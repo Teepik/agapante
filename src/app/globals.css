@@ -348,13 +348,16 @@
 
 .vitrine-shell {
   overscroll-behavior: none;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 .vitrine-stage {
   position: relative;
   perspective: 1400px;
   perspective-origin: 50% 50%;
-  touch-action: manipulation;
+  overflow: hidden;
+  touch-action: none;
 }
 
 .vitrine-carousel-card.is-dragging {
@@ -365,7 +368,7 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  width: min(calc(100vw - 2.5rem), 520px);
+  width: min(100%, 520px);
   height: min(calc(100dvh - 13.5rem), calc(100% - 2.5rem), 540px);
   max-height: min(calc(100dvh - 13.5rem), 540px);
   transform-style: preserve-3d;
@@ -392,6 +395,7 @@
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   scrollbar-width: thin;
   scrollbar-color: rgba(26, 29, 46, 0.22) transparent;
   padding-right: 0.15rem;
@@ -445,7 +449,7 @@
 
 @media (max-width: 640px) {
   .vitrine-carousel-card {
-    width: min(calc(100vw - 1.5rem), 480px);
+    width: min(100%, 480px);
     height: min(calc(100dvh - 12rem), 480px);
     max-height: min(calc(100dvh - 12rem), 480px);
   }
