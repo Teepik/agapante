@@ -1,12 +1,29 @@
 import "server-only";
 
-import { getDownloadUrl } from "@vercel/blob";
-
 export function isVercelBlobUrl(url: string): boolean {
   try {
     return new URL(url).hostname.endsWith(".blob.vercel-storage.com");
   } catch {
     return false;
+  }
+}
+
+export function isPrivateVercelBlobUrl(url: string): boolean {
+  try {
+    return new URL(url).hostname.includes(".private.blob.vercel-storage.com");
+  } catch {
+    return false;
+  }
+}
+
+export function getBlobPathname(url: string): string | null {
+  try {
+    const parsed = new URL(url);
+    if (!parsed.hostname.endsWith(".blob.vercel-storage.com")) return null;
+    const pathname = parsed.pathname.replace(/^\/+/, "");
+    return pathname || null;
+  } catch {
+    return null;
   }
 }
 
@@ -31,13 +48,12 @@ export function normalizeStoredImageUrl(raw: string): string | null {
 export function resolveShowcaseImageDisplayUrl(url: string | null | undefined): string | null {
   const normalized = url ? normalizeStoredImageUrl(url) : null;
   if (!normalized) return null;
-  if (!isVercelBlobUrl(normalized)) return normalized;
+  if (!isPrivateVercelBlobUrl(normalized)) return normalized;
 
-  try {
-    return getDownloadUrl(normalized);
-  } catch {
-    return normalized;
-  }
+  const pathname = getBlobPathname(normalized);
+  if (!pathname) return normalized;
+
+  return `/api/vitrine/image?pathname=${encodeURIComponent(pathname)}`;
 }
 
 export function resolveShowcaseImageUrl(formData: FormData): string | null {
