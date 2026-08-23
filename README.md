@@ -24,7 +24,8 @@ Copier `.env.example` vers `.env.local` et renseigner les variables.
 | Variable | Rôle | Obligatoire |
 | --- | --- | --- |
 | `DATABASE_URL` | Connexion PostgreSQL (Neon). Injectée automatiquement par l'intégration Vercel Storage. | Oui |
-| `ADMIN_PASSWORD` | Mot de passe d'accès à `/admin`. | Oui |
+| `ADMIN_PASSWORD` | Mot de passe d'accès à `/admin` (secours si aucun mot de passe en base). | Oui |
+| `ADMIN_BOOTSTRAP_TOKEN` | Jeton pour réinitialiser le mot de passe via `/admin/configurer?jeton=…` | Non |
 | `SESSION_SECRET` | Clé de signature du cookie de session et de hachage des IP. | Recommandé |
 | `NEXT_PUBLIC_SITE_URL` | URL publique canonique (sans slash final). | Recommandé |
 | `RESEND_API_KEY`, `NOTIFICATION_EMAIL` | Notification e-mail à chaque nouvelle demande. | Non |
@@ -79,6 +80,14 @@ elles se trouvent dans `src/lib/site.ts`, `src/app/mentions-legales/page.tsx` et
 ## Back-office
 
 `/admin` — connexion par mot de passe, session signée valable 12 h.
+
+Le mot de passe est enregistré en base PostgreSQL (table `admin_credentials`). La variable
+`ADMIN_PASSWORD` sert de secours tant qu'aucun mot de passe n'a été défini via l'interface.
+
+**Première configuration ou mot de passe perdu :** ouvrir
+`/admin/configurer?jeton=<jeton>` pour choisir un nouveau mot de passe. Le jeton de secours
+intégré ne fonctionne qu'une seule fois (tant qu'aucun mot de passe n'est enregistré en base).
+Pour les réinitialisations ultérieures, définir `ADMIN_BOOTSTRAP_TOKEN` dans Vercel.
 
 - liste des demandes avec filtres par statut et recherche plein texte ;
 - fiche détaillée : statut, notes internes, réponse en un clic, suppression RGPD ;
