@@ -24,7 +24,7 @@ import {
   type LeadStatus,
 } from "@/lib/db";
 import { normalizeShowcaseUrl } from "@/lib/showcase";
-import { resolveShowcaseImageUrl } from "@/lib/showcase-image";
+import { isAllowedShowcaseImageUrl, resolveShowcaseImageUrl } from "@/lib/showcase-image";
 
 export type LoginState = { error: string };
 
@@ -176,9 +176,15 @@ export async function createShowcaseItem(
   if (name.length < 2) {
     return { error: "Indiquez un nom de projet (2 caractères minimum).", success: "" };
   }
-  const imageResult = await resolveShowcaseImageUrl(formData);
-  if (!imageResult.ok) {
-    return { error: imageResult.error, success: "" };
+  const imageUrl = resolveShowcaseImageUrl(formData);
+  if (!imageUrl) {
+    return {
+      error: "Sélectionnez une image (JPG, PNG, WebP ou GIF, 4 Mo max). Attendez la fin du téléversement avant d'enregistrer.",
+      success: "",
+    };
+  }
+  if (!isAllowedShowcaseImageUrl(imageUrl)) {
+    return { error: "L'URL de l'image n'est pas valide.", success: "" };
   }
   if (description.length < 10) {
     return {
@@ -191,7 +197,7 @@ export async function createShowcaseItem(
     await insertShowcaseItem({
       url,
       name,
-      image_url: imageResult.url,
+      image_url: imageUrl,
       description,
     });
     revalidatePath("/admin/vitrine");
@@ -205,29 +211,56 @@ export async function createShowcaseItem(
   }
 }
 
-export async function updateShowcaseItemAction(formData: FormData): Promise<void> {
+export async function updateShowcaseItemAction(
+  _prev: ShowcaseFormState,
+  formData: FormData
+): Promise<ShowcaseFormState> {
   await assertAuth();
   const id = Number(formData.get("id"));
   const { url, name, description } = parseShowcaseFields(formData);
-  const imageResult = await resolveShowcaseImageUrl(formData);
-  if (
-    !Number.isFinite(id) ||
-    !url ||
-    name.length < 2 ||
-    !imageResult.ok ||
-    description.length < 10
-  ) {
-    return;
+  const imageUrl = resolveShowcaseImageUrl(formData);
+
+  if (!Number.isFinite(id)) {
+    return { error: "Projet introuvable.", success: "" };
+  }
+  if (!url) {
+    return { error: "Indiquez une URL valide (ex. https://exemple.com).", success: "" };
+  }
+  if (name.length < 2) {
+    return { error: "Indiquez un nom de projet (2 caractères minimum).", success: "" };
+  }
+  if (!imageUrl) {
+    return {
+      error: "Sélectionnez une image (JPG, PNG, WebP ou GIF, 4 Mo max). Attendez la fin du téléversement avant d'enregistrer.",
+      success: "",
+    };
+  }
+  if (!isAllowedShowcaseImageUrl(imageUrl)) {
+    return { error: "L'URL de l'image n'est pas valide.", success: "" };
+  }
+  if (description.length < 10) {
+    return {
+      error: "Le commentaire doit contenir au moins 10 caractères.",
+      success: "",
+    };
   }
 
-  await updateShowcaseItem(id, {
-    url,
-    name,
-    image_url: imageResult.url,
-    description,
-  });
-  revalidatePath("/admin/vitrine");
-  revalidatePath("/vitrine");
+  try {
+    await updateShowcaseItem(id, {
+      url,
+      name,
+      image_url: imageUrl,
+      description,
+    });
+    revalidatePath("/admin/vitrine");
+    revalidatePath("/vitrine");
+    return { error: "", success: "Modifications enregistrées." };
+  } catch {
+    return {
+      error: "Impossible d'enregistrer le projet. Vérifiez la connexion à la base de données.",
+      success: "",
+    };
+  }
 }
 
 export async function removeShowcaseItem(formData: FormData): Promise<void> {
