@@ -133,10 +133,9 @@ export function ShowcaseExperience({ items }: { items: ShowcaseCardData[] }) {
           {items.length === 0 ? (
             <Reveal>
               <div className="surface-card mx-auto max-w-xl p-12 text-center">
-                <p className="display text-[1.8rem] text-chalk">La vitrine se prépare.</p>
+                <p className="display text-[1.8rem] text-chalk">Aucun projet publié</p>
                 <p className="mt-4 text-[0.95rem] leading-relaxed text-mute">
-                  Aucun projet n&apos;est publié pour le moment. Les cartes ajoutées depuis
-                  l&apos;espace admin apparaîtront ici automatiquement.
+                  Les projets ajoutés depuis le back-office s&apos;affichent ici.
                 </p>
               </div>
             </Reveal>

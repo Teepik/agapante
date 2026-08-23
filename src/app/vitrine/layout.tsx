@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
-  title: "Vitrine projets",
-  description: "Sélection de sites et webapps réalisés.",
+  title: "Réalisations web",
+  description: "Sites et applications web livrés par Agapante.",
   path: "/vitrine",
   noIndex: true,
 });
