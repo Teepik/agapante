@@ -26,6 +26,24 @@ export function showcaseHostname(url: string): string {
   }
 }
 
+export function normalizeImageUrl(raw: string): string | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  let candidate = trimmed;
+  if (!/^https?:\/\//i.test(candidate)) {
+    candidate = `https://${candidate}`;
+  }
+
+  try {
+    const url = new URL(candidate);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
 export function showcaseAccent(url: string): { from: string; to: string; glow: string } {
   let hash = 0;
   for (let i = 0; i < url.length; i += 1) {

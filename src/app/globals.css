@@ -315,7 +315,7 @@
   font-weight: 600;
 }
 
-/* --- Vitrine portfolio --- */
+/* --- Vitrine carousel --- */
 .vitrine-orbit {
   position: absolute;
   border-radius: 9999px;
@@ -341,99 +341,58 @@
   animation-delay: -6s;
 }
 
-.vitrine-orbit-c {
-  width: 22rem;
-  height: 22rem;
-  bottom: 8rem;
-  left: 35%;
-  background: radial-gradient(circle, rgba(229, 181, 103, 0.18), transparent 72%);
-  animation-delay: -12s;
-}
-
 @keyframes vitrine-float {
   0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
   50% { transform: translate3d(0, -24px, 0) scale(1.04); }
 }
 
-.vitrine-card {
+.vitrine-shell {
+  overscroll-behavior: none;
+}
+
+.vitrine-stage {
   position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  border-radius: var(--radius-xl);
-  border: 1px solid color-mix(in oklab, var(--color-ink-600) 75%, transparent);
-  background:
-    linear-gradient(
-      155deg,
-      color-mix(in oklab, var(--color-ink-800) 92%, transparent),
-      color-mix(in oklab, var(--color-ink-950) 96%, transparent)
-    );
-  transition:
-    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.45s ease,
-    box-shadow 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  perspective: 1500px;
+  perspective-origin: 50% 42%;
 }
 
-.vitrine-card::before {
-  content: "";
+.vitrine-carousel-card {
   position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 0.45s ease;
-  background: radial-gradient(
-    520px circle at var(--mouse-x, 50%) var(--mouse-y, 0%),
-    rgba(139, 147, 248, 0.16),
-    transparent 42%
-  );
-  pointer-events: none;
-  z-index: 0;
+  left: 50%;
+  top: 46%;
+  width: min(92vw, 540px);
+  max-height: min(72vh, 640px);
+  transform-style: preserve-3d;
+  transition:
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.65s ease,
+    filter 0.65s ease;
+  will-change: transform, opacity;
+  cursor: pointer;
 }
 
-.vitrine-card:hover::before {
-  opacity: 1;
+.vitrine-carousel-card.is-active {
+  cursor: default;
+  filter: drop-shadow(0 36px 80px rgba(0, 0, 0, 0.55));
 }
 
-.vitrine-card:hover {
-  transform: translateY(-6px);
-  border-color: color-mix(in oklab, var(--color-iris-400) 45%, transparent);
+.vitrine-card-light {
+  height: 100%;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: linear-gradient(180deg, #fcfcff 0%, #eceff8 100%);
   box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.35),
-    0 0 0 1px color-mix(in oklab, var(--color-iris-400) 18%, transparent);
+    0 1px 0 rgba(255, 255, 255, 0.85) inset,
+    0 24px 60px rgba(0, 0, 0, 0.42);
+  color: var(--color-ink-950);
 }
 
-.vitrine-card-accent {
-  height: 3px;
-  width: 100%;
-  background: linear-gradient(90deg, var(--accent-from), var(--accent-to));
-}
-
-.vitrine-grid {
-  display: grid;
-  gap: 1.25rem;
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 768px) {
-  .vitrine-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.5rem;
-  }
-}
-
-@media (min-width: 1100px) {
-  .vitrine-grid {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
+@media (prefers-reduced-motion: reduce) {
+  .vitrine-carousel-card {
+    transition-duration: 0.001ms;
   }
 
-  .vitrine-grid-item {
-    grid-column: span 4;
-  }
-
-  .vitrine-grid-item:nth-child(6n + 1),
-  .vitrine-grid-item:nth-child(6n + 5) {
-    grid-column: span 6;
-  }
-
-  .vitrine-grid-item:nth-child(6n + 3) {
-    grid-column: span 8;
+  .vitrine-orbit {
+    animation: none;
   }
 }

@@ -1,15 +1,12 @@
-import { ShowcaseExperience } from "@/components/vitrine/ShowcaseExperience";
+import { ShowcaseCarousel } from "@/components/vitrine/ShowcaseCarousel";
 import { isDbConfigured, listShowcaseItems } from "@/lib/db";
+import { showcaseHostname } from "@/lib/showcase";
 
 export const dynamic = "force-dynamic";
 
 export default async function VitrinePage() {
   if (!isDbConfigured()) {
-    return (
-      <ShowcaseExperience
-        items={[]}
-      />
-    );
+    return <ShowcaseCarousel items={[]} />;
   }
 
   let items: Awaited<ReturnType<typeof listShowcaseItems>> = [];
@@ -21,11 +18,13 @@ export default async function VitrinePage() {
   }
 
   return (
-    <ShowcaseExperience
+    <ShowcaseCarousel
       items={items.map((item) => ({
         id: item.id,
         url: item.url,
-        description: item.description,
+        name: item.name?.trim() || showcaseHostname(item.url),
+        imageUrl: item.image_url,
+        comment: item.description,
       }))}
     />
   );

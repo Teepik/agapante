@@ -23,7 +23,7 @@ import {
   updateShowcaseItem,
   type LeadStatus,
 } from "@/lib/db";
-import { normalizeShowcaseUrl } from "@/lib/showcase";
+import { normalizeShowcaseUrl, normalizeImageUrl } from "@/lib/showcase";
 
 export type LoginState = { error: string };
 
@@ -157,8 +157,10 @@ export type ShowcaseFormState = { error: string; success: string };
 
 function parseShowcaseFields(formData: FormData) {
   const url = normalizeShowcaseUrl(String(formData.get("url") ?? ""));
+  const name = String(formData.get("name") ?? "").trim().slice(0, 120);
+  const imageUrl = normalizeImageUrl(String(formData.get("imageUrl") ?? ""));
   const description = String(formData.get("description") ?? "").trim().slice(0, 2000);
-  return { url, description };
+  return { url, name, imageUrl, description };
 }
 
 export async function createShowcaseItem(
@@ -166,20 +168,34 @@ export async function createShowcaseItem(
   formData: FormData
 ): Promise<ShowcaseFormState> {
   await assertAuth();
-  const { url, description } = parseShowcaseFields(formData);
+  const { url, name, imageUrl, description } = parseShowcaseFields(formData);
 
   if (!url) {
     return { error: "Indiquez une URL valide (ex. https://exemple.com).", success: "" };
   }
+  if (name.length < 2) {
+    return { error: "Indiquez un nom de projet (2 caractères minimum).", success: "" };
+  }
+  if (!imageUrl) {
+    return {
+      error: "Indiquez une URL d'image valide (ex. https://exemple.com/capture.jpg).",
+      success: "",
+    };
+  }
   if (description.length < 10) {
     return {
-      error: "Le descriptif doit contenir au moins 10 caractères.",
+      error: "Le commentaire doit contenir au moins 10 caractères.",
       success: "",
     };
   }
 
   try {
-    await insertShowcaseItem({ url, description });
+    await insertShowcaseItem({
+      url,
+      name,
+      image_url: imageUrl,
+      description,
+    });
     revalidatePath("/admin/vitrine");
     revalidatePath("/vitrine");
     return { error: "", success: "Projet ajouté à la vitrine." };
@@ -194,10 +210,17 @@ export async function createShowcaseItem(
 export async function updateShowcaseItemAction(formData: FormData): Promise<void> {
   await assertAuth();
   const id = Number(formData.get("id"));
-  const { url, description } = parseShowcaseFields(formData);
-  if (!Number.isFinite(id) || !url || description.length < 10) return;
+  const { url, name, imageUrl, description } = parseShowcaseFields(formData);
+  if (!Number.isFinite(id) || !url || name.length < 2 || !imageUrl || description.length < 10) {
+    return;
+  }
 
-  await updateShowcaseItem(id, { url, description });
+  await updateShowcaseItem(id, {
+    url,
+    name,
+    image_url: imageUrl,
+    description,
+  });
   revalidatePath("/admin/vitrine");
   revalidatePath("/vitrine");
 }
