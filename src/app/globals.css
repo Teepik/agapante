@@ -314,3 +314,126 @@
   color: var(--color-chalk);
   font-weight: 600;
 }
+
+/* --- Vitrine portfolio --- */
+.vitrine-orbit {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  pointer-events: none;
+  animation: vitrine-float 18s ease-in-out infinite;
+}
+
+.vitrine-orbit-a {
+  width: 34rem;
+  height: 34rem;
+  top: -8rem;
+  left: -10rem;
+  background: radial-gradient(circle, rgba(111, 119, 232, 0.45), transparent 68%);
+}
+
+.vitrine-orbit-b {
+  width: 28rem;
+  height: 28rem;
+  top: 20vh;
+  right: -8rem;
+  background: radial-gradient(circle, rgba(127, 209, 185, 0.28), transparent 70%);
+  animation-delay: -6s;
+}
+
+.vitrine-orbit-c {
+  width: 22rem;
+  height: 22rem;
+  bottom: 8rem;
+  left: 35%;
+  background: radial-gradient(circle, rgba(229, 181, 103, 0.18), transparent 72%);
+  animation-delay: -12s;
+}
+
+@keyframes vitrine-float {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(0, -24px, 0) scale(1.04); }
+}
+
+.vitrine-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  border: 1px solid color-mix(in oklab, var(--color-ink-600) 75%, transparent);
+  background:
+    linear-gradient(
+      155deg,
+      color-mix(in oklab, var(--color-ink-800) 92%, transparent),
+      color-mix(in oklab, var(--color-ink-950) 96%, transparent)
+    );
+  transition:
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.45s ease,
+    box-shadow 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.vitrine-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  background: radial-gradient(
+    520px circle at var(--mouse-x, 50%) var(--mouse-y, 0%),
+    rgba(139, 147, 248, 0.16),
+    transparent 42%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.vitrine-card:hover::before {
+  opacity: 1;
+}
+
+.vitrine-card:hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in oklab, var(--color-iris-400) 45%, transparent);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.35),
+    0 0 0 1px color-mix(in oklab, var(--color-iris-400) 18%, transparent);
+}
+
+.vitrine-card-accent {
+  height: 3px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--accent-from), var(--accent-to));
+}
+
+.vitrine-grid {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .vitrine-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1100px) {
+  .vitrine-grid {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  .vitrine-grid-item {
+    grid-column: span 4;
+  }
+
+  .vitrine-grid-item:nth-child(6n + 1),
+  .vitrine-grid-item:nth-child(6n + 5) {
+    grid-column: span 6;
+  }
+
+  .vitrine-grid-item:nth-child(6n + 3) {
+    grid-column: span 8;
+  }
+}

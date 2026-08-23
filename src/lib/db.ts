@@ -86,6 +86,16 @@ export function ensureSchema(): Promise<void> {
           updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
         )
       `;
+      await sql`
+        CREATE TABLE IF NOT EXISTS showcase_items (
+          id           SERIAL PRIMARY KEY,
+          url          TEXT        NOT NULL,
+          description  TEXT        NOT NULL,
+          sort_order   INT         NOT NULL DEFAULT 0,
+          created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
+        )
+      `;
+      await sql`CREATE INDEX IF NOT EXISTS showcase_items_sort_idx ON showcase_items (sort_order ASC, id ASC)`;
     })().catch((error) => {
       schemaReady = null;
       throw error;
@@ -228,4 +238,88 @@ export async function setAdminPasswordHash(passwordHash: string): Promise<void> 
     SET password_hash = EXCLUDED.password_hash,
         updated_at = now()
   `;
+}
+
+export type ShowcaseItem = {
+  id: number;
+  url: string;
+  description: string;
+  sort_order: number;
+  created_at: string;
+};
+
+export async function listShowcaseItems(): Promise<ShowcaseItem[]> {
+  if (!isDbConfigured()) return [];
+  await ensureSchema();
+  const sql = getSql();
+  const rows = (await sql`
+    SELECT * FROM showcase_items ORDER BY sort_order ASC, id ASC
+  `) as unknown as ShowcaseItem[];
+  return rows;
+}
+
+export async function getShowcaseItem(id: number): Promise<ShowcaseItem | null> {
+  await ensureSchema();
+  const sql = getSql();
+  const rows = (await sql`
+    SELECT * FROM showcase_items WHERE id = ${id} LIMIT 1
+  `) as unknown as ShowcaseItem[];
+  return rows[0] ?? null;
+}
+
+export async function insertShowcaseItem(input: {
+  url: string;
+  description: string;
+  sort_order?: number;
+}): Promise<number> {
+  await ensureSchema();
+  const sql = getSql();
+  let sortOrder = input.sort_order;
+  if (sortOrder === undefined) {
+    const rows = (await sql`
+      SELECT COALESCE(MAX(sort_order), -1) + 1 AS next_order FROM showcase_items
+    `) as { next_order: number }[];
+    sortOrder = rows[0]?.next_order ?? 0;
+  }
+  const inserted = (await sql`
+    INSERT INTO showcase_items (url, description, sort_order)
+    VALUES (${input.url}, ${input.description}, ${sortOrder})
+    RETURNING id
+  `) as { id: number }[];
+  return inserted[0].id;
+}
+
+export async function updateShowcaseItem(
+  id: number,
+  input: { url: string; description: string }
+): Promise<void> {
+  await ensureSchema();
+  const sql = getSql();
+  await sql`
+    UPDATE showcase_items
+    SET url = ${input.url}, description = ${input.description}
+    WHERE id = ${id}
+  `;
+}
+
+export async function deleteShowcaseItem(id: number): Promise<void> {
+  await ensureSchema();
+  const sql = getSql();
+  await sql`DELETE FROM showcase_items WHERE id = ${id}`;
+}
+
+export async function moveShowcaseItem(id: number, direction: "up" | "down"): Promise<void> {
+  await ensureSchema();
+  const sql = getSql();
+  const items = await listShowcaseItems();
+  const index = items.findIndex((item) => item.id === id);
+  if (index < 0) return;
+
+  const swapIndex = direction === "up" ? index - 1 : index + 1;
+  if (swapIndex < 0 || swapIndex >= items.length) return;
+
+  const current = items[index];
+  const swap = items[swapIndex];
+  await sql`UPDATE showcase_items SET sort_order = ${swap.sort_order} WHERE id = ${current.id}`;
+  await sql`UPDATE showcase_items SET sort_order = ${current.sort_order} WHERE id = ${swap.id}`;
 }
