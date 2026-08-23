@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { createShowcaseItem, type ShowcaseFormState } from "@/app/admin/actions";
 import { ShowcaseImageField } from "@/components/admin/ShowcaseImageField";
@@ -10,24 +10,27 @@ const initial: ShowcaseFormState = { error: "", success: "" };
 const fieldCls =
   "mt-2 w-full rounded-[12px] border border-ink-600 bg-ink-900/70 px-4 py-3 text-[0.95rem] text-chalk transition-colors focus:border-iris-400/70 focus:outline-none";
 
-function SubmitButton() {
+function SubmitButton({ uploading }: { uploading: boolean }) {
   const { pending } = useFormStatus();
+  const disabled = pending || uploading;
+
   return (
     <button
       type="submit"
-      disabled={pending}
+      disabled={disabled}
       className="rounded-full bg-chalk px-6 py-3 text-[0.92rem] font-medium text-ink-950 transition-colors hover:bg-iris-100 disabled:opacity-60"
     >
-      {pending ? "Ajout…" : "Ajouter à la vitrine"}
+      {uploading ? "Téléversement…" : pending ? "Ajout…" : "Ajouter à la vitrine"}
     </button>
   );
 }
 
 export function CreateShowcaseForm() {
   const [state, formAction] = useActionState(createShowcaseItem, initial);
+  const [uploading, setUploading] = useState(false);
 
   return (
-    <form action={formAction} encType="multipart/form-data" className="surface-card border border-iris-400/20 p-7">
+    <form action={formAction} className="surface-card border border-iris-400/20 p-7">
       <h2 className="display text-[1.45rem] text-chalk">Ajouter une carte</h2>
       <p className="mt-2 text-[0.92rem] text-mute">
         Nom, image, commentaire et lien du site. Visible immédiatement sur{" "}
@@ -65,7 +68,7 @@ export function CreateShowcaseForm() {
       <label className="mt-5 block text-[0.82rem] font-medium text-chalk-dim">
         Image du projet
       </label>
-      <ShowcaseImageField required />
+      <ShowcaseImageField required onUploadingChange={setUploading} />
 
       <label htmlFor="description" className="mt-5 block text-[0.82rem] font-medium text-chalk-dim">
         Commentaire
@@ -93,7 +96,7 @@ export function CreateShowcaseForm() {
       />
 
       <div className="mt-6">
-        <SubmitButton />
+        <SubmitButton uploading={uploading} />
       </div>
     </form>
   );

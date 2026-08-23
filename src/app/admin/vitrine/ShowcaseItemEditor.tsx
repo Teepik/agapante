@@ -1,9 +1,12 @@
 "use client";
 
+import { useActionState, useState } from "react";
+import { useFormStatus } from "react-dom";
 import {
   removeShowcaseItem,
   reorderShowcaseItem,
   updateShowcaseItemAction,
+  type ShowcaseFormState,
 } from "@/app/admin/actions";
 import { ShowcaseImageField } from "@/components/admin/ShowcaseImageField";
 import { showcaseHostname } from "@/lib/showcase";
@@ -15,6 +18,8 @@ type Item = {
   image_url: string | null;
   description: string;
 };
+
+const initial: ShowcaseFormState = { error: "", success: "" };
 
 const fieldCls =
   "w-full rounded-[12px] border border-ink-600 bg-ink-900/70 px-4 py-2.5 text-[0.9rem] text-chalk transition-colors focus:border-iris-400/70 focus:outline-none";
@@ -36,6 +41,83 @@ function DeleteButton({ id, label }: { id: number; label: string }) {
       >
         Supprimer
       </button>
+    </form>
+  );
+}
+
+function SaveButton({ uploading }: { uploading: boolean }) {
+  const { pending } = useFormStatus();
+  const disabled = pending || uploading;
+
+  return (
+    <button
+      type="submit"
+      disabled={disabled}
+      className="justify-self-start rounded-full border border-ink-600 px-5 py-2 text-[0.84rem] text-chalk-dim transition-colors hover:border-iris-400/60 hover:text-chalk disabled:opacity-60 sm:col-span-2"
+    >
+      {uploading ? "Téléversement…" : pending ? "Enregistrement…" : "Enregistrer les modifications"}
+    </button>
+  );
+}
+
+function ShowcaseItemForm({ item }: { item: Item }) {
+  const [state, formAction] = useActionState(updateShowcaseItemAction, initial);
+  const [uploading, setUploading] = useState(false);
+
+  return (
+    <form action={formAction} className="grid gap-4 sm:grid-cols-2">
+      <input type="hidden" name="id" value={item.id} />
+
+      {state.error ? (
+        <p
+          role="alert"
+          className="rounded-[12px] border border-amber-sig/40 bg-amber-sig/[0.07] px-4 py-3 text-[0.82rem] text-amber-sig sm:col-span-2"
+        >
+          {state.error}
+        </p>
+      ) : null}
+
+      {state.success ? (
+        <p className="rounded-[12px] border border-sage-400/40 bg-sage-400/10 px-4 py-3 text-[0.82rem] text-sage-400 sm:col-span-2">
+          {state.success}
+        </p>
+      ) : null}
+
+      <div className="sm:col-span-2">
+        <label className="text-[0.78rem] font-medium text-chalk-dim">Nom</label>
+        <input
+          name="name"
+          type="text"
+          required
+          minLength={2}
+          defaultValue={item.name ?? ""}
+          className={fieldCls}
+        />
+      </div>
+      <div className="sm:col-span-2">
+        <label className="text-[0.78rem] font-medium text-chalk-dim">Image</label>
+        <ShowcaseImageField
+          currentUrl={item.image_url}
+          required={false}
+          onUploadingChange={setUploading}
+        />
+      </div>
+      <div className="sm:col-span-2">
+        <label className="text-[0.78rem] font-medium text-chalk-dim">Commentaire</label>
+        <textarea
+          name="description"
+          required
+          rows={3}
+          minLength={10}
+          defaultValue={item.description}
+          className={`${fieldCls} resize-y`}
+        />
+      </div>
+      <div className="sm:col-span-2">
+        <label className="text-[0.78rem] font-medium text-chalk-dim">URL du site</label>
+        <input name="url" type="url" required defaultValue={item.url} className={fieldCls} />
+      </div>
+      <SaveButton uploading={uploading} />
     </form>
   );
 }
@@ -100,49 +182,7 @@ export function ShowcaseItemEditor({ items }: { items: Item[] }) {
               </div>
             </div>
 
-            <form
-              action={updateShowcaseItemAction}
-              encType="multipart/form-data"
-              className="grid gap-4 sm:grid-cols-2"
-            >
-              <input type="hidden" name="id" value={item.id} />
-              <div className="sm:col-span-2">
-                <label className="text-[0.78rem] font-medium text-chalk-dim">Nom</label>
-                <input
-                  name="name"
-                  type="text"
-                  required
-                  minLength={2}
-                  defaultValue={item.name ?? ""}
-                  className={fieldCls}
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="text-[0.78rem] font-medium text-chalk-dim">Image</label>
-                <ShowcaseImageField currentUrl={item.image_url} required={false} />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="text-[0.78rem] font-medium text-chalk-dim">Commentaire</label>
-                <textarea
-                  name="description"
-                  required
-                  rows={3}
-                  minLength={10}
-                  defaultValue={item.description}
-                  className={`${fieldCls} resize-y`}
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className="text-[0.78rem] font-medium text-chalk-dim">URL du site</label>
-                <input name="url" type="url" required defaultValue={item.url} className={fieldCls} />
-              </div>
-              <button
-                type="submit"
-                className="justify-self-start rounded-full border border-ink-600 px-5 py-2 text-[0.84rem] text-chalk-dim transition-colors hover:border-iris-400/60 hover:text-chalk sm:col-span-2"
-              >
-                Enregistrer les modifications
-              </button>
-            </form>
+            <ShowcaseItemForm item={item} />
           </article>
         );
       })}
