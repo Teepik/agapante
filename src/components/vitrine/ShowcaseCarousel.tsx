@@ -27,58 +27,51 @@ function cardTransform(offset: number): string {
   }
   if (Math.abs(offset) === 1) {
     const direction = offset > 0 ? 1 : -1;
-    return `translate(-50%, -50%) translateX(${direction * 44}%) translateZ(-100px) rotateY(${direction * -32}deg) scale(0.84)`;
+    return `translate(-50%, -50%) translateX(${direction * 42}%) translateZ(-100px) rotateY(${direction * -30}deg) scale(0.86)`;
   }
   if (Math.abs(offset) === 2) {
     const direction = offset > 0 ? 1 : -1;
-    return `translate(-50%, -50%) translateX(${direction * 72}%) translateZ(-200px) rotateY(${direction * -44}deg) scale(0.72)`;
+    return `translate(-50%, -50%) translateX(${direction * 68}%) translateZ(-200px) rotateY(${direction * -42}deg) scale(0.74)`;
   }
   const direction = offset > 0 ? 1 : -1;
-  return `translate(-50%, -50%) translateX(${direction * 88}%) translateZ(-280px) rotateY(${direction * -52}deg) scale(0.62)`;
+  return `translate(-50%, -50%) translateX(${direction * 82}%) translateZ(-280px) rotateY(${direction * -50}deg) scale(0.64)`;
 }
 
 function cardOpacity(offset: number): number {
   const distance = Math.abs(offset);
   if (distance === 0) return 1;
-  if (distance === 1) return 0.52;
-  if (distance === 2) return 0.28;
-  return 0.12;
+  if (distance === 1) return 0.5;
+  if (distance === 2) return 0.26;
+  return 0.1;
 }
 
 function cardZIndex(offset: number): number {
   return 40 - Math.abs(offset) * 10;
 }
 
-function ProjectCard({
-  item,
-  offset,
-  onSelect,
-}: {
-  item: ShowcaseCardData;
-  offset: number;
-  onSelect: () => void;
-}) {
+function ProjectCard({ item, offset }: { item: ShowcaseCardData; offset: number }) {
   const accent = showcaseAccent(item.url);
   const isActive = offset === 0;
   const label = item.name || showcaseHostname(item.url);
 
   return (
-    <article
+    <a
+      href={item.url}
+      target="_blank"
+      rel="noopener noreferrer"
       role="listitem"
       aria-hidden={!isActive}
-      className={`vitrine-carousel-card ${isActive ? "is-active" : ""}`}
+      aria-label={`Ouvrir ${label} dans un nouvel onglet`}
+      className={`vitrine-carousel-card ${isActive ? "is-active" : "is-background"}`}
       style={{
         transform: cardTransform(offset),
         opacity: cardOpacity(offset),
         zIndex: cardZIndex(offset),
         pointerEvents: Math.abs(offset) <= 2 ? "auto" : "none",
       }}
-      onClick={() => {
-        if (!isActive) onSelect();
-      }}
     >
-      <div className="vitrine-card-light flex h-full flex-col overflow-hidden">
-        <div className="relative aspect-[16/10] w-full overflow-hidden bg-ink-800">
+      <div className="vitrine-card-light flex h-full max-h-full flex-col overflow-hidden">
+        <div className="relative aspect-[16/10] max-h-[42%] w-full shrink-0 overflow-hidden bg-ink-800">
           {item.imageUrl ? (
             <img
               src={item.imageUrl}
@@ -93,52 +86,44 @@ function ProjectCard({
                 background: `linear-gradient(135deg, ${accent.from}, ${accent.to})`,
               }}
             >
-              <span className="display text-[1.6rem] text-white/90">{label}</span>
+              <span className="display text-[1.4rem] text-white/90 sm:text-[1.6rem]">{label}</span>
             </div>
           )}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
         </div>
 
-        <div className="flex flex-1 flex-col p-6 sm:p-7">
-          <p className="text-[0.72rem] uppercase tracking-[0.14em] text-ink-600/80">
+        <div className="flex min-h-0 flex-1 flex-col p-5 sm:p-6">
+          <p className="text-[0.7rem] uppercase tracking-[0.14em] text-ink-600/80 sm:text-[0.72rem]">
             {showcaseHostname(item.url)}
           </p>
-          <h2 className="display mt-2 text-[clamp(1.45rem,2.5vw,2rem)] leading-tight text-ink-950">
+          <h2 className="display mt-2 text-[clamp(1.25rem,2.2vw,1.85rem)] leading-tight text-ink-950">
             {label}
           </h2>
-          <p className="mt-4 flex-1 text-[0.95rem] leading-relaxed text-ink-700">{item.comment}</p>
-
-          {isActive ? (
-            <a
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-flex items-center justify-center gap-2 rounded-full bg-ink-950 px-6 py-3.5 text-[0.92rem] font-medium text-chalk transition-colors hover:bg-iris-600"
-              onClick={(event) => event.stopPropagation()}
-            >
-              Visiter le site
-              <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" aria-hidden="true">
-                <path
-                  d="M5 15 15 5M15 5H7M15 5v8"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </a>
-          ) : (
-            <p className="mt-6 text-[0.82rem] text-ink-600">Cliquer pour afficher</p>
-          )}
+          <p className="mt-3 line-clamp-4 flex-1 text-[0.88rem] leading-relaxed text-ink-700 sm:mt-4 sm:text-[0.95rem]">
+            {item.comment}
+          </p>
+          <p className="mt-4 inline-flex items-center gap-2 text-[0.8rem] font-medium text-ink-950 sm:mt-5 sm:text-[0.86rem]">
+            Visiter le site
+            <svg viewBox="0 0 20 20" className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" aria-hidden="true">
+              <path
+                d="M5 15 15 5M15 5H7M15 5v8"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </p>
         </div>
       </div>
-    </article>
+    </a>
   );
 }
 
 export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
   const [active, setActive] = useState(0);
-  const touchStart = useRef<number | null>(null);
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const touchMoved = useRef(false);
   const total = items.length;
 
   useEffect(() => {
@@ -179,15 +164,34 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
   }, [go, total]);
 
   const onTouchStart = (event: React.TouchEvent) => {
-    touchStart.current = event.touches[0]?.clientX ?? null;
+    const touch = event.touches[0];
+    if (!touch) return;
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+    touchMoved.current = false;
+  };
+
+  const onTouchMove = (event: React.TouchEvent) => {
+    if (!touchStart.current) return;
+    const touch = event.touches[0];
+    if (!touch) return;
+    const dx = Math.abs(touch.clientX - touchStart.current.x);
+    const dy = Math.abs(touch.clientY - touchStart.current.y);
+    if (dx > 8 || dy > 8) touchMoved.current = true;
   };
 
   const onTouchEnd = (event: React.TouchEvent) => {
-    if (touchStart.current === null || total <= 1) return;
-    const delta = (event.changedTouches[0]?.clientX ?? 0) - touchStart.current;
+    if (!touchStart.current || total <= 1) return;
+    const touch = event.changedTouches[0];
+    if (!touch) return;
+
+    const deltaX = touch.clientX - touchStart.current.x;
     touchStart.current = null;
-    if (Math.abs(delta) < 40) return;
-    go(delta < 0 ? 1 : -1);
+
+    if (touchMoved.current && Math.abs(deltaX) >= 40) {
+      event.preventDefault();
+      go(deltaX < 0 ? 1 : -1);
+    }
+    touchMoved.current = false;
   };
 
   return (
@@ -211,20 +215,19 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
         </div>
       </header>
 
-      <main className="relative z-10 flex min-h-0 flex-1 flex-col">
-        <div className="container-x shrink-0 pt-5 sm:pt-7">
-          <h1 className="display text-[clamp(1.6rem,3.2vw,2.35rem)] text-chalk">
+      <main className="relative z-10 grid min-h-0 flex-1 grid-rows-[auto_minmax(0,1fr)]">
+        <div className="container-x shrink-0 pt-4 pb-2 sm:pt-6 sm:pb-3">
+          <h1 className="display text-[clamp(1.45rem,3vw,2.2rem)] text-chalk">
             Sites et applications web
           </h1>
-          <p className="mt-2 max-w-xl text-[0.92rem] leading-relaxed text-mute sm:text-[0.98rem]">
-            Projets livrés pour des clients ou en interne. Faites défiler pour parcourir la
-            sélection.
+          <p className="mt-1.5 max-w-xl text-[0.86rem] leading-relaxed text-mute sm:mt-2 sm:text-[0.95rem]">
+            Faites défiler pour parcourir — cliquez sur une carte pour ouvrir le projet.
           </p>
         </div>
 
-        <div className="relative mt-4 min-h-0 flex-1 sm:mt-6">
+        <div className="relative min-h-0 px-3 pb-8 sm:px-4 sm:pb-10">
           {total === 0 ? (
-            <div className="flex h-full items-center justify-center px-6">
+            <div className="flex h-full items-center justify-center">
               <div className="vitrine-card-light max-w-md p-10 text-center">
                 <p className="display text-[1.6rem] text-ink-950">Aucun projet publié</p>
                 <p className="mt-3 text-[0.95rem] leading-relaxed text-ink-700">
@@ -233,14 +236,14 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
               </div>
             </div>
           ) : (
-            <div className="relative mx-auto h-full max-w-6xl px-4">
+            <div className="relative mx-auto h-full max-w-6xl">
               {total > 1 ? (
                 <>
                   <button
                     type="button"
                     onClick={() => go(-1)}
                     aria-label="Projet précédent"
-                    className="absolute left-0 top-[46%] z-30 hidden -translate-y-1/2 rounded-full border border-ink-600/80 bg-ink-950/50 p-2.5 text-chalk-dim backdrop-blur-sm transition-colors hover:border-iris-400/50 hover:text-chalk sm:inline-flex"
+                    className="absolute left-0 top-1/2 z-30 hidden -translate-y-1/2 rounded-full border border-ink-600/80 bg-ink-950/50 p-2.5 text-chalk-dim backdrop-blur-sm transition-colors hover:border-iris-400/50 hover:text-chalk sm:inline-flex"
                   >
                     ←
                   </button>
@@ -248,7 +251,7 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
                     type="button"
                     onClick={() => go(1)}
                     aria-label="Projet suivant"
-                    className="absolute right-0 top-[46%] z-30 hidden -translate-y-1/2 rounded-full border border-ink-600/80 bg-ink-950/50 p-2.5 text-chalk-dim backdrop-blur-sm transition-colors hover:border-iris-400/50 hover:text-chalk sm:inline-flex"
+                    className="absolute right-0 top-1/2 z-30 hidden -translate-y-1/2 rounded-full border border-ink-600/80 bg-ink-950/50 p-2.5 text-chalk-dim backdrop-blur-sm transition-colors hover:border-iris-400/50 hover:text-chalk sm:inline-flex"
                   >
                     →
                   </button>
@@ -256,9 +259,10 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
               ) : null}
 
               <div
-                className="vitrine-stage h-full"
+                className="vitrine-stage h-full w-full"
                 role="list"
                 onTouchStart={onTouchStart}
+                onTouchMove={onTouchMove}
                 onTouchEnd={onTouchEnd}
               >
                 {items.map((item, index) => (
@@ -266,13 +270,12 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
                     key={item.id}
                     item={item}
                     offset={relativeOffset(index, active, total)}
-                    onSelect={() => setActive(index)}
                   />
                 ))}
               </div>
 
               {total > 1 ? (
-                <div className="pointer-events-none absolute inset-x-0 bottom-4 z-30 flex justify-center sm:bottom-6">
+                <div className="pointer-events-none absolute inset-x-0 bottom-1 z-30 flex justify-center sm:bottom-2">
                   <div className="pointer-events-auto flex items-center gap-2">
                     {items.map((item, index) => (
                       <button
