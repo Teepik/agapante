@@ -350,44 +350,15 @@
   overscroll-behavior: none;
 }
 
-.vitrine-mobile-feed {
-  overflow-y: auto;
-  scroll-snap-type: y mandatory;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
-  scroll-padding-top: 0.75rem;
-  scroll-padding-bottom: 5rem;
-}
-
-.vitrine-mobile-card {
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
-  margin-bottom: 1.25rem;
-  text-decoration: none;
-  color: inherit;
-}
-
-.vitrine-mobile-card:last-child {
-  margin-bottom: 0;
-}
-
-.vitrine-mobile-card .vitrine-card-light {
-  height: auto;
-  min-height: min(calc(100dvh - 15rem), 680px);
-}
-
-.vitrine-card-media {
-  max-height: 38%;
-}
-
-.vitrine-mobile-card .vitrine-card-media {
-  max-height: none;
-}
-
 .vitrine-stage {
   position: relative;
   perspective: 1400px;
   perspective-origin: 50% 50%;
+  touch-action: pan-y pinch-zoom;
+}
+
+.vitrine-carousel-card.is-dragging {
+  transition: none;
 }
 
 .vitrine-carousel-card {
