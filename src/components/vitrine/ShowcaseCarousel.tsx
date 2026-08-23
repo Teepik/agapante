@@ -125,13 +125,7 @@ function ProjectCard({
           <h2 className="display mt-2 text-[clamp(1.25rem,2.2vw,1.85rem)] leading-tight text-ink-950">
             {label}
           </h2>
-          <div
-            className="vitrine-card-comment mt-3 sm:mt-4"
-            data-vitrine-scroll="true"
-            onTouchStart={(event) => event.stopPropagation()}
-            onTouchMove={(event) => event.stopPropagation()}
-            onTouchEnd={(event) => event.stopPropagation()}
-          >
+          <div className="vitrine-card-comment mt-3 sm:mt-4">
             <p className="text-[0.88rem] leading-relaxed text-ink-700 sm:text-[0.95rem]">
               {item.comment}
             </p>
@@ -210,7 +204,6 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     if (total <= 1 || event.pointerType === "mouse") return;
-    if ((event.target as HTMLElement).closest("[data-vitrine-scroll]")) return;
 
     pointerStart.current = { x: event.clientX, y: event.clientY, id: event.pointerId };
     axisLock.current = "none";
@@ -231,7 +224,12 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
       axisLock.current = Math.abs(deltaX) > Math.abs(deltaY) ? "x" : "y";
     }
 
-    if (axisLock.current === "y") return;
+    if (axisLock.current === "y") {
+      if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+        event.currentTarget.releasePointerCapture(event.pointerId);
+      }
+      return;
+    }
 
     event.preventDefault();
     setIsDragging(true);
@@ -296,7 +294,7 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
             Sites et applications web
           </h1>
           <p className="mt-1.5 max-w-xl text-[0.86rem] leading-relaxed text-mute sm:mt-2 sm:text-[0.95rem]">
-            Glissez horizontalement sur les cartes pour parcourir — touchez pour ouvrir le projet.
+            Faites défiler pour parcourir — cliquez sur une carte pour ouvrir le projet.
           </p>
         </div>
 
@@ -335,7 +333,7 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
 
               <div
                 ref={stageRef}
-                className="vitrine-stage h-full w-full touch-pan-y"
+                className="vitrine-stage h-full w-full"
                 role="list"
                 onPointerDown={onPointerDown}
                 onPointerMove={onPointerMove}
