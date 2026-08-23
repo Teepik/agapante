@@ -28,25 +28,6 @@ function mimeFromFilename(name: string): string | null {
   }
 }
 
-function extensionForFile(file: File): string {
-  const fromName = file.name.split(".").pop()?.toLowerCase();
-  if (fromName && ["jpg", "jpeg", "png", "webp", "gif"].includes(fromName)) {
-    return fromName === "jpeg" ? "jpg" : fromName;
-  }
-  switch (file.type) {
-    case "image/jpeg":
-      return "jpg";
-    case "image/png":
-      return "png";
-    case "image/webp":
-      return "webp";
-    case "image/gif":
-      return "gif";
-    default:
-      return "jpg";
-  }
-}
-
 export function ShowcaseImageField({
   currentUrl,
   required = true,
