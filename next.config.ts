@@ -14,6 +14,9 @@ const nextConfig: NextConfig = {
   compress: true,
   experimental: {
     optimizePackageImports: [],
+    serverActions: {
+      bodySizeLimit: "5mb",
+    },
   },
   async headers() {
     return [

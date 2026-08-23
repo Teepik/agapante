@@ -5,6 +5,7 @@ import {
   reorderShowcaseItem,
   updateShowcaseItemAction,
 } from "@/app/admin/actions";
+import { ShowcaseImageField } from "@/components/admin/ShowcaseImageField";
 import { showcaseHostname } from "@/lib/showcase";
 
 type Item = {
@@ -99,7 +100,11 @@ export function ShowcaseItemEditor({ items }: { items: Item[] }) {
               </div>
             </div>
 
-            <form action={updateShowcaseItemAction} className="grid gap-4 sm:grid-cols-2">
+            <form
+              action={updateShowcaseItemAction}
+              encType="multipart/form-data"
+              className="grid gap-4 sm:grid-cols-2"
+            >
               <input type="hidden" name="id" value={item.id} />
               <div className="sm:col-span-2">
                 <label className="text-[0.78rem] font-medium text-chalk-dim">Nom</label>
@@ -113,14 +118,8 @@ export function ShowcaseItemEditor({ items }: { items: Item[] }) {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="text-[0.78rem] font-medium text-chalk-dim">URL de l&apos;image</label>
-                <input
-                  name="imageUrl"
-                  type="url"
-                  required
-                  defaultValue={item.image_url ?? ""}
-                  className={fieldCls}
-                />
+                <label className="text-[0.78rem] font-medium text-chalk-dim">Image</label>
+                <ShowcaseImageField currentUrl={item.image_url} required={false} />
               </div>
               <div className="sm:col-span-2">
                 <label className="text-[0.78rem] font-medium text-chalk-dim">Commentaire</label>

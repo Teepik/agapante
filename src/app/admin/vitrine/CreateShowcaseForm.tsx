@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { createShowcaseItem, type ShowcaseFormState } from "@/app/admin/actions";
+import { ShowcaseImageField } from "@/components/admin/ShowcaseImageField";
 
 const initial: ShowcaseFormState = { error: "", success: "" };
 
@@ -26,7 +27,7 @@ export function CreateShowcaseForm() {
   const [state, formAction] = useActionState(createShowcaseItem, initial);
 
   return (
-    <form action={formAction} className="surface-card border border-iris-400/20 p-7">
+    <form action={formAction} encType="multipart/form-data" className="surface-card border border-iris-400/20 p-7">
       <h2 className="display text-[1.45rem] text-chalk">Ajouter une carte</h2>
       <p className="mt-2 text-[0.92rem] text-mute">
         Nom, image, commentaire et lien du site. Visible immédiatement sur{" "}
@@ -61,20 +62,10 @@ export function CreateShowcaseForm() {
         className={fieldCls}
       />
 
-      <label htmlFor="imageUrl" className="mt-5 block text-[0.82rem] font-medium text-chalk-dim">
-        URL de l&apos;image
+      <label className="mt-5 block text-[0.82rem] font-medium text-chalk-dim">
+        Image du projet
       </label>
-      <input
-        id="imageUrl"
-        name="imageUrl"
-        type="url"
-        required
-        placeholder="https://exemple.com/capture.jpg"
-        className={fieldCls}
-      />
-      <p className="mt-2 text-[0.78rem] text-mute-dim">
-        Lien direct vers une capture ou une illustration (JPG, PNG, WebP…).
-      </p>
+      <ShowcaseImageField required />
 
       <label htmlFor="description" className="mt-5 block text-[0.82rem] font-medium text-chalk-dim">
         Commentaire
