@@ -108,18 +108,17 @@ export function ShowcaseExperience({ items }: { items: ShowcaseCardData[] }) {
       <main className="relative z-10">
         <section className="container-x pb-10 pt-16 sm:pt-20 lg:pb-14 lg:pt-24">
           <Reveal>
-            <p className="eyebrow">Portfolio sélectif</p>
+            <p className="eyebrow">Réalisations</p>
           </Reveal>
           <Reveal delay={90}>
-            <h1 className="display mt-6 max-w-[14ch] text-[clamp(2.6rem,7vw,5.2rem)] text-chalk">
-              Sites &amp; webapps{" "}
-              <span className="text-gradient italic">conçus pour durer.</span>
+            <h1 className="display mt-6 max-w-[16ch] text-[clamp(2.6rem,7vw,5.2rem)] text-chalk">
+              Sites et applications web
             </h1>
           </Reveal>
           <Reveal delay={170}>
             <p className="mt-8 max-w-2xl text-[1.08rem] leading-relaxed text-mute md:text-[1.18rem]">
-              Une sélection de réalisations — interfaces soignées, produits utiles, déploiements
-              sobres. Chaque carte ouvre le projet dans un nouvel onglet.
+              Projets livrés pour des clients ou en interne — vitrines, outils métier, webapps.
+              La liste est volontairement courte et mise à jour au fil des missions.
             </p>
           </Reveal>
           <Reveal delay={230}>
