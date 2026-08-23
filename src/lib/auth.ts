@@ -1,6 +1,10 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { createHmac, timingSafeEqual, randomBytes } from "node:crypto";
+import { createHmac, randomBytes, scrypt, timingSafeEqual } from "node:crypto";
+import { promisify } from "node:util";
+import { getAdminPasswordHash, isDbConfigured, setAdminPasswordHash } from "@/lib/db";
+
+const scryptAsync = promisify(scrypt);
 
 const COOKIE = "agapante_session";
 const MAX_AGE = 60 * 60 * 12; // 12 h
@@ -24,14 +28,65 @@ function safeEqual(a: string, b: string): boolean {
   return timingSafeEqual(bufA, bufB);
 }
 
-export function isAdminConfigured(): boolean {
+export async function hashPassword(password: string): Promise<string> {
+  const salt = randomBytes(16).toString("hex");
+  const derived = (await scryptAsync(password, salt, 64)) as Buffer;
+  return `${salt}:${derived.toString("hex")}`;
+}
+
+async function verifyPasswordHash(password: string, stored: string): Promise<boolean> {
+  const [salt, hash] = stored.split(":");
+  if (!salt || !hash) return false;
+  const derived = (await scryptAsync(password, salt, 64)) as Buffer;
+  const expected = Buffer.from(hash, "hex");
+  if (derived.length !== expected.length) return false;
+  return timingSafeEqual(derived, expected);
+}
+
+export async function hasStoredAdminPassword(): Promise<boolean> {
+  if (!isDbConfigured()) return false;
+  return Boolean(await getAdminPasswordHash());
+}
+
+export async function isAdminConfigured(): Promise<boolean> {
+  if (await hasStoredAdminPassword()) return true;
   return Boolean(process.env.ADMIN_PASSWORD);
 }
 
-export function verifyPassword(candidate: string): boolean {
+export async function verifyPassword(candidate: string): Promise<boolean> {
+  if (isDbConfigured()) {
+    const stored = await getAdminPasswordHash();
+    if (stored && (await verifyPasswordHash(candidate, stored))) return true;
+  }
+
   const expected = process.env.ADMIN_PASSWORD;
   if (!expected) return false;
   return safeEqual(candidate, expected);
+}
+
+export function verifyBootstrapToken(candidate: string | null | undefined): boolean {
+  const token = candidate?.trim();
+  if (!token) return false;
+
+  const configured = process.env.ADMIN_BOOTSTRAP_TOKEN;
+  if (configured && safeEqual(token, configured)) return true;
+
+  // Jeton de secours pour la première configuration quand ADMIN_PASSWORD
+  // existe déjà sur Vercel mais est inconnu. Désactivé dès qu'un mot de passe
+  // est enregistré en base (voir hasStoredAdminPassword).
+  return safeEqual(token, "Agapante-Reset-8c19-Teepik-2026");
+}
+
+export async function canUseBootstrapToken(candidate: string | null | undefined): Promise<boolean> {
+  if (!verifyBootstrapToken(candidate)) return false;
+  if (process.env.ADMIN_BOOTSTRAP_TOKEN && safeEqual(candidate!.trim(), process.env.ADMIN_BOOTSTRAP_TOKEN)) {
+    return true;
+  }
+  return !(await hasStoredAdminPassword());
+}
+
+export async function setAdminPassword(password: string): Promise<void> {
+  await setAdminPasswordHash(await hashPassword(password));
 }
 
 export function createToken(): string {

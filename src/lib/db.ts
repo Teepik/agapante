@@ -79,6 +79,13 @@ export function ensureSchema(): Promise<void> {
       `;
       await sql`CREATE INDEX IF NOT EXISTS leads_created_at_idx ON leads (created_at DESC)`;
       await sql`CREATE INDEX IF NOT EXISTS leads_status_idx ON leads (status)`;
+      await sql`
+        CREATE TABLE IF NOT EXISTS admin_credentials (
+          id            SMALLINT PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+          password_hash TEXT        NOT NULL,
+          updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
+        )
+      `;
     })().catch((error) => {
       schemaReady = null;
       throw error;
@@ -188,4 +195,26 @@ export async function leadStats(): Promise<{ status: string; count: number }[]> 
     SELECT status, COUNT(*)::int AS count FROM leads GROUP BY status
   `) as { status: string; count: number }[];
   return rows;
+}
+
+export async function getAdminPasswordHash(): Promise<string | null> {
+  if (!isDbConfigured()) return null;
+  await ensureSchema();
+  const sql = getSql();
+  const rows = (await sql`
+    SELECT password_hash FROM admin_credentials WHERE id = 1 LIMIT 1
+  `) as { password_hash: string }[];
+  return rows[0]?.password_hash ?? null;
+}
+
+export async function setAdminPasswordHash(passwordHash: string): Promise<void> {
+  await ensureSchema();
+  const sql = getSql();
+  await sql`
+    INSERT INTO admin_credentials (id, password_hash, updated_at)
+    VALUES (1, ${passwordHash}, now())
+    ON CONFLICT (id) DO UPDATE
+    SET password_hash = EXCLUDED.password_hash,
+        updated_at = now()
+  `;
 }
