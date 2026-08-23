@@ -1,5 +1,6 @@
 import { put } from "@vercel/blob";
 import { isAuthenticated } from "@/lib/auth";
+import { resolveShowcaseImageDisplayUrl } from "@/lib/showcase-image";
 
 export const runtime = "nodejs";
 
@@ -93,12 +94,15 @@ export async function POST(request: Request): Promise<Response> {
 
   try {
     const blob = await put(pathname, file, {
-      access: "public",
+      access: "private",
       contentType: mime,
       addRandomSuffix: false,
     });
 
-    return Response.json({ url: blob.url });
+    return Response.json({
+      url: blob.url,
+      previewUrl: resolveShowcaseImageDisplayUrl(blob.url),
+    });
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Impossible de téléverser l'image.";

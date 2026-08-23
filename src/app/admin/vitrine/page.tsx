@@ -1,4 +1,5 @@
 import { isDbConfigured, listShowcaseItems } from "@/lib/db";
+import { resolveShowcaseImageDisplayUrl } from "@/lib/showcase-image";
 import { CreateShowcaseForm } from "./CreateShowcaseForm";
 import { ShowcaseItemEditor } from "./ShowcaseItemEditor";
 
@@ -56,7 +57,12 @@ export default async function VitrineAdminPage() {
         <CreateShowcaseForm />
       </div>
 
-      <ShowcaseItemEditor items={items} />
+      <ShowcaseItemEditor
+        items={items.map((item) => ({
+          ...item,
+          image_display_url: resolveShowcaseImageDisplayUrl(item.image_url),
+        }))}
+      />
     </div>
   );
 }

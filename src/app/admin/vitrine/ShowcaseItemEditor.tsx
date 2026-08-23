@@ -16,6 +16,7 @@ type Item = {
   url: string;
   name: string | null;
   image_url: string | null;
+  image_display_url?: string | null;
   description: string;
 };
 
@@ -98,6 +99,7 @@ function ShowcaseItemForm({ item }: { item: Item }) {
         <label className="text-[0.78rem] font-medium text-chalk-dim">Image</label>
         <ShowcaseImageField
           currentUrl={item.image_url}
+          displayUrl={item.image_display_url}
           required={false}
           onUploadingChange={setUploading}
         />
