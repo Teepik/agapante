@@ -1,6 +1,5 @@
 "use client";
 
-import { upload } from "@vercel/blob/client";
 import { useId, useState } from "react";
 
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
@@ -90,15 +89,27 @@ export function ShowcaseImageField({
     });
 
     try {
-      const pathname = `showcase/${Date.now()}-${crypto.randomUUID().slice(0, 8)}.${extensionForFile(file)}`;
-      const blob = await upload(pathname, file, {
-        access: "public",
-        handleUploadUrl: "/api/admin/showcase/upload",
-        contentType: mime,
+      const body = new FormData();
+      body.append("file", file);
+
+      const response = await fetch("/api/admin/showcase/upload", {
+        method: "POST",
+        body,
+        credentials: "same-origin",
       });
-      setImageUrl(blob.url);
-    } catch {
-      setError("Impossible de téléverser l'image. Réessayez dans quelques instants.");
+
+      const payload = (await response.json().catch(() => null)) as { url?: string; error?: string } | null;
+      if (!response.ok || !payload?.url) {
+        throw new Error(payload?.error ?? "Impossible de téléverser l'image.");
+      }
+
+      setImageUrl(payload.url);
+    } catch (uploadError) {
+      setError(
+        uploadError instanceof Error
+          ? uploadError.message
+          : "Impossible de téléverser l'image. Réessayez dans quelques instants."
+      );
       setImageUrl(currentUrl ?? "");
       setPreview(currentUrl ?? null);
       setFileName(null);
