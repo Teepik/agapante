@@ -89,7 +89,7 @@ function ProjectCard({
       }}
       className={`vitrine-carousel-card ${isActive ? "is-active" : "is-background"}${isDragging ? " is-dragging" : ""}`}
       style={{
-        transform: cardTransform(offset, isDragging ? dragPx : 0),
+        transform: cardTransform(offset, isDragging && isActive ? dragPx : 0),
         opacity: isDragging ? cardOpacity(offset, dragProgress) : cardOpacity(offset, 0),
         zIndex: isDragging ? cardZIndex(offset, dragProgress) : cardZIndex(offset, 0),
         pointerEvents: Math.abs(offset) <= 2 ? "auto" : "none",
@@ -125,7 +125,7 @@ function ProjectCard({
           <h2 className="display mt-2 text-[clamp(1.25rem,2.2vw,1.85rem)] leading-tight text-ink-950">
             {label}
           </h2>
-          <div className="vitrine-card-comment mt-3 sm:mt-4">
+          <div className="vitrine-card-comment mt-3 touch-pan-y sm:mt-4">
             <p className="text-[0.88rem] leading-relaxed text-ink-700 sm:text-[0.95rem]">
               {item.comment}
             </p>
@@ -160,10 +160,22 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
 
   useEffect(() => {
     const root = document.documentElement;
-    const previous = root.style.overflow;
+    const body = document.body;
+    const prevRootOverflow = root.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    const prevBodyPosition = body.style.position;
+    const prevBodyWidth = body.style.width;
+
     root.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    body.style.position = "fixed";
+    body.style.width = "100%";
+
     return () => {
-      root.style.overflow = previous;
+      root.style.overflow = prevRootOverflow;
+      body.style.overflow = prevBodyOverflow;
+      body.style.position = prevBodyPosition;
+      body.style.width = prevBodyWidth;
     };
   }, []);
 
@@ -268,7 +280,7 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
   };
 
   return (
-    <div className="vitrine-shell flex h-[100dvh] flex-col overflow-hidden bg-ink-950 text-chalk">
+    <div className="vitrine-shell flex h-[100dvh] max-w-full flex-col overflow-hidden bg-ink-950 text-chalk">
       <div className="vitrine-orbit vitrine-orbit-a" />
       <div className="vitrine-orbit vitrine-orbit-b" />
       <div className="grid-veil opacity-70" />
