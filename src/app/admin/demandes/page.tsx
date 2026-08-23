@@ -88,6 +88,19 @@ export default async function DemandesPage({ searchParams }: { searchParams: Sea
           </p>
         </div>
 
+        <Link
+          href="/admin/vitrine"
+          className="surface-card inline-flex max-w-md flex-col gap-1 rounded-[14px] border border-iris-400/20 px-5 py-4 transition-colors hover:border-iris-400/40"
+        >
+          <span className="text-[0.72rem] uppercase tracking-[0.12em] text-iris-300">
+            Vitrine projets
+          </span>
+          <span className="text-[0.92rem] text-chalk-dim">
+            Ajouter ou modifier les cartes affichées sur{" "}
+            <span className="text-chalk">/vitrine</span> →
+          </span>
+        </Link>
+
         <form className="flex w-full gap-2 lg:w-auto" action="/admin/demandes">
           {status !== "tous" ? <input type="hidden" name="statut" value={status} /> : null}
           <input

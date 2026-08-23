@@ -26,10 +26,10 @@ export function CreateShowcaseForm() {
   const [state, formAction] = useActionState(createShowcaseItem, initial);
 
   return (
-    <form action={formAction} className="surface-card p-7">
-      <h2 className="eyebrow mb-2">Nouveau projet</h2>
-      <p className="text-[0.92rem] text-mute">
-        Ajoutez l&apos;URL et un descriptif. La carte apparaît immédiatement sur{" "}
+    <form action={formAction} className="surface-card border border-iris-400/20 p-7">
+      <h2 className="display text-[1.45rem] text-chalk">Ajouter une carte</h2>
+      <p className="mt-2 text-[0.92rem] text-mute">
+        Renseignez l&apos;URL et un descriptif. La carte est visible immédiatement sur{" "}
         <code className="text-iris-300">/vitrine</code>.
       </p>
 

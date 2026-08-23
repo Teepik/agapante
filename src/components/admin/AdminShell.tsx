@@ -7,67 +7,70 @@ type Props = {
   children: React.ReactNode;
 };
 
-const linkCls = (active: boolean) =>
-  `rounded-full px-3.5 py-1.5 text-[0.87rem] transition-colors ${
+const tabCls = (active: boolean) =>
+  `shrink-0 rounded-full px-4 py-2 text-[0.86rem] font-medium transition-colors ${
     active
       ? "bg-chalk text-ink-950"
-      : "text-chalk-dim hover:text-chalk"
+      : "border border-ink-600 text-chalk-dim hover:border-iris-400/50 hover:text-chalk"
   }`;
 
 export function AdminShell({ active, children }: Props) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 border-b border-ink-700/80 bg-ink-950/90 backdrop-blur-xl">
-        <div className="mx-auto flex h-16 w-full max-w-[92rem] items-center justify-between gap-6 px-6">
-          <div className="flex items-center gap-8">
-            <Link href="/admin/demandes" className="flex items-center gap-2.5">
-              <Mark className="h-6 w-6" />
-              <span className="display text-[1.15rem] text-chalk">Agapante</span>
-              <span className="ml-1 rounded-full border border-ink-600 px-2.5 py-0.5 text-[0.66rem] uppercase tracking-[0.12em] text-mute">
+        <div className="mx-auto w-full max-w-[92rem] px-4 sm:px-6">
+          <div className="flex h-16 items-center justify-between gap-4">
+            <Link href="/admin/demandes" className="flex min-w-0 items-center gap-2.5">
+              <Mark className="h-6 w-6 shrink-0" />
+              <span className="display truncate text-[1.15rem] text-chalk">Agapante</span>
+              <span className="hidden rounded-full border border-ink-600 px-2.5 py-0.5 text-[0.66rem] uppercase tracking-[0.12em] text-mute sm:inline">
                 Back-office
               </span>
             </Link>
-            <nav className="hidden items-center gap-1 sm:flex">
-              <Link href="/admin/demandes" className={linkCls(active === "demandes")}>
+
+            <form action={logout}>
+              <button
+                type="submit"
+                className="shrink-0 rounded-full border border-ink-600 px-4 py-2 text-[0.84rem] text-chalk-dim transition-colors hover:border-iris-400/60 hover:text-chalk"
+              >
+                Déconnexion
+              </button>
+            </form>
+          </div>
+
+          <div className="flex flex-col gap-3 border-t border-ink-800/80 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <nav
+              className="flex gap-2 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              aria-label="Sections du back-office"
+            >
+              <Link href="/admin/demandes" className={tabCls(active === "demandes")}>
                 Demandes
               </Link>
-              <Link href="/admin/vitrine" className={linkCls(active === "vitrine")}>
+              <Link href="/admin/vitrine" className={tabCls(active === "vitrine")}>
                 Vitrine
               </Link>
-              <a
-                href="/admin/export"
-                className="rounded-full px-3.5 py-1.5 text-[0.87rem] text-chalk-dim transition-colors hover:text-chalk"
-              >
+            </nav>
+
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[0.82rem]">
+              <a href="/admin/export" className="text-mute transition-colors hover:text-chalk-dim">
                 Export CSV
               </a>
               <Link
                 href="/vitrine"
                 target="_blank"
-                className="rounded-full px-3.5 py-1.5 text-[0.87rem] text-chalk-dim transition-colors hover:text-chalk"
+                className="text-mute transition-colors hover:text-chalk-dim"
               >
-                Voir la vitrine
+                Voir la vitrine ↗
               </Link>
-              <Link
-                href="/"
-                className="rounded-full px-3.5 py-1.5 text-[0.87rem] text-chalk-dim transition-colors hover:text-chalk"
-              >
+              <Link href="/" className="text-mute transition-colors hover:text-chalk-dim">
                 Site public
               </Link>
-            </nav>
+            </div>
           </div>
-
-          <form action={logout}>
-            <button
-              type="submit"
-              className="rounded-full border border-ink-600 px-4 py-2 text-[0.84rem] text-chalk-dim transition-colors hover:border-iris-400/60 hover:text-chalk"
-            >
-              Déconnexion
-            </button>
-          </form>
         </div>
       </header>
 
-      <div className="mx-auto w-full max-w-[92rem] flex-1 px-6 py-10">{children}</div>
+      <div className="mx-auto w-full max-w-[92rem] flex-1 px-4 py-8 sm:px-6 sm:py-10">{children}</div>
     </div>
   );
 }
