@@ -39,7 +39,7 @@ export default async function VitrineAdminPage() {
       <div className="max-w-3xl">
         <h1 className="display text-[clamp(1.9rem,3.5vw,2.6rem)] text-chalk">Vitrine projets</h1>
         <p className="mt-3 text-[0.95rem] leading-relaxed text-mute">
-          Gérez les sites et webapps affichés sur{" "}
+          Ajoutez une carte ci-dessous avec l&apos;URL et un descriptif. Elle apparaît sur{" "}
           <a
             href="/vitrine"
             target="_blank"
@@ -47,11 +47,11 @@ export default async function VitrineAdminPage() {
           >
             /vitrine
           </a>
-          . Cette page n&apos;apparaît pas dans la navigation du site public.
+          . Cette page n&apos;est pas liée depuis le site public.
         </p>
       </div>
 
-      <div className="mt-10 max-w-3xl">
+      <div className="mt-8 max-w-3xl">
         <CreateShowcaseForm />
       </div>
 
