@@ -12,7 +12,7 @@ import {
   verifyBootstrapToken,
   verifyPassword,
 } from "@/lib/auth";
-import { deleteLead, updateLeadNotes, updateLeadStatus, type LeadStatus } from "@/lib/db";
+import { deleteLead, deleteLeads, updateLeadNotes, updateLeadStatus, type LeadStatus } from "@/lib/db";
 
 export type LoginState = { error: string };
 
@@ -72,6 +72,26 @@ export async function removeLead(formData: FormData): Promise<void> {
   await deleteLead(id);
   revalidatePath("/admin/demandes");
   redirect("/admin/demandes");
+}
+
+export async function removeLeadById(formData: FormData): Promise<void> {
+  await assertAuth();
+  const id = Number(formData.get("id"));
+  if (!Number.isFinite(id)) return;
+  await deleteLead(id);
+  revalidatePath("/admin/demandes");
+  revalidatePath(`/admin/demandes/${id}`);
+}
+
+export async function removeLeads(formData: FormData): Promise<void> {
+  await assertAuth();
+  const ids = formData
+    .getAll("ids")
+    .map((value) => Number(value))
+    .filter((id) => Number.isFinite(id) && id > 0);
+  if (ids.length === 0) return;
+  await deleteLeads(ids);
+  revalidatePath("/admin/demandes");
 }
 
 export type ConfigureState = { error: string; success: string };

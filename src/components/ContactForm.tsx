@@ -7,6 +7,7 @@ import Link from "next/link";
 import { submitContact } from "@/app/contact/actions";
 import { initialContactState } from "@/lib/contact-state";
 import { Arrow } from "./ui";
+import { TurnstileField } from "./TurnstileField";
 
 const orgTypes = ["TPE (< 20 salariés)", "PME (20 – 250)", "ETI (250 – 5 000)", "Grand groupe", "Administration / secteur public", "Association", "Autre"];
 const needs = [
@@ -27,24 +28,38 @@ function ErrorText({ children }: { children?: string }) {
   return <p className="mt-1.5 text-[0.8rem] text-amber-sig">{children}</p>;
 }
 
-function SubmitButton() {
+function SubmitButton({
+  turnstileRequired,
+  turnstileReady,
+}: {
+  turnstileRequired: boolean;
+  turnstileReady: boolean;
+}) {
   const { pending } = useFormStatus();
+  const blocked = turnstileRequired && !turnstileReady;
   return (
     <button
       type="submit"
-      disabled={pending}
+      disabled={pending || blocked}
       className="group inline-flex items-center justify-center gap-2 rounded-full bg-chalk px-7 py-4 text-[0.95rem] font-medium text-ink-950 transition-all duration-300 hover:bg-iris-100 disabled:cursor-not-allowed disabled:opacity-60"
     >
-      {pending ? "Envoi en cours…" : "Envoyer ma demande"}
-      {pending ? null : <Arrow />}
+      {pending ? "Envoi en cours…" : blocked ? "Vérification en cours…" : "Envoyer ma demande"}
+      {pending || blocked ? null : <Arrow />}
     </button>
   );
 }
 
-export function ContactForm() {
+export function ContactForm({
+  formToken,
+  turnstileSiteKey,
+}: {
+  formToken: string;
+  turnstileSiteKey?: string;
+}) {
   const pathname = usePathname();
   const [state, formAction] = useActionState(submitContact, initialContactState);
   const [startedAt, setStartedAt] = useState("0");
+  const [turnstileToken, setTurnstileToken] = useState("");
   const successRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -94,9 +109,15 @@ export function ContactForm() {
     <form action={formAction} className="surface-card p-6 sm:p-9" noValidate>
       <input type="hidden" name="startedAt" value={startedAt} />
       <input type="hidden" name="sourcePath" value={pathname} />
+      <input type="hidden" name="formToken" value={formToken} />
+      {turnstileSiteKey ? (
+        <input type="hidden" name="cf-turnstile-response" value={turnstileToken} />
+      ) : null}
       <div className="absolute left-[-9999px] top-auto h-px w-px overflow-hidden" aria-hidden="true">
         <label htmlFor="website">Ne pas remplir</label>
         <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" />
+        <label htmlFor="company_url">Ne pas remplir</label>
+        <input id="company_url" name="company_url" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
       {state.status === "error" && state.message ? (
@@ -269,8 +290,21 @@ export function ContactForm() {
       </div>
       <ErrorText>{state.errors.consent}</ErrorText>
 
+      {turnstileSiteKey ? (
+        <div className="mt-6">
+          <TurnstileField
+            siteKey={turnstileSiteKey}
+            onToken={setTurnstileToken}
+            onExpire={() => setTurnstileToken("")}
+          />
+        </div>
+      ) : null}
+
       <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <SubmitButton />
+        <SubmitButton
+          turnstileRequired={Boolean(turnstileSiteKey)}
+          turnstileReady={Boolean(turnstileToken)}
+        />
         <p className="text-[0.8rem] text-mute-dim">Réponse sous 24 h ouvrées.</p>
       </div>
     </form>

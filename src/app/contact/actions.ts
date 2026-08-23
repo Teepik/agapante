@@ -5,6 +5,15 @@ import { createHash } from "node:crypto";
 import { countRecentByIp, insertLead, isDbConfigured } from "@/lib/db";
 import { notifyNewLead } from "@/lib/notify";
 import type { ContactState } from "@/lib/contact-state";
+import {
+  isBotUserAgent,
+  isDisposableEmail,
+  isHoneypotFilled,
+  isSubmitTooFast,
+  looksLikeSpam,
+  verifyFormToken,
+  verifyTurnstile,
+} from "@/lib/spam";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i;
 
@@ -15,6 +24,10 @@ function str(form: FormData, key: string): string {
 
 function clamp(value: string, max: number): string {
   return value.length > max ? value.slice(0, max) : value;
+}
+
+function fakeSuccess(): ContactState {
+  return { status: "success", message: "Merci, votre message a bien été transmis.", errors: {} };
 }
 
 export async function submitContact(
@@ -34,17 +47,36 @@ export async function submitContact(
     message: clamp(str(formData, "message"), 6000),
   };
 
-  // Honeypot : champ invisible, rempli uniquement par les robots.
-  if (str(formData, "website")) {
-    return { status: "success", message: "Merci, votre message a bien été transmis.", errors: {} };
+  const head = await headers();
+  const userAgent = head.get("user-agent");
+
+  // Honeypots : champs invisibles remplis uniquement par les robots.
+  if (isHoneypotFilled(str(formData, "website"), str(formData, "company_url"))) {
+    return fakeSuccess();
   }
 
-  // Soumission trop rapide pour être humaine.
+  if (!verifyFormToken(str(formData, "formToken"))) {
+    return fakeSuccess();
+  }
+
+  if (isBotUserAgent(userAgent)) {
+    return fakeSuccess();
+  }
+
   const startedAt = Number(str(formData, "startedAt"));
-  if (Number.isFinite(startedAt) && startedAt > 0 && Date.now() - startedAt < 2500) {
+  if (isSubmitTooFast(startedAt)) {
     return {
       status: "error",
       message: "Votre message a été envoyé un peu trop vite. Merci de réessayer.",
+      errors: {},
+      values,
+    };
+  }
+
+  if (!(await verifyTurnstile(str(formData, "cf-turnstile-response")))) {
+    return {
+      status: "error",
+      message: "La vérification anti-robot a échoué. Merci de réessayer.",
       errors: {},
       values,
     };
@@ -66,6 +98,10 @@ export async function submitContact(
     };
   }
 
+  if (isDisposableEmail(values.email) || looksLikeSpam(values)) {
+    return fakeSuccess();
+  }
+
   if (!isDbConfigured()) {
     return {
       status: "error",
@@ -76,7 +112,6 @@ export async function submitContact(
     };
   }
 
-  const head = await headers();
   const ip =
     head.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     head.get("x-real-ip") ||
@@ -87,8 +122,8 @@ export async function submitContact(
     .slice(0, 32);
 
   try {
-    const recent = await countRecentByIp(ipHash, 10);
-    if (recent >= 3) {
+    const recent = await countRecentByIp(ipHash, 15);
+    if (recent >= 2) {
       return {
         status: "error",
         message:
@@ -112,7 +147,7 @@ export async function submitContact(
       source_path: clamp(str(formData, "sourcePath"), 200) || null,
       referer: head.get("referer"),
       ip_hash: ipHash,
-      user_agent: head.get("user-agent")?.slice(0, 300) ?? null,
+      user_agent: userAgent?.slice(0, 300) ?? null,
     });
 
     await notifyNewLead({

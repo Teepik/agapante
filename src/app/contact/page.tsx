@@ -3,6 +3,7 @@ import { ContactForm } from "@/components/ContactForm";
 import { JsonLd } from "@/components/JsonLd";
 import { Reveal } from "@/components/Reveal";
 import { Breadcrumbs } from "@/components/ui";
+import { createFormToken } from "@/lib/spam";
 import { breadcrumbJsonLd, buildMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
 
@@ -42,6 +43,8 @@ const expectations = [
 ];
 
 export default function ContactPage() {
+  const formToken = createFormToken();
+  const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
   const crumbs = [
     { name: "Accueil", path: "/" },
     { name: "Contact", path: "/contact" },
@@ -82,7 +85,7 @@ export default function ContactPage() {
       <section className="pb-24 lg:pb-32">
         <div className="container-x grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
           <Reveal>
-            <ContactForm />
+            <ContactForm formToken={formToken} turnstileSiteKey={turnstileSiteKey} />
           </Reveal>
 
           <Reveal delay={120}>
