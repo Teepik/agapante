@@ -39,7 +39,8 @@ export default async function VitrineAdminPage() {
       <div className="max-w-3xl">
         <h1 className="display text-[clamp(1.9rem,3.5vw,2.6rem)] text-chalk">Vitrine projets</h1>
         <p className="mt-3 text-[0.95rem] leading-relaxed text-mute">
-          Ajoutez une carte ci-dessous avec l&apos;URL et un descriptif. Elle apparaît sur{" "}
+          Chaque carte comprend un nom, une image, un commentaire et le lien du site. Ajoutez-en une
+          ci-dessous — elle apparaît sur{" "}
           <a
             href="/vitrine"
             target="_blank"

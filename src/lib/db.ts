@@ -96,6 +96,8 @@ export function ensureSchema(): Promise<void> {
         )
       `;
       await sql`CREATE INDEX IF NOT EXISTS showcase_items_sort_idx ON showcase_items (sort_order ASC, id ASC)`;
+      await sql`ALTER TABLE showcase_items ADD COLUMN IF NOT EXISTS name TEXT`;
+      await sql`ALTER TABLE showcase_items ADD COLUMN IF NOT EXISTS image_url TEXT`;
     })().catch((error) => {
       schemaReady = null;
       throw error;
@@ -243,6 +245,8 @@ export async function setAdminPasswordHash(passwordHash: string): Promise<void> 
 export type ShowcaseItem = {
   id: number;
   url: string;
+  name: string | null;
+  image_url: string | null;
   description: string;
   sort_order: number;
   created_at: string;
@@ -269,6 +273,8 @@ export async function getShowcaseItem(id: number): Promise<ShowcaseItem | null> 
 
 export async function insertShowcaseItem(input: {
   url: string;
+  name: string;
+  image_url: string;
   description: string;
   sort_order?: number;
 }): Promise<number> {
@@ -282,8 +288,8 @@ export async function insertShowcaseItem(input: {
     sortOrder = rows[0]?.next_order ?? 0;
   }
   const inserted = (await sql`
-    INSERT INTO showcase_items (url, description, sort_order)
-    VALUES (${input.url}, ${input.description}, ${sortOrder})
+    INSERT INTO showcase_items (url, name, image_url, description, sort_order)
+    VALUES (${input.url}, ${input.name}, ${input.image_url}, ${input.description}, ${sortOrder})
     RETURNING id
   `) as { id: number }[];
   return inserted[0].id;
@@ -291,13 +297,16 @@ export async function insertShowcaseItem(input: {
 
 export async function updateShowcaseItem(
   id: number,
-  input: { url: string; description: string }
+  input: { url: string; name: string; image_url: string; description: string }
 ): Promise<void> {
   await ensureSchema();
   const sql = getSql();
   await sql`
     UPDATE showcase_items
-    SET url = ${input.url}, description = ${input.description}
+    SET url = ${input.url},
+        name = ${input.name},
+        image_url = ${input.image_url},
+        description = ${input.description}
     WHERE id = ${id}
   `;
 }

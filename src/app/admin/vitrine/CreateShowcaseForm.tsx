@@ -29,7 +29,7 @@ export function CreateShowcaseForm() {
     <form action={formAction} className="surface-card border border-iris-400/20 p-7">
       <h2 className="display text-[1.45rem] text-chalk">Ajouter une carte</h2>
       <p className="mt-2 text-[0.92rem] text-mute">
-        Renseignez l&apos;URL et un descriptif. La carte est visible immédiatement sur{" "}
+        Nom, image, commentaire et lien du site. Visible immédiatement sur{" "}
         <code className="text-iris-300">/vitrine</code>.
       </p>
 
@@ -48,7 +48,48 @@ export function CreateShowcaseForm() {
         </p>
       ) : null}
 
-      <label htmlFor="url" className="mt-6 block text-[0.82rem] font-medium text-chalk-dim">
+      <label htmlFor="name" className="mt-6 block text-[0.82rem] font-medium text-chalk-dim">
+        Nom du projet
+      </label>
+      <input
+        id="name"
+        name="name"
+        type="text"
+        required
+        minLength={2}
+        placeholder="Agapante, Outil RH interne…"
+        className={fieldCls}
+      />
+
+      <label htmlFor="imageUrl" className="mt-5 block text-[0.82rem] font-medium text-chalk-dim">
+        URL de l&apos;image
+      </label>
+      <input
+        id="imageUrl"
+        name="imageUrl"
+        type="url"
+        required
+        placeholder="https://exemple.com/capture.jpg"
+        className={fieldCls}
+      />
+      <p className="mt-2 text-[0.78rem] text-mute-dim">
+        Lien direct vers une capture ou une illustration (JPG, PNG, WebP…).
+      </p>
+
+      <label htmlFor="description" className="mt-5 block text-[0.82rem] font-medium text-chalk-dim">
+        Commentaire
+      </label>
+      <textarea
+        id="description"
+        name="description"
+        required
+        rows={4}
+        minLength={10}
+        placeholder="Contexte, rôle du projet, ce qu'il apporte…"
+        className={`${fieldCls} resize-y`}
+      />
+
+      <label htmlFor="url" className="mt-5 block text-[0.82rem] font-medium text-chalk-dim">
         URL du site ou de la webapp
       </label>
       <input
@@ -58,19 +99,6 @@ export function CreateShowcaseForm() {
         required
         placeholder="https://exemple.com"
         className={fieldCls}
-      />
-
-      <label htmlFor="description" className="mt-5 block text-[0.82rem] font-medium text-chalk-dim">
-        Descriptif
-      </label>
-      <textarea
-        id="description"
-        name="description"
-        required
-        rows={4}
-        minLength={10}
-        placeholder="En une ou deux phrases : le contexte, la stack, ce que le projet démontre…"
-        className={`${fieldCls} resize-y`}
       />
 
       <div className="mt-6">
