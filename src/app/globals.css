@@ -356,7 +356,6 @@
   position: relative;
   perspective: 1400px;
   perspective-origin: 50% 50%;
-  overflow: hidden;
   touch-action: none;
 }
 
