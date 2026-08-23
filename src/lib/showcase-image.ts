@@ -1,5 +1,15 @@
 import "server-only";
 
+import { getDownloadUrl } from "@vercel/blob";
+
+export function isVercelBlobUrl(url: string): boolean {
+  try {
+    return new URL(url).hostname.endsWith(".blob.vercel-storage.com");
+  } catch {
+    return false;
+  }
+}
+
 export function normalizeStoredImageUrl(raw: string): string | null {
   const trimmed = raw.trim();
   if (!trimmed) return null;
@@ -15,6 +25,18 @@ export function normalizeStoredImageUrl(raw: string): string | null {
     return url.toString();
   } catch {
     return null;
+  }
+}
+
+export function resolveShowcaseImageDisplayUrl(url: string | null | undefined): string | null {
+  const normalized = url ? normalizeStoredImageUrl(url) : null;
+  if (!normalized) return null;
+  if (!isVercelBlobUrl(normalized)) return normalized;
+
+  try {
+    return getDownloadUrl(normalized);
+  } catch {
+    return normalized;
   }
 }
 

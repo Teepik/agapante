@@ -7,6 +7,7 @@ const MAX_BYTES = 4 * 1024 * 1024;
 
 type Props = {
   currentUrl?: string | null;
+  displayUrl?: string | null;
   required?: boolean;
   onUploadingChange?: (uploading: boolean) => void;
 };
@@ -49,12 +50,14 @@ function extensionForFile(file: File): string {
 
 export function ShowcaseImageField({
   currentUrl,
+  displayUrl,
   required = true,
   onUploadingChange,
 }: Props) {
   const inputId = useId();
+  const initialPreview = displayUrl ?? currentUrl ?? null;
   const [imageUrl, setImageUrl] = useState(currentUrl ?? "");
-  const [preview, setPreview] = useState<string | null>(currentUrl ?? null);
+  const [preview, setPreview] = useState<string | null>(initialPreview);
   const [fileName, setFileName] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -98,12 +101,17 @@ export function ShowcaseImageField({
         credentials: "same-origin",
       });
 
-      const payload = (await response.json().catch(() => null)) as { url?: string; error?: string } | null;
+      const payload = (await response.json().catch(() => null)) as {
+        url?: string;
+        previewUrl?: string;
+        error?: string;
+      } | null;
       if (!response.ok || !payload?.url) {
         throw new Error(payload?.error ?? "Impossible de téléverser l'image.");
       }
 
       setImageUrl(payload.url);
+      setPreview(payload.previewUrl ?? payload.url);
     } catch (uploadError) {
       setError(
         uploadError instanceof Error
@@ -111,7 +119,7 @@ export function ShowcaseImageField({
           : "Impossible de téléverser l'image. Réessayez dans quelques instants."
       );
       setImageUrl(currentUrl ?? "");
-      setPreview(currentUrl ?? null);
+      setPreview(displayUrl ?? currentUrl ?? null);
       setFileName(null);
       event.target.value = "";
     } finally {
