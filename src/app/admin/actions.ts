@@ -12,7 +12,18 @@ import {
   verifyBootstrapToken,
   verifyPassword,
 } from "@/lib/auth";
-import { deleteLead, deleteLeads, updateLeadNotes, updateLeadStatus, type LeadStatus } from "@/lib/db";
+import {
+  deleteLead,
+  deleteLeads,
+  deleteShowcaseItem,
+  insertShowcaseItem,
+  moveShowcaseItem,
+  updateLeadNotes,
+  updateLeadStatus,
+  updateShowcaseItem,
+  type LeadStatus,
+} from "@/lib/db";
+import { normalizeShowcaseUrl } from "@/lib/showcase";
 
 export type LoginState = { error: string };
 
@@ -140,4 +151,72 @@ export async function configurePassword(
 
   await createSession();
   redirect("/admin/demandes");
+}
+
+export type ShowcaseFormState = { error: string; success: string };
+
+function parseShowcaseFields(formData: FormData) {
+  const url = normalizeShowcaseUrl(String(formData.get("url") ?? ""));
+  const description = String(formData.get("description") ?? "").trim().slice(0, 2000);
+  return { url, description };
+}
+
+export async function createShowcaseItem(
+  _prev: ShowcaseFormState,
+  formData: FormData
+): Promise<ShowcaseFormState> {
+  await assertAuth();
+  const { url, description } = parseShowcaseFields(formData);
+
+  if (!url) {
+    return { error: "Indiquez une URL valide (ex. https://exemple.com).", success: "" };
+  }
+  if (description.length < 10) {
+    return {
+      error: "Le descriptif doit contenir au moins 10 caractères.",
+      success: "",
+    };
+  }
+
+  try {
+    await insertShowcaseItem({ url, description });
+    revalidatePath("/admin/vitrine");
+    revalidatePath("/vitrine");
+    return { error: "", success: "Projet ajouté à la vitrine." };
+  } catch {
+    return {
+      error: "Impossible d'enregistrer le projet. Vérifiez la connexion à la base de données.",
+      success: "",
+    };
+  }
+}
+
+export async function updateShowcaseItemAction(formData: FormData): Promise<void> {
+  await assertAuth();
+  const id = Number(formData.get("id"));
+  const { url, description } = parseShowcaseFields(formData);
+  if (!Number.isFinite(id) || !url || description.length < 10) return;
+
+  await updateShowcaseItem(id, { url, description });
+  revalidatePath("/admin/vitrine");
+  revalidatePath("/vitrine");
+}
+
+export async function removeShowcaseItem(formData: FormData): Promise<void> {
+  await assertAuth();
+  const id = Number(formData.get("id"));
+  if (!Number.isFinite(id)) return;
+  await deleteShowcaseItem(id);
+  revalidatePath("/admin/vitrine");
+  revalidatePath("/vitrine");
+}
+
+export async function reorderShowcaseItem(formData: FormData): Promise<void> {
+  await assertAuth();
+  const id = Number(formData.get("id"));
+  const direction = String(formData.get("direction"));
+  if (!Number.isFinite(id) || (direction !== "up" && direction !== "down")) return;
+  await moveShowcaseItem(id, direction);
+  revalidatePath("/admin/vitrine");
+  revalidatePath("/vitrine");
 }

@@ -13,7 +13,7 @@ export function AppShell({
   children: ReactNode;
 }) {
   const pathname = usePathname();
-  const bare = pathname.startsWith("/admin");
+  const bare = pathname.startsWith("/admin") || pathname.startsWith("/vitrine");
 
   return (
     <>
