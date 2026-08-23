@@ -71,7 +71,7 @@ function ProjectCard({ item, offset }: { item: ShowcaseCardData; offset: number 
       }}
     >
       <div className="vitrine-card-light flex h-full max-h-full flex-col overflow-hidden">
-        <div className="relative aspect-[16/10] max-h-[42%] w-full shrink-0 overflow-hidden bg-ink-800">
+        <div className="relative aspect-[16/10] max-h-[38%] w-full shrink-0 overflow-hidden bg-ink-800">
           {item.imageUrl ? (
             <img
               src={item.imageUrl}
@@ -99,9 +99,16 @@ function ProjectCard({ item, offset }: { item: ShowcaseCardData; offset: number 
           <h2 className="display mt-2 text-[clamp(1.25rem,2.2vw,1.85rem)] leading-tight text-ink-950">
             {label}
           </h2>
-          <p className="mt-3 line-clamp-4 flex-1 text-[0.88rem] leading-relaxed text-ink-700 sm:mt-4 sm:text-[0.95rem]">
-            {item.comment}
-          </p>
+          <div
+            className="vitrine-card-comment mt-3 sm:mt-4"
+            onTouchStart={(event) => event.stopPropagation()}
+            onTouchMove={(event) => event.stopPropagation()}
+            onTouchEnd={(event) => event.stopPropagation()}
+          >
+            <p className="text-[0.88rem] leading-relaxed text-ink-700 sm:text-[0.95rem]">
+              {item.comment}
+            </p>
+          </div>
           <p className="mt-4 inline-flex items-center gap-2 text-[0.8rem] font-medium text-ink-950 sm:mt-5 sm:text-[0.86rem]">
             Visiter le site
             <svg viewBox="0 0 20 20" className="h-3.5 w-3.5 sm:h-4 sm:w-4" fill="none" aria-hidden="true">
