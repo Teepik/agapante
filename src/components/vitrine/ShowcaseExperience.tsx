@@ -108,18 +108,17 @@ export function ShowcaseExperience({ items }: { items: ShowcaseCardData[] }) {
       <main className="relative z-10">
         <section className="container-x pb-10 pt-16 sm:pt-20 lg:pb-14 lg:pt-24">
           <Reveal>
-            <p className="eyebrow">Portfolio sélectif</p>
+            <p className="eyebrow">Réalisations</p>
           </Reveal>
           <Reveal delay={90}>
-            <h1 className="display mt-6 max-w-[14ch] text-[clamp(2.6rem,7vw,5.2rem)] text-chalk">
-              Sites &amp; webapps{" "}
-              <span className="text-gradient italic">conçus pour durer.</span>
+            <h1 className="display mt-6 max-w-[16ch] text-[clamp(2.6rem,7vw,5.2rem)] text-chalk">
+              Sites et applications web
             </h1>
           </Reveal>
           <Reveal delay={170}>
             <p className="mt-8 max-w-2xl text-[1.08rem] leading-relaxed text-mute md:text-[1.18rem]">
-              Une sélection de réalisations — interfaces soignées, produits utiles, déploiements
-              sobres. Chaque carte ouvre le projet dans un nouvel onglet.
+              Projets livrés pour des clients ou en interne — vitrines, outils métier, webapps.
+              La liste est volontairement courte et mise à jour au fil des missions.
             </p>
           </Reveal>
           <Reveal delay={230}>
@@ -134,10 +133,9 @@ export function ShowcaseExperience({ items }: { items: ShowcaseCardData[] }) {
           {items.length === 0 ? (
             <Reveal>
               <div className="surface-card mx-auto max-w-xl p-12 text-center">
-                <p className="display text-[1.8rem] text-chalk">La vitrine se prépare.</p>
+                <p className="display text-[1.8rem] text-chalk">Aucun projet publié</p>
                 <p className="mt-4 text-[0.95rem] leading-relaxed text-mute">
-                  Aucun projet n&apos;est publié pour le moment. Les cartes ajoutées depuis
-                  l&apos;espace admin apparaîtront ici automatiquement.
+                  Les projets ajoutés depuis le back-office s&apos;affichent ici.
                 </p>
               </div>
             </Reveal>
