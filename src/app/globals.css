@@ -354,7 +354,7 @@
   position: relative;
   perspective: 1400px;
   perspective-origin: 50% 50%;
-  touch-action: pan-y pinch-zoom;
+  touch-action: manipulation;
 }
 
 .vitrine-carousel-card.is-dragging {
