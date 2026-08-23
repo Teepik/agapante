@@ -23,7 +23,8 @@ import {
   updateShowcaseItem,
   type LeadStatus,
 } from "@/lib/db";
-import { normalizeShowcaseUrl, normalizeImageUrl } from "@/lib/showcase";
+import { normalizeShowcaseUrl } from "@/lib/showcase";
+import { resolveShowcaseImageUrl } from "@/lib/showcase-image";
 
 export type LoginState = { error: string };
 
@@ -158,9 +159,8 @@ export type ShowcaseFormState = { error: string; success: string };
 function parseShowcaseFields(formData: FormData) {
   const url = normalizeShowcaseUrl(String(formData.get("url") ?? ""));
   const name = String(formData.get("name") ?? "").trim().slice(0, 120);
-  const imageUrl = normalizeImageUrl(String(formData.get("imageUrl") ?? ""));
   const description = String(formData.get("description") ?? "").trim().slice(0, 2000);
-  return { url, name, imageUrl, description };
+  return { url, name, description };
 }
 
 export async function createShowcaseItem(
@@ -168,7 +168,7 @@ export async function createShowcaseItem(
   formData: FormData
 ): Promise<ShowcaseFormState> {
   await assertAuth();
-  const { url, name, imageUrl, description } = parseShowcaseFields(formData);
+  const { url, name, description } = parseShowcaseFields(formData);
 
   if (!url) {
     return { error: "Indiquez une URL valide (ex. https://exemple.com).", success: "" };
@@ -176,11 +176,9 @@ export async function createShowcaseItem(
   if (name.length < 2) {
     return { error: "Indiquez un nom de projet (2 caractères minimum).", success: "" };
   }
-  if (!imageUrl) {
-    return {
-      error: "Indiquez une URL d'image valide (ex. https://exemple.com/capture.jpg).",
-      success: "",
-    };
+  const imageResult = await resolveShowcaseImageUrl(formData);
+  if (!imageResult.ok) {
+    return { error: imageResult.error, success: "" };
   }
   if (description.length < 10) {
     return {
@@ -193,7 +191,7 @@ export async function createShowcaseItem(
     await insertShowcaseItem({
       url,
       name,
-      image_url: imageUrl,
+      image_url: imageResult.url,
       description,
     });
     revalidatePath("/admin/vitrine");
@@ -210,15 +208,22 @@ export async function createShowcaseItem(
 export async function updateShowcaseItemAction(formData: FormData): Promise<void> {
   await assertAuth();
   const id = Number(formData.get("id"));
-  const { url, name, imageUrl, description } = parseShowcaseFields(formData);
-  if (!Number.isFinite(id) || !url || name.length < 2 || !imageUrl || description.length < 10) {
+  const { url, name, description } = parseShowcaseFields(formData);
+  const imageResult = await resolveShowcaseImageUrl(formData);
+  if (
+    !Number.isFinite(id) ||
+    !url ||
+    name.length < 2 ||
+    !imageResult.ok ||
+    description.length < 10
+  ) {
     return;
   }
 
   await updateShowcaseItem(id, {
     url,
     name,
-    image_url: imageUrl,
+    image_url: imageResult.url,
     description,
   });
   revalidatePath("/admin/vitrine");
