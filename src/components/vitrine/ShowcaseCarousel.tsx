@@ -141,6 +141,15 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
   const touchStart = useRef<number | null>(null);
   const total = items.length;
 
+  useEffect(() => {
+    const root = document.documentElement;
+    const previous = root.style.overflow;
+    root.style.overflow = "hidden";
+    return () => {
+      root.style.overflow = previous;
+    };
+  }, []);
+
   const go = useCallback(
     (delta: number) => {
       if (total <= 1) return;
@@ -193,9 +202,12 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
             <Mark className="h-6 w-6 sm:h-7 sm:w-7" />
             <span className="display text-[1.05rem] text-chalk sm:text-[1.2rem]">Agapante</span>
           </Link>
-          <p className="hidden text-[0.76rem] uppercase tracking-[0.16em] text-mute sm:block">
-            Réalisations
-          </p>
+          <Link
+            href="/"
+            className="text-[0.78rem] text-mute transition-colors hover:text-chalk-dim sm:text-[0.82rem]"
+          >
+            Retour au site
+          </Link>
         </div>
       </header>
 
@@ -221,74 +233,67 @@ export function ShowcaseCarousel({ items }: { items: ShowcaseCardData[] }) {
               </div>
             </div>
           ) : (
-            <div
-              className="vitrine-stage mx-auto h-full max-w-6xl px-4"
-              role="list"
-              onTouchStart={onTouchStart}
-              onTouchEnd={onTouchEnd}
-            >
-              {items.map((item, index) => (
-                <ProjectCard
-                  key={item.id}
-                  item={item}
-                  offset={relativeOffset(index, active, total)}
-                  onSelect={() => setActive(index)}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-
-        {total > 0 ? (
-          <div className="relative z-20 shrink-0 border-t border-ink-700/50 bg-ink-950/80 px-4 py-4 backdrop-blur-xl sm:py-5">
-            <div className="container-x flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => go(-1)}
-                  disabled={total <= 1}
-                  aria-label="Projet précédent"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink-600 text-chalk-dim transition-colors hover:border-iris-400/50 hover:text-chalk disabled:opacity-40"
-                >
-                  ←
-                </button>
-                <button
-                  type="button"
-                  onClick={() => go(1)}
-                  disabled={total <= 1}
-                  aria-label="Projet suivant"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink-600 text-chalk-dim transition-colors hover:border-iris-400/50 hover:text-chalk disabled:opacity-40"
-                >
-                  →
-                </button>
-                <span className="text-[0.84rem] tabular-nums text-mute">
-                  {active + 1} / {total}
-                </span>
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-2">
-                {items.map((item, index) => (
+            <div className="relative mx-auto h-full max-w-6xl px-4">
+              {total > 1 ? (
+                <>
                   <button
-                    key={item.id}
                     type="button"
-                    aria-label={`Afficher ${item.name}`}
-                    aria-current={index === active ? "true" : undefined}
-                    onClick={() => setActive(index)}
-                    className={`h-2.5 rounded-full transition-all ${
-                      index === active
-                        ? "w-8 bg-chalk"
-                        : "w-2.5 bg-ink-600 hover:bg-iris-400/70"
-                    }`}
+                    onClick={() => go(-1)}
+                    aria-label="Projet précédent"
+                    className="absolute left-0 top-[46%] z-30 hidden -translate-y-1/2 rounded-full border border-ink-600/80 bg-ink-950/50 p-2.5 text-chalk-dim backdrop-blur-sm transition-colors hover:border-iris-400/50 hover:text-chalk sm:inline-flex"
+                  >
+                    ←
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => go(1)}
+                    aria-label="Projet suivant"
+                    className="absolute right-0 top-[46%] z-30 hidden -translate-y-1/2 rounded-full border border-ink-600/80 bg-ink-950/50 p-2.5 text-chalk-dim backdrop-blur-sm transition-colors hover:border-iris-400/50 hover:text-chalk sm:inline-flex"
+                  >
+                    →
+                  </button>
+                </>
+              ) : null}
+
+              <div
+                className="vitrine-stage h-full"
+                role="list"
+                onTouchStart={onTouchStart}
+                onTouchEnd={onTouchEnd}
+              >
+                {items.map((item, index) => (
+                  <ProjectCard
+                    key={item.id}
+                    item={item}
+                    offset={relativeOffset(index, active, total)}
+                    onSelect={() => setActive(index)}
                   />
                 ))}
               </div>
 
-              <Link href="/" className="text-[0.82rem] text-mute transition-colors hover:text-chalk-dim">
-                Retour au site
-              </Link>
+              {total > 1 ? (
+                <div className="pointer-events-none absolute inset-x-0 bottom-4 z-30 flex justify-center sm:bottom-6">
+                  <div className="pointer-events-auto flex items-center gap-2">
+                    {items.map((item, index) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        aria-label={`Afficher ${item.name}`}
+                        aria-current={index === active ? "true" : undefined}
+                        onClick={() => setActive(index)}
+                        className={`rounded-full transition-all ${
+                          index === active
+                            ? "h-2 w-6 bg-chalk/90"
+                            : "h-1.5 w-1.5 bg-chalk/30 hover:bg-chalk/55"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ) : null}
             </div>
-          </div>
-        ) : null}
+          )}
+        </div>
       </main>
     </div>
   );
