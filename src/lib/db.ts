@@ -188,6 +188,17 @@ export async function deleteLead(id: number): Promise<void> {
   await sql`DELETE FROM leads WHERE id = ${id}`;
 }
 
+export async function deleteLeads(ids: number[]): Promise<number> {
+  const unique = [...new Set(ids.filter((id) => Number.isFinite(id) && id > 0))];
+  if (unique.length === 0) return 0;
+  await ensureSchema();
+  const sql = getSql();
+  const rows = (await sql`
+    DELETE FROM leads WHERE id = ANY(${unique}::int[]) RETURNING id
+  `) as { id: number }[];
+  return rows.length;
+}
+
 export async function leadStats(): Promise<{ status: string; count: number }[]> {
   await ensureSchema();
   const sql = getSql();

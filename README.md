@@ -29,6 +29,7 @@ Copier `.env.example` vers `.env.local` et renseigner les variables.
 | `SESSION_SECRET` | Clé de signature du cookie de session et de hachage des IP. | Recommandé |
 | `NEXT_PUBLIC_SITE_URL` | URL publique canonique (sans slash final). | Recommandé |
 | `RESEND_API_KEY`, `NOTIFICATION_EMAIL` | Notification e-mail à chaque nouvelle demande. | Non |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Cloudflare Turnstile sur le formulaire de contact. | Recommandé |
 
 Le schéma de la table `leads` est créé automatiquement au premier accès (`CREATE TABLE IF NOT
 EXISTS`) : aucune migration à lancer.

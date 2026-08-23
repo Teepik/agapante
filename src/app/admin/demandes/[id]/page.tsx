@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLead, LEAD_STATUSES } from "@/lib/db";
 import { removeLead, saveNotes, setStatus } from "../../actions";
+import { DeleteLeadButton } from "../DeleteLeadButton";
 
 export const dynamic = "force-dynamic";
 
@@ -151,12 +152,7 @@ export default async function LeadDetailPage({ params }: Params) {
               À utiliser pour honorer une demande de suppression des données. L&apos;action est
               irréversible.
             </p>
-            <button
-              type="submit"
-              className="mt-4 rounded-full border border-amber-sig/40 px-5 py-2.5 text-[0.84rem] text-amber-sig transition-colors hover:bg-amber-sig/10"
-            >
-              Supprimer cette demande
-            </button>
+            <DeleteLeadButton leadName={lead.name} />
           </form>
         </div>
       </div>

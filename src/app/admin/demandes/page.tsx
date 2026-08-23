@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { isDbConfigured, LEAD_STATUSES, leadStats, listLeads, type LeadStatus } from "@/lib/db";
+import { LeadListTable } from "./LeadListTable";
 
 export const dynamic = "force-dynamic";
 
@@ -140,73 +141,26 @@ export default async function DemandesPage({ searchParams }: { searchParams: Sea
           </p>
         </div>
       ) : (
-        <div className="mt-8 overflow-hidden rounded-[16px] border border-ink-700">
-          <table className="w-full border-collapse text-left">
-            <thead className="bg-ink-850">
-              <tr className="text-[0.72rem] uppercase tracking-[0.12em] text-mute-dim">
-                <th className="px-5 py-3.5 font-medium">Reçue le</th>
-                <th className="px-5 py-3.5 font-medium">Contact</th>
-                <th className="hidden px-5 py-3.5 font-medium md:table-cell">Organisation</th>
-                <th className="hidden px-5 py-3.5 font-medium lg:table-cell">Besoin</th>
-                <th className="px-5 py-3.5 font-medium">Statut</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-ink-800">
-              {leads.map((lead) => {
-                const meta = statusMeta(lead.status);
-                return (
-                  <tr key={lead.id} className="transition-colors hover:bg-ink-900/60">
-                    <td className="px-5 py-4 align-top text-[0.83rem] text-mute">
-                      <Link href={`/admin/demandes/${lead.id}`} className="block">
-                        {formatDateTime(lead.created_at)}
-                      </Link>
-                    </td>
-                    <td className="px-5 py-4 align-top">
-                      <Link href={`/admin/demandes/${lead.id}`} className="block">
-                        <span className="block text-[0.95rem] font-medium text-chalk">
-                          {lead.name}
-                        </span>
-                        <span className="mt-0.5 block text-[0.83rem] text-mute">{lead.email}</span>
-                        <span className="mt-2 line-clamp-2 block max-w-md text-[0.82rem] leading-relaxed text-mute-dim md:hidden">
-                          {lead.message}
-                        </span>
-                      </Link>
-                    </td>
-                    <td className="hidden px-5 py-4 align-top md:table-cell">
-                      <Link href={`/admin/demandes/${lead.id}`} className="block">
-                        <span className="block text-[0.88rem] text-chalk-dim">
-                          {lead.company ?? "—"}
-                        </span>
-                        <span className="mt-0.5 block text-[0.8rem] text-mute-dim">
-                          {lead.org_type ?? ""}
-                        </span>
-                      </Link>
-                    </td>
-                    <td className="hidden px-5 py-4 align-top lg:table-cell">
-                      <Link href={`/admin/demandes/${lead.id}`} className="block">
-                        <span className="block text-[0.85rem] text-chalk-dim">
-                          {lead.need ?? "—"}
-                        </span>
-                        <span className="mt-0.5 block text-[0.8rem] text-mute-dim">
-                          {lead.timeline ?? ""}
-                        </span>
-                      </Link>
-                    </td>
-                    <td className="px-5 py-4 align-top">
-                      <Link href={`/admin/demandes/${lead.id}`}>
-                        <span
-                          className={`inline-block rounded-full border px-3 py-1 text-[0.75rem] ${meta.tone}`}
-                        >
-                          {meta.label}
-                        </span>
-                      </Link>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <LeadListTable
+          leads={leads.map((lead) => {
+            const meta = statusMeta(lead.status);
+            return {
+              id: lead.id,
+              created_at: lead.created_at,
+              name: lead.name,
+              email: lead.email,
+              company: lead.company,
+              org_type: lead.org_type,
+              need: lead.need,
+              timeline: lead.timeline,
+              message: lead.message,
+              status: lead.status,
+              statusLabel: meta.label,
+              statusTone: meta.tone,
+              createdLabel: formatDateTime(lead.created_at),
+            };
+          })}
+        />
       )}
     </div>
   );
