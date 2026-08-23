@@ -381,6 +381,31 @@
   cursor: pointer;
 }
 
+.vitrine-card-comment {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(26, 29, 46, 0.22) transparent;
+  padding-right: 0.15rem;
+  margin-right: -0.15rem;
+}
+
+.vitrine-card-comment::-webkit-scrollbar {
+  width: 4px;
+}
+
+.vitrine-card-comment::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: rgba(26, 29, 46, 0.18);
+}
+
+.vitrine-card-comment::-webkit-scrollbar-thumb:hover {
+  background: rgba(26, 29, 46, 0.32);
+}
+
 .vitrine-card-light {
   height: 100%;
   border-radius: 22px;
