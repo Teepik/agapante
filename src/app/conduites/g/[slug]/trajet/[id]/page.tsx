@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireGroup } from "@/lib/conduites/auth";
-import { getTrip, listChildrenInGroup, listAbsences, listMembers } from "@/lib/conduites/db";
-import { updateTrip, claimTrip, releaseTrip, deleteTrip, setTripDone } from "@/lib/conduites/actions";
+import { getTrip, listChildrenInGroup, listPassengers, listMembers } from "@/lib/conduites/db";
+import { updateTrip, claimTrip, releaseTrip, deleteTrip, setTripDone, setPassenger } from "@/lib/conduites/actions";
 import { fmtDate, today, plural, DIRECTION_LABEL } from "@/lib/conduites/dates";
 import { ActionForm, SubmitButton, Field, ConfirmSubmit } from "@/components/conduites/ui";
+import { buttonCls } from "@/components/conduites/styles";
 import { Avatar } from "@/components/conduites/avatar";
 import { IconArrowLeft, IconAlert, IconCheck } from "@/components/conduites/icons";
 import { euros } from "@/lib/conduites/equity";
@@ -14,23 +15,28 @@ export const dynamic = "force-dynamic";
 export default async function TripPage({ params }: { params: Promise<{ slug: string; id: string }> }) {
   const { slug, id } = await params;
   const { user, group, membership, isAdmin } = await requireGroup(slug);
-  const trip = await getTrip(group.id, id);
+  const trip = await getTrip(group.id, membership.id, id);
   if (!trip) notFound();
 
   const mine = trip.driver_membership_id === membership.id;
-  const children = (await listChildrenInGroup(group.id)).filter(c => c.travels === "both" || c.travels === trip.direction);
-  const absent = new Set(await listAbsences(id));
+  const allChildren = await listChildrenInGroup(group.id);
+  const passengersAll = await listPassengers(id);
+  const registered = new Set(passengersAll.map(p => p.child_id));
   const members = isAdmin ? await listMembers(group.id) : [];
   const driverLabel = trip.driver_last ?? trip.driver_name;
   const seats = trip.seats ?? trip.driver_seats;
-  const passengers = children.filter(c => !absent.has(c.id)).length;
-  const overflow = seats != null && passengers > seats;
+  const confirmed = seats == null ? passengersAll : passengersAll.slice(0, seats);
+  const waiting = seats == null ? [] : passengersAll.slice(seats);
+  const passengers = confirmed.length;
+  const overflow = waiting.length > 0;
   const past = trip.date < today();
   const canConfirm = !!trip.driver_membership_id && (mine || isAdmin) && trip.date <= today() && !trip.cancelled;
   const meta = [trip.departure_time ? `Départ ${trip.departure_time.replace(":", "h")}` : null, trip.departure_place].filter(Boolean).join(" · ");
 
-  const byFamily = new Map<string, typeof children>();
-  for (const c of children) byFamily.set(c.last_name, [...(byFamily.get(c.last_name) ?? []), c]);
+  // Enfants que cette famille peut inscrire ou retirer (tous pour un admin), groupés par famille.
+  const editable = allChildren.filter(c => isAdmin || c.user_id === user.id);
+  const byFamily = new Map<string, typeof editable>();
+  for (const c of editable) byFamily.set(c.last_name, [...(byFamily.get(c.last_name) ?? []), c]);
 
   return (
     <div className="space-y-5">
@@ -62,9 +68,9 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
       <div className={`card card-pad flex items-center gap-4 animate-rise ${trip.cancelled ? "opacity-60" : ""}`}>
         {driverLabel ? <Avatar name={driverLabel} size={48} /> : <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-warn-soft text-warn"><IconAlert /></span>}
         <div className="min-w-0 flex-1">
-          <div className="truncate text-[17px] font-semibold">{driverLabel ? (mine ? `Vous conduisez` : `${driverLabel} conduit`) : "Conducteur à pourvoir"}</div>
+          <div className="text-[17px] font-semibold leading-tight">{driverLabel ? (mine ? `Vous conduisez` : `${driverLabel} conduit`) : "Conducteur à pourvoir"}</div>
           <div className={`text-[14px] ${overflow ? "text-bad" : "text-ink-2"}`}>
-            {plural(passengers, "enfant")} à transporter{seats != null && ` · ${seats} places`}{overflow && " · il manque des places"}
+            {plural(passengers, "passager")}{seats != null && ` · ${plural(seats, "place")}`}{overflow && ` · ${plural(waiting.length, "enfant")} en attente`}
             {trip.driver_first && !mine && ` · ${trip.driver_first}`}
           </div>
         </div>
@@ -116,36 +122,63 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
           </div>
         )}
 
-        <div>
-          <div className="mb-1 flex items-baseline justify-between">
-            <h2 className="h2">Absences</h2>
-            <span className="text-[12px] text-ink-3">{isAdmin ? "Tous les enfants" : "Vos enfants"}</span>
-          </div>
-          <p className="mb-3 text-[13px] text-ink-2">Cochez les enfants qui ne voyagent pas ce jour-là. Les enfants qui ne font jamais ce sens de trajet n'apparaissent pas.</p>
-          {children.length === 0 && (
-            <p className="rounded-[14px] bg-raised px-4 py-3 text-[14px] text-ink-2">Aucun enfant enregistré dans le groupe. Ajoutez les vôtres dans <Link href={`/conduites/g/${slug}/famille`} className="font-medium text-accent">Famille</Link>.</p>
-          )}
-          <div className="grid gap-3 sm:grid-cols-2">
-            {[...byFamily.entries()].map(([fam, kids]) => (
-              <div key={fam} className="rounded-[14px] ring-1 ring-line p-3">
-                <div className="mb-1.5 flex items-center gap-2"><Avatar name={fam} size={20} /><span className="text-[13px] font-medium">{fam}</span></div>
-                {kids.map(k => {
-                  const editable = isAdmin || k.user_id === user.id;
-                  return (
-                    <label key={k.id} className={`flex items-center gap-2.5 py-1.5 text-[15px] ${editable ? "cursor-pointer" : "text-ink-3"}`}>
-                      <input type="checkbox" name="absent" value={k.id} defaultChecked={absent.has(k.id)} disabled={!editable} />
-                      <span className={absent.has(k.id) ? "line-through decoration-ink-3" : ""}>{k.first_name}</span>
-                      {absent.has(k.id) && <span className="ml-auto text-[12px] text-warn">absent</span>}
-                    </label>
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div className="flex justify-end"><SubmitButton>Enregistrer</SubmitButton></div>
       </ActionForm>
+
+      {/* Passagers */}
+      <section className="card animate-rise">
+        <div className="card-pad pb-3">
+          <div className="flex items-baseline justify-between gap-3">
+            <h2 className="h2">Passagers</h2>
+            <span className={`text-[13px] ${overflow ? "font-medium text-warn" : "text-ink-2"}`}>
+              {plural(passengersAll.length, "inscrit")}{seats != null && ` · ${plural(seats, "place")}`}
+            </span>
+          </div>
+          <p className="mt-1 text-[13px] text-ink-2">
+            Les enfants inscrits par défaut (selon leur sens de voyage) sont déjà là. {seats != null ? "Les places sont attribuées dans l'ordre d'inscription, enfants du conducteur d'abord ; au-delà, liste d'attente." : "Le nombre de places sera connu quand un conducteur se sera positionné."}
+          </p>
+        </div>
+        {passengersAll.length > 0 ? (
+          <ul className="divide-rows border-t border-line">
+            {passengersAll.map((p, i) => {
+              const onWait = seats != null && i >= seats;
+              const canEdit = isAdmin || p.user_id === user.id;
+              return (
+                <li key={p.id} className={`flex items-center gap-3 px-5 py-2.5 sm:px-6 ${onWait ? "bg-warn-soft/30" : ""}`}>
+                  <span className={`w-6 text-center text-[12px] tabular ${onWait ? "text-warn" : "text-ink-3"}`}>{onWait ? "⏳" : i + 1}</span>
+                  <Avatar name={p.first_name} size={26} />
+                  <span className="min-w-0 flex-1 truncate text-[15px]">{p.first_name} <span className="text-[13px] text-ink-2">{p.last_name}</span></span>
+                  {onWait && <span className="rounded-[8px] bg-warn-soft px-1.5 py-0.5 text-[11px] font-medium text-warn">en attente</span>}
+                  {canEdit && !past && (
+                    <form action={setPassenger}>
+                      <input type="hidden" name="slug" value={slug} /><input type="hidden" name="trip" value={id} /><input type="hidden" name="child" value={p.child_id} /><input type="hidden" name="on" value="0" />
+                      <SubmitButton variant="ghost" size="sm" className="text-ink-3 hover:text-bad" aria-label={`Retirer ${p.first_name}`}>Retirer</SubmitButton>
+                    </form>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="border-t border-line px-5 py-5 text-[14px] text-ink-2 sm:px-6">Aucun passager inscrit pour l'instant.</p>
+        )}
+        {!past && editable.some(c => !registered.has(c.id)) && (
+          <div className="border-t border-line px-5 py-4 sm:px-6">
+            <div className="mb-2 text-[13px] font-medium text-ink-2">{isAdmin ? "Inscrire un enfant" : "Inscrire un de vos enfants"}</div>
+            <div className="flex flex-wrap gap-2">
+              {[...byFamily.entries()].map(([fam, kids]) => kids.filter(k => !registered.has(k.id)).map(k => (
+                <form key={k.id} action={setPassenger}>
+                  <input type="hidden" name="slug" value={slug} /><input type="hidden" name="trip" value={id} /><input type="hidden" name="child" value={k.id} /><input type="hidden" name="on" value="1" />
+                  <SubmitButton variant="secondary" size="sm">+ {k.first_name}{isAdmin ? ` (${fam})` : ""}</SubmitButton>
+                </form>
+              )))}
+            </div>
+          </div>
+        )}
+        {editable.length === 0 && (
+          <p className="border-t border-line px-5 py-4 text-[13px] text-ink-2 sm:px-6">Ajoutez vos enfants dans <Link href={`/conduites/g/${slug}/famille`} className={buttonCls("ghost", "sm", "!inline !h-auto !px-1 text-accent")}>Famille</Link> pour les inscrire.</p>
+        )}
+      </section>
 
       {isAdmin && (
         <form action={deleteTrip} className="flex justify-end">

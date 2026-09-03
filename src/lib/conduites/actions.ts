@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
-  q, one, uid, inviteCode, slugify, newToken, getGroupByCode, getUserByEmail, getUserById, joinGroup, claimOrphanGroups,
+  q, one, uid, inviteCode, slugify, newToken, getGroupByCode, getUserByEmail, getUserById, joinGroup, claimOrphanGroups, autoRegister,
   type Role, type Travels,
 } from "./db";
 import { BASE, createSession, destroySession, hashPassword, verifyPassword, requireUser, requireGroup, requireGroupAdmin } from "./auth";
@@ -159,7 +159,9 @@ export async function addChild(fd: FormData) {
   const { group, membership } = await requireGroup(str(fd, "slug"));
   const name = str(fd, "firstName");
   if (!name) return;
-  await q("INSERT INTO conduites_children (id, membership_id, first_name, travels) VALUES ($1,$2,$3,$4)", [uid(), membership.id, name, travelsOf(str(fd, "travels"))]);
+  const childId = uid();
+  await q("INSERT INTO conduites_children (id, membership_id, first_name, travels) VALUES ($1,$2,$3,$4)", [childId, membership.id, name, travelsOf(str(fd, "travels"))]);
+  await autoRegister(group.id, { childId });
   revalidateGroup(group.slug);
 }
 
@@ -171,7 +173,12 @@ export async function removeChild(fd: FormData) {
 
 export async function setChildTravels(fd: FormData) {
   const { group, membership } = await requireGroup(str(fd, "slug"));
-  await q("UPDATE conduites_children SET travels = $1 WHERE id = $2 AND membership_id = $3", [travelsOf(str(fd, "travels")), str(fd, "id"), membership.id]);
+  const travels = travelsOf(str(fd, "travels"));
+  const childId = str(fd, "id");
+  await q("UPDATE conduites_children SET travels = $1 WHERE id = $2 AND membership_id = $3", [travels, childId, membership.id]);
+  // Trajets futurs : on retire l'enfant des sens qu'il ne fait plus, on l'inscrit sur ceux qu'il fait désormais.
+  await q(`DELETE FROM conduites_passengers p USING conduites_trips t WHERE p.trip_id = t.id AND p.child_id = $1 AND t.date >= CURRENT_DATE AND $2 <> 'both' AND t.direction <> $2`, [childId, travels]);
+  await autoRegister(group.id, { childId });
   revalidateGroup(group.slug);
 }
 
@@ -239,15 +246,6 @@ export async function updateTrip(_: ActionState, fd: FormData): Promise<ActionSt
       [weight, cancelled, cost, driverId, id]);
   }
 
-  const editable = (isAdmin
-    ? await q<{ id: string }>("SELECT c.id FROM conduites_children c JOIN conduites_memberships m ON m.id = c.membership_id WHERE m.group_id = $1", [group.id])
-    : await q<{ id: string }>("SELECT id FROM conduites_children WHERE membership_id = $1", [membership.id])).map(r => r.id);
-  const absent = new Set(fd.getAll("absent").map(String));
-  const toAbsent = editable.filter(c => absent.has(c));
-  const toPresent = editable.filter(c => !absent.has(c));
-  if (toPresent.length) await q("DELETE FROM conduites_absences WHERE trip_id = $1 AND child_id = ANY($2::text[])", [id, toPresent]);
-  if (toAbsent.length) await q(
-    "INSERT INTO conduites_absences (id, trip_id, child_id) SELECT gen_random_uuid()::text, $1, unnest($2::text[]) ON CONFLICT DO NOTHING", [id, toAbsent]);
 
   revalidateGroup(group.slug);
   return { ok: "Trajet mis à jour." };
@@ -267,6 +265,7 @@ export async function generateTrips(_: ActionState, fd: FormData): Promise<Actio
      ON CONFLICT DO NOTHING RETURNING id`,
     [group.id, dates.map(d => d.date), dates.map(d => d.direction)]);
   const n = inserted.length;
+  if (n) await autoRegister(group.id);
   revalidateGroup(group.slug);
   return { ok: n ? `${n} trajet${n > 1 ? "s" : ""} ajouté${n > 1 ? "s" : ""}.` : "Toutes ces dates existaient déjà." };
 }
@@ -276,7 +275,8 @@ export async function addTrip(_: ActionState, fd: FormData): Promise<ActionState
   const date = str(fd, "date");
   const direction = str(fd, "direction") === "aller" ? "aller" : "retour";
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Date invalide." };
-  const r = await q("INSERT INTO conduites_trips (id, group_id, date, direction) VALUES ($1,$2,$3,$4) ON CONFLICT DO NOTHING RETURNING id", [uid(), group.id, date, direction]);
+  const r = await q<{ id: string }>("INSERT INTO conduites_trips (id, group_id, date, direction) VALUES ($1,$2,$3,$4) ON CONFLICT DO NOTHING RETURNING id", [uid(), group.id, date, direction]);
+  if (r.length) await autoRegister(group.id, { tripId: r[0].id });
   revalidateGroup(group.slug);
   return r.length ? { ok: "Trajet ajouté." } : { error: "Ce trajet existe déjà." };
 }
@@ -297,6 +297,21 @@ export async function resetMemberPassword(_: ActionState, fd: FormData): Promise
   if (!m) return { error: "Membre introuvable." };
   await q("UPDATE conduites_users SET password_hash = $1 WHERE id = $2", [await hashPassword(next), m.user_id]);
   return { ok: "Mot de passe réinitialisé." };
+}
+
+/** Une famille inscrit ou retire un de ses enfants sur un trajet (un admin peut le faire pour tous). */
+export async function setPassenger(fd: FormData) {
+  const { group, membership, isAdmin } = await requireGroup(str(fd, "slug"));
+  const tripId = str(fd, "trip");
+  const childId = str(fd, "child");
+  const on = fd.get("on") === "1";
+  const child = await one<{ membership_id: string }>(
+    "SELECT c.membership_id FROM conduites_children c JOIN conduites_memberships m ON m.id = c.membership_id WHERE c.id = $1 AND m.group_id = $2", [childId, group.id]);
+  const trip = await one("SELECT id FROM conduites_trips WHERE id = $1 AND group_id = $2", [tripId, group.id]);
+  if (!child || !trip || (child.membership_id !== membership.id && !isAdmin)) return;
+  if (on) await q("INSERT INTO conduites_passengers (id, trip_id, child_id) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING", [uid(), tripId, childId]);
+  else await q("DELETE FROM conduites_passengers WHERE trip_id = $1 AND child_id = $2", [tripId, childId]);
+  revalidateGroup(group.slug);
 }
 
 /** Le conducteur (ou un admin) confirme que le trajet s'est bien passé et que les passagers sont arrivés. */

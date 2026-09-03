@@ -15,7 +15,7 @@ export default async function PlanningPage({ params, searchParams }: { params: P
   const { vue } = await searchParams;
   const { group, membership, isAdmin } = await requireGroup(slug);
   const showAll = vue === "tout";
-  const trips = await listTrips(group.id, showAll ? undefined : today());
+  const trips = await listTrips(group.id, membership.id, showAll ? undefined : today());
   const totalChildren = await countChildren(group.id);
   const months = groupByMonth(groupByWeekend(trips));
   const upcoming = trips.filter(t => t.date >= today() && !t.cancelled);
@@ -47,7 +47,7 @@ export default async function PlanningPage({ params, searchParams }: { params: P
             <span className="kicker block">Votre prochaine conduite</span>
             <span className="block truncate font-medium">{fmtDate(mine.date)} · {DIRECTION_LABEL[mine.direction]}</span>
             <span className="block text-[13px] text-ink-2">
-              {[mine.departure_time ? `Départ ${mine.departure_time.replace(":", "h")}` : null, mine.departure_place, plural(mine.eligible - mine.absent_count, "enfant") + " à transporter", mine.comment].filter(Boolean).join(" · ")}
+              {[mine.departure_time ? `Départ ${mine.departure_time.replace(":", "h")}` : null, mine.departure_place, plural(Math.min(mine.registered, mine.seats ?? mine.driver_seats ?? mine.registered), "passager"), mine.comment].filter(Boolean).join(" · ")}
             </span>
           </span>
           <IconChevron className="shrink-0 text-ink-3" />
@@ -110,8 +110,9 @@ function TripLine({ t, slug, membershipId, isAdmin, totalChildren }: { t: TripRo
   const driverLabel = t.driver_last ?? t.driver_name;
   const hasDriver = !!driverLabel;
   const seats = t.seats ?? t.driver_seats;
-  const passengers = t.eligible - t.absent_count;
-  const overflow = seats != null && passengers > seats;
+  const passengers = seats == null ? t.registered : Math.min(t.registered, seats);
+  const waiting = seats == null ? 0 : Math.max(0, t.registered - seats);
+  const overflow = waiting > 0;
   const past = t.date < today();
   const href = `/conduites/g/${slug}/trajet/${t.id}`;
 
@@ -132,12 +133,12 @@ function TripLine({ t, slug, membershipId, isAdmin, totalChildren }: { t: TripRo
         <div className={`line-clamp-2 text-[13px] ${overflow ? "text-bad" : "text-ink-2"}`}>
           {overflow && <IconAlert width={14} height={14} className="mr-1 inline -mt-0.5" />}
           {[
-            totalChildren > 0 ? plural(passengers, "enfant") : null,
-            hasDriver && seats != null ? `${seats} pl.` : null,
-            overflow ? "manque de places" : null,
+            totalChildren > 0 ? (seats != null ? `${passengers}/${seats} places` : plural(t.registered, "inscrit")) : null,
+            overflow ? `${waiting} en attente` : null,
+            t.mine_registered > 0 && !mine ? `${t.mine_registered} à vous` : null,
           ].filter(Boolean).join(" · ")}
           {t.departure_place && <> · {t.departure_place}</>}
-          {t.comment && <>{totalChildren > 0 || (hasDriver && seats != null) || t.departure_place ? " · " : ""}<span className="italic">{t.comment}</span></>}
+          {t.comment && <>{totalChildren > 0 || t.departure_place ? " · " : ""}<span className="italic">{t.comment}</span></>}
         </div>
       </Link>
 
