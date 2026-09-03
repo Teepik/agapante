@@ -16,7 +16,7 @@ export default async function GroupLayout({ children, params }: { children: Reac
     <div className="min-h-dvh pb-24 sm:pb-10">
       <header className="sticky top-0 z-20 border-b border-line bg-canvas/85 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-[720px] items-center gap-3 px-4 sm:px-6">
-          <Link href="/conduites" className="shrink-0" aria-label="Mes groupes"><Logo /></Link>
+          <Link href="/conduites?tous=1" className="shrink-0" aria-label="Mes groupes"><Logo /></Link>
           <div className="min-w-0 flex-1">
             {groups.length > 1 ? (
               <details className="relative">
@@ -27,7 +27,8 @@ export default async function GroupLayout({ children, params }: { children: Reac
                   {groups.map(g => (
                     <li key={g.id}><Link href={`/conduites/g/${g.slug}`} className={`block px-4 py-2.5 text-[14px] hover:bg-raised ${g.id === group.id ? "font-semibold" : ""}`}>{g.name}</Link></li>
                   ))}
-                  <li className="border-t border-line"><Link href="/conduites" className="block px-4 py-2.5 text-[14px] text-ink-2 hover:bg-raised">Tous mes groupes</Link></li>
+                  <li className="border-t border-line"><Link href="/conduites?tous=1" className="block px-4 py-2.5 text-[14px] text-ink-2 hover:bg-raised">Tous mes groupes</Link></li>
+                  <li><Link href="/conduites/nouveau-groupe" className="block px-4 py-2.5 text-[14px] text-accent hover:bg-raised">+ Créer un groupe</Link></li>
                 </ul>
               </details>
             ) : (
@@ -45,7 +46,8 @@ export default async function GroupLayout({ children, params }: { children: Reac
                 <div className="truncate text-[12px] text-ink-3">{user.email}</div>
               </div>
               <Link href={`/conduites/g/${slug}/famille`} className="block border-t border-line px-4 py-2.5 text-[14px] hover:bg-raised">Ma famille</Link>
-              <Link href="/conduites" className="block px-4 py-2.5 text-[14px] hover:bg-raised">Mes groupes</Link>
+              <Link href="/conduites?tous=1" className="block px-4 py-2.5 text-[14px] hover:bg-raised">Mes groupes</Link>
+              <Link href="/conduites/nouveau-groupe" className="block px-4 py-2.5 text-[14px] hover:bg-raised">Créer un autre groupe</Link>
               <form action={logout}><button className="flex w-full items-center gap-2 border-t border-line px-4 py-2.5 text-left text-[14px] text-ink-2 hover:bg-raised"><IconLogout width={16} height={16} /> Déconnexion</button></form>
             </div>
           </details>

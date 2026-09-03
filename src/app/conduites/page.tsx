@@ -11,12 +11,12 @@ import { plural } from "@/lib/conduites/dates";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage({ searchParams }: { searchParams: Promise<{ groupe?: string }> }) {
+export default async function HomePage({ searchParams }: { searchParams: Promise<{ groupe?: string; tous?: string }> }) {
   const user = await getCurrentUser();
   if (!user) return <Landing />;
-  const { groupe } = await searchParams;
+  const { groupe, tous } = await searchParams;
   const groups = await listUserGroups(user.id);
-  if (groups.length === 1 && !groupe) redirect(`/conduites/g/${groups[0].slug}`);
+  if (groups.length === 1 && !groupe && !tous) redirect(`/conduites/g/${groups[0].slug}`);
   const wanted = groupe ? await getGroupBySlug(groupe) : undefined;
 
   return (
@@ -32,7 +32,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         <Avatar name={`${user.first_name} ${user.last_name}`} size={44} />
         <div>
           <h1 className="h2">Bonjour {user.first_name}</h1>
-          <p className="text-[14px] text-ink-2">{groups.length ? "Choisissez un groupe." : "Vous n'êtes encore dans aucun groupe."}</p>
+          <p className="text-[14px] text-ink-2">{groups.length ? "Vos groupes. Chaque groupe a son planning, ses familles et ses comptes." : "Vous n'êtes encore dans aucun groupe."}</p>
         </div>
       </div>
 
@@ -70,7 +70,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         </Link>
         <Link href="/conduites/nouveau-groupe" className="card card-pad flex items-center gap-3 transition hover:bg-raised">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-[14px] bg-accent-soft text-accent-ink"><IconPlus /></span>
-          <span><span className="block font-medium">Créer un groupe</span><span className="block text-[13px] text-ink-2">Pour votre école ou votre trajet</span></span>
+          <span><span className="block font-medium">Créer un groupe</span><span className="block text-[13px] text-ink-2">Un autre trajet, d'autres familles, un autre planning</span></span>
         </Link>
       </div>
     </div>

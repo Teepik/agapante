@@ -28,7 +28,7 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
   // Comptes
   const cost = Number(group.cost_per_point) || 0;
   const settlements = cost > 0 ? await listSettlements(group.id, sy.from, sy.to) : [];
-  const balances = computeBalances(rows, cost, group.split, settlements);
+  const balances = computeBalances(rows, group.split, settlements);
   const transfers = settle(balances);
   const name = (id: string) => rows.find(r => r.id === id)?.last_name ?? "?";
   const members = cost > 0 ? await listMembers(group.id) : [];
@@ -85,7 +85,7 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
           <h2 className="h1 !text-[22px]">Comptes</h2>
           <p className="mt-1 text-[14px] text-ink-2">
             {cost > 0
-              ? <>Un trajet simple vaut <strong>{euros(cost)}</strong>, frais répartis {group.split === "child" ? "au prorata des enfants" : "à parts égales entre familles"}. Chaque famille « avance » ce qu'elle conduit ; les virements ci-dessous remettent tout le monde à égalité.</>
+              ? <>Un trajet simple vaut <strong>{euros(cost)}</strong> par défaut (un admin peut ajuster le coût d'un trajet précis depuis sa fiche), frais répartis {group.split === "child" ? "au prorata des enfants" : "à parts égales entre familles"}. Chaque famille « avance » ce qu'elle conduit ; les virements ci-dessous remettent tout le monde à égalité.</>
               : "Pour calculer qui doit combien à qui, il faut d'abord fixer le coût d'un trajet simple."}
           </p>
         </div>
@@ -146,7 +146,7 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
             <div className="card overflow-hidden">
               <div className="card-pad pb-3">
                 <h3 className="h2">Détail par famille</h3>
-                <p className="mt-1 text-[13px] text-ink-2">Avancé = conduites × coût. Part = ce que chacun doit au total. Solde positif : on vous doit ; négatif : vous devez.</p>
+                <p className="mt-1 text-[13px] text-ink-2">Avancé = somme des conduites (points × coût du jour). Part = ce que chacun doit au total. Solde positif : on vous doit ; négatif : vous devez.</p>
               </div>
               <div className="overflow-x-auto border-t border-line">
                 <table className="w-full min-w-[520px] text-[14px]">

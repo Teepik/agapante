@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { requireGroup } from "@/lib/conduites/auth";
 import { listTrips, countChildren, type TripRow } from "@/lib/conduites/db";
-import { claimTrip, releaseTrip } from "@/lib/conduites/actions";
-import { fmtDate, fmtDay, fmtWeekday, fmtShort, groupByWeekend, groupByMonth, today, plural, DIRECTION_LABEL } from "@/lib/conduites/dates";
-import { SubmitButton } from "@/components/conduites/ui";
+import { claimTrip, releaseTrip, addTrip } from "@/lib/conduites/actions";
+import { fmtDate, fmtDay, fmtWeekday, fmtShort, groupByWeekend, groupByMonth, today, addDays, plural, DIRECTION_LABEL } from "@/lib/conduites/dates";
+import { SubmitButton, ActionForm, Field } from "@/components/conduites/ui";
 import { buttonCls } from "@/components/conduites/styles";
 import { Avatar } from "@/components/conduites/avatar";
-import { IconChevron, IconAlert, IconCalendar } from "@/components/conduites/icons";
+import { IconChevron, IconAlert, IconCalendar, IconCheck, IconPlus } from "@/components/conduites/icons";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +46,9 @@ export default async function PlanningPage({ params, searchParams }: { params: P
           <span className="min-w-0 flex-1">
             <span className="kicker block">Votre prochaine conduite</span>
             <span className="block truncate font-medium">{fmtDate(mine.date)} · {DIRECTION_LABEL[mine.direction]}</span>
-            <span className="block text-[13px] text-ink-2">{plural(mine.eligible - mine.absent_count, "enfant")} à transporter{mine.comment ? ` · ${mine.comment}` : ""}</span>
+            <span className="block text-[13px] text-ink-2">
+              {[mine.departure_time ? `Départ ${mine.departure_time.replace(":", "h")}` : null, mine.departure_place, plural(mine.eligible - mine.absent_count, "enfant") + " à transporter", mine.comment].filter(Boolean).join(" · ")}
+            </span>
           </span>
           <IconChevron className="shrink-0 text-ink-3" />
         </Link>
@@ -78,6 +80,27 @@ export default async function PlanningPage({ params, searchParams }: { params: P
           ))}
         </section>
       ))}
+
+      <details className="card group animate-rise" id="ajouter">
+        <summary className="card-pad flex cursor-pointer list-none items-center gap-3 [&::-webkit-details-marker]:hidden">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-[14px] bg-accent-soft text-accent-ink"><IconPlus /></span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-medium">Ajouter une conduite</span>
+            <span className="block text-[13px] text-ink-2">Un lundi férié, une veille de pont, un jour exceptionnel…</span>
+          </span>
+          <IconChevron className="text-ink-3 transition group-open:rotate-90" />
+        </summary>
+        <ActionForm action={addTrip} className="border-t border-line p-5 sm:p-6">
+          <input type="hidden" name="slug" value={slug} />
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-[1fr_1fr_auto]">
+            <Field label="Date"><input name="date" type="date" required defaultValue={addDays(today(), 1)} className="field" /></Field>
+            <Field label="Sens">
+              <select name="direction" className="field"><option value="retour">Retour à la maison</option><option value="aller">Aller vers l'école</option></select>
+            </Field>
+            <div className="col-span-2 flex items-end sm:col-span-1"><SubmitButton className="w-full sm:w-auto">Ajouter</SubmitButton></div>
+          </div>
+        </ActionForm>
+      </details>
     </div>
   );
 }
@@ -102,7 +125,9 @@ function TripLine({ t, slug, membershipId, isAdmin, totalChildren }: { t: TripRo
       <Link href={href} className="min-w-0 flex-1">
         <div className="truncate text-[15px] font-medium">
           {DIRECTION_LABEL[t.direction]}
+          {t.departure_time && <span className="ml-1.5 font-normal text-ink-2">{t.departure_time.replace(":", "h")}</span>}
           {!!t.cancelled && <span className="ml-2 rounded-[8px] bg-raised px-1.5 py-0.5 text-[11px] font-medium text-ink-2">annulé</span>}
+          {t.done && <span className="ml-2 inline-flex items-center gap-0.5 rounded-[8px] bg-good-soft px-1.5 py-0.5 text-[11px] font-medium text-good"><IconCheck width={12} height={12} /> effectué</span>}
         </div>
         <div className={`line-clamp-2 text-[13px] ${overflow ? "text-bad" : "text-ink-2"}`}>
           {overflow && <IconAlert width={14} height={14} className="mr-1 inline -mt-0.5" />}
@@ -111,7 +136,8 @@ function TripLine({ t, slug, membershipId, isAdmin, totalChildren }: { t: TripRo
             hasDriver && seats != null ? `${seats} pl.` : null,
             overflow ? "manque de places" : null,
           ].filter(Boolean).join(" · ")}
-          {t.comment && <>{totalChildren > 0 || (hasDriver && seats != null) ? " · " : ""}<span className="italic">{t.comment}</span></>}
+          {t.departure_place && <> · {t.departure_place}</>}
+          {t.comment && <>{totalChildren > 0 || (hasDriver && seats != null) || t.departure_place ? " · " : ""}<span className="italic">{t.comment}</span></>}
         </div>
       </Link>
 
