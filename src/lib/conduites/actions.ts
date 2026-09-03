@@ -86,7 +86,9 @@ export async function updateGroup(_: ActionState, fd: FormData): Promise<ActionS
   const name = str(fd, "name");
   const destination = str(fd, "destination") || null;
   if (name.length < 2) return { error: "Le nom est trop court." };
-  await q("UPDATE conduites_groups SET name = $1, destination = $2 WHERE id = $3", [name, destination, group.id]);
+  const cost = Math.max(0, Math.min(999, Number(String(fd.get("cost") ?? "0").replace(",", ".")) || 0));
+  const split = str(fd, "split") === "child" ? "child" : "family";
+  await q("UPDATE conduites_groups SET name = $1, destination = $2, cost_per_point = $3, split = $4 WHERE id = $5", [name, destination, cost, split, group.id]);
   revalidateGroup(group.slug);
   return { ok: "Groupe mis à jour." };
 }
@@ -289,4 +291,28 @@ export async function resetMemberPassword(_: ActionState, fd: FormData): Promise
   if (!m) return { error: "Membre introuvable." };
   await q("UPDATE conduites_users SET password_hash = $1 WHERE id = $2", [await hashPassword(next), m.user_id]);
   return { ok: "Mot de passe réinitialisé." };
+}
+
+// ============ Comptes ============
+/** Enregistre un règlement entre deux familles (le payeur lui-même ou un admin). */
+export async function recordSettlement(_: ActionState, fd: FormData): Promise<ActionState> {
+  const { group, membership, isAdmin } = await requireGroup(str(fd, "slug"));
+  const from = str(fd, "from");
+  const to = str(fd, "to");
+  const amount = Math.round((Number(String(fd.get("amount") ?? "").replace(",", ".")) || 0) * 100) / 100;
+  const note = str(fd, "note") || null;
+  if (!from || !to || from === to) return { error: "Choisissez deux familles différentes." };
+  if (amount <= 0) return { error: "Montant invalide." };
+  if (from !== membership.id && !isAdmin) return { error: "Vous ne pouvez enregistrer qu'un règlement que vous avez fait vous-même." };
+  const ok = await q("SELECT id FROM conduites_memberships WHERE group_id = $1 AND id = ANY($2::text[])", [group.id, [from, to]]);
+  if (ok.length !== 2) return { error: "Famille introuvable dans ce groupe." };
+  await q("INSERT INTO conduites_settlements (id, group_id, from_membership_id, to_membership_id, amount, note) VALUES ($1,$2,$3,$4,$5,$6)", [uid(), group.id, from, to, amount, note]);
+  revalidatePath(`${BASE}/g/${group.slug}/equite`);
+  return { ok: "Règlement enregistré." };
+}
+
+export async function deleteSettlement(fd: FormData) {
+  const { group } = await requireGroupAdmin(str(fd, "slug"));
+  await q("DELETE FROM conduites_settlements WHERE id = $1 AND group_id = $2", [str(fd, "id"), group.id]);
+  revalidatePath(`${BASE}/g/${group.slug}/equite`);
 }

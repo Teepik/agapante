@@ -150,6 +150,15 @@ export default async function AdminPage({ params, searchParams }: { params: Prom
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Nom"><input name="name" defaultValue={group.name} required className="field" /></Field>
           <Field label="Destination"><input name="destination" defaultValue={group.destination ?? ""} className="field" placeholder="École, ville…" /></Field>
+          <Field label="Coût d'un trajet simple (€)" hint="Un point d'équité = un trajet simple. Sert à calculer les comptes entre familles ; 0 pour ne pas gérer d'argent.">
+            <input name="cost" type="number" inputMode="decimal" min={0} step="0.5" defaultValue={Number(group.cost_per_point) || ""} placeholder="15" className="field" />
+          </Field>
+          <Field label="Répartition des frais" hint="Ce que chaque famille doit au total.">
+            <select name="split" defaultValue={group.split} className="field">
+              <option value="family">À parts égales entre familles</option>
+              <option value="child">Au prorata du nombre d'enfants</option>
+            </select>
+          </Field>
         </div>
         <div className="flex justify-end"><SubmitButton variant="secondary">Enregistrer</SubmitButton></div>
       </ActionForm>

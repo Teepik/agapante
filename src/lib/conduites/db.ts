@@ -84,6 +84,13 @@ const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS conduites_notifications (
     id TEXT PRIMARY KEY, trip_id TEXT NOT NULL REFERENCES conduites_trips(id) ON DELETE CASCADE,
     kind TEXT NOT NULL, sent_at TIMESTAMPTZ NOT NULL DEFAULT now(), UNIQUE(trip_id, kind))`,
+  `CREATE TABLE IF NOT EXISTS conduites_settlements (
+    id TEXT PRIMARY KEY, group_id TEXT NOT NULL REFERENCES conduites_groups(id) ON DELETE CASCADE,
+    from_membership_id TEXT NOT NULL REFERENCES conduites_memberships(id) ON DELETE CASCADE,
+    to_membership_id TEXT NOT NULL REFERENCES conduites_memberships(id) ON DELETE CASCADE,
+    amount NUMERIC(10,2) NOT NULL, note TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now())`,
+  `ALTER TABLE conduites_groups ADD COLUMN IF NOT EXISTS cost_per_point NUMERIC(10,2) NOT NULL DEFAULT 0`,
+  `ALTER TABLE conduites_groups ADD COLUMN IF NOT EXISTS split TEXT NOT NULL DEFAULT 'family'`,
   `CREATE INDEX IF NOT EXISTS conduites_trips_group_date ON conduites_trips(group_id, date)`,
   `CREATE INDEX IF NOT EXISTS conduites_memberships_user ON conduites_memberships(user_id)`,
 ];
@@ -130,7 +137,8 @@ export type User = {
   id: string; email: string; password_hash: string; first_name: string; last_name: string;
   phone: string | null; seats: number; notify: boolean; ical_token: string | null; created_at: string;
 };
-export type Group = { id: string; name: string; slug: string; invite_code: string; destination: string | null; created_by: string | null; created_at: string };
+export type Group = { id: string; name: string; slug: string; invite_code: string; destination: string | null; created_by: string | null; created_at: string; cost_per_point: string | number; split: "family" | "child" };
+export type Settlement = { id: string; from_membership_id: string; to_membership_id: string; amount: string | number; note: string | null; created_at: string; from_last: string; to_last: string };
 export type Role = "owner" | "admin" | "member";
 export type Membership = { id: string; group_id: string; user_id: string; role: Role; joined_at: string };
 export type MemberRow = Membership & { first_name: string; last_name: string; email: string; phone: string | null; seats: number; children_count: number };
@@ -235,4 +243,14 @@ export function equityStats(groupId: string, from: string, to: string) {
     LEFT JOIN conduites_trips t ON t.driver_membership_id = m.id AND NOT t.cancelled AND t.date >= $1 AND t.date <= $2
     WHERE m.group_id = $3
     GROUP BY m.id, u.last_name, u.first_name ORDER BY points DESC, u.last_name`, [from, to, groupId]);
+}
+
+export function listSettlements(groupId: string, from: string, to: string) {
+  return q<Settlement>(`
+    SELECT s.*, uf.last_name AS from_last, ut.last_name AS to_last
+    FROM conduites_settlements s
+    JOIN conduites_memberships mf ON mf.id = s.from_membership_id JOIN conduites_users uf ON uf.id = mf.user_id
+    JOIN conduites_memberships mt ON mt.id = s.to_membership_id JOIN conduites_users ut ON ut.id = mt.user_id
+    WHERE s.group_id = $1 AND s.created_at >= $2::date AND s.created_at < ($3::date + 1)
+    ORDER BY s.created_at DESC`, [groupId, from, to]);
 }

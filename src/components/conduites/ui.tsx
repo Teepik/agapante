@@ -84,8 +84,9 @@ export function ConfirmSubmit({ children, confirmLabel = "Confirmer ?", variant 
   const [armed, setArmed] = useState(false);
   const { pending } = useFormStatus();
   useEffect(() => { if (!armed) return; const t = setTimeout(() => setArmed(false), 4000); return () => clearTimeout(t); }, [armed]);
-  if (!armed) return <button type="button" onClick={() => setArmed(true)} className={buttonCls(variant, size)}>{children}</button>;
-  return <button type="submit" disabled={pending} className={buttonCls("primary", size, "!bg-bad")}>{pending ? <Spinner /> : null}{confirmLabel}</button>;
+  // `key` distinct : le bouton de confirmation est un nouvel élément DOM, sinon le clic d'armement se transforme en soumission.
+  if (!armed) return <button key="arm" type="button" onClick={e => { e.preventDefault(); setArmed(true); }} className={buttonCls(variant, size)}>{children}</button>;
+  return <button key="confirm" type="submit" disabled={pending} className={buttonCls("primary", size, "!bg-bad")}>{pending ? <Spinner /> : null}{confirmLabel}</button>;
 }
 
 /** Select qui soumet son formulaire dès qu'une valeur est choisie. */
