@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
-  q, one, uid, inviteCode, slugify, newToken, getGroupByCode, getUserByEmail, getUserById, joinGroup, claimOrphanGroups, autoRegister,
+  q, one, count, uid, inviteCode, slugify, newToken, getGroupByCode, getUserByEmail, getUserById, joinGroup, claimOrphanGroups, autoRegister,
   type Role, type Travels,
 } from "./db";
 import { BASE, createSession, destroySession, hashPassword, verifyPassword, requireUser, requireGroup, requireGroupAdmin } from "./auth";
@@ -118,8 +118,20 @@ export async function removeMember(fd: FormData) {
   if (!target || target.role === "owner") return;
   const self = id === membership.id;
   if (!self && !isAdmin) return;
-  await q("DELETE FROM conduites_memberships WHERE id = $1", [id]);
-  revalidatePath(`${BASE}/g/${group.slug}/admin`);
+  // Une famille qui a un historique (conduites, trajets en passager, règlements) est marquée « partie » :
+  // les comptes passés restent exacts et elle retrouve tout si elle revient. Sinon, suppression pure.
+  const history = await count(`SELECT (SELECT COUNT(*) FROM conduites_trips WHERE driver_membership_id = $1)
+      + (SELECT COUNT(*) FROM conduites_passengers p JOIN conduites_children c ON c.id = p.child_id JOIN conduites_trips t ON t.id = p.trip_id WHERE c.membership_id = $1 AND (t.date < CURRENT_DATE OR t.done))
+      + (SELECT COUNT(*) FROM conduites_settlements WHERE from_membership_id = $1 OR to_membership_id = $1) AS n`, [id]);
+  if (history > 0) {
+    await q("UPDATE conduites_memberships SET left_at = now(), role = 'member' WHERE id = $1", [id]);
+    // Plus d'inscription sur les trajets à venir.
+    await q("DELETE FROM conduites_passengers p USING conduites_children c, conduites_trips t WHERE p.child_id = c.id AND t.id = p.trip_id AND c.membership_id = $1 AND t.date >= CURRENT_DATE AND NOT t.done", [id]);
+    await q("UPDATE conduites_trips SET driver_membership_id = NULL WHERE driver_membership_id = $1 AND date >= CURRENT_DATE AND NOT done", [id]);
+  } else {
+    await q("DELETE FROM conduites_memberships WHERE id = $1", [id]);
+  }
+  revalidateGroup(group.slug);
   if (self) redirect(BASE);
 }
 
@@ -233,17 +245,22 @@ export async function updateTrip(_: ActionState, fd: FormData): Promise<ActionSt
     const time = str(fd, "departureTime");
     const place = str(fd, "departurePlace") || null;
     if (time && !/^\d{1,2}:\d{2}$/.test(time)) return { error: "Heure invalide (ex. 13:45)." };
-    await q("UPDATE conduites_trips SET seats = $1, departure_time = $2, departure_place = $3 WHERE id = $4",
-      [seatsRaw ? Math.max(1, Math.min(12, Number(seatsRaw))) : null, time ? time.padStart(5, "0") : null, place, id]);
+    const money = (k: string) => { const raw = str(fd, k).replace(",", "."); return raw === "" ? null : Math.max(0, Math.min(9999, Math.round((Number(raw) || 0) * 100) / 100)); };
+    const cost = fd.has("cost") ? money("cost") : undefined;
+    const extra = fd.has("extra") ? (money("extra") ?? 0) : undefined;
+    const extraNote = fd.has("extraNote") ? (str(fd, "extraNote") || null) : undefined;
+    await q(`UPDATE conduites_trips SET seats = $1, departure_time = $2, departure_place = $3,
+        cost = CASE WHEN $5 THEN $4 ELSE cost END, extra = CASE WHEN $7 THEN $6 ELSE extra END, extra_note = CASE WHEN $9 THEN $8 ELSE extra_note END
+      WHERE id = $10`,
+      [seatsRaw ? Math.max(1, Math.min(12, Number(seatsRaw))) : null, time ? time.padStart(5, "0") : null, place,
+        cost ?? null, cost !== undefined, extra ?? 0, extra !== undefined, extraNote ?? null, extraNote !== undefined, id]);
   }
   if (isAdmin) {
     const weight = Math.max(0, Math.min(10, Number(fd.get("weight")) || 0));
     const cancelled = !!fd.get("cancelled");
     const driverId = str(fd, "driverId") || null;
-    const costRaw = str(fd, "cost").replace(",", ".");
-    const cost = costRaw === "" ? null : Math.max(0, Math.min(999, Number(costRaw) || 0));
-    await q("UPDATE conduites_trips SET weight = $1, cancelled = $2, cost = $3, driver_membership_id = $4, driver_name = CASE WHEN $4::text IS NULL THEN driver_name ELSE NULL END WHERE id = $5",
-      [weight, cancelled, cost, driverId, id]);
+    await q("UPDATE conduites_trips SET weight = $1, cancelled = $2, driver_membership_id = $3, driver_name = CASE WHEN $3::text IS NULL THEN driver_name ELSE NULL END WHERE id = $4",
+      [weight, cancelled, driverId, id]);
   }
 
 

@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { requireGroup } from "@/lib/conduites/auth";
-import { equityStats, count, listSettlements, listMembers } from "@/lib/conduites/db";
-import { schoolYear, today, plural, fmtDate } from "@/lib/conduites/dates";
-import { computeBalances, settle, euros } from "@/lib/conduites/equity";
+import { equityStats, count, listSettlements, listAccountMembers, listAccountRows } from "@/lib/conduites/db";
+import { schoolYear, today, plural, fmtDate, DIRECTION_LABEL } from "@/lib/conduites/dates";
+import { computeAccounts, euros, signed, fromCents } from "@/lib/conduites/equity";
 import { recordSettlement, deleteSettlement } from "@/lib/conduites/actions";
 import { ActionForm, SubmitButton, Field, ConfirmSubmit } from "@/components/conduites/ui";
 import { Avatar } from "@/components/conduites/avatar";
-import { IconArrowRight } from "@/components/conduites/icons";
+import { IconArrowRight, IconCheck } from "@/components/conduites/icons";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Équité" };
@@ -25,14 +25,22 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
   const me = rows.find(r => r.id === membership.id);
   const delta = me ? me.points - avg : 0;
 
-  // Comptes
+  // ---- Comptes ----
   const cost = Number(group.cost_per_point) || 0;
-  const settlements = cost > 0 ? await listSettlements(group.id, sy.from, sy.to) : [];
-  const balances = computeBalances(rows, group.split, settlements);
-  const transfers = settle(balances);
-  const name = (id: string) => rows.find(r => r.id === id)?.last_name ?? "?";
-  const members = cost > 0 ? await listMembers(group.id) : [];
-  const myBalance = balances.find(b => b.id === membership.id)?.balance ?? 0;
+  const [accountRows, accountMembers, settlements] = cost > 0
+    ? await Promise.all([listAccountRows(group.id), listAccountMembers(group.id), listSettlements(group.id)])
+    : [[], [], []];
+  const acc = computeAccounts(accountRows, accountMembers, group.split, settlements);
+  const fam = (id: string) => acc.families.find(f => f.id === id);
+  const last = (id: string) => fam(id)?.last_name ?? "?";
+  const name = (id: string) => { const f = fam(id); return f ? f.last_name + (f.left ? " (partie)" : "") : "?"; };
+  const mine = fam(membership.id);
+  const myBalance = mine?.balance ?? 0;
+  const myDebts = acc.debts.filter(d => d.from === membership.id);
+  const myCredits = acc.debts.filter(d => d.to === membership.id);
+  const visibleFamilies = acc.families.filter(f => !f.left || Math.abs(f.balance) > 0.005 || f.drives > 0 || f.rides > 0);
+  const canRecord = (from: string) => isAdmin || from === membership.id;
+  const nonZero = acc.families.filter(f => Math.abs(f.balance) > 0.005).length;
 
   return (
     <div className="space-y-5">
@@ -42,7 +50,7 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
       </div>
 
       <div className="grid grid-cols-3 gap-3 animate-rise">
-        <Stat label="Points au total" value={total} />
+        <Stat label="Conduites au total" value={total} />
         <Stat label="Moyenne / famille" value={avg.toFixed(1)} />
         <Stat label="À pourvoir" value={open} tone={open > 0 ? "warn" : "good"} />
       </div>
@@ -51,8 +59,8 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
         <p className="rounded-[14px] bg-raised px-4 py-3 text-[14px] text-ink-2 animate-rise">
           {Math.abs(delta) < 0.5
             ? "Vous êtes dans la moyenne du groupe."
-            : delta > 0 ? `Vous avez ${delta.toFixed(1)} point${delta >= 2 ? "s" : ""} de plus que la moyenne — merci !`
-            : `Il vous manque ${(-delta).toFixed(1)} point${-delta >= 2 ? "s" : ""} pour rejoindre la moyenne.`}
+            : delta > 0 ? `Vous avez ${delta.toFixed(1)} conduite${delta >= 2 ? "s" : ""} de plus que la moyenne — merci !`
+            : `Il vous manque ${(-delta).toFixed(1)} conduite${-delta >= 2 ? "s" : ""} pour rejoindre la moyenne.`}
         </p>
       )}
 
@@ -85,55 +93,85 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
           <h2 className="h1 !text-[22px]">Comptes</h2>
           <p className="mt-1 text-[14px] text-ink-2">
             {cost > 0
-              ? <>Un trajet simple vaut <strong>{euros(cost)}</strong> par défaut (un admin peut ajuster le coût d'un trajet précis depuis sa fiche), frais répartis {group.split === "child" ? "au prorata des enfants" : "à parts égales entre familles"}. Chaque famille « avance » ce qu'elle conduit ; les virements ci-dessous remettent tout le monde à égalité.</>
-              : "Pour calculer qui doit combien à qui, il faut d'abord fixer le coût d'un trajet simple."}
+              ? <>Chaque trajet coûte <strong>{euros(cost)}</strong> par défaut (le conducteur peut indiquer le coût réel du jour et ses frais : parking, péage…). Ce coût est partagé {group.split === "child" ? "au prorata des enfants" : "à parts égales entre les familles"} réellement dans la voiture, famille du conducteur comprise. Le conducteur avance ; les autres lui remboursent leur part. Tout est calculé au centime, trajet par trajet, et vous pouvez régler vos comptes à tout moment.</>
+              : "Pour calculer qui doit combien à qui, il faut d'abord fixer le coût d'un trajet."}
           </p>
         </div>
 
         {cost <= 0 ? (
           <div className="card card-pad text-[14px] text-ink-2">
             {isAdmin
-              ? <>Indiquez le coût d'un trajet dans les <Link href={`/conduites/g/${slug}/admin`} className="font-medium text-accent">réglages du groupe</Link> (par exemple le carburant et le péage d'un aller simple, divisés par une voiture).</>
+              ? <>Indiquez le coût d'un trajet dans les <Link href={`/conduites/g/${slug}/admin`} className="font-medium text-accent">réglages du groupe</Link> (par exemple carburant et péage d'un trajet simple).</>
               : "Un administrateur du groupe doit indiquer le coût d'un trajet dans les réglages."}
           </div>
         ) : (
           <>
-            {me && (
-              <div className={`card card-pad flex items-center gap-4 ${myBalance > 0.005 ? "bg-good-soft/40" : myBalance < -0.005 ? "bg-warn-soft/40" : ""}`}>
-                <div className="min-w-0 flex-1">
-                  <div className="kicker">Votre solde</div>
-                  <div className={`mt-0.5 text-[26px] font-semibold tabular leading-tight ${myBalance > 0.005 ? "text-good" : myBalance < -0.005 ? "text-warn" : ""}`}>
-                    {myBalance > 0 ? "+" : ""}{euros(myBalance)}
-                  </div>
-                  <div className="mt-1 text-[13px] text-ink-2">
-                    {myBalance > 0.005 ? "On vous doit cette somme." : myBalance < -0.005 ? "Vous devez cette somme au groupe." : "Vous êtes à jour."}
+            {/* Ma situation */}
+            {mine && (
+              <div className={`card overflow-hidden ${myBalance > 0.005 ? "ring-1 ring-good/30" : myBalance < -0.005 ? "ring-1 ring-warn/30" : ""}`}>
+                <div className="card-pad flex items-center gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="kicker">Votre solde</div>
+                    <div className={`mt-0.5 text-[28px] font-semibold tabular leading-tight ${myBalance > 0.005 ? "text-good" : myBalance < -0.005 ? "text-warn" : ""}`}>{signed(myBalance)}</div>
+                    <div className="mt-1 text-[13px] text-ink-2">
+                      {myBalance > 0.005 ? "On vous doit cette somme." : myBalance < -0.005 ? "Vous devez cette somme." : "Vous êtes à jour."}
+                      {" "}Vous avez avancé {euros(mine.advanced)} en conduisant ({plural(mine.drives, "conduite")}) et consommé {euros(mine.consumed)} de trajets.
+                    </div>
                   </div>
                 </div>
+                {(myDebts.length > 0 || myCredits.length > 0) && (
+                  <ul className="divide-rows border-t border-line">
+                    {myDebts.map(d => (
+                      <li key={d.to} className="flex flex-wrap items-center gap-3 px-5 py-3 sm:px-6">
+                        <Avatar name={last(d.to)} size={26} />
+                        <span className="text-[14px]">Vous devez <strong className="tabular">{euros(d.amount)}</strong> à <span className="font-medium">{name(d.to)}</span></span>
+                        <ActionForm action={recordSettlement} className="ml-auto !space-y-0">
+                          <input type="hidden" name="slug" value={slug} /><input type="hidden" name="from" value={d.from} /><input type="hidden" name="to" value={d.to} /><input type="hidden" name="amount" value={d.amount} />
+                          <ConfirmSubmit size="sm" variant="primary" confirmLabel="Confirmer : j'ai payé"><IconCheck width={14} height={14} /> J'ai payé</ConfirmSubmit>
+                        </ActionForm>
+                      </li>
+                    ))}
+                    {myCredits.map(d => (
+                      <li key={d.from} className="flex flex-wrap items-center gap-3 px-5 py-3 sm:px-6">
+                        <Avatar name={last(d.from)} size={26} />
+                        <span className="text-[14px]"><span className="font-medium">{name(d.from)}</span> vous doit <strong className="tabular">{euros(d.amount)}</strong></span>
+                        {isAdmin && (
+                          <ActionForm action={recordSettlement} className="ml-auto !space-y-0">
+                            <input type="hidden" name="slug" value={slug} /><input type="hidden" name="from" value={d.from} /><input type="hidden" name="to" value={d.to} /><input type="hidden" name="amount" value={d.amount} />
+                            <ConfirmSubmit size="sm" variant="secondary" confirmLabel="Confirmer : reçu">Reçu</ConfirmSubmit>
+                          </ActionForm>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
 
+            {/* Qui doit quoi à qui */}
             <div className="card overflow-hidden">
-              <div className="card-pad pb-3"><h3 className="h2">Virements à faire</h3></div>
-              {transfers.length === 0 ? (
+              <div className="card-pad pb-3">
+                <h3 className="h2">Qui doit quoi à qui</h3>
+                <p className="mt-1 text-[13px] text-ink-2">Dettes exactes entre familles, d'après les trajets réellement partagés. Chacun peut solder les siennes quand il veut, sans attendre la fin de l'année.</p>
+              </div>
+              {acc.debts.length === 0 ? (
                 <p className="border-t border-line px-5 py-6 text-center text-[14px] text-good sm:px-6">Les comptes sont équilibrés.</p>
               ) : (
                 <ul className="divide-rows border-t border-line">
-                  {transfers.map((t, i) => {
-                    const meInvolved = t.from === membership.id || t.to === membership.id;
-                    const canRecord = isAdmin || t.from === membership.id;
+                  {acc.debts.map(d => {
+                    const meInvolved = d.from === membership.id || d.to === membership.id;
                     return (
-                      <li key={i} className={`flex flex-wrap items-center gap-3 px-5 py-3.5 sm:px-6 ${meInvolved ? "bg-accent-soft/30" : ""}`}>
-                        <span className="inline-flex items-center gap-2 text-[15px]">
-                          <Avatar name={name(t.from)} size={26} /> <span className="font-medium">{name(t.from)}</span>
+                      <li key={`${d.from}|${d.to}`} className={`flex flex-wrap items-center gap-3 px-5 py-3 sm:px-6 ${meInvolved ? "bg-accent-soft/30" : ""}`}>
+                        <span className="inline-flex items-center gap-2 text-[14px]">
+                          <Avatar name={last(d.from)} size={24} /> <span className="font-medium">{name(d.from)}</span>
                           <IconArrowRight width={16} height={16} className="text-ink-3" />
-                          <Avatar name={name(t.to)} size={26} /> <span className="font-medium">{name(t.to)}</span>
+                          <Avatar name={last(d.to)} size={24} /> <span className="font-medium">{name(d.to)}</span>
                         </span>
-                        <span className="ml-auto text-[17px] font-semibold tabular">{euros(t.amount)}</span>
-                        {canRecord && (
+                        <span className="ml-auto text-[16px] font-semibold tabular">{euros(d.amount)}</span>
+                        {canRecord(d.from) && (
                           <ActionForm action={recordSettlement} className="!space-y-0">
-                            <input type="hidden" name="slug" value={slug} /><input type="hidden" name="from" value={t.from} />
-                            <input type="hidden" name="to" value={t.to} /><input type="hidden" name="amount" value={t.amount} />
-                            <ConfirmSubmit variant="secondary" confirmLabel="Confirmer le règlement">Réglé</ConfirmSubmit>
+                            <input type="hidden" name="slug" value={slug} /><input type="hidden" name="from" value={d.from} /><input type="hidden" name="to" value={d.to} /><input type="hidden" name="amount" value={d.amount} />
+                            <ConfirmSubmit variant="secondary" size="sm" confirmLabel="Confirmer le règlement">Réglé</ConfirmSubmit>
                           </ActionForm>
                         )}
                       </li>
@@ -141,37 +179,92 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
                   })}
                 </ul>
               )}
+              {acc.simplified.length > 0 && acc.simplified.length < acc.debts.length && (
+                <details className="border-t border-line">
+                  <summary className="cursor-pointer list-none px-5 py-3 text-[13px] font-medium text-accent sm:px-6 [&::-webkit-details-marker]:hidden">
+                    Version simplifiée : {plural(acc.simplified.length, "virement")} au lieu de {acc.debts.length}
+                  </summary>
+                  <p className="px-5 pb-2 text-[12px] text-ink-3 sm:px-6">Même résultat pour tout le monde, en moins de virements. À utiliser si tout le groupe règle en même temps.</p>
+                  <ul className="divide-rows border-t border-line">
+                    {acc.simplified.map(t => (
+                      <li key={`${t.from}|${t.to}`} className="flex flex-wrap items-center gap-3 px-5 py-2.5 text-[14px] sm:px-6">
+                        <span className="font-medium">{name(t.from)}</span><IconArrowRight width={14} height={14} className="text-ink-3" /><span className="font-medium">{name(t.to)}</span>
+                        <span className="ml-auto font-semibold tabular">{euros(t.amount)}</span>
+                        {canRecord(t.from) && (
+                          <ActionForm action={recordSettlement} className="!space-y-0">
+                            <input type="hidden" name="slug" value={slug} /><input type="hidden" name="from" value={t.from} /><input type="hidden" name="to" value={t.to} /><input type="hidden" name="amount" value={t.amount} />
+                            <ConfirmSubmit variant="ghost" size="sm" confirmLabel="Confirmer">Réglé</ConfirmSubmit>
+                          </ActionForm>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              )}
             </div>
 
+            {/* Détail par famille */}
             <div className="card overflow-hidden">
               <div className="card-pad pb-3">
                 <h3 className="h2">Détail par famille</h3>
-                <p className="mt-1 text-[13px] text-ink-2">Avancé = somme des conduites (points × coût du jour). Part = ce que chacun doit au total. Solde positif : on vous doit ; négatif : vous devez.</p>
+                <p className="mt-1 text-[13px] text-ink-2">Avancé = coût des trajets conduits. Consommé = parts des trajets où ses enfants étaient dans la voiture. Solde positif : on lui doit ; négatif : elle doit.{nonZero === 0 && " Tout le monde est à jour."}</p>
               </div>
               <div className="overflow-x-auto border-t border-line">
-                <table className="w-full min-w-[520px] text-[14px]">
+                <table className="w-full text-[14px]">
                   <thead className="text-left text-[11px] uppercase tracking-[0.08em] text-ink-3">
-                    <tr><th className="px-5 py-2 font-semibold sm:px-6">Famille</th><th className="px-3 py-2 text-right font-semibold">Avancé</th><th className="px-3 py-2 text-right font-semibold">Part</th><th className="px-3 py-2 text-right font-semibold">Réglé</th><th className="px-5 py-2 text-right font-semibold sm:px-6">Solde</th></tr>
+                    <tr><th className="px-5 py-2 font-semibold sm:px-6">Famille</th><th className="px-3 py-2 text-right font-semibold">Avancé</th><th className="px-3 py-2 text-right font-semibold">Consommé</th><th className="hidden px-3 py-2 text-right font-semibold sm:table-cell">Réglé</th><th className="px-5 py-2 text-right font-semibold sm:px-6">Solde</th></tr>
                   </thead>
                   <tbody className="divide-rows">
-                    {balances.map(b => (
-                      <tr key={b.id} className={b.id === membership.id ? "bg-accent-soft/30 font-medium" : ""}>
-                        <td className="px-5 py-2.5 sm:px-6"><span className="inline-flex items-center gap-2"><Avatar name={b.last_name} size={22} />{b.last_name}</span></td>
-                        <td className="px-3 py-2.5 text-right tabular">{euros(b.paid)}</td>
-                        <td className="px-3 py-2.5 text-right tabular">{euros(b.share)}</td>
-                        <td className="px-3 py-2.5 text-right tabular text-ink-2">{b.settled ? (b.settled > 0 ? "+" : "") + euros(b.settled) : "—"}</td>
-                        <td className={`px-5 py-2.5 text-right tabular font-semibold sm:px-6 ${b.balance > 0.005 ? "text-good" : b.balance < -0.005 ? "text-warn" : ""}`}>{b.balance > 0 ? "+" : ""}{euros(b.balance)}</td>
-                      </tr>
-                    ))}
+                    {visibleFamilies.map(f => {
+                      const net = f.settledOut - f.settledIn;
+                      return (
+                        <tr key={f.id} className={f.id === membership.id ? "bg-accent-soft/30 font-medium" : f.left ? "text-ink-2" : ""}>
+                          <td className="px-5 py-2.5 sm:px-6"><span className="inline-flex items-center gap-2"><Avatar name={f.last_name} size={22} />{f.last_name}{f.left && <span className="rounded-[8px] bg-raised px-1.5 py-0.5 text-[11px] font-normal text-ink-3">partie</span>}</span>
+                            <span className="block pl-[30px] text-[12px] font-normal text-ink-3">{plural(f.drives, "conduite")} · {plural(f.rides, "trajet en passager", "trajets en passager")}</span></td>
+                          <td className="px-3 py-2.5 text-right tabular">{euros(f.advanced)}</td>
+                          <td className="px-3 py-2.5 text-right tabular">{euros(f.consumed)}</td>
+                          <td className="hidden px-3 py-2.5 text-right tabular text-ink-2 sm:table-cell">{Math.abs(net) > 0.005 ? signed(net) : "—"}</td>
+                          <td className={`px-5 py-2.5 text-right tabular font-semibold sm:px-6 ${f.balance > 0.005 ? "text-good" : f.balance < -0.005 ? "text-warn" : ""}`}>{signed(f.balance)}</td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
             </div>
 
+            {/* Trajet par trajet */}
+            <details className="card overflow-hidden">
+              <summary className="card-pad cursor-pointer list-none [&::-webkit-details-marker]:hidden">
+                <span className="h2">Trajet par trajet</span> <span className="ml-1 text-[13px] text-ink-3">{acc.trips.length} · {euros(fromCents(acc.totalCents))}</span>
+                <span className="block text-[13px] text-ink-2">Le détail de chaque partage, pour vérifier. Un trajet compte dès que sa date est passée (ou qu'il est validé).</span>
+              </summary>
+              {acc.trips.length === 0 ? (
+                <p className="border-t border-line px-5 py-5 text-[14px] text-ink-2 sm:px-6">Aucun trajet passé pour l'instant.</p>
+              ) : (
+                <ul className="divide-rows border-t border-line">
+                  {[...acc.trips].reverse().map(t => (
+                    <li key={t.id} className="px-5 py-3 text-[14px] sm:px-6">
+                      <div className="flex flex-wrap items-baseline gap-x-3">
+                        <Link href={`/conduites/g/${slug}/trajet/${t.id}`} className="font-medium hover:text-accent">{fmtDate(t.date, { weekday: "short", day: "numeric", month: "short" })} · {DIRECTION_LABEL[t.direction]}</Link>
+                        <span className="text-ink-2">{name(t.driver)} conduit</span>
+                        <span className="ml-auto font-semibold tabular">{euros(fromCents(t.totalCents))}</span>
+                      </div>
+                      <div className="mt-0.5 text-[13px] text-ink-2">
+                        {t.shares.length === 0 ? "Aucun enfant inscrit : rien à partager." : t.shares.map(s => `${name(s.membership)}${group.split === "child" ? ` (${s.children})` : ""} ${euros(fromCents(s.cents))}${s.membership === t.driver ? " (sa part)" : ""}`).join(" · ")}
+                        {t.waiting > 0 && <span className="text-warn"> · {plural(t.waiting, "enfant")} en attente non compté{t.waiting > 1 ? "s" : ""}</span>}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </details>
+
+            {/* Règlements */}
             <details className="card overflow-hidden">
               <summary className="card-pad cursor-pointer list-none [&::-webkit-details-marker]:hidden">
                 <span className="h2">Règlements enregistrés</span> <span className="ml-1 text-[13px] text-ink-3">{settlements.length}</span>
-                <span className="block text-[13px] text-ink-2">Enregistrez ici un virement fait en dehors de la liste ci-dessus.</span>
+                <span className="block text-[13px] text-ink-2">Historique des remboursements, et saisie d'un montant libre (acompte, arrondi…).</span>
               </summary>
               <div className="border-t border-line">
                 {settlements.length > 0 && (
@@ -193,12 +286,12 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
                   <div className="grid gap-3 sm:grid-cols-[1fr_1fr_120px_auto]">
                     <Field label="Qui a payé">
                       <select name="from" defaultValue={membership.id} className="field">
-                        {members.filter(m => isAdmin || m.id === membership.id).map(m => <option key={m.id} value={m.id}>{m.last_name}</option>)}
+                        {accountMembers.filter(m => (isAdmin || m.id === membership.id) && !m.left_at).map(m => <option key={m.id} value={m.id}>{m.last_name}</option>)}
                       </select>
                     </Field>
                     <Field label="À qui">
                       <select name="to" className="field">
-                        {members.filter(m => m.id !== membership.id || isAdmin).map(m => <option key={m.id} value={m.id}>{m.last_name}</option>)}
+                        {accountMembers.filter(m => m.id !== membership.id || isAdmin).map(m => <option key={m.id} value={m.id}>{m.last_name}{m.left_at ? " (partie)" : ""}</option>)}
                       </select>
                     </Field>
                     <Field label="Montant (€)"><input name="amount" type="number" inputMode="decimal" min={0.01} step="0.01" required className="field" /></Field>
@@ -213,7 +306,7 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
       </section>
 
       <p className="px-1 text-[12px] leading-relaxed text-ink-3">
-        Chaque conduite vaut 1 point par défaut ; un administrateur peut ajuster le poids d'un trajet (par exemple 3 pour un aller-retour complet). Les conduites importées de l'ancien tableau comptent dès que la famille a rejoint le groupe avec le même nom.
+        L'équité compte les conduites (1 point par défaut, ajustable par un admin) ; les comptes, eux, suivent l'argent réellement avancé. Une famille qui quitte le groupe garde son historique : ses dettes et créances restent visibles jusqu'à leur règlement.
       </p>
     </div>
   );

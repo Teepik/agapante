@@ -8,7 +8,7 @@ import { ActionForm, SubmitButton, Field, ConfirmSubmit } from "@/components/con
 import { buttonCls } from "@/components/conduites/styles";
 import { Avatar } from "@/components/conduites/avatar";
 import { IconArrowLeft, IconAlert, IconCheck } from "@/components/conduites/icons";
-import { euros } from "@/lib/conduites/equity";
+import { euros, splitCents, fromCents } from "@/lib/conduites/equity";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +31,14 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
   const overflow = waiting.length > 0;
   const past = trip.date < today();
   const canConfirm = !!trip.driver_membership_id && (mine || isAdmin) && trip.date <= today() && !trip.cancelled;
+  const defaultCost = Number(group.cost_per_point) || 0;
+  const tripCost = (trip.cost == null ? defaultCost : Number(trip.cost)) + (Number(trip.extra) || 0);
+  const counts = (trip.date < today() || trip.done) && !trip.cancelled && !!trip.driver_membership_id;
+  // Partage du coût entre les familles réellement dans la voiture (même règle que la page Comptes).
+  const famMap = new Map<string, { last: string; n: number }>();
+  for (const p of confirmed) { const f = famMap.get(p.membership_id); if (f) f.n++; else famMap.set(p.membership_id, { last: p.last_name, n: 1 }); }
+  const fams = [...famMap.entries()];
+  const shares = splitCents(Math.round(tripCost * 100), fams.map(([, f]) => (group.split === "child" ? f.n : 1)));
   const meta = [trip.departure_time ? `Départ ${trip.departure_time.replace(":", "h")}` : null, trip.departure_place].filter(Boolean).join(" · ");
 
   // Enfants que cette famille peut inscrire ou retirer (tous pour un admin), groupés par famille.
@@ -101,9 +109,20 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
             <input name="seats" type="number" inputMode="numeric" min={1} max={12} defaultValue={trip.seats ?? ""} placeholder={String(trip.driver_seats ?? user.seats)} className="field" />
           </Field>
         )}
+        {(mine || isAdmin) && defaultCost > 0 && (
+          <div className="grid gap-4 sm:grid-cols-[130px_130px_1fr]">
+            <Field label="Coût du trajet (€)" hint={`Vide = ${euros(defaultCost)} par défaut`}>
+              <input name="cost" type="number" inputMode="decimal" min={0} step="0.01" defaultValue={trip.cost == null ? "" : Number(trip.cost)} placeholder={String(defaultCost)} className="field" />
+            </Field>
+            <Field label="Frais en plus (€)" hint="Parking, péage…">
+              <input name="extra" type="number" inputMode="decimal" min={0} step="0.01" defaultValue={Number(trip.extra) ? Number(trip.extra) : ""} placeholder="0" className="field" />
+            </Field>
+            <Field label="Précision sur les frais"><input name="extraNote" defaultValue={trip.extra_note ?? ""} className="field" placeholder="Parking gare 4 €, péage 6,50 €" /></Field>
+          </div>
+        )}
 
         {isAdmin && (
-          <div className="grid gap-4 rounded-[14px] bg-raised p-4 ring-1 ring-line sm:grid-cols-[1fr_110px_130px_auto]">
+          <div className="grid gap-4 rounded-[14px] bg-raised p-4 ring-1 ring-line sm:grid-cols-[1fr_110px_auto]">
             <Field label="Conducteur">
               <select name="driverId" defaultValue={trip.driver_membership_id ?? ""} className="field">
                 <option value="">{trip.driver_name ? `${trip.driver_name} (importé, sans compte)` : "Personne"}</option>
@@ -112,9 +131,6 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
             </Field>
             <Field label="Points d'équité">
               <input name="weight" type="number" inputMode="numeric" min={0} max={10} defaultValue={trip.weight} className="field" />
-            </Field>
-            <Field label="Coût ce jour (€)" hint={`Vide = ${euros(Number(group.cost_per_point) || 0)} par défaut`}>
-              <input name="cost" type="number" inputMode="decimal" min={0} step="0.5" defaultValue={trip.cost == null ? "" : Number(trip.cost)} className="field" />
             </Field>
             <label className="flex items-center gap-2 self-end pb-2.5 text-[14px]">
               <input type="checkbox" name="cancelled" defaultChecked={!!trip.cancelled} /> Annulé
@@ -179,6 +195,35 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
           <p className="border-t border-line px-5 py-4 text-[13px] text-ink-2 sm:px-6">Ajoutez vos enfants dans <Link href={`/conduites/g/${slug}/famille`} className={buttonCls("ghost", "sm", "!inline !h-auto !px-1 text-accent")}>Famille</Link> pour les inscrire.</p>
         )}
       </section>
+
+      {/* Frais */}
+      {defaultCost > 0 && driverLabel && !trip.cancelled && (
+        <section className="card animate-rise">
+          <div className="card-pad pb-3">
+            <div className="flex items-baseline justify-between gap-3">
+              <h2 className="h2">Frais{counts ? "" : " prévus"}</h2>
+              <span className="text-[15px] font-semibold tabular">{euros(tripCost)}</span>
+            </div>
+            <p className="mt-1 text-[13px] text-ink-2">
+              {trip.cost != null || Number(trip.extra) ? <>{euros(trip.cost == null ? defaultCost : Number(trip.cost))} de trajet{Number(trip.extra) ? <> + {euros(Number(trip.extra))} de frais{trip.extra_note ? ` (${trip.extra_note})` : ""}</> : null}. </> : null}
+              {fams.length === 0 ? "Aucun enfant dans la voiture : rien à partager." : <>Partagé {group.split === "child" ? "au prorata des enfants" : "à parts égales"} entre {plural(fams.length, "famille")}{counts ? "" : ", d'après les inscrits actuels"}. {trip.driver_membership_id ? `Chaque famille rembourse sa part à ${mine ? "vous" : driverLabel}.` : "Ce conducteur n'a pas de compte : ce trajet n'entre pas dans les comptes."}</>}
+            </p>
+          </div>
+          {fams.length > 0 && (
+            <ul className="divide-rows border-t border-line">
+              {fams.map(([mid, f], i) => (
+                <li key={mid} className={`flex items-center gap-3 px-5 py-2.5 text-[14px] sm:px-6 ${mid === membership.id ? "bg-accent-soft/30" : ""}`}>
+                  <Avatar name={f.last} size={24} />
+                  <span className="min-w-0 flex-1 truncate">{f.last}{mid === membership.id && <span className="ml-1.5 text-[12px] text-accent">vous</span>} <span className="text-[13px] text-ink-2">· {plural(f.n, "enfant")}</span></span>
+                  <span className="tabular font-medium">{euros(fromCents(shares[i]))}</span>
+                  <span className="w-16 text-right text-[12px] text-ink-3">{mid === trip.driver_membership_id ? "sa part" : "à rembourser"}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {counts && <p className="border-t border-line px-5 py-2.5 text-[12px] text-ink-3 sm:px-6">Ce trajet est compté dans les <Link href={`/conduites/g/${slug}/equite#comptes`} className="font-medium text-accent">comptes du groupe</Link>.</p>}
+        </section>
+      )}
 
       {isAdmin && (
         <form action={deleteTrip} className="flex justify-end">

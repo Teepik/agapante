@@ -53,7 +53,7 @@ export async function runReminders(): Promise<{ driver: number; open: number }> 
       AND NOT EXISTS (SELECT 1 FROM conduites_notifications n WHERE n.trip_id = t.id AND n.kind = 'open_j3')`, [today(), addDays(today(), 3)]);
   for (const r of opens) {
     const members = await q<{ email: string; first_name: string }>(
-      "SELECT u.email, u.first_name FROM conduites_memberships m JOIN conduites_users u ON u.id = m.user_id WHERE m.group_id = $1 AND u.notify", [r.group_id]);
+      "SELECT u.email, u.first_name FROM conduites_memberships m JOIN conduites_users u ON u.id = m.user_id WHERE m.group_id = $1 AND m.left_at IS NULL AND u.notify", [r.group_id]);
     if (members.length === 0) { await mark(r.id, "open_j3"); continue; }
     const url = `${base}/conduites/g/${r.group_slug}/trajet/${r.id}`;
     const day = fmtDate(r.date, { weekday: "long", day: "numeric" }).toLowerCase();

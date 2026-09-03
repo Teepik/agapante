@@ -30,7 +30,7 @@ export async function buildIcal(user: User, appUrl: string): Promise<string> {
     JOIN conduites_trips t ON t.group_id = g.id
     LEFT JOIN conduites_memberships dm ON dm.id = t.driver_membership_id
     LEFT JOIN conduites_users du ON du.id = dm.user_id
-    WHERE m.user_id = $1 AND t.date >= CURRENT_DATE - 60
+    WHERE m.user_id = $1 AND m.left_at IS NULL AND t.date >= CURRENT_DATE - 60
     ORDER BY t.date`, [user.id]);
 
   const stamp = new Date().toISOString().replace(/[-:]/g, "").slice(0, 15) + "Z";

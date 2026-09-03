@@ -150,10 +150,10 @@ export default async function AdminPage({ params, searchParams }: { params: Prom
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Nom"><input name="name" defaultValue={group.name} required className="field" /></Field>
           <Field label="Destination"><input name="destination" defaultValue={group.destination ?? ""} className="field" placeholder="École, ville…" /></Field>
-          <Field label="Coût par défaut d'un trajet simple (€)" hint="Un point d'équité = un trajet simple. Modifiable trajet par trajet depuis sa fiche si le prix change ; 0 pour ne pas gérer d'argent.">
+          <Field label="Coût par défaut d'un trajet (€)" hint="Carburant et péage habituels d'un trajet simple. Le conducteur peut indiquer le coût réel et ses frais (parking…) sur chaque trajet ; 0 pour ne pas gérer d'argent.">
             <input name="cost" type="number" inputMode="decimal" min={0} step="0.5" defaultValue={Number(group.cost_per_point) || ""} placeholder="15" className="field" />
           </Field>
-          <Field label="Répartition des frais" hint="Ce que chaque famille doit au total.">
+          <Field label="Répartition des frais" hint="Entre les familles réellement dans la voiture, conducteur compris.">
             <select name="split" defaultValue={group.split} className="field">
               <option value="family">À parts égales entre familles</option>
               <option value="child">Au prorata du nombre d'enfants</option>
@@ -168,7 +168,7 @@ export default async function AdminPage({ params, searchParams }: { params: Prom
           <summary className="cursor-pointer list-none text-[13px] text-ink-3 hover:text-bad [&::-webkit-details-marker]:hidden">Supprimer le groupe…</summary>
           <form action={deleteGroup} className="card card-pad mt-3 space-y-3">
             <input type="hidden" name="slug" value={slug} />
-            <p className="text-[14px] text-ink-2">Toutes les données du groupe (trajets, absences) seront effacées. Les comptes des familles restent. Tapez <strong>{group.name}</strong> pour confirmer.</p>
+            <p className="text-[14px] text-ink-2">Toutes les données du groupe (trajets, passagers, comptes) seront effacées. Les comptes des familles restent. Tapez <strong>{group.name}</strong> pour confirmer.</p>
             <div className="flex gap-2"><input name="confirm" className="field" placeholder={group.name} /><SubmitButton variant="danger">Supprimer</SubmitButton></div>
           </form>
         </details>
