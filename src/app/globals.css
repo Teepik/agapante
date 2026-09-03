@@ -463,3 +463,79 @@
     animation: none;
   }
 }
+
+/* =====================================================================
+   Conduites — application autonome sous /conduites (thème clair, sombre auto)
+   ===================================================================== */
+@theme inline {
+  --color-canvas: var(--cd-canvas);
+  --color-surface: var(--cd-surface);
+  --color-raised: var(--cd-raised);
+  --color-line: var(--cd-line);
+  --color-ink: var(--cd-ink);
+  --color-ink-2: var(--cd-ink-2);
+  --color-ink-3: var(--cd-ink-3);
+  --color-accent: var(--cd-accent);
+  --color-accent-hover: var(--cd-accent-hover);
+  --color-accent-soft: var(--cd-accent-soft);
+  --color-accent-ink: var(--cd-accent-ink);
+  --color-warn: var(--cd-warn);
+  --color-warn-soft: var(--cd-warn-soft);
+  --color-good: var(--cd-good);
+  --color-good-soft: var(--cd-good-soft);
+  --color-bad: var(--cd-bad);
+  --color-bad-soft: var(--cd-bad-soft);
+  --shadow-card: 0 1px 2px rgb(16 24 40 / 0.04), 0 1px 3px rgb(16 24 40 / 0.06);
+  --shadow-pop: 0 8px 24px rgb(16 24 40 / 0.12), 0 2px 6px rgb(16 24 40 / 0.06);
+  --animate-rise: cd-rise .28s cubic-bezier(.2,.8,.2,1) both;
+  --animate-fade: cd-fade .2s ease-out both;
+  @keyframes cd-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @keyframes cd-fade { from { opacity: 0; } to { opacity: 1; } }
+}
+
+.conduites {
+  --cd-canvas: #f7f6f3; --cd-surface: #ffffff; --cd-raised: #faf9f7; --cd-line: #e6e4df;
+  --cd-ink: #181a1f; --cd-ink-2: #5c626e; --cd-ink-3: #8f95a0;
+  --cd-accent: #1754d6; --cd-accent-hover: #1244b0; --cd-accent-soft: #e8f0ff; --cd-accent-ink: #0f3482;
+  --cd-warn: #b45309; --cd-warn-soft: #fef3c7; --cd-good: #15803d; --cd-good-soft: #dcfce7; --cd-bad: #b91c1c; --cd-bad-soft: #fee2e2;
+  color-scheme: light;
+  background: var(--cd-canvas);
+  color: var(--cd-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: "cv11", "ss01", "tnum";
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@media (prefers-color-scheme: dark) {
+  .conduites {
+    --cd-canvas: #111216; --cd-surface: #1a1c21; --cd-raised: #212329; --cd-line: #2d3038;
+    --cd-ink: #ecedf0; --cd-ink-2: #a8adb8; --cd-ink-3: #787e8a;
+    --cd-accent: #608fff; --cd-accent-hover: #80a6ff; --cd-accent-soft: #1e2b4a; --cd-accent-ink: #bed0ff;
+    --cd-warn: #fbbf24; --cd-warn-soft: #422e0a; --cd-good: #4ade80; --cd-good-soft: #0c341e; --cd-bad: #f87171; --cd-bad-soft: #461414;
+    color-scheme: dark;
+  }
+}
+.conduites * { border-color: var(--cd-line); }
+.conduites ::selection { background: var(--cd-accent-soft); color: var(--cd-accent-ink); }
+.conduites :focus-visible { outline: none; box-shadow: 0 0 0 2px var(--cd-canvas), 0 0 0 4px color-mix(in oklab, var(--cd-accent) 60%, transparent); border-radius: 8px; }
+.conduites h1, .conduites h2, .conduites h3 { text-wrap: balance; }
+
+@utility press { transition-property: transform; &:active { transform: scale(0.98); } }
+@utility tabular { font-variant-numeric: tabular-nums; }
+
+@layer components {
+  .conduites .card { @apply bg-surface rounded-[20px] shadow-card ring-1 ring-line; }
+  .conduites .card-pad { @apply p-5 sm:p-6; }
+  .conduites .field {
+    @apply w-full rounded-[14px] bg-surface px-3.5 py-2.5 text-[15px] text-ink ring-1 ring-line placeholder:text-ink-3 transition;
+    @apply focus:ring-2 focus:ring-accent focus:outline-none disabled:opacity-60;
+    border: 0;
+  }
+  .conduites .field-label { @apply block text-[13px] font-medium text-ink-2 mb-1.5; }
+  .conduites .field-hint { @apply mt-1.5 text-xs text-ink-3; }
+  .conduites select.field { @apply appearance-none bg-no-repeat pr-9; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%238f95a0' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E"); background-position: right .75rem center; }
+  .conduites input[type="checkbox"] { @apply h-[18px] w-[18px] rounded-[6px]; accent-color: var(--cd-accent); }
+  .conduites .h1 { @apply text-[26px] sm:text-[30px] font-semibold tracking-[-0.02em] leading-tight; }
+  .conduites .h2 { @apply text-[17px] font-semibold tracking-[-0.01em]; }
+  .conduites .kicker { @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-3; }
+  .conduites .divide-rows > * + * { @apply border-t border-line; }
+}
