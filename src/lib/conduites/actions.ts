@@ -223,14 +223,20 @@ export async function updateTrip(_: ActionState, fd: FormData): Promise<ActionSt
 
   if (isDriver || isAdmin) {
     const seatsRaw = str(fd, "seats");
-    await q("UPDATE conduites_trips SET seats = $1 WHERE id = $2", [seatsRaw ? Math.max(1, Math.min(12, Number(seatsRaw))) : null, id]);
+    const time = str(fd, "departureTime");
+    const place = str(fd, "departurePlace") || null;
+    if (time && !/^\d{1,2}:\d{2}$/.test(time)) return { error: "Heure invalide (ex. 13:45)." };
+    await q("UPDATE conduites_trips SET seats = $1, departure_time = $2, departure_place = $3 WHERE id = $4",
+      [seatsRaw ? Math.max(1, Math.min(12, Number(seatsRaw))) : null, time ? time.padStart(5, "0") : null, place, id]);
   }
   if (isAdmin) {
     const weight = Math.max(0, Math.min(10, Number(fd.get("weight")) || 0));
     const cancelled = !!fd.get("cancelled");
     const driverId = str(fd, "driverId") || null;
-    await q("UPDATE conduites_trips SET weight = $1, cancelled = $2, driver_membership_id = $3, driver_name = CASE WHEN $3::text IS NULL THEN driver_name ELSE NULL END WHERE id = $4",
-      [weight, cancelled, driverId, id]);
+    const costRaw = str(fd, "cost").replace(",", ".");
+    const cost = costRaw === "" ? null : Math.max(0, Math.min(999, Number(costRaw) || 0));
+    await q("UPDATE conduites_trips SET weight = $1, cancelled = $2, cost = $3, driver_membership_id = $4, driver_name = CASE WHEN $4::text IS NULL THEN driver_name ELSE NULL END WHERE id = $5",
+      [weight, cancelled, cost, driverId, id]);
   }
 
   const editable = (isAdmin
@@ -266,7 +272,7 @@ export async function generateTrips(_: ActionState, fd: FormData): Promise<Actio
 }
 
 export async function addTrip(_: ActionState, fd: FormData): Promise<ActionState> {
-  const { group } = await requireGroupAdmin(str(fd, "slug"));
+  const { group } = await requireGroup(str(fd, "slug"));
   const date = str(fd, "date");
   const direction = str(fd, "direction") === "aller" ? "aller" : "retour";
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Date invalide." };
@@ -291,6 +297,16 @@ export async function resetMemberPassword(_: ActionState, fd: FormData): Promise
   if (!m) return { error: "Membre introuvable." };
   await q("UPDATE conduites_users SET password_hash = $1 WHERE id = $2", [await hashPassword(next), m.user_id]);
   return { ok: "Mot de passe réinitialisé." };
+}
+
+/** Le conducteur (ou un admin) confirme que le trajet s'est bien passé et que les passagers sont arrivés. */
+export async function setTripDone(fd: FormData) {
+  const { group, membership, isAdmin } = await requireGroup(str(fd, "slug"));
+  const id = str(fd, "id");
+  const trip = await tripOf(group.id, id);
+  if (!trip || (trip.driver_membership_id !== membership.id && !isAdmin)) return;
+  await q("UPDATE conduites_trips SET done = $1 WHERE id = $2", [fd.get("done") === "1", id]);
+  revalidateGroup(group.slug);
 }
 
 // ============ Comptes ============

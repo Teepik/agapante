@@ -91,6 +91,10 @@ const SCHEMA = [
     amount NUMERIC(10,2) NOT NULL, note TEXT, created_at TIMESTAMPTZ NOT NULL DEFAULT now())`,
   `ALTER TABLE conduites_groups ADD COLUMN IF NOT EXISTS cost_per_point NUMERIC(10,2) NOT NULL DEFAULT 0`,
   `ALTER TABLE conduites_groups ADD COLUMN IF NOT EXISTS split TEXT NOT NULL DEFAULT 'family'`,
+  `ALTER TABLE conduites_trips ADD COLUMN IF NOT EXISTS departure_time TEXT`,
+  `ALTER TABLE conduites_trips ADD COLUMN IF NOT EXISTS departure_place TEXT`,
+  `ALTER TABLE conduites_trips ADD COLUMN IF NOT EXISTS done BOOLEAN NOT NULL DEFAULT FALSE`,
+  `ALTER TABLE conduites_trips ADD COLUMN IF NOT EXISTS cost NUMERIC(10,2)`,
   `CREATE INDEX IF NOT EXISTS conduites_trips_group_date ON conduites_trips(group_id, date)`,
   `CREATE INDEX IF NOT EXISTS conduites_memberships_user ON conduites_memberships(user_id)`,
 ];
@@ -147,6 +151,7 @@ export type Child = { id: string; first_name: string; membership_id: string; tra
 export type Trip = {
   id: string; group_id: string; date: string; direction: "aller" | "retour"; driver_membership_id: string | null; driver_name: string | null;
   seats: number | null; weight: number; comment: string | null; cancelled: boolean;
+  departure_time: string | null; departure_place: string | null; done: boolean; cost: string | number | null;
 };
 export type TripRow = Trip & { driver_last: string | null; driver_first: string | null; driver_seats: number | null; absent_count: number; eligible: number };
 
@@ -236,10 +241,11 @@ export const unlinkedDrivers = (groupId: string) => q<{ driver_name: string; n: 
   "SELECT driver_name, COUNT(*)::int AS n FROM conduites_trips WHERE group_id = $1 AND driver_membership_id IS NULL AND driver_name IS NOT NULL GROUP BY driver_name ORDER BY driver_name", [groupId]);
 
 export function equityStats(groupId: string, from: string, to: string) {
-  return q<{ id: string; last_name: string; first_name: string; trips: number; points: number; children: number }>(`
+  return q<{ id: string; last_name: string; first_name: string; trips: number; points: number; paid: number; children: number }>(`
     SELECT m.id, u.last_name, u.first_name, COUNT(t.id)::int AS trips, COALESCE(SUM(t.weight),0)::int AS points,
+      COALESCE(SUM(t.weight * COALESCE(t.cost, g.cost_per_point)), 0)::float AS paid,
       (SELECT COUNT(*)::int FROM conduites_children c WHERE c.membership_id = m.id) AS children
-    FROM conduites_memberships m JOIN conduites_users u ON u.id = m.user_id
+    FROM conduites_memberships m JOIN conduites_users u ON u.id = m.user_id JOIN conduites_groups g ON g.id = m.group_id
     LEFT JOIN conduites_trips t ON t.driver_membership_id = m.id AND NOT t.cancelled AND t.date >= $1 AND t.date <= $2
     WHERE m.group_id = $3
     GROUP BY m.id, u.last_name, u.first_name ORDER BY points DESC, u.last_name`, [from, to, groupId]);

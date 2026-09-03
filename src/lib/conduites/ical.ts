@@ -2,7 +2,7 @@ import { q, type User } from "./db";
 import { DIRECTION_LABEL, addDays } from "./dates";
 
 type Row = {
-  id: string; date: string; direction: "aller" | "retour"; comment: string | null; cancelled: boolean; weight: number;
+  id: string; date: string; direction: "aller" | "retour"; comment: string | null; cancelled: boolean; weight: number; departure_time: string | null; departure_place: string | null; done: boolean;
   group_name: string; group_slug: string; driver_last: string | null; is_mine: boolean; eligible: number; absent_count: number;
 };
 
@@ -20,7 +20,7 @@ const fold = (line: string) => {
 /** Flux iCal d'une famille : tous les trajets de ses groupes, alerte la veille quand elle conduit. */
 export async function buildIcal(user: User, appUrl: string): Promise<string> {
   const rows = await q<Row>(`
-    SELECT t.id, to_char(t.date, 'YYYY-MM-DD') AS date, t.direction, t.comment, t.cancelled, t.weight, g.name AS group_name, g.slug AS group_slug,
+    SELECT t.id, to_char(t.date, 'YYYY-MM-DD') AS date, t.direction, t.comment, t.cancelled, t.weight, t.departure_time, t.departure_place, t.done, g.name AS group_name, g.slug AS group_slug,
       COALESCE(du.last_name, t.driver_name) AS driver_last,
       (t.driver_membership_id = m.id) AS is_mine,
       (SELECT COUNT(*)::int FROM conduites_children c JOIN conduites_memberships mm ON mm.id = c.membership_id WHERE mm.group_id = t.group_id AND (c.travels = 'both' OR c.travels = t.direction)) AS eligible,
@@ -43,15 +43,24 @@ export async function buildIcal(user: User, appUrl: string): Promise<string> {
     const kids = r.eligible - r.absent_count;
     const summary = `${r.cancelled ? "[Annulé] " : ""}${r.is_mine ? "🚗 " : ""}${DIRECTION_LABEL[r.direction]} · ${who}`;
     const url = `${appUrl}/conduites/g/${r.group_slug}/trajet/${r.id}`;
-    const desc = [r.group_name, `${kids} enfant${kids > 1 ? "s" : ""} à transporter`, r.comment ?? "", url].filter(Boolean).join("\n");
+    const desc = [r.group_name, `${kids} enfant${kids > 1 ? "s" : ""} à transporter`, r.departure_place ? `Départ : ${r.departure_place}` : "", r.comment ?? "", url].filter(Boolean).join("\n");
+    const d = r.date.replace(/-/g, "");
+    let start = `DTSTART;VALUE=DATE:${d}`, end = `DTEND;VALUE=DATE:${addDays(r.date, 1).replace(/-/g, "")}`;
+    if (r.departure_time) {
+      const [h, m] = r.departure_time.split(":").map(Number);
+      const hm = (x: number) => String(x).padStart(2, "0");
+      start = `DTSTART;TZID=Europe/Paris:${d}T${hm(h)}${hm(m)}00`;
+      end = `DTEND;TZID=Europe/Paris:${d}T${hm(Math.min(23, h + 1))}${hm(m)}00`;
+    }
     lines.push(
       "BEGIN:VEVENT",
       `UID:${r.id}@conduites`,
       `DTSTAMP:${stamp}`,
-      `DTSTART;VALUE=DATE:${r.date.replace(/-/g, "")}`,
-      `DTEND;VALUE=DATE:${addDays(r.date, 1).replace(/-/g, "")}`,
+      start,
+      end,
       fold(`SUMMARY:${esc(summary)}`),
       fold(`DESCRIPTION:${esc(desc)}`),
+      ...(r.departure_place ? [fold(`LOCATION:${esc(r.departure_place)}`)] : []),
       `URL:${url}`,
       `STATUS:${r.cancelled ? "CANCELLED" : "CONFIRMED"}`,
       `TRANSP:${r.is_mine ? "OPAQUE" : "TRANSPARENT"}`,

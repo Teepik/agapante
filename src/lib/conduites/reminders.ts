@@ -4,7 +4,7 @@ import { fmtDate, addDays, today, DIRECTION_LABEL } from "./dates";
 
 type DriverRow = {
   id: string; date: string; direction: "aller" | "retour"; comment: string | null; group_name: string; group_slug: string;
-  email: string; first_name: string; kids: number; seats: number;
+  email: string; first_name: string; kids: number; seats: number; departure_time: string | null; departure_place: string | null;
 };
 type OpenRow = { id: string; date: string; direction: "aller" | "retour"; group_id: string; group_name: string; group_slug: string; kids: number };
 
@@ -23,7 +23,7 @@ export async function runReminders(): Promise<{ driver: number; open: number }> 
 
   // --- Conducteur, la veille ---
   const drivers = await q<DriverRow>(`
-    SELECT t.id, to_char(t.date,'YYYY-MM-DD') AS date, t.direction, t.comment, g.name AS group_name, g.slug AS group_slug, u.email, u.first_name,
+    SELECT t.id, to_char(t.date,'YYYY-MM-DD') AS date, t.direction, t.comment, t.departure_time, t.departure_place, g.name AS group_name, g.slug AS group_slug, u.email, u.first_name,
       COALESCE(t.seats, u.seats) AS seats, ${KIDS} - ${ABSENT} AS kids
     FROM conduites_trips t JOIN conduites_groups g ON g.id = t.group_id
     JOIN conduites_memberships m ON m.id = t.driver_membership_id JOIN conduites_users u ON u.id = m.user_id
@@ -35,6 +35,7 @@ export async function runReminders(): Promise<{ driver: number; open: number }> 
       "Demain, c'est vous qui conduisez",
       [
         `${fmtDate(r.date)} · ${DIRECTION_LABEL[r.direction]} · ${r.group_name}.`,
+        [r.departure_time ? `Départ à ${r.departure_time.replace(":", "h")}` : "", r.departure_place ? `depuis ${r.departure_place}` : ""].filter(Boolean).join(" ") + (r.departure_time || r.departure_place ? "." : ""),
         `${r.kids} enfant${r.kids > 1 ? "s" : ""} à transporter, ${r.seats} place${r.seats > 1 ? "s" : ""} dans votre voiture.${r.kids > r.seats ? " Attention : il manque des places." : ""}`,
         r.comment ? `Note : ${r.comment}` : "",
       ].filter(Boolean),
