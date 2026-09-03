@@ -1,0 +1,292 @@
+"use server";
+
+import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import {
+  q, one, uid, inviteCode, slugify, newToken, getGroupByCode, getUserByEmail, getUserById, joinGroup, claimOrphanGroups,
+  type Role, type Travels,
+} from "./db";
+import { BASE, createSession, destroySession, hashPassword, verifyPassword, requireUser, requireGroup, requireGroupAdmin } from "./auth";
+import { generateWeekends } from "./dates";
+
+export type ActionState = { error?: string; ok?: string } | undefined;
+const str = (fd: FormData, k: string) => String(fd.get(k) ?? "").trim();
+const safeNext = (n: string) => (n.startsWith(BASE) && !n.startsWith("//") ? n : BASE);
+const revalidateGroup = (slug: string) => revalidatePath(`${BASE}/g/${slug}`, "layout");
+
+// ============ Auth ============
+export async function register(_: ActionState, fd: FormData): Promise<ActionState> {
+  const email = str(fd, "email").toLowerCase();
+  const password = String(fd.get("password") ?? "");
+  const lastName = str(fd, "lastName");
+  const firstName = str(fd, "firstName");
+  const code = str(fd, "code");
+  const next = str(fd, "next");
+
+  if (!email.includes("@")) return { error: "Adresse e-mail invalide." };
+  if (password.length < 8) return { error: "Le mot de passe doit faire au moins 8 caractères." };
+  if (!lastName || !firstName) return { error: "Nom et prénom sont nécessaires." };
+  if (await getUserByEmail(email)) return { error: "Un compte existe déjà avec cet e-mail." };
+  const group = code ? await getGroupByCode(code) : undefined;
+  if (code && !group) return { error: "Ce code d'invitation ne correspond à aucun groupe." };
+
+  const id = uid();
+  await q("INSERT INTO conduites_users (id, email, password_hash, first_name, last_name) VALUES ($1,$2,$3,$4,$5)",
+    [id, email, await hashPassword(password), firstName, lastName]);
+  const user = (await getUserById(id))!;
+  await claimOrphanGroups(user);
+  if (group) await joinGroup(group.id, user);
+  await createSession(id);
+  if (group) redirect(`${BASE}/g/${group.slug}/famille?bienvenue=1`);
+  redirect(next ? safeNext(next) : BASE);
+}
+
+export async function login(_: ActionState, fd: FormData): Promise<ActionState> {
+  const email = str(fd, "email").toLowerCase();
+  const password = String(fd.get("password") ?? "");
+  const next = str(fd, "next");
+  const user = await getUserByEmail(email);
+  if (!user || !(await verifyPassword(password, user.password_hash))) return { error: "E-mail ou mot de passe incorrect." };
+  await claimOrphanGroups(user);
+  await createSession(user.id);
+  redirect(next ? safeNext(next) : BASE);
+}
+
+export async function logout() {
+  await destroySession();
+  redirect(`${BASE}/login`);
+}
+
+// ============ Groupes ============
+export async function createGroup(_: ActionState, fd: FormData): Promise<ActionState> {
+  const user = await requireUser(`${BASE}/nouveau-groupe`);
+  const name = str(fd, "name");
+  const destination = str(fd, "destination") || null;
+  if (name.length < 2) return { error: "Donnez un nom au groupe." };
+  let slug = slugify(name);
+  for (let i = 2; await one("SELECT 1 FROM conduites_groups WHERE slug = $1", [slug]); i++) slug = `${slugify(name)}-${i}`;
+  let code = inviteCode();
+  while (await one("SELECT 1 FROM conduites_groups WHERE invite_code = $1", [code])) code = inviteCode();
+  const id = uid();
+  await q("INSERT INTO conduites_groups (id, name, slug, invite_code, destination, created_by) VALUES ($1,$2,$3,$4,$5,$6)", [id, name, slug, code, destination, user.id]);
+  await joinGroup(id, user, "owner");
+  redirect(`${BASE}/g/${slug}/admin?nouveau=1`);
+}
+
+export async function joinByCode(_: ActionState, fd: FormData): Promise<ActionState> {
+  const user = await requireUser(`${BASE}/rejoindre`);
+  const group = await getGroupByCode(str(fd, "code"));
+  if (!group) return { error: "Aucun groupe ne correspond à ce code." };
+  await joinGroup(group.id, user);
+  redirect(`${BASE}/g/${group.slug}/famille?bienvenue=1`);
+}
+
+export async function updateGroup(_: ActionState, fd: FormData): Promise<ActionState> {
+  const { group } = await requireGroupAdmin(str(fd, "slug"));
+  const name = str(fd, "name");
+  const destination = str(fd, "destination") || null;
+  if (name.length < 2) return { error: "Le nom est trop court." };
+  await q("UPDATE conduites_groups SET name = $1, destination = $2 WHERE id = $3", [name, destination, group.id]);
+  revalidateGroup(group.slug);
+  return { ok: "Groupe mis à jour." };
+}
+
+export async function regenerateCode(fd: FormData) {
+  const { group } = await requireGroupAdmin(str(fd, "slug"));
+  let code = inviteCode();
+  while (await one("SELECT 1 FROM conduites_groups WHERE invite_code = $1", [code])) code = inviteCode();
+  await q("UPDATE conduites_groups SET invite_code = $1 WHERE id = $2", [code, group.id]);
+  revalidatePath(`${BASE}/g/${group.slug}/admin`);
+}
+
+export async function setMemberRole(fd: FormData) {
+  const { group, isOwner, membership } = await requireGroup(str(fd, "slug"));
+  if (!isOwner) return;
+  const id = str(fd, "id");
+  const role: Role = str(fd, "role") === "admin" ? "admin" : "member";
+  if (id === membership.id) return;
+  await q("UPDATE conduites_memberships SET role = $1 WHERE id = $2 AND group_id = $3 AND role <> 'owner'", [role, id, group.id]);
+  revalidatePath(`${BASE}/g/${group.slug}/admin`);
+}
+
+export async function removeMember(fd: FormData) {
+  const { group, membership, isAdmin } = await requireGroup(str(fd, "slug"));
+  const id = str(fd, "id");
+  const target = await one<{ role: Role }>("SELECT role FROM conduites_memberships WHERE id = $1 AND group_id = $2", [id, group.id]);
+  if (!target || target.role === "owner") return;
+  const self = id === membership.id;
+  if (!self && !isAdmin) return;
+  await q("DELETE FROM conduites_memberships WHERE id = $1", [id]);
+  revalidatePath(`${BASE}/g/${group.slug}/admin`);
+  if (self) redirect(BASE);
+}
+
+export async function deleteGroup(fd: FormData) {
+  const { group, isOwner } = await requireGroup(str(fd, "slug"));
+  if (!isOwner || str(fd, "confirm") !== group.name) return;
+  await q("DELETE FROM conduites_groups WHERE id = $1", [group.id]);
+  redirect(BASE);
+}
+
+// ============ Famille ============
+export async function updateProfile(_: ActionState, fd: FormData): Promise<ActionState> {
+  const user = await requireUser();
+  const firstName = str(fd, "firstName");
+  const lastName = str(fd, "lastName");
+  const phone = str(fd, "phone") || null;
+  const seats = Math.max(1, Math.min(12, Number(fd.get("seats")) || user.seats));
+  if (!firstName || !lastName) return { error: "Nom et prénom sont nécessaires." };
+  await q("UPDATE conduites_users SET first_name = $1, last_name = $2, phone = $3, seats = $4 WHERE id = $5", [firstName, lastName, phone, seats, user.id]);
+  revalidatePath(BASE, "layout");
+  return { ok: "Enregistré." };
+}
+
+export async function changePassword(_: ActionState, fd: FormData): Promise<ActionState> {
+  const user = await requireUser();
+  const current = String(fd.get("current") ?? "");
+  const next = String(fd.get("next") ?? "");
+  if (!(await verifyPassword(current, user.password_hash))) return { error: "Mot de passe actuel incorrect." };
+  if (next.length < 8) return { error: "8 caractères minimum." };
+  await q("UPDATE conduites_users SET password_hash = $1 WHERE id = $2", [await hashPassword(next), user.id]);
+  return { ok: "Mot de passe modifié." };
+}
+
+const travelsOf = (v: string): Travels => (v === "aller" || v === "retour" ? v : "both");
+
+export async function addChild(fd: FormData) {
+  const { group, membership } = await requireGroup(str(fd, "slug"));
+  const name = str(fd, "firstName");
+  if (!name) return;
+  await q("INSERT INTO conduites_children (id, membership_id, first_name, travels) VALUES ($1,$2,$3,$4)", [uid(), membership.id, name, travelsOf(str(fd, "travels"))]);
+  revalidateGroup(group.slug);
+}
+
+export async function removeChild(fd: FormData) {
+  const { group, membership } = await requireGroup(str(fd, "slug"));
+  await q("DELETE FROM conduites_children WHERE id = $1 AND membership_id = $2", [str(fd, "id"), membership.id]);
+  revalidateGroup(group.slug);
+}
+
+export async function setChildTravels(fd: FormData) {
+  const { group, membership } = await requireGroup(str(fd, "slug"));
+  await q("UPDATE conduites_children SET travels = $1 WHERE id = $2 AND membership_id = $3", [travelsOf(str(fd, "travels")), str(fd, "id"), membership.id]);
+  revalidateGroup(group.slug);
+}
+
+export async function setNotify(fd: FormData) {
+  const user = await requireUser();
+  await q("UPDATE conduites_users SET notify = $1 WHERE id = $2", [!!fd.get("notify"), user.id]);
+  revalidatePath(BASE, "layout");
+}
+
+export async function regenerateIcalToken() {
+  const user = await requireUser();
+  await q("UPDATE conduites_users SET ical_token = $1 WHERE id = $2", [newToken(), user.id]);
+  revalidatePath(BASE, "layout");
+}
+
+// ============ Trajets ============
+const tripOf = (groupId: string, id: string) =>
+  one<{ driver_membership_id: string | null; driver_name: string | null }>("SELECT driver_membership_id, driver_name FROM conduites_trips WHERE id = $1 AND group_id = $2", [id, groupId]);
+
+export async function claimTrip(fd: FormData) {
+  const { group, membership, isAdmin } = await requireGroup(str(fd, "slug"));
+  const id = str(fd, "id");
+  const trip = await tripOf(group.id, id);
+  if (!trip) return;
+  const taken = trip.driver_membership_id || trip.driver_name;
+  if (taken && trip.driver_membership_id !== membership.id && !isAdmin) return;
+  await q("UPDATE conduites_trips SET driver_membership_id = $1, driver_name = NULL, seats = NULL WHERE id = $2", [membership.id, id]);
+  revalidateGroup(group.slug);
+}
+
+export async function releaseTrip(fd: FormData) {
+  const { group, membership, isAdmin } = await requireGroup(str(fd, "slug"));
+  const id = str(fd, "id");
+  const trip = await tripOf(group.id, id);
+  if (!trip) return;
+  if (trip.driver_membership_id !== membership.id && !isAdmin) return;
+  await q("UPDATE conduites_trips SET driver_membership_id = NULL, driver_name = NULL, seats = NULL WHERE id = $1", [id]);
+  revalidateGroup(group.slug);
+}
+
+export async function updateTrip(_: ActionState, fd: FormData): Promise<ActionState> {
+  const { group, membership, isAdmin } = await requireGroup(str(fd, "slug"));
+  const id = str(fd, "id");
+  const trip = await tripOf(group.id, id);
+  if (!trip) return { error: "Trajet introuvable." };
+  const isDriver = trip.driver_membership_id === membership.id;
+
+  await q("UPDATE conduites_trips SET comment = $1 WHERE id = $2", [str(fd, "comment") || null, id]);
+
+  if (isDriver || isAdmin) {
+    const seatsRaw = str(fd, "seats");
+    await q("UPDATE conduites_trips SET seats = $1 WHERE id = $2", [seatsRaw ? Math.max(1, Math.min(12, Number(seatsRaw))) : null, id]);
+  }
+  if (isAdmin) {
+    const weight = Math.max(0, Math.min(10, Number(fd.get("weight")) || 0));
+    const cancelled = !!fd.get("cancelled");
+    const driverId = str(fd, "driverId") || null;
+    await q("UPDATE conduites_trips SET weight = $1, cancelled = $2, driver_membership_id = $3, driver_name = CASE WHEN $3::text IS NULL THEN driver_name ELSE NULL END WHERE id = $4",
+      [weight, cancelled, driverId, id]);
+  }
+
+  const editable = (isAdmin
+    ? await q<{ id: string }>("SELECT c.id FROM conduites_children c JOIN conduites_memberships m ON m.id = c.membership_id WHERE m.group_id = $1", [group.id])
+    : await q<{ id: string }>("SELECT id FROM conduites_children WHERE membership_id = $1", [membership.id])).map(r => r.id);
+  const absent = new Set(fd.getAll("absent").map(String));
+  const toAbsent = editable.filter(c => absent.has(c));
+  const toPresent = editable.filter(c => !absent.has(c));
+  if (toPresent.length) await q("DELETE FROM conduites_absences WHERE trip_id = $1 AND child_id = ANY($2::text[])", [id, toPresent]);
+  if (toAbsent.length) await q(
+    "INSERT INTO conduites_absences (id, trip_id, child_id) SELECT gen_random_uuid()::text, $1, unnest($2::text[]) ON CONFLICT DO NOTHING", [id, toAbsent]);
+
+  revalidateGroup(group.slug);
+  return { ok: "Trajet mis à jour." };
+}
+
+// ============ Dates (admin) ============
+export async function generateTrips(_: ActionState, fd: FormData): Promise<ActionState> {
+  const { group } = await requireGroupAdmin(str(fd, "slug"));
+  const from = str(fd, "from");
+  const to = str(fd, "to");
+  if (!from || !to || from > to) return { error: "Période invalide." };
+  const dates = generateWeekends(from, to);
+  if (!dates.length) return { error: "Aucun vendredi ni dimanche dans cette période." };
+  const inserted = await q<{ id: string }>(
+    `INSERT INTO conduites_trips (id, group_id, date, direction)
+     SELECT gen_random_uuid()::text, $1, d, dir FROM unnest($2::date[], $3::text[]) AS x(d, dir)
+     ON CONFLICT DO NOTHING RETURNING id`,
+    [group.id, dates.map(d => d.date), dates.map(d => d.direction)]);
+  const n = inserted.length;
+  revalidateGroup(group.slug);
+  return { ok: n ? `${n} trajet${n > 1 ? "s" : ""} ajouté${n > 1 ? "s" : ""}.` : "Toutes ces dates existaient déjà." };
+}
+
+export async function addTrip(_: ActionState, fd: FormData): Promise<ActionState> {
+  const { group } = await requireGroupAdmin(str(fd, "slug"));
+  const date = str(fd, "date");
+  const direction = str(fd, "direction") === "aller" ? "aller" : "retour";
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Date invalide." };
+  const r = await q("INSERT INTO conduites_trips (id, group_id, date, direction) VALUES ($1,$2,$3,$4) ON CONFLICT DO NOTHING RETURNING id", [uid(), group.id, date, direction]);
+  revalidateGroup(group.slug);
+  return r.length ? { ok: "Trajet ajouté." } : { error: "Ce trajet existe déjà." };
+}
+
+export async function deleteTrip(fd: FormData) {
+  const { group } = await requireGroupAdmin(str(fd, "slug"));
+  await q("DELETE FROM conduites_trips WHERE id = $1 AND group_id = $2", [str(fd, "id"), group.id]);
+  revalidateGroup(group.slug);
+  redirect(`${BASE}/g/${group.slug}`);
+}
+
+export async function resetMemberPassword(_: ActionState, fd: FormData): Promise<ActionState> {
+  const { group } = await requireGroupAdmin(str(fd, "slug"));
+  const id = str(fd, "id");
+  const next = String(fd.get("next") ?? "");
+  if (next.length < 8) return { error: "8 caractères minimum." };
+  const m = await one<{ user_id: string }>("SELECT user_id FROM conduites_memberships WHERE id = $1 AND group_id = $2", [id, group.id]);
+  if (!m) return { error: "Membre introuvable." };
+  await q("UPDATE conduites_users SET password_hash = $1 WHERE id = $2", [await hashPassword(next), m.user_id]);
+  return { ok: "Mot de passe réinitialisé." };
+}
