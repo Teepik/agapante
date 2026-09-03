@@ -47,7 +47,7 @@ export default async function FamilyPage({ params, searchParams }: { params: Pro
 
       <section className="card card-pad animate-rise">
         <h2 className="h2">Enfants transportés</h2>
-        <p className="mt-1 text-[13px] text-ink-2">Dans ce groupe. Précisez si un enfant ne fait que l'aller ou que le retour ; vous déclarerez les absences ponctuelles trajet par trajet.</p>
+        <p className="mt-1 text-[13px] text-ink-2">Dans ce groupe. Précisez si un enfant ne fait que l'aller ou que le retour ; vous pourrez retirer ou inscrire un enfant sur un trajet précis.</p>
         {children.length > 0 && (
           <ul className="divide-rows mt-4 overflow-hidden rounded-[14px] ring-1 ring-line">
             {children.map(c => (
@@ -115,7 +115,16 @@ export default async function FamilyPage({ params, searchParams }: { params: Pro
           <Field label="Prénom"><input name="firstName" defaultValue={user.first_name} required className="field" /></Field>
           <Field label="Nom de famille"><input name="lastName" defaultValue={user.last_name} required className="field" /></Field>
           <Field label="Téléphone" hint="Visible par les autres familles du groupe."><input name="phone" type="tel" defaultValue={user.phone ?? ""} className="field" /></Field>
-          <Field label="Places passagers" hint="Hors conducteur. Modifiable trajet par trajet."><input name="seats" type="number" inputMode="numeric" min={1} max={12} defaultValue={user.seats} className="field" /></Field>
+          <Field label="Places passagers habituelles" hint="Hors conducteur. Pour chaque trajet, vous indiquez en un clic le nombre de places de la voiture du jour."><input name="seats" type="number" inputMode="numeric" min={1} max={12} defaultValue={user.seats} className="field" /></Field>
+        </div>
+        <div className="mt-2 rounded-[14px] bg-raised p-4 ring-1 ring-line">
+          <div className="font-medium">Pour vous rembourser</div>
+          <p className="mt-0.5 text-[13px] text-ink-2">Facultatif. Les familles qui vous doivent de l'argent verront un bouton « Payer » qui ouvre directement le bon moyen, avec le montant.</p>
+          <div className="mt-3 grid gap-4 sm:grid-cols-2">
+            <Field label="PayPal.me" hint="Votre identifiant PayPal.me (paypal.me/…)."><input name="paypal" defaultValue={user.paypal ?? ""} className="field" placeholder="prenomnom" /></Field>
+            <Field label="Lien Lydia, Revolut… " hint="Un lien de paiement personnel."><input name="payLink" type="url" defaultValue={user.pay_link ?? ""} className="field" placeholder="https://lydia-app.com/collect/…" /></Field>
+            <Field label="IBAN" hint="Pour un virement instantané (gratuit) depuis l'appli bancaire. Le téléphone ci-dessus sert pour Wero."><input name="iban" defaultValue={user.iban ?? ""} className="field" placeholder="FR76 …" /></Field>
+          </div>
         </div>
         <div className="flex justify-end"><SubmitButton>Enregistrer</SubmitButton></div>
       </ActionForm>

@@ -104,6 +104,9 @@ const SCHEMA = [
   `ALTER TABLE conduites_trips ADD COLUMN IF NOT EXISTS extra NUMERIC(10,2) NOT NULL DEFAULT 0`,
   `ALTER TABLE conduites_trips ADD COLUMN IF NOT EXISTS extra_note TEXT`,
   `ALTER TABLE conduites_memberships ADD COLUMN IF NOT EXISTS left_at TIMESTAMPTZ`,
+  `ALTER TABLE conduites_users ADD COLUMN IF NOT EXISTS paypal TEXT`,
+  `ALTER TABLE conduites_users ADD COLUMN IF NOT EXISTS pay_link TEXT`,
+  `ALTER TABLE conduites_users ADD COLUMN IF NOT EXISTS iban TEXT`,
   `CREATE INDEX IF NOT EXISTS conduites_trips_group_date ON conduites_trips(group_id, date)`,
   `CREATE INDEX IF NOT EXISTS conduites_memberships_user ON conduites_memberships(user_id)`,
 ];
@@ -162,6 +165,7 @@ async function seedIfEmpty() {
 export type User = {
   id: string; email: string; password_hash: string; first_name: string; last_name: string;
   phone: string | null; seats: number; notify: boolean; ical_token: string | null; created_at: string;
+  paypal: string | null; pay_link: string | null; iban: string | null;
 };
 export type Group = { id: string; name: string; slug: string; invite_code: string; destination: string | null; created_by: string | null; created_at: string; cost_per_point: string | number; split: "family" | "child" };
 export type Settlement = { id: string; from_membership_id: string; to_membership_id: string; amount: string | number; note: string | null; created_at: string; from_last: string; to_last: string };
@@ -302,14 +306,18 @@ export function equityStats(groupId: string, from: string, to: string) {
 }
 
 // ---- Comptes (partage des frais) ----
-export type AccountMember = { id: string; last_name: string; first_name: string; left_at: string | null; children: number };
+export type AccountMember = {
+  id: string; last_name: string; first_name: string; left_at: string | null; children: number;
+  phone: string | null; paypal: string | null; pay_link: string | null; iban: string | null;
+};
 export type AccountRow = {
   id: string; date: string; direction: "aller" | "retour"; driver_membership_id: string; total: number; seats: number | null; done: boolean;
   child_id: string | null; membership_id: string | null;
 };
 /** Toutes les familles ayant appartenu au groupe (les parties comprises, pour que l'historique des comptes reste exact). */
 export const listAccountMembers = (groupId: string) => q<AccountMember>(`
-    SELECT m.id, u.last_name, u.first_name, m.left_at, (SELECT COUNT(*)::int FROM conduites_children c WHERE c.membership_id = m.id) AS children
+    SELECT m.id, u.last_name, u.first_name, m.left_at, u.phone, u.paypal, u.pay_link, u.iban,
+      (SELECT COUNT(*)::int FROM conduites_children c WHERE c.membership_id = m.id) AS children
     FROM conduites_memberships m JOIN conduites_users u ON u.id = m.user_id
     WHERE m.group_id = $1 ORDER BY m.left_at NULLS FIRST, u.last_name`, [groupId]);
 /**

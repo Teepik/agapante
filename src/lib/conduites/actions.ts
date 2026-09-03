@@ -150,7 +150,14 @@ export async function updateProfile(_: ActionState, fd: FormData): Promise<Actio
   const phone = str(fd, "phone") || null;
   const seats = Math.max(1, Math.min(12, Number(fd.get("seats")) || user.seats));
   if (!firstName || !lastName) return { error: "Nom et prénom sont nécessaires." };
-  await q("UPDATE conduites_users SET first_name = $1, last_name = $2, phone = $3, seats = $4 WHERE id = $5", [firstName, lastName, phone, seats, user.id]);
+  // Moyens de remboursement (facultatifs)
+  const paypal = str(fd, "paypal").replace(/^https?:\/\/(www\.)?paypal\.me\//i, "").replace(/^@/, "").replace(/\/.*$/, "") || null;
+  let payLink = str(fd, "payLink") || null;
+  if (payLink && !/^https?:\/\//i.test(payLink)) payLink = "https://" + payLink;
+  const iban = str(fd, "iban").replace(/\s+/g, "").toUpperCase() || null;
+  if (iban && !/^[A-Z]{2}\d{2}[A-Z0-9]{11,30}$/.test(iban)) return { error: "IBAN invalide (ex. FR76 3000 6000 0112 3456 7890 189)." };
+  await q("UPDATE conduites_users SET first_name = $1, last_name = $2, phone = $3, seats = $4, paypal = $5, pay_link = $6, iban = $7 WHERE id = $8",
+    [firstName, lastName, phone, seats, paypal, payLink, iban, user.id]);
   revalidatePath(BASE, "layout");
   return { ok: "Enregistré." };
 }
@@ -249,11 +256,11 @@ export async function updateTrip(_: ActionState, fd: FormData): Promise<ActionSt
     const cost = fd.has("cost") ? money("cost") : undefined;
     const extra = fd.has("extra") ? (money("extra") ?? 0) : undefined;
     const extraNote = fd.has("extraNote") ? (str(fd, "extraNote") || null) : undefined;
-    await q(`UPDATE conduites_trips SET seats = $1, departure_time = $2, departure_place = $3,
+    await q(`UPDATE conduites_trips SET seats = CASE WHEN $11 THEN $1 ELSE seats END, departure_time = $2, departure_place = $3,
         cost = CASE WHEN $5 THEN $4 ELSE cost END, extra = CASE WHEN $7 THEN $6 ELSE extra END, extra_note = CASE WHEN $9 THEN $8 ELSE extra_note END
       WHERE id = $10`,
       [seatsRaw ? Math.max(1, Math.min(12, Number(seatsRaw))) : null, time ? time.padStart(5, "0") : null, place,
-        cost ?? null, cost !== undefined, extra ?? 0, extra !== undefined, extraNote ?? null, extraNote !== undefined, id]);
+        cost ?? null, cost !== undefined, extra ?? 0, extra !== undefined, extraNote ?? null, extraNote !== undefined, id, fd.has("seats")]);
   }
   if (isAdmin) {
     const weight = Math.max(0, Math.min(10, Number(fd.get("weight")) || 0));
@@ -328,6 +335,17 @@ export async function setPassenger(fd: FormData) {
   if (!child || !trip || (child.membership_id !== membership.id && !isAdmin)) return;
   if (on) await q("INSERT INTO conduites_passengers (id, trip_id, child_id) VALUES ($1,$2,$3) ON CONFLICT DO NOTHING", [uid(), tripId, childId]);
   else await q("DELETE FROM conduites_passengers WHERE trip_id = $1 AND child_id = $2", [tripId, childId]);
+  revalidateGroup(group.slug);
+}
+
+/** Le conducteur (ou un admin) indique le nombre de places de la voiture du jour, en un clic. */
+export async function setTripSeats(fd: FormData) {
+  const { group, membership, isAdmin } = await requireGroup(str(fd, "slug"));
+  const id = str(fd, "id");
+  const trip = await tripOf(group.id, id);
+  if (!trip || (trip.driver_membership_id !== membership.id && !isAdmin)) return;
+  const n = Number(fd.get("seats"));
+  await q("UPDATE conduites_trips SET seats = $1 WHERE id = $2", [n >= 1 && n <= 12 ? Math.round(n) : null, id]);
   revalidateGroup(group.slug);
 }
 

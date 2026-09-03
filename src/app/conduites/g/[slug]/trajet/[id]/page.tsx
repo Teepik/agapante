@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireGroup } from "@/lib/conduites/auth";
 import { getTrip, listChildrenInGroup, listPassengers, listMembers } from "@/lib/conduites/db";
-import { updateTrip, claimTrip, releaseTrip, deleteTrip, setTripDone, setPassenger } from "@/lib/conduites/actions";
+import { updateTrip, claimTrip, releaseTrip, deleteTrip, setTripDone, setPassenger, setTripSeats } from "@/lib/conduites/actions";
 import { fmtDate, today, plural, DIRECTION_LABEL } from "@/lib/conduites/dates";
 import { ActionForm, SubmitButton, Field, ConfirmSubmit } from "@/components/conduites/ui";
 import { buttonCls } from "@/components/conduites/styles";
@@ -91,6 +91,24 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
         )}
       </div>
 
+      {(mine || isAdmin) && driverLabel && !past && !trip.cancelled && (
+        <div className="card card-pad animate-rise">
+          <div className="flex items-baseline justify-between gap-3">
+            <div className="font-medium">Places dans la voiture {mine ? "ce jour-là" : `de ${driverLabel}`}</div>
+            <span className="text-[12px] text-ink-3">{trip.seats == null ? "voiture habituelle" : "pour ce trajet"}</span>
+          </div>
+          <p className="mt-0.5 text-[13px] text-ink-2">Hors conducteur. Un clic suffit si vous prenez une autre voiture ; les places sont réattribuées aussitôt.</p>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
+              <form key={n} action={setTripSeats}>
+                <input type="hidden" name="slug" value={slug} /><input type="hidden" name="id" value={id} /><input type="hidden" name="seats" value={n} />
+                <SubmitButton variant={seats === n ? "primary" : "secondary"} size="sm" className="min-w-[44px] tabular" aria-pressed={seats === n}>{n}</SubmitButton>
+              </form>
+            ))}
+          </div>
+        </div>
+      )}
+
       <ActionForm action={updateTrip} className="card card-pad animate-rise">
         <input type="hidden" name="slug" value={slug} /><input type="hidden" name="id" value={id} />
 
@@ -103,11 +121,6 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
             <Field label="Heure de départ"><input name="departureTime" type="time" defaultValue={trip.departure_time ?? ""} className="field" /></Field>
             <Field label="Lieu de départ" hint="Parking, adresse, point de rendez-vous…"><input name="departurePlace" defaultValue={trip.departure_place ?? ""} className="field" placeholder="Devant l'école, parking nord" /></Field>
           </div>
-        )}
-        {(mine || isAdmin) && (
-          <Field label="Places passagers pour ce trajet" hint="Laissez vide pour garder les places habituelles de la voiture.">
-            <input name="seats" type="number" inputMode="numeric" min={1} max={12} defaultValue={trip.seats ?? ""} placeholder={String(trip.driver_seats ?? user.seats)} className="field" />
-          </Field>
         )}
         {(mine || isAdmin) && defaultCost > 0 && (
           <div className="grid gap-4 sm:grid-cols-[130px_130px_1fr]">
@@ -124,7 +137,7 @@ export default async function TripPage({ params }: { params: Promise<{ slug: str
         {isAdmin && (
           <div className="grid gap-4 rounded-[14px] bg-raised p-4 ring-1 ring-line sm:grid-cols-[1fr_110px_auto]">
             <Field label="Conducteur">
-              <select name="driverId" defaultValue={trip.driver_membership_id ?? ""} className="field">
+              <select key={trip.driver_membership_id ?? "none"} name="driverId" defaultValue={trip.driver_membership_id ?? ""} className="field">
                 <option value="">{trip.driver_name ? `${trip.driver_name} (importé, sans compte)` : "Personne"}</option>
                 {members.map(m => <option key={m.id} value={m.id}>{m.last_name} · {m.first_name}</option>)}
               </select>

@@ -4,7 +4,9 @@ import { equityStats, count, listSettlements, listAccountMembers, listAccountRow
 import { schoolYear, today, plural, fmtDate, DIRECTION_LABEL } from "@/lib/conduites/dates";
 import { computeAccounts, euros, signed, fromCents } from "@/lib/conduites/equity";
 import { recordSettlement, deleteSettlement } from "@/lib/conduites/actions";
-import { ActionForm, SubmitButton, Field, ConfirmSubmit } from "@/components/conduites/ui";
+import { ActionForm, SubmitButton, Field, ConfirmSubmit, CopyButton } from "@/components/conduites/ui";
+import type { AccountMember } from "@/lib/conduites/db";
+import { buttonCls } from "@/components/conduites/styles";
 import { Avatar } from "@/components/conduites/avatar";
 import { IconArrowRight, IconCheck } from "@/components/conduites/icons";
 
@@ -129,6 +131,7 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
                           <input type="hidden" name="slug" value={slug} /><input type="hidden" name="from" value={d.from} /><input type="hidden" name="to" value={d.to} /><input type="hidden" name="amount" value={d.amount} />
                           <ConfirmSubmit size="sm" variant="primary" confirmLabel="Confirmer : j'ai payé"><IconCheck width={14} height={14} /> J'ai payé</ConfirmSubmit>
                         </ActionForm>
+                        <PayOptions to={accountMembers.find(m => m.id === d.to)} amount={d.amount} reference={`Conduites ${group.name}`} />
                       </li>
                     ))}
                     {myCredits.map(d => (
@@ -212,7 +215,7 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
               <div className="overflow-x-auto border-t border-line">
                 <table className="w-full text-[14px]">
                   <thead className="text-left text-[11px] uppercase tracking-[0.08em] text-ink-3">
-                    <tr><th className="px-5 py-2 font-semibold sm:px-6">Famille</th><th className="px-3 py-2 text-right font-semibold">Avancé</th><th className="px-3 py-2 text-right font-semibold">Consommé</th><th className="hidden px-3 py-2 text-right font-semibold sm:table-cell">Réglé</th><th className="px-5 py-2 text-right font-semibold sm:px-6">Solde</th></tr>
+                    <tr><th className="px-5 py-2 font-semibold sm:px-6">Famille</th><th className="px-3 py-2 text-right font-semibold">Avancé</th><th className="hidden px-3 py-2 text-right font-semibold sm:table-cell">Consommé</th><th className="hidden px-3 py-2 text-right font-semibold sm:table-cell">Réglé</th><th className="px-5 py-2 text-right font-semibold sm:px-6">Solde</th></tr>
                   </thead>
                   <tbody className="divide-rows">
                     {visibleFamilies.map(f => {
@@ -222,7 +225,7 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
                           <td className="px-5 py-2.5 sm:px-6"><span className="inline-flex items-center gap-2"><Avatar name={f.last_name} size={22} />{f.last_name}{f.left && <span className="rounded-[8px] bg-raised px-1.5 py-0.5 text-[11px] font-normal text-ink-3">partie</span>}</span>
                             <span className="block pl-[30px] text-[12px] font-normal text-ink-3">{plural(f.drives, "conduite")} · {plural(f.rides, "trajet en passager", "trajets en passager")}</span></td>
                           <td className="px-3 py-2.5 text-right tabular">{euros(f.advanced)}</td>
-                          <td className="px-3 py-2.5 text-right tabular">{euros(f.consumed)}</td>
+                          <td className="hidden px-3 py-2.5 text-right tabular sm:table-cell">{euros(f.consumed)}</td>
                           <td className="hidden px-3 py-2.5 text-right tabular text-ink-2 sm:table-cell">{Math.abs(net) > 0.005 ? signed(net) : "—"}</td>
                           <td className={`px-5 py-2.5 text-right tabular font-semibold sm:px-6 ${f.balance > 0.005 ? "text-good" : f.balance < -0.005 ? "text-warn" : ""}`}>{signed(f.balance)}</td>
                         </tr>
@@ -309,6 +312,33 @@ export default async function EquityPage({ params }: { params: Promise<{ slug: s
         L'équité compte les conduites (1 point par défaut, ajustable par un admin) ; les comptes, eux, suivent l'argent réellement avancé. Une famille qui quitte le groupe garde son historique : ses dettes et créances restent visibles jusqu'à leur règlement.
       </p>
     </div>
+  );
+}
+
+/** Moyens de payer une famille, avec le montant pré-rempli quand le service le permet. */
+function PayOptions({ to, amount, reference }: { to?: AccountMember; amount: number; reference: string }) {
+  if (!to) return null;
+  const amt = amount.toFixed(2);
+  const has = !!(to.paypal || to.pay_link || to.iban || to.phone);
+  return (
+    <details className="w-full">
+      <summary className="cursor-pointer list-none text-[13px] font-medium text-accent [&::-webkit-details-marker]:hidden">Comment payer {to.last_name} ?</summary>
+      {!has ? (
+        <p className="mt-2 text-[13px] text-ink-2">{to.last_name} n'a pas encore indiqué de moyen de remboursement (PayPal, Lydia, IBAN…) dans sa page Famille. Réglez comme vous en avez l'habitude, puis cliquez « J'ai payé ».</p>
+      ) : (
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          {to.paypal && <a href={`https://paypal.me/${encodeURIComponent(to.paypal)}/${amt}EUR`} target="_blank" rel="noopener" className={buttonCls("secondary", "sm")}>PayPal {euros(amount)}</a>}
+          {to.pay_link && <a href={to.pay_link} target="_blank" rel="noopener" className={buttonCls("secondary", "sm")}>{/lydia/i.test(to.pay_link) ? "Lydia" : /revolut/i.test(to.pay_link) ? "Revolut" : "Lien de paiement"}</a>}
+          {to.phone && <span className="inline-flex items-center gap-1.5 text-[13px] text-ink-2">Wero : {to.phone} <CopyButton text={to.phone} label="Copier" /></span>}
+          {to.iban && (
+            <span className="inline-flex flex-wrap items-center gap-1.5 text-[13px] text-ink-2">
+              Virement : <span className="font-mono text-[12px]">{to.iban.replace(/(.{4})/g, "$1 ").trim()}</span>
+              <CopyButton text={to.iban} label="Copier l'IBAN" /><CopyButton text={amt} label={`Copier ${euros(amount)}`} /><CopyButton text={reference} label="Copier le libellé" />
+            </span>
+          )}
+        </div>
+      )}
+    </details>
   );
 }
 
