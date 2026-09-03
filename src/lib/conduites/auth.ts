@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createHmac, randomBytes, scrypt, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
-import { getGroupBySlug, getMembership, getUserById, type Group, type Membership, type User } from "./db";
+import { q, one, getGroupBySlug, getMembership, getUserById, type Group, type Membership, type User } from "./db";
 
 export const BASE = "/conduites";
 const COOKIE = "conduites_session";
@@ -70,6 +70,12 @@ export async function requireGroup(slug: string): Promise<GroupContext> {
   if (!group) redirect(BASE);
   const membership = await getMembership(group.id, user.id);
   if (!membership) redirect(`${BASE}?groupe=${slug}`);
+  // Un groupe sans créateur (planning importé) : la première famille présente en devient responsable.
+  if (membership.role !== "owner" && !(await one("SELECT 1 FROM conduites_memberships WHERE group_id = $1 AND role = 'owner' AND left_at IS NULL", [group.id]))) {
+    await q("UPDATE conduites_memberships SET role = 'owner' WHERE id = $1", [membership.id]);
+    await q("UPDATE conduites_groups SET created_by = COALESCE(created_by, $1) WHERE id = $2", [user.id, group.id]);
+    membership.role = "owner";
+  }
   const isOwner = membership.role === "owner";
   return { user, group, membership, isAdmin: isOwner || membership.role === "admin", isOwner };
 }
