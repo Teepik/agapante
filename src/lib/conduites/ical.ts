@@ -3,7 +3,7 @@ import { DIRECTION_LABEL, addDays } from "./dates";
 
 type Row = {
   id: string; date: string; direction: "aller" | "retour"; comment: string | null; cancelled: boolean; weight: number; departure_time: string | null; departure_place: string | null; done: boolean;
-  group_name: string; group_slug: string; driver_last: string | null; is_mine: boolean; eligible: number; absent_count: number;
+  group_name: string; group_slug: string; driver_last: string | null; is_mine: boolean; registered: number; seats: number | null;
 };
 
 const esc = (s: string) => s.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
@@ -23,8 +23,8 @@ export async function buildIcal(user: User, appUrl: string): Promise<string> {
     SELECT t.id, to_char(t.date, 'YYYY-MM-DD') AS date, t.direction, t.comment, t.cancelled, t.weight, t.departure_time, t.departure_place, t.done, g.name AS group_name, g.slug AS group_slug,
       COALESCE(du.last_name, t.driver_name) AS driver_last,
       (t.driver_membership_id = m.id) AS is_mine,
-      (SELECT COUNT(*)::int FROM conduites_children c JOIN conduites_memberships mm ON mm.id = c.membership_id WHERE mm.group_id = t.group_id AND (c.travels = 'both' OR c.travels = t.direction)) AS eligible,
-      (SELECT COUNT(*)::int FROM conduites_absences a JOIN conduites_children c ON c.id = a.child_id WHERE a.trip_id = t.id AND (c.travels = 'both' OR c.travels = t.direction)) AS absent_count
+      (SELECT COUNT(*)::int FROM conduites_passengers p WHERE p.trip_id = t.id) AS registered,
+      COALESCE(t.seats, du.seats) AS seats
     FROM conduites_memberships m
     JOIN conduites_groups g ON g.id = m.group_id
     JOIN conduites_trips t ON t.group_id = g.id
@@ -40,7 +40,7 @@ export async function buildIcal(user: User, appUrl: string): Promise<string> {
   ];
   for (const r of rows) {
     const who = r.is_mine ? "Vous conduisez" : r.driver_last ? `${r.driver_last} conduit` : "Conducteur à pourvoir";
-    const kids = r.eligible - r.absent_count;
+    const kids = r.seats == null ? r.registered : Math.min(r.registered, r.seats);
     const summary = `${r.cancelled ? "[Annulé] " : ""}${r.is_mine ? "🚗 " : ""}${DIRECTION_LABEL[r.direction]} · ${who}`;
     const url = `${appUrl}/conduites/g/${r.group_slug}/trajet/${r.id}`;
     const desc = [r.group_name, `${kids} enfant${kids > 1 ? "s" : ""} à transporter`, r.departure_place ? `Départ : ${r.departure_place}` : "", r.comment ?? "", url].filter(Boolean).join("\n");
