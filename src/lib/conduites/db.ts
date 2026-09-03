@@ -1,5 +1,5 @@
 import "server-only";
-import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
+import { neon, neonConfig, type NeonQueryFunction } from "@neondatabase/serverless";
 import { randomUUID, randomBytes } from "node:crypto";
 
 /**
@@ -11,7 +11,11 @@ let cached: NeonQueryFunction<false, false> | null = null;
 function sqlClient() {
   const url = process.env.DATABASE_URL;
   if (!url) throw new Error("DATABASE_URL n'est pas configurée.");
-  if (!cached) cached = neon(url);
+  if (!cached) {
+    // Tests locaux : point d'entrée HTTP alternatif (émulation du protocole Neon).
+    if (process.env.NEON_FETCH_ENDPOINT) neonConfig.fetchEndpoint = process.env.NEON_FETCH_ENDPOINT;
+    cached = neon(url);
+  }
   return cached;
 }
 
