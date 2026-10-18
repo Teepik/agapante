@@ -132,7 +132,7 @@ export const destinations: Destination[] = frTypo([
     id: "bcpst",
     name: "Prépa BCPST (biologie, agro, vétérinaire)",
     line: "sante",
-    station: "pass-las",
+    station: "prepa-scientifique",
     judge: (s) => {
       const { T, P, mathsTle, mathsAny } = ctx(s);
       const sciencesOnly = [...T].every((x) => x === "maths" || x === "pc" || x === "svt");
