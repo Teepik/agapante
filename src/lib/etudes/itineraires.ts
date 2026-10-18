@@ -1,5 +1,5 @@
 import type { LineId } from "./lines";
-import { frTypo } from "@/lib/typo";
+import { etTypo as frTypo } from "./typo";
 
 export type Step = { when: string; title: string; detail: string; choice?: boolean; station?: string };
 
@@ -203,23 +203,23 @@ export const itineraires: Itineraire[] = frTypo([
       },
       {
         when: "Janvier à mars 2030",
-        title: "Parcoursup : PASS et LAS",
-        detail: "Ajoute plusieurs LAS à ton PASS : elles te gardent dans la course.",
+        title: "Parcoursup : la licence santé",
+        detail: "Depuis 2027, une licence unique remplace le PASS et la LAS : un seul vœu, avec des sous-vœux par université.",
         choice: true,
         station: "pass-las",
       },
       {
         when: "2030-2031",
-        title: "La première année",
-        detail: "Dense et classante : ton rang décide de l'entrée en 2e année.",
+        title: "Une ou deux années de licence santé",
+        detail: "Au moins 10 sur 20 dans chaque bloc, puis un classement : tu candidates en médecine après la 1re ou la 2e année.",
         choice: true,
         station: "pass-las",
       },
-      { when: "2031-2036", title: "Les études de médecine", detail: "Cours, stages à l'hôpital dès la 4e année.", station: "etudes-sante" },
+      { when: "2031-2036", title: "Les études de médecine", detail: "Cours, puis stages à l'hôpital de plus en plus nombreux.", station: "etudes-sante" },
       {
         when: "2036",
         title: "EDN et ECOS, puis l'internat",
-        detail: "Ton classement décide de ta spécialité et de ta ville d'internat.",
+        detail: "En 6e année, ton classement décide de ta spécialité et de ta ville d'internat : quatre à six ans de plus.",
         choice: true,
         station: "internat",
       },
@@ -371,19 +371,19 @@ export const itineraires: Itineraire[] = frTypo([
       },
       { when: "Été 2029", title: "Préparer le dossier", detail: "Lettre de motivation, tests d'admission, lettres de recommandation." },
       {
-        when: "Mi-octobre 2029",
+        when: "15 octobre 2029",
         title: "Candidature à Oxford ou Cambridge",
-        detail: "Sur la plateforme UCAS, avec une date limite précoce.",
+        detail: "Sur la plateforme UCAS, avec des tests d'admission à la même période ; les universités américaines suivent en novembre ou en janvier.",
         choice: true,
       },
-      { when: "2030-2033", title: "Bachelor à l'étranger", detail: "Trois ou quatre ans, en anglais, en français ou en allemand.", station: "bachelor-etranger" },
+      { when: "2030-2033", title: "Bachelor à l'étranger", detail: "Trois ou quatre ans, en anglais, en français ou en allemand. L'EPFL demande au moins 16 sur 20 en maths, en physique et de moyenne.", station: "bachelor-etranger" },
       { when: "2033-2035", title: "Master, en France ou ailleurs", detail: "Tu peux revenir en France pour ton master.", station: "master-etranger" },
       { when: "Ensuite", title: "Recherche, organisations internationales, entreprises", detail: "Une carrière ouverte sur le monde.", station: "metiers-monde" },
     ],
     cles: [
       "Lire et écrire en anglais chaque semaine.",
       "Garder un dossier excellent dans toutes les matières.",
-      "Regarder tôt les frais : ils varient énormément d'un pays à l'autre.",
+      "Regarder tôt les frais : de 1 200 € par an à Louvain à plus de 60 000 £ à Oxford.",
     ],
   },
 ]);

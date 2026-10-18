@@ -1,4 +1,4 @@
-import { frTypo } from "@/lib/typo";
+import { etTypo as frTypo } from "./typo";
 
 export type FriseYear = {
   years: string;
@@ -50,8 +50,8 @@ export const frise: FriseYear[] = frTypo([
     age: "17 ans",
     items: [
       {
-        when: "Mi-octobre 2029",
-        what: "Date limite pour Oxford, Cambridge et la médecine au Royaume-Uni, si tu vises l'étranger.",
+        when: "15 octobre 2029",
+        what: "Date limite habituelle pour Oxford, Cambridge et la médecine au Royaume-Uni, si tu vises l'étranger.",
       },
       { when: "Décembre 2029", what: "Ouverture de Parcoursup pour découvrir les formations." },
       { when: "Janvier à mars 2030", what: "Inscription et vœux sur Parcoursup, jusqu'à dix vœux.", key: true },

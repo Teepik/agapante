@@ -1406,10 +1406,13 @@ html.et-lock body {
 }
 .et-sheet__body {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
   padding: 20px 22px 30px;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-content: start;
   gap: 22px;
 }
@@ -3497,4 +3500,21 @@ html.et-lock body {
 
 .is-here.et-strip__stop .et-strip__dot {
   background: var(--et-gold);
+}
+
+.et-legend__done {
+  display: grid;
+  place-items: center;
+  margin-left: auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--et-gold);
+  color: #14213d;
+}
+.et-strip__count {
+  margin: 6px 0 0;
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: var(--et-ink-3);
 }

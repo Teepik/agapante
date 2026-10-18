@@ -1,5 +1,5 @@
 import type { LineId } from "./lines";
-import { frTypo } from "@/lib/typo";
+import { etTypo as frTypo } from "./typo";
 
 export type Option = { label: string; w: Partial<Record<LineId, number>> };
 export type Question = { id: string; prompt: string; options: Option[] };

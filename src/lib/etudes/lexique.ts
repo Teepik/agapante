@@ -1,4 +1,4 @@
-import { frTypo } from "@/lib/typo";
+import { etTypo as frTypo } from "./typo";
 
 export type Mot = { term: string; def: string; station?: string };
 
@@ -82,7 +82,6 @@ export const lexique: Mot[] = frTypo([
     def: "La dernière partie des études de médecine, dans la spécialité choisie : de quatre à six ans selon la spécialité.",
     station: "internat",
   },
-  { term: "LAS", def: "Licence accès santé : une licence au choix, avec une option qui permet de candidater en médecine ou en pharmacie.", station: "pass-las" },
   {
     term: "Licence, master, doctorat",
     def: "Les trois diplômes de l'université : la licence (bac+3), le master (bac+5), le doctorat (environ bac+8).",
@@ -98,7 +97,16 @@ export const lexique: Mot[] = frTypo([
     def: "Les prépas scientifiques de 1re année : maths et physique, physique et chimie, maths et informatique, technologie.",
     station: "prepa-scientifique",
   },
-  { term: "PASS", def: "Parcours d'accès spécifique santé : une première année centrée sur la santé, avec une option d'une autre discipline.", station: "pass-las" },
+  {
+    term: "PASS et LAS",
+    def: "Les deux voies d'accès aux études de santé jusqu'en 2026. À partir de 2027, une licence unique les remplace.",
+    station: "pass-las",
+  },
+  {
+    term: "Licence santé",
+    def: "La nouvelle première année des études de santé, prévue à partir de 2027 (nom provisoire : licence « portail santé ») : un bloc santé, un bloc disciplinaire, un bloc transversal.",
+    station: "pass-las",
+  },
   { term: "Parcoursup", def: "La plateforme nationale où tu formules tes vœux d'études supérieures, de janvier à mars de ta Terminale." },
   { term: "Passerelle", def: "Une possibilité officielle de changer de formation en cours de route, souvent sans perdre d'année.", station: "universite" },
   {
@@ -108,4 +116,19 @@ export const lexique: Mot[] = frTypo([
   { term: "Spécialité", def: "Une matière approfondie au lycée : trois en 1re, deux en Terminale." },
   { term: "Taupe", def: "Le surnom de la 2e année de prépa scientifique ; ses élèves sont les taupins." },
   { term: "UCAS", def: "La plateforme de candidature aux universités britanniques." },
+  {
+    term: "DNSPM",
+    def: "Diplôme national supérieur professionnel de musicien : le diplôme des pôles supérieurs et des conservatoires nationaux supérieurs, de niveau licence.",
+    station: "cnsmd",
+  },
+  {
+    term: "HMONP",
+    def: "Habilitation de l'architecte à exercer en son nom propre : une année après le diplôme d'architecte.",
+    station: "pole-superieur",
+  },
+  {
+    term: "S2TMD",
+    def: "Bac technologique sciences et techniques du théâtre, de la musique et de la danse : un lycée associé à un conservatoire, avec beaucoup de pratique.",
+    station: "conservatoire",
+  },
 ]);

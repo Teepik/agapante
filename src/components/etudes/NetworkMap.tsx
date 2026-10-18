@@ -190,7 +190,7 @@ function PlanDrawing({
         </button>
       ))}
 
-      <Legend focusLine={focusLine} route={route} onFocusLine={onFocusLine} />
+      <Legend focusLine={focusLine} route={route} onFocusLine={onFocusLine} visited={visited} />
     </>
   );
 }
@@ -337,10 +337,12 @@ function Legend({
   focusLine,
   route,
   onFocusLine,
+  visited,
 }: {
   focusLine: LineId | null;
   route: LineId | null;
   onFocusLine: (line: LineId | null) => void;
+  visited: Set<string>;
 }) {
   const active = route ?? focusLine;
   return (
@@ -358,6 +360,12 @@ function Legend({
             >
               <Bullet line={l.id} />
               <span>{l.name}</span>
+              {routeOf(l.id).every((id) => visited.has(id)) ? (
+                <span className="et-legend__done" title="Toutes les stations de la ligne sont explorées">
+                  <Icon name="check" width={16} height={16} />
+                  <span className="et-sr">ligne explorée</span>
+                </span>
+              ) : null}
             </button>
           </li>
         ))}
@@ -412,6 +420,11 @@ function Strip({ stripLine, onStripLine, visited, onOpen }: Props) {
         <div>
           <p className="et-strip__name">{line.name}</p>
           <p className="et-strip__pitch">{line.pitch}</p>
+          <p className="et-strip__count">
+            {stops.filter((id) => visited.has(id)).length} station
+            {stops.filter((id) => visited.has(id)).length > 1 ? "s" : ""} explorée
+            {stops.filter((id) => visited.has(id)).length > 1 ? "s" : ""} sur {stops.length}
+          </p>
         </div>
       </div>
 

@@ -4,7 +4,7 @@
  * (Parcoursup, Onisep) ; chaque formation examine aussi l'ensemble du dossier.
  */
 import type { LineId } from "./lines";
-import { frTypo } from "@/lib/typo";
+import { etTypo as frTypo } from "./typo";
 
 export type SpeId =
   | "maths"
@@ -160,25 +160,20 @@ export const destinations: Destination[] = frTypo([
     },
   },
   {
-    id: "pass",
-    name: "PASS : parcours d'accès spécifique santé",
+    id: "sante",
+    name: "Licence santé (ex-PASS et LAS) : médecine, pharmacie…",
     line: "sante",
     station: "pass-las",
     judge: (s) => {
       const { T, mathsAny } = ctx(s);
-      if (T.has("svt") && T.has("pc")) return v("grande", "SVT et physique-chimie : les bases de la première année de santé.");
+      if (T.has("svt") && T.has("pc")) return v("grande", "SVT et physique-chimie : les bases du bloc santé de la première année.");
       if (T.has("svt") || T.has("pc"))
-        return v("ouverte", mathsAny ? "Une science et des maths : un bon socle." : "Une science en Terminale : faisable, avec du travail en biologie ou en chimie.");
-      return v("entrouverte", "Accessible, mais la biologie et la chimie démarrent très vite : préfère une LAS.");
+        return v(
+          "ouverte",
+          mathsAny ? "Une science et des maths : un bon socle." : "Une science en Terminale : faisable, avec du travail en biologie ou en chimie.",
+        );
+      return v("entrouverte", "Accessible, mais la biologie et la chimie démarrent très vite : prévois de les travailler avant la rentrée.");
     },
-  },
-  {
-    id: "las",
-    name: "LAS : licence avec accès santé",
-    line: "sante",
-    station: "pass-las",
-    judge: () =>
-      v("ouverte", "Tu choisis une licence (droit, sciences, langues…) avec une option santé : tous les profils y entrent."),
   },
   {
     id: "ecg",

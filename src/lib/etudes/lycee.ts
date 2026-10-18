@@ -1,4 +1,4 @@
-import { frTypo } from "@/lib/typo";
+import { etTypo as frTypo } from "./typo";
 
 export type LyceeType = { id: string; name: string; tagline: string; rows: { k: string; v: string }[]; plus: string };
 
@@ -43,7 +43,7 @@ export const lyceeTypes: LyceeType[] = frTypo([
       },
       { k: "Coût", v: "Les frais de scolarité de l'établissement." },
     ],
-    plus: "Sur Parcoursup, les repères nationaux pèsent lourd : soigne l'épreuve anticipée de maths et le bac de français, notés partout de la même façon.",
+    plus: "Les repères nationaux pèsent lourd : l'épreuve anticipée de maths et le bac de français, notés partout de la même façon. Sciences Po Paris les compte même dans sa note d'admission depuis 2027.",
   },
   {
     id: "defense",
