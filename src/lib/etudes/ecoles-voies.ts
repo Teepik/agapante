@@ -99,7 +99,7 @@ export const ecolesVoies: Ecole[] = [
       "Un tronc commun de maths, physique, informatique, chimie, dessin technique, fabrication et conception ; puis énergie et génie électrique, mécanique et ergonomie, mécanique, informatique, génie industriel, ou une spécialité en apprentissage dès la 3e année (mécanique et transports, logistique industrielle…).",
     debouches:
       "Chef de projet, responsable recherche et développement, ingénieur méthodes ou calcul, dans la mécanique, l'énergie, l'aéronautique, la défense, les transports ou l'horlogerie.",
-    plus: "La spécialité se choisit à la fin du tronc commun, sans sélection ni classement ; un stage de 4 semaines est prévu dès le tronc commun.",
+    plus: "La spécialité se choisit librement à la fin du tronc commun ; un stage de 4 semaines est prévu dès le tronc commun.",
     station: "cycle-integre",
     url: "https://www.utbm.fr",
     sources: [

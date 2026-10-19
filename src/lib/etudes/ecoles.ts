@@ -621,7 +621,7 @@ const base: Ecole[] = frTypo([
     cout: "Jusqu'à environ 90 000 $ par an, avec des aides selon les revenus",
     formations: "Un premier cycle généraliste (liberal arts), puis une spécialité.",
     debouches: "Recherche, entreprises, institutions internationales.",
-    plus: "À Harvard, les familles qui gagnent moins de 100 000 $ par an ne paient rien, étudiants étrangers compris.",
+    plus: "À Harvard, les études sont entièrement payées pour les familles qui gagnent jusqu'à 100 000 $ par an, étudiants étrangers compris.",
     station: "bachelor-etranger",
   },
 ]);
