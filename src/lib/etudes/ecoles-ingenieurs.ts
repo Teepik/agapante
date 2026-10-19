@@ -20,8 +20,9 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Concours X-ENS",
     uneRang: 1,
     uneVoie: "prepa",
-    places: "Concours 2025 : 431 élèves français admis, dont MP 163, PC 131 et PSI 56, plus les élèves internationaux",
-    cout: "Élèves français rémunérés, scolarité gratuite contre 10 ans de service public ; élèves de l'UE : 19 000 € sur 3 ans (barème depuis 2019)",
+    places:
+      "Concours 2025 : 431 élèves français admis, dont 164 en MP, 131 en PC et 56 en PSI, plus 111 élèves internationaux",
+    cout: "Élèves français rémunérés, scolarité gratuite s'ils servent l'État 10 ans dans les 20 ans qui suivent, sinon environ 21 000 à 31 000 € à rembourser ; élèves étrangers : 19 000 € sur 3 ans (UE), 38 000 € (hors UE)",
   },
   "ens-ulm": {
     accroche:
@@ -66,7 +67,7 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     uneRang: 16,
     uneVoie: "prepa",
     places: "Concours 2026 : 57 élèves en PC, 5 en MP, 2 en BCPST ; environ 90 élèves en 1re année",
-    cout: "Frais annuels à confirmer. Bourses Joliot depuis 2010 : près de 400 000 € de bourses et aides par promotion",
+    cout: "Bourses Joliot depuis 2010, pour les élèves français et internationaux : près de 400 000 € de bourses et d'aides par promotion, sur toute la scolarité",
   },
   mines: {
     accroche:
@@ -259,7 +260,7 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["postbac", "titre", "prepa"],
     alternance:
       "Cycle ingénieur en apprentissage après une L2, une L3, un BUT ou un bachelor ; 5 majeures ; 2 semaines à l'école, 2 en entreprise",
-    places: "783 places en 1re année sur 5 campus",
+    places: "783 places en 1re année sur 5 campus (session 2027)",
     cout: "2027-2028 : 10 350 € en prépa, 12 950 € en cycle ingénieur ; boursiers : concours gratuit, même grille",
   },
   "esiee-paris": {
@@ -267,7 +268,7 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
       "ESIEE Paris forme des ingénieurs du numérique, de l'électronique et de l'industrie : informatique, cybersécurité, data et IA, systèmes embarqués, santé numérique, énergie, génie civil.",
     recrutement: ["titre", "postbac", "prepa"],
     alternance:
-      "Cycle ingénieur en apprentissage dès la 1re année, après un bac + 2 ou le premier cycle : 418 places dans 10 filières, de l'IA au génie civil",
+      "Cycle ingénieur en apprentissage dès la 1re année, après un bac+2 ou le premier cycle : 418 places dans 10 filières, de l'IA au génie civil",
     places: "Rentrée 2026 : 255 places + 20 en cycle renforcé après le bac ; 420 apprentis en cycle ingénieur",
     cout: "8 280 € par an en premier cycle, 8 680 € en cycle ingénieur (2026) ; boursiers : 3 312 € au plus bas, 2 070 € dès 2027",
   },
@@ -277,7 +278,7 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     statut: "prive",
     recrutement: ["postbac", "titre", "prepa"],
     alternance:
-      "Aéro 3 à Aéro 5 en apprentissage à Paris-Ivry, après un bac + 2 ou l'Aéro 2 ; systèmes autonomes ou propulsion ; 3 semaines école, 3 semaines entreprise",
+      "Aéro 3 à Aéro 5 en apprentissage à Paris-Ivry, après un bac+2 ou l'Aéro 2 ; systèmes autonomes ou propulsion ; 3 semaines école, 3 semaines entreprise",
     places: "400 places en 1re année : Paris 200, Toulouse 130, Lyon 70",
     cout: "11 640 € par an en 2026-2027, de la 1re à la 5e année ; boursiers : concours gratuit, même montant",
   },
@@ -288,8 +289,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["postbac", "prepa", "titre"],
     alternance:
       "Deux diplômes par apprentissage : véhicules, systèmes autonomes et connectés ; génie industriel pour l'aéronautique et l'espace. 5e année possible en alternance",
-    places: "Places 2026 à confirmer sur le site du concours Avenir ; les 3 campus recrutent en 1re année",
-    cout: "10 130 € en 2026-2027 ; boursiers : bourses du CROUS, concours à 30 € au lieu de 120 €",
+    places: "Les 3 campus recrutent en 1re année",
+    cout: "10 130 € en 2026-2027 ; boursiers : bourses du Crous, concours à 30 € au lieu de 120 €",
   },
   icam: {
     accroche:
@@ -432,7 +433,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     ville: "Marseille (Château-Gombert) et Nice",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, MPI, PC, PSI, TSI, puis concours Centrale-Supélec ; PT via la Banque PT ; aussi sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "Concours 2026 : 265 places Centrale-Supélec (90 MP, 10 MPI, 90 PC, 70 PSI, 5 TSI) et 5 en PT",
     cout: "2 600 € par an en 2025-2026 ; depuis la rentrée 2026, droits modulés selon le revenu fiscal de la famille ; apprentis exonérés",
     formations:
@@ -458,7 +459,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     ville: "Saint-Étienne ; Gardanne (ISMIN) ; Lyon (FUSION)",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, MPI, PC, PSI, PT, TSI, puis concours Mines-Ponts ; ISMIN via le concours Mines-Télécom",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "Concours Mines-Ponts 2026 : 154 places (40 MP, 20 MPI, 42 PC, 45 PSI, 6 PT, 1 TSI), dont 25 pour FUSION",
     cout: "3 600 € par an pour les nouveaux élèves de la rentrée 2026, plus la CVEC ; boursiers du Crous exonérés ; FUSION : 15 500 € par an",
     formations: "1re année : socle scientifique, technique et humain, stage opérateur de 4 semaines.",
@@ -485,7 +486,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     ville: "Nancy (campus Artem) ; Saint-Dié-des-Vosges",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, MPI, PC, PSI, PT, TSI, puis concours Mines-Ponts ; aussi Prépa des INP, CUPGE, sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places:
       "Concours Mines-Ponts 2026 : 141 places (46 MP, 12 MPI, 36 PC, 40 PSI, 6 PT, 1 TSI) ; 7 places pour La Prépa des INP",
     cout: "2 613 € par an pour les élèves de l'Union européenne (notice du concours 2026) ; boursiers exonérés",
@@ -513,7 +514,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     ville: "Palaiseau, puis Bordeaux-Talence ou Saint-Étienne",
     kind: "École d'ingénieurs privée",
     acces: "Prépa MP, MPI, PC, PSI, TSI, puis concours Centrale-Supélec ; PT via la Banque PT ; aussi sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "Concours 2026 : 124 places en MP, MPI, PC et PSI (dont 6 pour candidats étrangers) et 15 en PT",
     cout: "3 200 € par an en 2026 (9 600 € pour les 3 ans) ; frais réduits selon l'échelon de bourse",
     formations: "La 1re année, commune, se passe à Palaiseau.",
@@ -530,13 +531,13 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
   },
   {
     id: "chimie-paristech",
-    name: "Chimie ParisTech - PSL",
+    name: "Chimie ParisTech – PSL",
     short: "Chimie ParisTech (ENSCP)",
     line: "sciences",
     ville: "Paris (5e arrondissement)",
     kind: "École d'ingénieurs publique",
     acces: "Prépa PC ou PSI, puis concours Mines-Ponts ; aussi TPC, BCPST, CPI Gay-Lussac, ATS et sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "Concours Mines-Ponts 2026 : 71 places (68 PC, 3 PSI) ; plus des places en BCPST, CPI, ATS et sur dossier",
     cout: "2026-2027 : 1 200 € en 1re année, 628 € en 2e et 3e années (Europe), plus 105 € de CVEC ; bourses sur critères sociaux possibles",
     formations:
@@ -557,18 +558,18 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
   },
   {
     id: "ensimag",
-    name: "Grenoble INP - Ensimag",
+    name: "Grenoble INP – Ensimag",
     short: "Ensimag",
     line: "sciences",
     ville: "Saint-Martin-d'Hères (domaine universitaire de Grenoble)",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, MPI, PC, PSI, puis Concours Commun INP ; aussi Banque PT, Prépa des INP, sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "Concours Commun INP 2026 : 160 places (110 MP, 40 MPI, 5 PC, 5 PSI) ; 10 places en PT",
     cout: "630 € par an en 2026-2027 (tarif fixé par l'État), plus 105 € de CVEC ; boursiers du Crous et apprentis exonérés",
     formations: "Le cursus dure 3 ans après la prépa.",
     debouches: "L'Ensimag forme des ingénieurs en informatique, mathématiques appliquées et télécommunications.",
-    plus: "Une école de Grenoble INP - UGA, créée en 1960, consacrée à l'informatique et aux mathématiques appliquées, avec une voie en apprentissage pour le même diplôme d'ingénieur.",
+    plus: "Une école de Grenoble INP – UGA, créée en 1960, consacrée à l'informatique et aux mathématiques appliquées, avec une voie en apprentissage pour le même diplôme d'ingénieur.",
     station: "ecole-ingenieurs",
     url: "https://ensimag.grenoble-inp.fr",
     accroche: "L'Ensimag forme des ingénieurs en informatique, mathématiques appliquées et télécommunications.",
@@ -584,7 +585,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     ville: "Bruz, campus de Ker Lann (métropole de Rennes)",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, MPI, PC, PSI, puis Concours Commun INP, en élève ingénieur ou en élève fonctionnaire de l'Insee",
-    duree: "3 ans après bac + 2 pour le diplôme d'ingénieur",
+    duree: "3 ans après bac+2 pour le diplôme d'ingénieur",
     places:
       "Concours Commun INP 2026 : 63 places d'élèves ingénieurs et 29 d'élèves fonctionnaires (attachés statisticiens)",
     cout: "Ingénieurs : 2 650 € par an (données 2024). Fonctionnaires : études payées 1 900 € bruts par mois, contre 8 ans au service de l'État",
@@ -758,9 +759,8 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     kind: "École d'ingénieurs privée reconnue par l'État, après le bac",
     acces: "Parcoursup : concours Puissance Alpha, dossier et QCM (maths, sciences, anglais)",
     duree: "5 ans",
-    places:
-      "Places post-bac 2026 à confirmer ; cycle ingénieur 2026 : 50 via e3a-Polytech, 80 sur titre, 80 en apprentissage",
-    cout: "2026-2027 : 10 000 € en P1, jusqu'à 12 000 € en ING3 ; boursiers : bourse CROUS de 1 454 à 6 335 € et bourses de l'école",
+    places: "Cycle ingénieur 2026 : 50 via e3a-Polytech, 80 sur titre, 80 en apprentissage",
+    cout: "2026-2027 : 10 000 € en P1, jusqu'à 12 000 € en ING3 ; boursiers : bourse Crous de 1 454 à 6 335 € et bourses de l'école",
     formations:
       "Deux ans de prépa intégrée : informatique, mathématiques, physique et électronique (180 h chacune en 1re année), formation générale et un mois de stage en décembre-janvier.",
     debouches:
@@ -784,8 +784,8 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     kind: "École d'ingénieurs privée reconnue par l'État, après le bac",
     acces: "Parcoursup : concours Puissance Alpha, dossier et QCM (maths, sciences, anglais)",
     duree: "5 ans",
-    places: "2026 : 60 places en prépa Informatique et technologies numériques (Paris) ; autres programmes à confirmer",
-    cout: "2026-2027 : 9 000 € par an en prépa, 10 850 € en cycle ingénieur ; boursiers CROUS : 2 000 € de réduction par an",
+    places: "2026 : 60 places en prépa Informatique et technologies numériques (Paris)",
+    cout: "2026-2027 : 9 000 € par an en prépa, 10 850 € en cycle ingénieur ; boursiers Crous : 2 000 € de réduction par an",
     formations:
       "Deux ans de prépa intégrée : maths, physique, signaux et systèmes, projets d'électronique, de robotique et d'informatique, économie, anglais et LV2, puis un semestre à l'étranger ou un stage en 2e année.",
     debouches:
@@ -809,7 +809,6 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     kind: "École d'ingénieurs privée reconnue par l'État, après le bac",
     acces: "Parcoursup : concours Puissance Alpha, dossier et QCM (maths, sciences, anglais)",
     duree: "5 ans",
-    places: "Places 2026 à confirmer : absentes des pages consultées en octobre 2026",
     cout: "2026-2027 : 7 722 € par an en prépa, 8 775 à 9 527 € en cycle ingénieur ; boursiers : documentation bourses de l'école",
     formations: "Deux ans de cycle préparatoire.",
     debouches:
@@ -822,7 +821,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "eespig",
     recrutement: ["postbac", "titre", "prepa"],
     alternance:
-      "Sept cycles ingénieur par apprentissage après un bac + 2 ou la prépa : BTP, énergie, aéronautique, robotique, numérique, agriculture, paysage",
+      "Sept cycles ingénieur par apprentissage après un bac+2 ou la prépa : BTP, énergie, aéronautique, robotique, numérique, agriculture, paysage",
   },
   {
     id: "cesi",
@@ -899,7 +898,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
   },
   {
     id: "eigsi",
-    name: "EIGSI, école d'ingénieurs généralistes - La Rochelle",
+    name: "EIGSI, école d'ingénieurs généralistes – La Rochelle",
     short: "EIGSI",
     line: "postbac",
     ville: "La Rochelle et Casablanca (Maroc)",
@@ -949,13 +948,13 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
   },
   {
     id: "enseeiht",
-    name: "Toulouse INP - ENSEEIHT",
+    name: "Toulouse INP – ENSEEIHT",
     short: "ENSEEIHT (N7)",
     line: "sciences",
     ville: "Toulouse",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, MPI, PC, PSI, PT, TSI, puis Concours Commun INP ; aussi Prépa des INP et sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places:
       "298 places après une prépa MP, MPI, PC, PSI, PT ou TSI, réparties entre trois départements (tableau de septembre 2026)",
     cout: "630 € par an en 2026-2027, plus 105 € de CVEC ; boursiers exonérés",
@@ -975,13 +974,13 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
   },
   {
     id: "ensiacet",
-    name: "Toulouse INP - ENSIACET",
+    name: "Toulouse INP – ENSIACET",
     short: "ENSIACET (A7)",
     line: "sciences",
     ville: "Toulouse",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, MPI, PC, PSI, TPC, puis Concours Commun INP ; aussi prépas intégrées et sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "Campagne 2026-2027 : 175 places au Concours Commun INP, dont 116 en PC",
     cout: "630 € par an et 105 € de CVEC en 2026-2027 ; boursiers exonérés ; apprentis exonérés et payés de 53 à 78 % du Smic",
     formations:
@@ -998,13 +997,13 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
   },
   {
     id: "phelma",
-    name: "Grenoble INP - Phelma, UGA",
+    name: "Grenoble INP – Phelma, UGA",
     short: "Phelma",
     line: "sciences",
     ville: "Grenoble",
     kind: "École d'ingénieurs publique",
     acces: "Prépa scientifique puis Concours Commun INP ; aussi BCPST, Prépa des INP et sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "Campagne 2026-2027 : 24 places en apprentissage, 36 sur titre en 1re année et 20 en 2e année",
     cout: "630 € par an en 2026-2027 (tarif Grenoble INP), plus 105 € de CVEC ; boursiers et apprentis exonérés",
     formations:
@@ -1021,14 +1020,13 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
   },
   {
     id: "ense3",
-    name: "Grenoble INP - Ense3, UGA",
+    name: "Grenoble INP – Ense3, UGA",
     short: "Ense3",
     line: "sciences",
     ville: "Grenoble",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, MPI, PC, PSI, PT, TSI, puis Concours Commun INP ; aussi Prépa des INP, BUT et sur titre",
-    duree: "3 ans après bac + 2",
-    places: "Site consulté en 2026 : environ 325 recrues par an, dont 231 via le Concours Commun INP et 25 apprentis",
+    duree: "3 ans après bac+2",
     cout: "630 € par an en 2026-2027 (UE), plus 105 € de CVEC ; boursiers et apprentis exonérés",
     formations:
       "Le premier semestre est commun : modélisation et calcul scientifique, conception soutenable, génie électrique, signaux et systèmes, mécanique des fluides et des solides, avec des projets.",
@@ -1042,17 +1040,17 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "public",
     recrutement: ["prepa", "titre"],
     alternance:
-      "Filière PRODISE en 3 ans (production, distribution et stockage des énergies) : de bac + 2 à bac + 4, 25 places, alternance d'un à deux mois",
+      "Filière PRODISE en 3 ans (production, distribution et stockage des énergies) : de bac+2 à bac+4, 25 places, alternance d'un à deux mois",
   },
   {
     id: "enseirb-matmeca",
-    name: "Bordeaux INP - ENSEIRB-MATMECA",
+    name: "Bordeaux INP – ENSEIRB-MATMECA",
     short: "ENSEIRB-MATMECA",
     line: "sciences",
     ville: "Talence (métropole de Bordeaux)",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, MPI, PC, PSI, PT, TSI, puis Concours Commun INP ; aussi Prépa des INP, CPBx et sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places:
       "2026-2027 : 72 places au Concours Commun INP pour la seule filière Informatique ; plus de 1 200 élèves-ingénieurs",
     cout: "630 € par an (UE) et 105 € de CVEC à la rentrée 2026 ; boursiers exonérés des droits et de la CVEC",
@@ -1078,7 +1076,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     ville: "Évry-Courcouronnes et Palaiseau (Essonne)",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, MPI, PC, PSI, puis concours Mines-Télécom ; aussi sur titre et en apprentissage",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "206 places au concours Mines-Télécom (session 2027) ; 42 places en apprentissage en 1re année",
     cout: "3 600 € par an pour un entrant de 2026 (UE) ; boursiers d'État exonérés ; apprentis exonérés",
     formations: "Le cycle généraliste mêle cours, projets et stages en lien étroit avec les entreprises.",
@@ -1103,7 +1101,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     kind: "École d'ingénieurs publique",
     acces:
       "Prépa MP, MPI, PC, PSI, PT, TSI, BCPST, puis concours Mines-Télécom ; après le bac, sur Parcoursup (160 places en 2025) ; aussi sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après une prépa, 5 ans après le bac",
     places: "Plus de 15 % des 1 500 places annuelles du concours Mines-Télécom ; une dizaine d'élèves fonctionnaires",
     cout: "Environ 3 200 € par an en 2025 (UE) ; exonération possible pour les boursiers ; élèves fonctionnaires rémunérés, engagés huit ans",
     formations:
@@ -1118,7 +1116,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "public",
     recrutement: ["prepa", "postbac", "titre"],
     alternance:
-      "Cinq diplômes de spécialité en apprentissage, en 3 ans après un bac + 2 : génie industriel, matériaux, énergie et nucléaire, ferroviaire, informatique et réseaux",
+      "Cinq diplômes de spécialité en apprentissage, en 3 ans après un bac+2 : génie industriel, matériaux, énergie et nucléaire, ferroviaire, informatique et réseaux",
     une: "Taux d'accès Parcoursup 2025 : 24 %",
     uneRang: 24,
     uneVoie: "postbac",
@@ -1131,7 +1129,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     ville: "Albi (campus Jarlard, 24 ha)",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, PC, PSI, MPI, PT, TSI, BCPST, puis concours Mines-Télécom ; aussi sur titre et en alternance",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "Rentrée 2026 : 156 places au concours Mines-Télécom, dont 45 en MP, 45 en PC et 45 en PSI",
     cout: "3 200 € par an pour l'UE (tarif affiché en 2026) ; boursiers exonérés ; en alternance, formation payée et salaire versé",
     formations:
@@ -1156,7 +1154,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     ville: "Alès (Gard)",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, PC, PSI, MPI, PT, TSI, puis concours Mines-Télécom ; BCPST par G2E ; aussi sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "Rentrée 2026 : 224 places sur concours, dont 68 en MP, 62 en PSI, 58 en PC et 23 en PT",
     cout: "3 500 € par an en 2026-2027 (UE et recrutés sur concours) ; boursiers exonérés ; apprentis rémunérés",
     formations:
@@ -1181,10 +1179,10 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     ville: "Brest ; second campus à Palaiseau (Paris-Saclay)",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, PC, PSI, PT, puis concours Mines-Ponts ; Mines-Télécom pour Défense & Sécurité ; aussi sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places:
       "Concours Mines-Ponts 2026 : 91 places à Brest ; Défense & Sécurité 2026 : 45 places civiles et 45 IETA (indicatives)",
-    cout: "2 936 € par an en 2026-2027 (UE) ; boursiers du CROUS exonérés ; élèves IETA rémunérés par la DGA",
+    cout: "2 936 € par an en 2026-2027 (UE) ; boursiers du Crous exonérés ; élèves IETA rémunérés par la DGA",
     formations: "1re année : tronc commun (maths, physique, mécanique, numérique, langues) et un mois de stage.",
     debouches:
       "À Brest, l'ENSTA forme aux métiers de la mer et de la défense : génie maritime, énergies en mer, hydrographie et océanographie, robotique, propulsion et pyrotechnie.",
@@ -1209,7 +1207,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     ville: "Cergy (Val-d'Oise)",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, PC, PSI, MPI, puis concours CentraleSupélec ; aussi PT, TSI, ATS, BUT ou licence",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "En 2026 : 175 places au concours CentraleSupélec, 20 en PT, 10 en TSI, 15 en ATS ; 56 en apprentissage",
     cout: "630 € par an en 2026-2027 (tarif national), plus 295 € de frais (montant 2025) ; boursiers exonérés des droits ; apprentis salariés",
     formations: "Tronc commun en 1re année, avec majeures et mineures.",
@@ -1231,7 +1229,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     ville: "Évry-Courcouronnes (Essonne)",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, MPI, PC, PSI, TSI, puis concours Mines-Télécom ; aussi sur titre (licence, BUT, ATS)",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "Concours Mines-Télécom : 109 places affichées pour la session 2027, dont 55 en MP et 20 en MPI",
     cout: "630 € à la rentrée 2026 (tarif national des écoles publiques) ; boursiers exonérés ; apprentis rémunérés et exonérés",
     formations: "Tronc commun en 1re année : informatique, mathématiques appliquées, gestion, entrepreneuriat.",
@@ -1254,7 +1252,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     ville: "Futuroscope, Chasseneuil-du-Poitou (près de Poitiers)",
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, PC, PSI, MPI, PT, TSI, puis concours Mines-Télécom ; aussi ATS et sur titre",
-    duree: "3 ans après bac + 2",
+    duree: "3 ans après bac+2",
     places: "Rentrée 2026 : 151 places au concours Mines-Télécom (58 PSI, 55 MP, 28 PC), 2 en ATS, 13 sur titres",
     cout: "630 € de droits à la rentrée 2026 ; boursiers dispensés ; apprentis salariés",
     formations: "1re année de tronc commun scientifique, technique et humain.",
@@ -1332,9 +1330,9 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     duree: "3 ans après une prépa ou un cycle préparatoire",
     places:
       "Rentrée 2026 : 64 places au CCINP (PC 50, MP 6, PSI 6, TPC 2), plus des places en BCPST, prépas intégrées et sur titre",
-    cout: "630 €/an en 2026-2027, plus 105 € de CVEC ; boursiers exonérés des droits d'inscription",
+    cout: "630 € par an en 2026-2027, plus 105 € de CVEC ; boursiers exonérés des droits d'inscription",
     formations:
-      "Un tronc commun en sciences fondamentales et génie des procédés, avec des projets tout au long du cursus (innovation, conception, R&D).",
+      "Un tronc commun en sciences fondamentales et sciences de l'ingénieur, avec des projets tout au long du cursus (innovation, conception, R&D).",
     debouches:
       "Tu deviens ingénieur en génie chimique et génie des procédés : tu conçois, pilotes et améliores des procédés de production.",
     plus: "Une école de chimie en plein centre de Nancy, adossée à un laboratoire commun avec le CNRS.",
@@ -1357,7 +1355,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     acces: "Prépa PC ou TPC, puis CCINP ; après le bac, CPI de la Fédération Gay-Lussac ; aussi sur titre",
     duree: "3 ans après une prépa ou le CPI",
     places: "Rentrée 2026 : 61 places au CCINP (PC chimie 50, ChemBiotech 8, TPC 3), plus CPI, ATS et sur titre",
-    cout: "630 €/an en 2026-2027, plus 105 € de CVEC ; boursiers exonérés des droits d'inscription ; Chemplast gratuit et salarié",
+    cout: "630 € par an en 2026-2027, plus 105 € de CVEC ; boursiers exonérés des droits d'inscription ; Chemplast gratuit et salarié",
     formations:
       "Trois semestres de tronc commun : sciences analytiques, chimie moléculaire, ingénierie des polymères, matériaux fonctionnels et nanosciences.",
     debouches:
@@ -1379,10 +1377,10 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     line: "sciences",
     ville: "Aubière (campus des Cézeaux), près de Clermont-Ferrand",
     kind: "École d'ingénieurs publique",
-    acces: "Prépa MP, PC, PSI, TPC ou TSI, puis CCINP ; CPI de chimie après le bac ; apprentissage après un bac + 3",
+    acces: "Prépa MP, PC, PSI, TPC ou TSI, puis CCINP ; CPI de chimie après le bac ; apprentissage après un bac+3",
     duree: "3 ans après une prépa ou un cycle préparatoire",
     places: "Rentrée 2026 : 124 places au CCINP (PSI 62, PC 32, MP 20, TSI 8, TPC 2) et 48 en apprentissage",
-    cout: "630 €/an en 2026-2027, plus 105 € de CVEC ; boursiers exonérés des droits d'inscription",
+    cout: "630 € par an en 2026-2027, plus 105 € de CVEC ; boursiers exonérés des droits d'inscription",
     formations:
       "Trois spécialités sous statut étudiant : chimie, génie des procédés et énergétique, mécanique (département mécanique avancée) ; une quatrième en apprentissage, mécanique et génie industriel.",
     debouches: "Tu choisis entre la chimie et les procédés d'un côté, la mécanique et l'industrie de l'autre.",
@@ -1393,7 +1391,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "public",
     recrutement: ["prepa", "titre", "postbac"],
     alternance:
-      "Mécanique et génie industriel en apprentissage, 3 ans : 48 places en 2026, après un bac + 3, un BTS ou une 2e année de prépa",
+      "Mécanique et génie industriel en apprentissage, 3 ans : 48 places en 2026, après un bac+3, un BTS ou une 2e année de prépa",
   },
   {
     id: "enac",
@@ -1406,7 +1404,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     duree: "3 ans après une prépa",
     places:
       "Rentrée 2026 : 108 places au concours Mines-Télécom (90 civils, 18 fonctionnaires) et 35 au plus en apprentissage",
-    cout: "1 500 €/an en 2026 pour un élève civil, gratuit pour les boursiers ; élève fonctionnaire payé environ 1 500 € nets par mois",
+    cout: "1 500 € par an en 2026 pour un élève civil, gratuit pour les boursiers ; élève fonctionnaire payé environ 1 500 € nets par mois",
     formations:
       "1re année commune : opérations aériennes et sécurité, trafic aérien, avionique et télécoms, maths, informatique.",
     debouches:
@@ -1417,7 +1415,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     accroche:
       "Tu deviens ingénieur généraliste de l'aéronautique, tourné vers la sécurité et la transition du transport aérien.",
     statut: "public",
-    recrutement: ["prepa", "titre", "postbac"],
+    recrutement: ["prepa", "titre"],
     alternance:
       "Ingénieur ENAC par apprentissage, 3 ans (Montpellier puis Toulouse) : 35 places au plus en 2026, après une L3, un BUT ou une prépa ATS ou TSI",
   },

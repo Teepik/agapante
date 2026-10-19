@@ -969,7 +969,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
     apprendre:
       "Le cursus dure 3 ans après la prépa. En 2e année, tu choisis une filière : en Ingénierie des systèmes d'information, par exemple, tu te spécialises en architecture de systèmes complexes, en sécurité ou en systèmes d'information. En 3e année, un master peut s'ajouter au diplôme, comme le MSc in Informatics at Grenoble ou le master Cybersecurity.",
     specificite:
-      "Une école de Grenoble INP - UGA, créée en 1960, consacrée à l'informatique et aux mathématiques appliquées, avec une voie en apprentissage pour le même diplôme d'ingénieur.",
+      "Une école de Grenoble INP – UGA, créée en 1960, consacrée à l'informatique et aux mathématiques appliquées, avec une voie en apprentissage pour le même diplôme d'ingénieur.",
     chiffres: [
       {
         label: "Places au Concours Commun INP (110 MP, 40 MPI, 5 PC, 5 PSI)",
@@ -984,7 +984,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         date: "concours 2026",
       },
       {
-        label: "Droits annuels d'un étudiant français ou européen dans une école de Grenoble INP - UGA",
+        label: "Droits annuels d'un étudiant français ou européen dans une école de Grenoble INP – UGA",
         valeur: "630 €",
         source: "https://ense3.grenoble-inp.fr/fr/formation/frais-dinscription-et-financement-des-etudes",
         date: "2026-2027",
@@ -2400,19 +2400,16 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Admis via le Concours Commun INP",
         valeur: "231 (65 MP, 60 PC, 80 PSI, 15 PT, 3 TSI, 3 MPI)",
         source: "https://ense3.grenoble-inp.fr/fr/formation/admission",
-        date: "année à confirmer",
       },
       {
         label: "Élèves recrutés par an",
         valeur: "environ 325",
         source: "https://ense3.grenoble-inp.fr/fr/formation/admission",
-        date: "année à confirmer",
       },
       {
         label: "Places en apprentissage (PRODISE)",
         valeur: "25",
         source: "https://ense3.grenoble-inp.fr/fr/formation/admission",
-        date: "année à confirmer",
       },
       {
         label: "Droits d'inscription (étudiant UE)",
@@ -2528,7 +2525,6 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Part des 1 500 places annuelles du concours Mines-Télécom",
         valeur: "plus de 15 %",
         source: "https://imt-nord-europe.fr/annuaire-formations/niveaux-admission/prepa-scientifique/",
-        date: "année à confirmer",
       },
       {
         label: "Places d'élève fonctionnaire",
@@ -2995,7 +2991,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
     pourquoi:
       "Tu deviens ingénieur en génie chimique et génie des procédés : tu conçois, pilotes et améliores des procédés de production. Les diplômés travaillent dans la chimie, l'énergie, la pharmacie, l'environnement ou l'agroalimentaire, chez BASF, Air Liquide, TotalEnergies, Sanofi, L'Oréal ou Veolia. L'école annonce 100 % de diplômés en emploi en moins de 6 mois et un salaire moyen de 44 300 € à la sortie.",
     apprendre:
-      "Un tronc commun en sciences fondamentales et génie des procédés, avec des projets tout au long du cursus (innovation, conception, R&D). Tu choisis ensuite un domaine : procédés pour l'énergie et l'environnement, produits innovants (de la chimie aux procédés) ou procédés pour les biotechnologies. Plus de 7 mois de stages en industrie, et un séjour à l'étranger pour chaque élève, de 6 mois en moyenne, dans plus de 50 universités partenaires.",
+      "Un tronc commun en sciences fondamentales et sciences de l'ingénieur, avec des projets tout au long du cursus (innovation, conception, R&D). Tu choisis ensuite un domaine : procédés pour l'énergie et l'environnement, produits innovants (de la chimie aux procédés) ou procédés pour les biotechnologies. Plus de 7 mois de stages en industrie, et un séjour à l'étranger pour chaque élève, de 6 mois en moyenne, dans plus de 50 universités partenaires.",
     specificite:
       "Une école de chimie en plein centre de Nancy, adossée à un laboratoire commun avec le CNRS. Elle accueille aussi des étudiants en pharmacie : 20 places en 2e année et une voie d'ingénieur-pharmacien par apprentissage.",
     chiffres: [
