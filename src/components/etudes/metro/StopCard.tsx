@@ -2,13 +2,23 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { mapTexts } from "@/lib/etudes/cohorte";
-import { ecoles } from "@/lib/etudes/ecoles";
-import { METRO_FICHES, METRO_LINES, metroLineById, stopById, type MetroLineId } from "@/lib/etudes/metro";
+import { ecoleById, ecoles, type Ecole, type Recrutement } from "@/lib/etudes/ecoles";
+import {
+  METRO_FICHES,
+  METRO_LINES,
+  metroLineById,
+  stopById,
+  type MetroLine,
+  type MetroLineId,
+} from "@/lib/etudes/metro";
+import { GROUPES } from "@/lib/etudes/metro-groupes";
 import { stationById, type StationContent } from "@/lib/etudes/stations";
 import { useCohort } from "../cohorte";
 import { Dot, Icon } from "../ui";
 import { neighbours } from "./geometry";
+import { GroupeChips } from "./Groupes";
 import { NEARBY } from "./Nearby";
+import { essentiel } from "./texte";
 
 /** Le contenu d'une étape : la fiche de stations.ts, ou celle propre à la carte. */
 export function useFiche(id: string): StationContent | null {
@@ -17,21 +27,39 @@ export function useFiche(id: string): StationContent | null {
   return raw ? mapTexts(raw, y) : null;
 }
 
-/** L'essentiel d'un texte : ses premières phrases, jusqu'à environ 220 signes. */
-export function essentiel(text: string, max = 220): string {
-  const phrases = text.split(/(?<=[.!?])\s+/);
-  let out = phrases[0] ?? text;
-  for (const p of phrases.slice(1)) {
-    if (out.length + p.length + 1 > max) break;
-    out = `${out} ${p}`;
-  }
-  return out;
+/** Les étapes où la question « laquelle choisir ? » se pose entre deux ou trois lignes. */
+const COMPARE_DUO: Record<string, MetroLine["id"][]> = {
+  "prepa-scientifique": ["prepa", "postbac"],
+  "cycle-integre": ["prepa", "postbac"],
+  universite: ["univ", "but", "prepa"],
+};
+
+/** Aux étapes d'école d'ingénieurs, toutes les écoles qui recrutent de cette façon. */
+const RECRUTE: Record<string, Recrutement> = {
+  "ecole-ingenieurs": "prepa",
+  "cycle-integre": "postbac",
+  "cycle-postbac": "postbac",
+};
+
+/** Les écoles d'une étape : celles que cite sa fiche, celles qui s'y rattachent, celles qui y recrutent. */
+export function ecolesDe(id: string, st: StationContent | null): Ecole[] {
+  const r = RECRUTE[id];
+  const ids = new Set([
+    ...(st?.ecoles ?? []),
+    ...ecoles.filter((e) => e.station === id || (r && e.recrutement?.includes(r))).map((e) => e.id),
+  ]);
+  return [...ids].map((x) => ecoleById[x]).filter(Boolean);
 }
 
-/** Les écoles rattachées à une étape. */
-export function ecolesDe(id: string, st: StationContent | null): string[] {
-  return [...new Set([...(st?.ecoles ?? []), ...ecoles.filter((e) => e.station === id).map((e) => e.id)])];
-}
+/** Ce qui met une école à la une, étape par étape : un critère public, dit en clair. */
+export const CRITERE_UNE: Record<string, string> = {
+  "ecole-ingenieurs":
+    "Les écoles des concours X-ENS, Mines-Ponts et Centrale-Supélec, les plus sélectifs après la prépa.",
+  "cycle-integre":
+    "Les écoles post-bac les plus sélectives sur Parcoursup en 2025 : la plus petite part de candidats ayant reçu une proposition.",
+  "cycle-postbac":
+    "Les écoles post-bac les plus sélectives sur Parcoursup en 2025 : la plus petite part de candidats ayant reçu une proposition.",
+};
 
 /** La fiche courte qui s'ouvre au toucher d'une station. */
 export function StopCard({
@@ -40,20 +68,29 @@ export function StopCard({
   onSelect,
   onFocus,
   onOpenFiche,
+  onOpenEcole,
+  onCompare,
 }: {
   id: string;
   onClose: () => void;
   onSelect: (id: string) => void;
   onFocus: (line: MetroLineId) => void;
   onOpenFiche: (id: string, section?: string) => void;
+  onOpenEcole: (id: string) => void;
+  onCompare: (lines?: MetroLine["id"][]) => void;
 }) {
   const s = stopById[id];
   const st = useFiche(id);
   if (!s || !st) return null;
   const line = s.line === "tronc" ? null : metroLineById[s.line];
   const { prev, next } = neighbours(id);
-  const nbEcoles = ecolesDe(id, st).length;
-  const chips = [s.duree, s.entree, s.cout].filter(Boolean) as string[];
+  const liste = ecolesDe(id, st);
+  const nbEcoles = liste.length;
+  const une = liste
+    .filter((e) => e.une)
+    .sort((a, b) => (a.uneRang ?? 99) - (b.uneRang ?? 99))
+    .slice(0, 6);
+  const chips = [s.duree, s.entree, s.cout, s.plus].filter(Boolean) as string[];
 
   return (
     <div className="e-mcard" data-line={line?.lane}>
@@ -75,13 +112,17 @@ export function StopCard({
           ))}
         </ul>
       ) : null}
-      <p className="e-mcard__lead">{essentiel(st.what)}</p>
+      <p className="e-mcard__lead">{s.resume ?? essentiel(st.what, id === "bac" || GROUPES[id]?.length ? 140 : 220)}</p>
       {s.alternance ? (
         <p className="e-mcard__alt">
           <Icon name="briefcase" />
           <span>{s.alternance}</span>
         </p>
       ) : null}
+
+      {(GROUPES[id] ?? []).map((g) => (
+        <GroupeChips key={g.id} groupe={g} onOpen={(section) => onOpenFiche(id, section)} />
+      ))}
 
       {id === "bac" ? (
         <div className="e-mcard__lines">
@@ -96,6 +137,32 @@ export function StopCard({
                     <span>{l.pitch}</span>
                   </span>
                   <Icon name="chevron-right" />
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button type="button" className="e-link e-mcard__cmp" onClick={() => onCompare()}>
+            Comparer les quatre lignes, côte à côte
+          </button>
+        </div>
+      ) : null}
+
+      {COMPARE_DUO[id] ? (
+        <button type="button" className="e-link e-mcard__cmp" onClick={() => onCompare(COMPARE_DUO[id])}>
+          {id === "universite"
+            ? "Licence, BUT ou prépa\u202f? Compare-les"
+            : "Prépa ou prépa intégrée\u202f? Compare-les"}
+        </button>
+      ) : null}
+
+      {une.length ? (
+        <div className="e-mcard__une">
+          <p className="e-mcard__k">À la une</p>
+          <ul>
+            {une.map((e) => (
+              <li key={e.id}>
+                <button type="button" onClick={() => onOpenEcole(e.id)}>
+                  {e.short && e.short.length < e.name.length ? e.short : e.name}
                 </button>
               </li>
             ))}

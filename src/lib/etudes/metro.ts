@@ -81,6 +81,12 @@ export type Stop = {
   cout?: string;
   /** Ce que permet l'alternance à cette étape ; absent quand l'étape se fait en formation classique. */
   alternance?: string;
+  /** Où l'étape se passe, quand c'est ce qui la distingue (« au lycée », « dans l'école »). */
+  lieu?: string;
+  /** Un fait de plus, en quelques mots, sur la fiche courte. */
+  plus?: string;
+  /** L'essentiel, pour la fiche courte, quand le texte de la fiche complète est long. */
+  resume?: string;
 };
 
 export const BAC_T = 4;
@@ -109,10 +115,20 @@ export const STOPS: Stop[] = etTypo([
     t1: 6,
     label: "Prépa scientifique",
     duree: "2 ans",
+    lieu: "au lycée",
     entree: "Sur Parcoursup",
     cout: "Scolarité gratuite dans le public",
   },
-  { id: "concours-ingenieurs", line: "prepa", kind: "choix", t0: 6, label: "Concours", entree: "Écrits, puis oraux" },
+  {
+    id: "concours-ingenieurs",
+    line: "prepa",
+    kind: "choix",
+    t0: 6,
+    label: "Concours",
+    entree: "Écrits, puis oraux",
+    resume:
+      "Au printemps de la 2e année, tu passes les écrits de plusieurs banques de concours, puis leurs oraux. Ton classement décide des écoles qui t'ouvrent leurs portes.",
+  },
   {
     id: "ecole-ingenieurs",
     line: "prepa",
@@ -124,7 +140,7 @@ export const STOPS: Stop[] = etTypo([
     entree: "Sur concours ou sur titre",
     cout: "630 € par an dans le public",
     alternance:
-      "De nombreuses écoles proposent leur cycle ingénieur en apprentissage, souvent dans des spécialités dédiées : l'entreprise paie la scolarité et te verse un salaire.",
+      "De nombreuses écoles proposent leur cycle ingénieur en apprentissage, souvent dans des spécialités dédiées : ta scolarité est prise en charge et tu touches un salaire.",
   },
   { id: "metiers-sciences", line: "prepa", kind: "terminus", t0: 9, label: "Ingénieur, chercheur" },
 
@@ -137,6 +153,7 @@ export const STOPS: Stop[] = etTypo([
     t1: 6,
     label: "Prépa intégrée",
     duree: "2 ans",
+    lieu: "dans l'école",
     entree: "Sur Parcoursup, souvent par un concours commun",
     cout: "De 178 € par an dans le public à 11 499 € dans le privé",
   },
@@ -151,7 +168,7 @@ export const STOPS: Stop[] = etTypo([
     entree: "Au contrôle continu, ou par admission parallèle",
     cout: "630 € par an dans le public",
     alternance:
-      "Possible dès la 3e ou la 4e année selon l'école : l'entreprise paie ta scolarité et te verse un salaire.",
+      "Possible dès la 3e ou la 4e année selon l'école : ta scolarité est prise en charge et tu touches un salaire.",
   },
   { id: "metiers-postbac", line: "postbac", kind: "terminus", t0: 9, label: "Ingénieur, manager" },
 
@@ -167,7 +184,7 @@ export const STOPS: Stop[] = etTypo([
     entree: "Sur Parcoursup",
     cout: "BTS public gratuit, BUT 178 € par an",
     alternance:
-      "Le BTS et le BUT se préparent aussi en alternance : tu signes un contrat avec un employeur, tu partages ton temps entre les cours et l'entreprise, et tu touches un salaire.",
+      "Le BTS et le BUT se préparent aussi en alternance : salarié d'une entreprise, tu partages ton temps entre les cours et le travail, tu touches un salaire et tu prépares le même diplôme. Fin 2025, 44 % des étudiants de BTS étaient apprentis ; en BUT, l'alternance s'ouvre surtout en 2e année.",
   },
   {
     id: "but-lp",
@@ -180,7 +197,7 @@ export const STOPS: Stop[] = etTypo([
     entree: "Dans ton IUT, ou sur dossier",
     cout: "178 € par an, salaire en alternance",
     alternance:
-      "La 3e année de BUT se suit en formation classique ou en alternance ; la licence professionnelle se prépare très souvent en alternance.",
+      "En 3e année de BUT, 57 % des étudiants étaient apprentis en 2025-2026 ; en licence professionnelle, 59 % fin 2025.",
   },
   { id: "metiers-courtes", line: "but", kind: "terminus", t0: 7, label: "Technicien supérieur" },
 
@@ -207,7 +224,8 @@ export const STOPS: Stop[] = etTypo([
     duree: "2 ans",
     entree: "Sur dossier, via Mon Master",
     cout: "255 € par an, boursiers dispensés",
-    alternance: "De nombreux masters se suivent en apprentissage, avec un salaire et une première expérience.",
+    alternance:
+      "Un master peut se préparer en apprentissage : fin 2025, 8 % des étudiants de master étaient apprentis. Sur Mon Master, tu peux déposer 15 candidatures en alternance, en plus des 15 autres.",
   },
   {
     id: "doctorat",
@@ -219,11 +237,18 @@ export const STOPS: Stop[] = etTypo([
     duree: "3 ans",
     entree: "Après un master",
     cout: "398 € par an d'inscription",
+    plus: "Contrat doctoral : au moins 2 300 € bruts par mois",
   },
   { id: "metiers-u", line: "univ", kind: "terminus", t0: 12, label: "Chercheur, cadre" },
 ]);
 
 export const stopById = Object.fromEntries(STOPS.map((s) => [s.id, s])) as Record<string, Stop>;
+
+/** Sous le nom d'une étape : sa durée, le lieu quand il éclaire, l'alternance quand elle est possible. */
+export function sousTitre(s: Stop): string {
+  const duree = s.duree && s.lieu ? `${s.duree} ${s.lieu}` : s.duree;
+  return [duree, s.alternance ? "alternance possible" : null].filter(Boolean).join(", ");
+}
 
 /** L'instant qui représente l'étape sur la carte : le milieu d'une étape, le point d'un choix. */
 export function stopT(s: Stop): number {
@@ -237,9 +262,40 @@ export const METRO_FICHES: Record<string, StationContent> = etTypo({
     name: "Mon Master, l'entrée en master",
     label: "Mon Master",
     when: "Au printemps de la 3e année de licence",
-    what: "Après la licence, l'entrée en master se fait sur dossier, par la plateforme nationale Mon Master : tu formules tes vœux, les universités étudient ton dossier, puis tu reçois leurs réponses.",
-    acces: ["Sélection sur dossier à l'entrée de la 1re année de master, via la plateforme nationale Mon Master."],
+    what: "Après la licence, l'entrée en master se fait sur dossier, par la plateforme nationale Mon Master : tu consultes les formations, tu déposes tes candidatures, puis tu reçois les réponses des universités.",
+    facts: [
+      {
+        icon: "clock",
+        label: "Calendrier 2026",
+        value:
+          "Candidatures du 17 février au 17 mars, premières réponses le 3 juin, phase complémentaire du 19 juin au 19 juillet",
+      },
+      {
+        icon: "key",
+        label: "Candidatures",
+        value: "Jusqu'à 15 en formation classique, et 15 de plus en alternance",
+      },
+      {
+        icon: "seat",
+        label: "En 2025",
+        value: "8 167 formations, 177 297 places ; 68 % des candidats ont reçu une proposition",
+      },
+    ],
+    acces: [
+      "Sélection sur dossier, parfois avec un entretien, à l'entrée de la 1re année de master : tes notes, ton projet et ta motivation comptent.",
+      "Une fois admis en 1re année, tu poursuis en 2e année dans la même mention quand tu valides ton année.",
+      "Si tu as ta licence et que tu attends encore une admission à la fin de la procédure, tu peux saisir le recteur : en 2026, dès le 20 juillet.",
+    ],
     apres: ["Master", "École sur titre", "Premier emploi avec la licence"],
+    astuce:
+      "En 2026, 270 400 candidats ont déposé près de 3 millions de candidatures, 11 en moyenne : vise large, avec des masters de niveaux de sélection différents.",
+    sources: [
+      "https://www.enseignementsup-recherche.gouv.fr/fr/mon-master-2026-bilan-de-la-phase-de-candidature-101166",
+      "https://www.enseignementsup-recherche.gouv.fr/fr/mon-master-la-phase-principale-d-admission-debute-mercredi-3-juin-103007",
+      "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2026-05/nf-sies-2026-10-40383.pdf",
+      "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2025-12/nf-sies-2025-32-38737.pdf",
+      "https://www.onisep.fr/formation/apres-le-bac-les-etudes-superieures/conseils-et-strategies-d-etudes/reussir-en-master/franchir-la-selection-a-l-entree-en-m1",
+    ],
   },
 });
 

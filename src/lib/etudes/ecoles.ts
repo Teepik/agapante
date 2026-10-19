@@ -3,6 +3,14 @@ import { ecolesPlus } from "./ecoles-plus";
 import { ecolesVoies } from "./ecoles-voies";
 import { etTypo as frTypo } from "./typo";
 
+/** Public, privé reconnu par l'État (EESPIG) ou privé. */
+export type Statut = "public" | "eespig" | "prive";
+
+/** Après le bac, après une prépa, ou sur titre (après un BUT, une licence, une prépa ATS). */
+export type Recrutement = "postbac" | "prepa" | "titre";
+
+export type Chiffre = { label: string; valeur: string; source?: string; date?: string };
+
 export type Ecole = {
   id: string;
   name: string;
@@ -20,6 +28,21 @@ export type Ecole = {
   station?: string;
   url?: string;
   sources?: string[];
+  /** Pourquoi y aller : métiers, secteurs, débouchés réels. */
+  pourquoi?: string;
+  /** Ce que tu y apprends : tronc commun, spécialités, stages, étranger. */
+  apprendre?: string;
+  /** Ce qui la distingue des autres écoles. */
+  specificite?: string;
+  statut?: Statut;
+  recrutement?: Recrutement[];
+  /** Ce que l'école propose en apprentissage. */
+  alternance?: string;
+  chiffres?: Chiffre[];
+  /** Pourquoi elle est à la une, selon un critère public (banque de concours, taux d'accès). */
+  une?: string;
+  /** L'ordre parmi les écoles à la une : le plus petit d'abord. */
+  uneRang?: number;
 };
 
 const base: Ecole[] = frTypo([

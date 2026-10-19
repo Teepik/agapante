@@ -6,6 +6,7 @@ import { stopsOf } from "./geometry";
 
 /** Sur téléphone, la carte se lit de haut en bas : le tronc commun, l'aiguillage du bac, puis la ligne choisie. */
 export function MetroMobile({
+  onCompare,
   sel,
   onSelect,
   line,
@@ -14,6 +15,7 @@ export function MetroMobile({
   ici,
   year,
 }: {
+  onCompare: () => void;
   sel: string | null;
   onSelect: (id: string) => void;
   line: MetroLineId | null;
@@ -76,6 +78,9 @@ export function MetroMobile({
             );
           })}
         </div>
+        <button type="button" className="e-link e-mmob__cmp" onClick={onCompare}>
+          Comparer les quatre lignes, côte à côte
+        </button>
       </div>
 
       {shown ? (
@@ -125,7 +130,7 @@ function Row({
         <span className="e-mrow__body">
           <span className="e-mrow__name">{s.label}</span>
           <span className="e-mrow__meta">
-            {s.duree ? `${s.duree}, dès ${year(s.t0)}` : year(s.t0)}
+            {s.duree ? `${s.lieu ? `${s.duree} ${s.lieu}` : s.duree}, dès ${year(s.t0)}` : year(s.t0)}
             {s.alternance ? (
               <span className="e-mrow__alt">
                 <Icon name="briefcase" /> alternance possible

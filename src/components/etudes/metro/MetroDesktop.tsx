@@ -1,7 +1,16 @@
 "use client";
 
 import { useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
-import { BAC_T, METRO_PASS, STOPS, metroLineById, stopById, type MetroLineId, type Stop } from "@/lib/etudes/metro";
+import {
+  BAC_T,
+  METRO_PASS,
+  STOPS,
+  metroLineById,
+  sousTitre,
+  stopById,
+  type MetroLineId,
+  type Stop,
+} from "@/lib/etudes/metro";
 import { LINE_ORDER, LINE_Y, MAP, linePath, stopXY, tx } from "./geometry";
 
 const CARD_W = 372;
@@ -149,7 +158,7 @@ export function MetroDesktop(props: Props) {
                   className="e-mpass"
                   role="button"
                   tabIndex={0}
-                  aria-label={`Passerelle : ${a.label} vers ${b.label}`}
+                  aria-label={`Passerelle\u202f: ${a.label} vers ${b.label}`}
                   onClick={() => onOpenPass(p.id)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
@@ -241,7 +250,8 @@ function StopMark({
   const cls = ["e-mstop", `is-${s.kind}`, selected ? "is-sel" : "", dim ? "is-dim" : "", alt ? "is-alt" : ""]
     .filter(Boolean)
     .join(" ");
-  const name = [s.label, s.duree].filter(Boolean).join(", ");
+  const sub = sousTitre(s);
+  const name = [s.label, sub].filter(Boolean).join(", ");
   return (
     <g
       className={cls}
@@ -276,9 +286,9 @@ function StopMark({
           <text x={x} y={y - 30} textAnchor="middle" className="e-mlabel">
             {s.label}
           </text>
-          {s.duree ? (
+          {sub ? (
             <text x={x} y={y - 14} textAnchor="middle" className="e-mlabel__sub">
-              {s.alternance ? `${s.duree}, alternance possible` : s.duree}
+              {sub}
             </text>
           ) : null}
         </>

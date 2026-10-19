@@ -29,6 +29,8 @@
   --l-lettres: #8f59d9;
   --l-monde: #038c9b;
   --l-arts: #ca3890;
+  /* L'alternance : une couleur à part, hors des voies. */
+  --alt: #b86e00;
 
   --shadow-pop: 0 1px 2px rgba(15, 18, 24, 0.06), 0 12px 32px -12px rgba(15, 18, 24, 0.22);
   --shadow-sheet: -24px 0 64px -32px rgba(15, 18, 24, 0.35);
@@ -76,6 +78,7 @@
     --l-lettres: #bf9bfe;
     --l-monde: #07c7dc;
     --l-arts: #fe7ec4;
+    --alt: #f2b13d;
 
     --shadow-pop: 0 1px 2px rgba(0, 0, 0, 0.5), 0 16px 40px -12px rgba(0, 0, 0, 0.8);
     --shadow-sheet: -24px 0 64px -24px rgba(0, 0, 0, 0.9);
@@ -1797,6 +1800,19 @@ html.e-lock body {
   display: block;
   margin-bottom: 4px;
   font-size: 0.86rem;
+}
+.e-note--alt {
+  background: color-mix(in srgb, var(--alt) 10%, var(--paper));
+}
+.e-note--alt strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--alt);
+}
+.e-note--alt strong svg {
+  width: 16px;
+  height: 16px;
 }
 .e-rows {
   border-radius: 16px;
@@ -4517,14 +4533,8 @@ html.e-lock body {
 /* ---------- La carte interactive (plan de métro) ---------- */
 
 .e-metro {
-  --alt: #b86e00;
   min-height: 100vh;
   background: var(--paper);
-}
-@media (prefers-color-scheme: dark) {
-  .e-metro {
-    --alt: #f2b13d;
-  }
 }
 .e-mbar {
   position: sticky;
@@ -4956,6 +4966,61 @@ html.e-lock body {
   height: 16px;
   color: var(--slate);
 }
+.e-mcard__cmp {
+  justify-self: start;
+  font-size: 0.9rem;
+  font-weight: 620;
+}
+.e-mcard__lines .e-mcard__cmp {
+  margin-top: 8px;
+}
+.e-mmob__cmp {
+  margin-top: 10px;
+  font-size: 0.92rem;
+  font-weight: 620;
+}
+.e-mcard__group ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.e-mcard__group li button {
+  min-width: 52px;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  font-stretch: 108%;
+  letter-spacing: 0.01em;
+  background: var(--fog);
+  box-shadow: inset 0 0 0 1px var(--hair);
+  transition:
+    background-color 0.15s var(--ease),
+    box-shadow 0.15s var(--ease);
+}
+.e-mcard__group li button:hover {
+  background: color-mix(in srgb, var(--lc, var(--ink)) 10%, var(--paper));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lc, var(--ink)) 35%, transparent);
+}
+.e-mcard__une ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.e-mcard__une button {
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 0.86rem;
+  font-weight: 620;
+  background: color-mix(in srgb, var(--lc, var(--ink)) 9%, var(--paper));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lc, var(--ink)) 22%, transparent);
+  transition: background-color 0.15s var(--ease);
+}
+.e-mcard__une button:hover {
+  background: color-mix(in srgb, var(--lc, var(--ink)) 16%, var(--paper));
+}
 .e-mcard__actions {
   display: flex;
   flex-wrap: wrap;
@@ -4986,16 +5051,6 @@ html.e-lock body {
   display: block;
   font-weight: 450;
 }
-.e-mfiche__alt strong {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--alt);
-}
-.e-mfiche__alt strong svg {
-  width: 16px;
-  height: 16px;
-}
 .e-mschools {
   display: grid;
   gap: 8px;
@@ -5021,9 +5076,397 @@ html.e-lock body {
   color: var(--slate);
 }
 .e-mschool__text {
+  display: -webkit-box;
   margin-top: 4px;
+  overflow: hidden;
   font-size: 0.9rem;
   line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}
+.e-mschool__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+}
+.e-mschool__alt {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 620;
+  color: var(--alt);
+}
+.e-mschool__alt svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Ce qu'une étape déplie : prépas, concours, spécialités */
+.e-mgroup__intro {
+  color: var(--slate);
+}
+.e-mgroup {
+  display: grid;
+  gap: 6px;
+}
+.e-mgroup__item {
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px var(--hair);
+  scroll-margin-top: 12px;
+}
+.e-mgroup__item[open] {
+  box-shadow: inset 0 0 0 1.5px var(--lc, var(--ink));
+}
+.e-mgroup__item.is-static {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  padding: 12px 14px;
+}
+.e-mgroup__item summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) 18px;
+  align-items: start;
+  gap: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  list-style: none;
+  border-radius: 14px;
+}
+.e-mgroup__item summary::-webkit-details-marker {
+  display: none;
+}
+.e-mgroup__item summary:hover {
+  background: var(--fog);
+}
+.e-mgroup__item summary:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.e-mgroup__item summary > svg {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  color: var(--slate);
+  transition: transform 0.2s var(--ease);
+}
+.e-mgroup__item[open] summary > svg {
+  transform: rotate(180deg);
+}
+.e-mgroup__chip {
+  min-width: 58px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 720;
+  font-stretch: 108%;
+  text-align: center;
+  color: #fff;
+  background: color-mix(in srgb, var(--lc, var(--ink)) 86%, #000);
+}
+@media (prefers-color-scheme: dark) {
+  .e-mgroup__chip {
+    color: #000;
+    background: var(--lc, var(--ink));
+  }
+}
+.e-mgroup__head {
+  display: grid;
+  gap: 2px;
+}
+.e-mgroup__titre {
+  font-weight: 680;
+  line-height: 1.3;
+}
+.e-mgroup__phrase {
+  font-size: 0.92rem;
+  line-height: 1.45;
+  color: var(--slate);
+}
+.e-mgroup__body {
+  display: grid;
+  gap: 12px;
+  padding: 2px 14px 14px;
+}
+.e-mgroup__body .e-facts {
+  grid-template-columns: minmax(0, 1fr);
+}
+.e-mgroup__body .e-facts dd {
+  font-weight: 450;
+  line-height: 1.5;
+}
+@media (prefers-reduced-motion: reduce) {
+  .e-mgroup__item summary > svg {
+    transition: none;
+  }
+}
+
+/* Les quatre lignes, côte à côte */
+.e-cmp__pick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.e-cmp {
+  display: grid;
+}
+.e-cmp__head,
+.e-cmp__row {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 20px;
+}
+.e-cmp__head {
+  position: sticky;
+  top: -22px;
+  z-index: 1;
+  grid-template-columns: 140px repeat(var(--cols, 4), minmax(0, 1fr));
+  padding: 14px 0 12px;
+  background: var(--paper);
+  border-bottom: 1px solid var(--hair-2);
+}
+.e-cmp__col {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-stretch: 104%;
+  line-height: 1.25;
+}
+.e-cmp__col .e-dot {
+  margin-top: 5px;
+}
+.e-cmp__row {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--hair);
+}
+.e-cmp__label {
+  font-size: 0.86rem;
+  font-weight: 680;
+  line-height: 1.35;
+  color: var(--slate);
+}
+.e-cmp__cells {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+  gap: 20px;
+  font-size: 0.93rem;
+  line-height: 1.48;
+}
+.e-cmp__line {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (max-width: 760px) {
+  .e-cmp__head {
+    display: none;
+  }
+  .e-cmp__row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  .e-cmp__label {
+    font-size: 1.02rem;
+    font-weight: 720;
+    color: var(--ink);
+  }
+  .e-cmp__cells {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .e-cmp__line {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 2px;
+    font-size: 0.82rem;
+    font-weight: 680;
+    color: var(--slate);
+  }
+}
+
+/* Les écoles d'une étape : à la une, puis toutes */
+.e-mecoles {
+  display: grid;
+  gap: 14px;
+}
+.e-mune {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--lc, var(--ink)) 7%, var(--paper));
+}
+.e-mune__k {
+  font-size: 1rem;
+  font-weight: 720;
+  font-stretch: 112%;
+}
+.e-mune__group {
+  display: grid;
+  gap: 6px;
+  margin-top: 6px;
+}
+.e-mune__group .e-mune__why {
+  font-size: 0.84rem;
+}
+.e-mune__list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+  gap: 8px;
+  margin-top: 4px;
+}
+.e-mune__card {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  width: 100%;
+  height: 100%;
+  padding: 12px 14px;
+  border-radius: 14px;
+  text-align: left;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--hair);
+  transition: box-shadow 0.15s var(--ease);
+}
+.e-mune__card:hover {
+  box-shadow: inset 0 0 0 1.5px var(--lc, var(--ink));
+}
+.e-mune__name {
+  font-size: 1.02rem;
+  font-weight: 720;
+  font-stretch: 108%;
+  line-height: 1.2;
+}
+.e-mune__why {
+  font-size: 0.8rem;
+  font-weight: 650;
+  color: var(--lc, var(--slate));
+}
+.e-mune__meta {
+  font-size: 0.82rem;
+  color: var(--slate);
+}
+.e-mune__text {
+  margin-top: 4px;
+  font-size: 0.86rem;
+  line-height: 1.42;
+}
+.e-mecoles__tools {
+  display: grid;
+  gap: 10px;
+}
+.e-mecoles__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.e-mecoles__all {
+  justify-self: start;
+}
+
+/* L'annuaire des écoles d'ingénieurs */
+.e-annu__tools {
+  display: grid;
+  gap: 10px;
+}
+.e-annu__region {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.e-annu__region select {
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font: inherit;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--fog);
+  border: 0;
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+.e-annu__list {
+  display: grid;
+  gap: 6px;
+}
+.e-annu__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 2px 12px;
+  width: 100%;
+  padding: 11px 14px;
+  border-radius: 14px;
+  text-align: left;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: inset 0 0 0 1px var(--hair);
+}
+.e-annu__item > :not(.e-annu__go) {
+  grid-column: 1;
+}
+a.e-annu__item:hover,
+button.e-annu__item:hover {
+  background: var(--fog);
+}
+.e-annu__name {
+  font-weight: 650;
+  line-height: 1.3;
+}
+.e-annu__court {
+  font-weight: 480;
+  color: var(--slate);
+}
+.e-annu__meta {
+  font-size: 0.84rem;
+  color: var(--slate);
+}
+.e-annu__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+.e-annu__tags span {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 620;
+  background: var(--fog);
+}
+.e-annu__tags .is-alt {
+  color: var(--alt);
+  background: color-mix(in srgb, var(--alt) 12%, var(--paper));
+}
+.e-annu__go {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.82rem;
+  font-weight: 620;
+  color: var(--slate);
+}
+.e-annu__go svg {
+  width: 15px;
+  height: 15px;
 }
 .e-near {
   display: grid;

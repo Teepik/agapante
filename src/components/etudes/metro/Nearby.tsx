@@ -96,9 +96,9 @@ export function Nearby({ id, onOpenFormation }: { id: string; onOpenFormation: (
       ) : null}
 
       {failed ? (
-        <p className="e-small e-muted">Le chargement des formations a échoué : vérifie ta connexion.</p>
+        <p className="e-small e-muted">Le chargement des formations a échoué&#8239;: vérifie ta connexion.</p>
       ) : !place ? (
-        <p className="e-small e-muted">Indique ta ville : les formations les plus proches s&apos;affichent ici.</p>
+        <p className="e-small e-muted">Indique ta ville&#8239;: les formations les plus proches s&apos;affichent ici.</p>
       ) : !data ? (
         <p className="e-small e-muted">Chargement des formations de Parcoursup…</p>
       ) : list.length ? (
@@ -123,7 +123,7 @@ export function Nearby({ id, onOpenFormation }: { id: string; onOpenFormation: (
         <p className="e-small e-muted">Essaie un autre mot ou une autre ville.</p>
       )}
       <p className="e-small e-muted">
-        Taux d&apos;accès : la part des candidats qui ont reçu une proposition sur Parcoursup en {PSUP_SESSION}.
+        Taux d&apos;accès&#8239;: la part des candidats qui ont reçu une proposition sur Parcoursup en {PSUP_SESSION}.
       </p>
     </div>
   );

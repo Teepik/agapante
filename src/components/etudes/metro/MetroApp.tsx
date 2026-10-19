@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useId, useMemo, useState, type KeyboardEvent } from "react";
 import { cle } from "@/lib/etudes/communes";
-import { METRO_LINES, etapesDuTrajet, stopById, type MetroLineId } from "@/lib/etudes/metro";
+import { METRO_LINES, etapesDuTrajet, stopById, type MetroLine, type MetroLineId } from "@/lib/etudes/metro";
 import { FAMILLES, metierById, metiers } from "@/lib/etudes/metiers";
 import { CohortProvider, ClassPicker, useCohort } from "../cohorte";
 import { EcoleSheet, PasserelleSheet } from "../DetailSheets";
@@ -11,6 +11,8 @@ import { FormationSheet } from "../FormationSheet";
 import { PlaceProvider } from "../place";
 import { SelectionProvider } from "../store";
 import { BrandMark, Dot, Icon } from "../ui";
+import { AnnuaireSheet } from "./Annuaire";
+import { ComparerSheet } from "./Comparer";
 import { MetroDesktop } from "./MetroDesktop";
 import { MetroFiche } from "./MetroFiche";
 import { MetroMobile } from "./MetroMobile";
@@ -20,7 +22,9 @@ type Overlay =
   | { kind: "fiche"; id: string; section?: string }
   | { kind: "ecole"; id: string }
   | { kind: "formation"; id: string }
-  | { kind: "pass"; id: string };
+  | { kind: "pass"; id: string }
+  | { kind: "annuaire" }
+  | { kind: "comparer"; lines?: MetroLine["id"][] };
 
 /** Les métiers que la carte sait tracer : au moins un trajet entièrement sur ses lignes. */
 const METIERS_CARTE = metiers
@@ -105,6 +109,11 @@ function Metro() {
         if (mobile) window.requestAnimationFrame(() => document.getElementById("m-mob-lines")?.scrollIntoView());
       }}
       onOpenFiche={openFiche}
+      onOpenEcole={(id) => push({ kind: "ecole", id })}
+      onCompare={(lines) => {
+        setSel(null);
+        push({ kind: "comparer", lines });
+      }}
     />
   ) : null;
 
@@ -127,7 +136,7 @@ function Metro() {
         <div>
           <h1 className="e-mhead__title">La carte des études</h1>
           <p className="e-mhead__lede">
-            Touche une station : ce qu&apos;on y fait, comment y entrer, ce que ça coûte, et où elle mène.
+            Touche une station&#8239;: ce qu&apos;on y fait, comment y entrer, ce que ça coûte, et où elle mène.
           </p>
         </div>
         <div className="e-mtools">
@@ -170,6 +179,7 @@ function Metro() {
       <div className="e-mstage">
         {mobile ? (
           <MetroMobile
+            onCompare={() => push({ kind: "comparer" })}
             sel={sel}
             onSelect={select}
             line={focus}
@@ -207,9 +217,14 @@ function Metro() {
                   </button>
                 </li>
               ))}
+              <li>
+                <button type="button" className="e-chip e-mlegend__cmp" onClick={() => push({ kind: "comparer" })}>
+                  <Icon name="list" /> Comparer les lignes
+                </button>
+              </li>
               {alternance ? <li className="e-mlegend__key is-alt">Alternance possible</li> : null}
               {passerelles ? (
-                <li className="e-mlegend__key is-pass">Passerelle : touche-la pour l&apos;ouvrir</li>
+                <li className="e-mlegend__key is-pass">Passerelle&#8239;: touche-la pour l&apos;ouvrir</li>
               ) : null}
             </ul>
           </>
@@ -230,7 +245,12 @@ function Metro() {
           onSelect={(id) => setStack((s) => [...s.slice(0, -1), { kind: "fiche", id }])}
           onOpenEcole={(id) => push({ kind: "ecole", id })}
           onOpenFormation={(id) => push({ kind: "formation", id })}
+          onOpenAnnuaire={() => push({ kind: "annuaire" })}
         />
+      ) : null}
+      {top?.kind === "comparer" ? <ComparerSheet onClose={pop} initial={top.lines} /> : null}
+      {top?.kind === "annuaire" ? (
+        <AnnuaireSheet onClose={pop} onOpenEcole={(id) => push({ kind: "ecole", id })} />
       ) : null}
       {top?.kind === "ecole" ? (
         <EcoleSheet
