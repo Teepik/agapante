@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { itineraires } from "@/lib/etudes/itineraires";
 import { lineById, type LineId } from "@/lib/etudes/lines";
 import { useCohort } from "./cohorte";
+import { Recits } from "./Recits";
 import { Dot, Icon, Meter } from "./ui";
 
 export function Parcours({
@@ -112,6 +113,8 @@ export function Parcours({
             ))}
           </ul>
         </div>
+
+        <Recits lane={it.line} />
 
         <div className="e-trip__actions">
           <button type="button" className="e-btn e-btn--primary" onClick={() => onShowRoute(it.line)}>

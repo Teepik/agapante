@@ -7,6 +7,7 @@ import { lyceeById, statutLabel } from "@/lib/etudes/lycees";
 import { passerelles } from "@/lib/etudes/passerelles";
 import { LANES, LANE_DEFS } from "@/lib/etudes/plan";
 import { dateLongue, dateRappel, rappels, toIcs } from "@/lib/etudes/projet";
+import { dateRecit, recitsDe } from "@/lib/etudes/recits";
 import { destinations, recommend, speById } from "@/lib/etudes/specialites";
 import { useCohort } from "./cohorte";
 import { useSelection } from "./store";
@@ -210,6 +211,19 @@ export function Projet({
                         </li>
                       ))}
                     </ul>
+                  </div>
+                ) : null}
+                {recitsDe(l)[0] ? (
+                  <div className="e-projet__b">
+                    <p className="e-projet__k">Un récit pour te projeter</p>
+                    <p>
+                      <a className="e-link" href={recitsDe(l)[0].url} target="_blank" rel="noopener noreferrer">
+                        {recitsDe(l)[0].titre}
+                      </a>{" "}
+                      <span className="e-muted e-small">
+                        {recitsDe(l)[0].media}, {dateRecit(recitsDe(l)[0])}
+                      </span>
+                    </p>
                   </div>
                 ) : null}
                 <button type="button" className="e-btn e-btn--sm e-noprint" onClick={() => onShowLine(l)}>

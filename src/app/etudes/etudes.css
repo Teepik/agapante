@@ -2668,6 +2668,76 @@ html.e-lock body {
   white-space: nowrap;
 }
 
+/* ---------- Ils racontent ---------- */
+
+.e-recits {
+  display: grid;
+  gap: 14px;
+  margin-top: 28px;
+}
+.e-recits h4 {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+.e-recits > .e-btn {
+  justify-self: start;
+}
+.e-recits__list {
+  display: grid;
+  gap: 10px;
+}
+.e-recit {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  color: inherit;
+  text-decoration: none;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--hair);
+  transition:
+    box-shadow 0.15s var(--ease),
+    background-color 0.15s var(--ease);
+}
+.e-section--fog .e-recit {
+  background: var(--paper);
+}
+.e-recit:hover {
+  box-shadow: inset 0 0 0 1px var(--hair-2);
+  background: var(--fog);
+}
+.e-recit__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--slate);
+}
+.e-recit__meta > span + span::before {
+  content: "/";
+  content: "/" / "";
+  margin-right: 6px;
+  color: var(--hair-2);
+}
+.e-recit__title {
+  font-weight: 680;
+  line-height: 1.3;
+}
+.e-recit__resume {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--slate);
+}
+.e-recit__etape {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--lc, var(--ink));
+}
+
 /* ---------- Lycées de toute la France ---------- */
 
 .e-fr {
