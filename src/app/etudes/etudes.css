@@ -2167,7 +2167,12 @@ html.et-lock body {
 
 .et-lycee {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 44px;
+}
+.et-lycee > *,
+.et-lycee__split > * {
+  min-width: 0;
 }
 .et-ltypes {
   list-style: none;
@@ -3128,17 +3133,62 @@ html.et-lock body {
   font-weight: 800;
   font-size: 1.1rem;
 }
-.et-foot__list {
+.et-foot__details {
+  border-top: 1px solid var(--et-rule);
+  padding-top: 4px;
+}
+.et-foot__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--et-ink);
   list-style: none;
-  margin: 6px 0 0;
-  padding: 0;
+}
+.et-foot__summary::-webkit-details-marker {
+  display: none;
+}
+.et-foot__summary svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.2s ease;
+}
+.et-foot__details[open] .et-foot__summary svg {
+  transform: rotate(180deg);
+}
+.et-foot__summary:focus-visible {
+  outline: 3px solid var(--et-gold);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.et-foot__list {
+  margin: 8px 0 0;
   columns: 3 260px;
-  column-gap: 24px;
+  column-gap: 28px;
+}
+.et-foot__group ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.et-foot__gtitle {
+  margin: 0 0 4px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--et-ink-3);
+  break-after: avoid;
 }
 .et-foot__list li {
   break-inside: avoid;
   padding: 3px 0;
   font-size: 0.9rem;
+}
+.et-foot__group + .et-foot__group .et-foot__gtitle {
+  margin-top: 18px;
 }
 .et-foot__list a {
   color: var(--et-ink-2);
@@ -3407,6 +3457,11 @@ html.et-lock body {
   margin: 0;
   color: var(--et-ink-2);
   line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 7;
+  line-clamp: 7;
+  overflow: hidden;
 }
 .et-pcard__actions {
   display: flex;

@@ -179,33 +179,67 @@ export const TIME_MARKS: { y: number; age: string; when: string }[] = [
   { y: PLAN.Y.r5, age: "23 ans", when: "premier métier" },
 ];
 
+/** Couloirs horizontaux libres d'étiquettes, où courent les passerelles. */
+export const CORRIDOR = {
+  A: PLAN.Y.r1 + 82,
+  B: PLAN.Y.r2 + 90,
+  B2: PLAN.Y.r2 + 100,
+  C: PLAN.Y.r3 + 96,
+} as const;
+export type Corridor = keyof typeof CORRIDOR;
+
+/** Côté de la ligne laissé libre par les étiquettes (elles regardent le centre du plan). */
+function freeSide(id: LineId): number {
+  return sideOf(id) === "left" ? -14 : 14;
+}
+
+/** Place le numéro d'une passerelle entre deux lignes, au plus près du milieu du couloir. */
+function badgeX(xa: number, xb: number) {
+  const lo = Math.min(xa, xb) + 18;
+  const hi = Math.max(xa, xb) - 18;
+  const mid = (xa + xb) / 2;
+  const cols = ORDER.map((id) => COLS[id]).sort((m, n) => m - n);
+  const gaps = cols.slice(1).map((c, i) => (c + cols[i]) / 2).filter((g) => g >= lo && g <= hi);
+  if (!gaps.length) return mid;
+  return gaps.reduce((best, g) => (Math.abs(g - mid) < Math.abs(best - mid) ? g : best));
+}
+
 /**
- * Tracé d'une passerelle sur le plan.
- * « bypass » : rail doré parallèle à la ligne, qui saute la station de sélection (même colonne).
- * « arc » : courbe entre deux colonnes ; `bend` déporte le point de contrôle (négatif : vers le haut).
+ * Tracé d'une passerelle.
+ * « bypass » : rail doré le long de la même ligne, qui double la station de sélection.
+ * « route » : descend le long de la ligne de départ, suit un couloir horizontal, puis rejoint la station d'arrivée.
  */
-export function passPath(fromId: string, toId: string, kind: "arc" | "bypass", bend = 0.2) {
+export function passPath(
+  fromId: string,
+  toId: string,
+  kind: "bypass" | "route",
+  via: Corridor = "B",
+  dxTo?: number,
+) {
   const a = placedById[fromId];
   const b = placedById[toId];
   if (!a || !b) return null;
+  const r = 14;
+  const dxa = a.line ? freeSide(a.line) : 0;
+  const dxb = dxTo ?? (b.line ? freeSide(b.line) : 0);
+  const xa = a.x + dxa;
+  const xb = b.x + dxb;
   if (kind === "bypass") {
-    const side = a.line ? sideOf(a.line) : "left";
-    const dx = side === "left" ? 13 : -13;
-    const d = [
-      `M ${a.x} ${a.y}`,
-      `Q ${a.x + dx} ${a.y} ${a.x + dx} ${a.y + 24}`,
-      `V ${b.y - 24}`,
-      `Q ${a.x + dx} ${b.y} ${b.x} ${b.y}`,
-    ].join(" ");
-    return { d, mid: { x: a.x + dx, y: (a.y + b.y) / 2 } };
+    const d = `M ${a.x} ${a.y} Q ${xa} ${a.y} ${xa} ${a.y + r} V ${b.y - r} Q ${xa} ${b.y} ${b.x} ${b.y}`;
+    const midY = a.y < PLAN.Y.r3 && b.y > PLAN.Y.r3 ? (PLAN.Y.r3 + PLAN.Y.r4) / 2 : (a.y + b.y) / 2;
+    return { d, mid: { x: xa, y: midY } };
   }
-  const mx = (a.x + b.x) / 2;
-  const my = (a.y + b.y) / 2;
-  const dx = b.x - a.x;
-  const dy = b.y - a.y;
-  // Normale au segment, orientée par le signe de `bend`.
-  const cx = mx - dy * bend;
-  const cy = my + dx * bend;
-  const d = `M ${a.x} ${a.y} Q ${cx} ${cy} ${b.x} ${b.y}`;
-  return { d, mid: { x: (a.x + 2 * cx + b.x) / 4, y: (a.y + 2 * cy + b.y) / 4 } };
+  const cy = CORRIDOR[via];
+  const dir = Math.sign(xb - xa) || 1;
+  const parts = [
+    `M ${a.x} ${a.y}`,
+    dxa ? `Q ${xa} ${a.y} ${xa} ${a.y + r}` : "",
+    `V ${cy - r}`,
+    `Q ${xa} ${cy} ${xa + dir * r} ${cy}`,
+    `H ${xb - dir * r}`,
+    `Q ${xb} ${cy} ${xb} ${cy + r}`,
+    `V ${b.y - r}`,
+    dxb ? `Q ${xb} ${b.y} ${b.x} ${b.y}` : `V ${b.y}`,
+  ];
+  return { d: parts.filter(Boolean).join(" "), mid: { x: badgeX(xa, xb), y: cy } };
 }

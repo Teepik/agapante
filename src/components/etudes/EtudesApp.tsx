@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { LineId } from "@/lib/etudes/lines";
 import { placed } from "@/lib/etudes/plan";
-import { sources } from "@/lib/etudes/sources";
+import { sourceCount, sourceGroups } from "@/lib/etudes/sources";
 import { Boussole } from "./Boussole";
 import { Frise } from "./Frise";
 import { Hero } from "./Hero";
@@ -17,7 +17,7 @@ import { Specialites } from "./Specialites";
 import { StationSheet } from "./StationSheet";
 import { Tickets } from "./Tickets";
 import { TopNav } from "./TopNav";
-import { Plaque } from "./ui";
+import { Icon, Plaque } from "./ui";
 
 const VISITED_KEY = "etudes:carnet";
 const TOTAL = placed.length;
@@ -237,15 +237,28 @@ export function EtudesApp() {
             Informations vérifiées en octobre 2026 auprès des sources officielles ci-dessous. Les règles peuvent
             évoluer d&apos;ici 2030 : vérifie chaque année les sites des formations et de Parcoursup.
           </p>
-          <ul className="et-foot__list">
-            {sources.map((s) => (
-              <li key={s.url}>
-                <a href={s.url} target="_blank" rel="noopener noreferrer">
-                  {s.title}
-                </a>
-              </li>
-            ))}
-          </ul>
+          <details className="et-foot__details">
+            <summary className="et-foot__summary">
+              Les {sourceCount} sources, par thème
+              <Icon name="chevron-down" />
+            </summary>
+            <div className="et-foot__list">
+              {sourceGroups.map((g) => (
+                <div key={g.title} className="et-foot__group">
+                  <p className="et-foot__gtitle">{g.title}</p>
+                  <ul>
+                    {g.items.map((s) => (
+                      <li key={s.url}>
+                        <a href={s.url} target="_blank" rel="noopener noreferrer">
+                          {s.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </details>
         </div>
       </footer>
 

@@ -122,7 +122,7 @@ function PlanDrawing({
   const drawn = showPass
     ? passerelles.flatMap((x) => {
         if (!x.draw) return [];
-        const g = passPath(x.draw.from, x.to, x.draw.kind, x.draw.bend);
+        const g = passPath(x.draw.from, x.to, x.draw.kind, x.draw.via, x.draw.dxTo);
         return g ? [{ x, g }] : [];
       })
     : [];
@@ -145,11 +145,6 @@ function PlanDrawing({
           <path key={id} d={linePath(id)} data-line={id} className={`et-line${dim(id)}`} />
         ))}
 
-        {/* Repères */}
-        {placed.map((p) => (
-          <Marker key={p.id} p={p} visited={visited.has(p.id)} dim={Boolean(lit && p.line && p.line !== lit)} />
-        ))}
-
         {/* Passerelles */}
         {drawn.length ? (
           <g className="et-pass">
@@ -166,6 +161,11 @@ function PlanDrawing({
             ))}
           </g>
         ) : null}
+
+        {/* Repères */}
+        {placed.map((p) => (
+          <Marker key={p.id} p={p} visited={visited.has(p.id)} dim={Boolean(lit && p.line && p.line !== lit)} />
+        ))}
 
         {/* « Tu es ici » */}
         <circle className="et-here-pulse" cx={PLAN.BX} cy={PLAN.Y.college} r="30" />

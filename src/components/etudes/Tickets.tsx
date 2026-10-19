@@ -6,7 +6,7 @@ import { lineById, linesByNum, type LineId } from "@/lib/etudes/lines";
 import { Bullet, Icon } from "./ui";
 
 function norm(s: string) {
-  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  return s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[\u2060\u00a0\u202f]/g, (c) => (c === "\u2060" ? "" : " ")).toLowerCase();
 }
 
 export function Tickets({
