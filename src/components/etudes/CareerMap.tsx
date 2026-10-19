@@ -19,6 +19,7 @@ import {
   routeOf,
   type PlacedStation,
 } from "@/lib/etudes/plan";
+import type { Metier } from "@/lib/etudes/metiers";
 import { passerelleById, passerelles } from "@/lib/etudes/passerelles";
 import { stationById } from "@/lib/etudes/stations";
 import { useCohort } from "./cohorte";
@@ -27,6 +28,9 @@ import { Dot, Icon } from "./ui";
 type Props = {
   focusLine: LaneId | null;
   route: LaneId | null;
+  /** Un métier choisi : ses routes s'allument sur la carte. */
+  metier?: Metier | null;
+  onClearMetier?: () => void;
   onOpen: (id: string, line: LaneId | null) => void;
   onFocusLine: (line: LaneId | null) => void;
   laneLine: LaneId;
@@ -40,13 +44,44 @@ type Props = {
 const OPTION_LABEL: Record<string, string> = {
   "lycee-defense": "Lycée de la Défense",
   conservatoire: "Conservatoire",
+  "bac-techno": "Bac technologique",
+  "concours-postbac": "Concours post-bac",
 };
+
+/** Le nom de la voie, en haut de sa colonne : court, pour tenir dans la largeur d'une voie. */
+const DEST_LABEL: Partial<Record<LaneId, string>> = { postbac: "Post-bac" };
 
 /** En dessous de cette échelle, la carte entière devient trop petite pour être lue : on passe voie par voie. */
 const MIN_SCALE = 0.78;
 
 /** Largeur d'une colonne de libellés, à droite de la barre. */
 const COL = PLAN.COL_STEP - 2;
+
+/** « Médecin » → « médecin » ; les sigles (« CPE ») gardent leurs capitales. */
+export function minuscule(s: string): string {
+  return /^.[A-ZÉ]/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1);
+}
+
+/** Les voies et les étapes d'un métier : les licences de l'université allument la voie centrale. */
+export function metierPaths(m: Metier) {
+  const lanes = new Set<LaneId>();
+  const stations = new Set<string>();
+  for (const r of m.routes) {
+    lanes.add(r.lane);
+    for (const id of r.via) {
+      if (placedById[id]) {
+        stations.add(id);
+        const line = placedById[id].line;
+        if (line) lanes.add(line);
+        else if (placedById[id].kind === "trunk") lanes.add("u");
+      } else if (id.startsWith("u-")) {
+        lanes.add("u");
+        stations.add("universite");
+      }
+    }
+  }
+  return { lanes, stations };
+}
 
 export function CareerMap(props: Props) {
   const frameRef = useRef<HTMLDivElement>(null);
@@ -67,7 +102,7 @@ export function CareerMap(props: Props) {
   const lit = props.route ?? props.focusLine;
 
   return (
-    <div className={`e-map${lit ? " is-focus" : ""}${props.activePass ? " is-pass" : ""}`}>
+    <div className={`e-map${lit || props.metier ? " is-focus" : ""}${props.activePass ? " is-pass" : ""}`}>
       <div className="e-wrap">
         <div className="e-map__bar">
           {mode === "carte" ? (
@@ -92,6 +127,21 @@ export function CareerMap(props: Props) {
                 </button>
               ))}
             </div>
+          ) : null}
+          {props.metier ? (
+            <p className="e-map__metier" aria-live="polite">
+              <span>
+                Les routes vers <strong>{minuscule(props.metier.name)}</strong>
+              </span>
+              <button
+                type="button"
+                className="e-iconbtn"
+                onClick={props.onClearMetier}
+                aria-label="Effacer les routes du métier"
+              >
+                <Icon name="close" width={16} height={16} />
+              </button>
+            </p>
           ) : null}
           <div className="e-map__tools">
             <div className="e-seg" role="group" aria-label="Affichage">
@@ -136,6 +186,7 @@ export function CareerMap(props: Props) {
 
 function Drawing({
   route,
+  metier,
   lit,
   onOpen,
   onFocusLine,
@@ -152,15 +203,18 @@ function Drawing({
   const target = geo ? geo.hot[geo.hot.length - 1] : null;
   const lift = geo?.runs.some((r) => r.dir === -1) && target && placedById[target]?.kind === "event" ? target : null;
   const call = geo && pass ? placeCallout(geo, pass.title, lift) : null;
-  const shown = geo ? null : (lit ?? peek);
-  const dimLane = (line?: LaneId) => Boolean(shown && line && line !== shown);
-  const dimSt = (p: PlacedStation) => (geo ? !hot.has(p.id) : dimLane(p.line));
+  const job = !geo && metier ? metierPaths(metier) : null;
+  const shown = geo || job ? null : (lit ?? peek);
+  const dimLane = (line?: LaneId) =>
+    job ? Boolean(line && !job.lanes.has(line)) : Boolean(shown && line && line !== shown);
+  const dimSt = (p: PlacedStation) =>
+    geo ? !hot.has(p.id) : job ? p.kind !== "trunk" && !job.stations.has(p.id) : dimLane(p.line);
   const cls = (base: string, dim: boolean) => (dim ? `${base} is-dim` : base);
 
   const segs = placed.filter((p) => p.kind === "seg");
   /** Un repère (concours, sortie) au bord d'une étape : son libellé s'en écarte. */
   const marksAt = (line: LaneId, t: number) =>
-    LANE_DEFS[line].events.some((e) => e.at === t) || LANE_DEFS[line].exits.some((e) => e.at === t);
+    LANE_DEFS[line].events.some((e) => e.at === t) || LANE_DEFS[line].exits.some((e) => e.at === t && !e.flip);
   const segEdge = (p: PlacedStation) => {
     const seg = LANE_DEFS[p.line!].segs.find((s) => s.id === p.id)!;
     return `${marksAt(p.line!, seg.to) ? " is-top" : ""}${marksAt(p.line!, seg.from) ? " is-bottom" : ""}`;
@@ -183,9 +237,14 @@ function Drawing({
           />
         ))}
 
-        {route ? (
+        {route && !job ? (
           <path key={route} d={linePath(route)} data-line={route} className="e-route-halo" pathLength={1} />
         ) : null}
+        {job
+          ? [...job.lanes].map((l) => (
+              <path key={`job-${l}`} d={linePath(l)} data-line={l} className="e-route-halo" pathLength={1} />
+            ))
+          : null}
 
         {LANES.map((id) => (
           <path key={id} d={linePath(id)} data-line={id} className={cls("e-lane", geo ? true : dimLane(id))} />
@@ -298,7 +357,7 @@ function Drawing({
             key={p.id}
             type="button"
             className={`e-ms e-ms--trunk${p.id === ici ? " is-here" : ""}`}
-            style={{ left: BX - 330, top: p.y - 24, width: 330 + 49 }}
+            style={{ left: BX - 330, top: p.y - (p.id === "seconde" ? 28 : 24), width: 330 + 49 }}
             aria-label={`${st.name}, tronc commun${p.id === ici ? ", tu es ici" : ""}`}
             onClick={() => onOpen(p.id, null)}
           >
@@ -308,23 +367,25 @@ function Drawing({
         );
       })}
 
-      <div className="e-opts" style={{ left: BX + 62, top: placedById.seconde.y - 14 }}>
-        {placed
-          .filter((p) => p.kind === "option")
-          .map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              className={cls("e-opt", geo ? true : dimLane(p.line))}
-              data-line={p.line}
-              aria-label={`${stationById[p.id]?.name}, en option au lycée`}
-              onClick={() => onOpen(p.id, p.line ?? null)}
-            >
-              <Dot line={p.line!} />
-              {OPTION_LABEL[p.id] ?? stationById[p.id]?.label}
-            </button>
-          ))}
-      </div>
+      {[...new Set(placed.filter((p) => p.kind === "option").map((p) => p.y))].map((oy) => (
+        <div key={oy} className="e-opts" style={{ left: BX + 62, top: oy - 14 }}>
+          {placed
+            .filter((p) => p.kind === "option" && p.y === oy)
+            .map((p) => (
+              <button
+                key={p.id}
+                type="button"
+                className={cls("e-opt", geo ? true : dimLane(p.line))}
+                data-line={p.line}
+                aria-label={`${stationById[p.id]?.name ?? OPTION_LABEL[p.id]}, au lycée`}
+                onClick={() => onOpen(p.id, p.line ?? null)}
+              >
+                <Dot line={p.line!} />
+                {OPTION_LABEL[p.id] ?? stationById[p.id]?.label}
+              </button>
+            ))}
+        </div>
+      ))}
 
       {segs.map((p) => (
         <button
@@ -353,7 +414,8 @@ function Drawing({
           className={cls(`e-ms e-ms--ev${lift === p.id ? " is-flip" : ""}`, dimSt(p))}
           style={{
             left: lift === p.id ? p.x - COL + 9 : p.x - 9,
-            top: p.y - 24,
+            // Un concours au moment du bac : son libellé monte dans la barre, loin des virages de l'éventail.
+            top: p.t === 0 ? p.y - 40 : p.y - 24,
             width: COL,
             height: 40,
           }}
@@ -370,8 +432,8 @@ function Drawing({
         <button
           key={`${e.line}-${e.at}`}
           type="button"
-          className={cls("e-ms e-ms--exit", geo ? true : dimLane(e.line))}
-          style={{ left: e.x - 9, top: e.y - 17, width: COL, height: 34 }}
+          className={cls(`e-ms e-ms--exit${e.flip ? " is-flip" : ""}`, geo ? true : dimLane(e.line))}
+          style={{ left: e.flip ? e.x - COL + 9 : e.x - 9, top: e.y - (e.flip ? 30 : 23), width: COL, height: 46 }}
           data-line={e.line}
           aria-label={`${e.name}, ${e.age}`}
           onClick={() => onOpen(e.station, e.line)}
@@ -401,7 +463,7 @@ function Drawing({
               onClick={() => onFocusLine(lit === line ? null : line)}
             >
               <Dot line={line} />
-              {laneShort(line)}
+              {DEST_LABEL[line] ?? laneShort(line)}
             </button>
             <button
               type="button"
@@ -505,7 +567,7 @@ function PassPanel({
   onActivePass: (id: string | null) => void;
 }) {
   return (
-    <div className="e-ppanel" style={{ left: 252, top: 14, width: 336 }}>
+    <div className="e-ppanel" style={{ left: 104, top: 14, width: 312 }}>
       <p className="e-ppanel__title">Les passerelles</p>
       <p className="e-ppanel__sub">Pour changer de voie en chemin. Choisis-en une pour la voir sur la carte.</p>
       <ul>
@@ -530,7 +592,7 @@ function PassPanel({
 
 function Legend() {
   return (
-    <div className="e-mkey" style={{ left: 876, top: 14, width: 340 }}>
+    <div className="e-mkey" style={{ left: 1180, top: 14, width: 310 }}>
       <p className="e-ppanel__title">Lire la carte</p>
       <ul>
         <li>

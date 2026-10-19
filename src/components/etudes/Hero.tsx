@@ -1,12 +1,13 @@
 "use client";
 
 import { classeInfo } from "@/lib/etudes/cohorte";
-import { enLettres, laneShort } from "@/lib/etudes/lines";
+import { enLettres, laneShort, type LaneId } from "@/lib/etudes/lines";
 import { LANES } from "@/lib/etudes/plan";
 import { ClassPicker, useCohort } from "./cohorte";
 import { Icon } from "./ui";
 
-/* L'arbre de l'ouverture : un tronc qui monte de la 3e et se ramifie en neuf voies ; l'université, au centre, monte tout droit. */
+/* L'arbre de l'ouverture : un tronc qui monte de la 3e et se ramifie en treize voies ; l'université, au centre,
+   monte tout droit ; la voie professionnelle part dès la 3e. */
 const T = {
   W: 640,
   H: 430,
@@ -14,19 +15,30 @@ const T = {
   BS: 7,
   BASE: 402,
   BAC: 330,
-  TURN0: 288,
-  STEP: 11,
-  R: 11,
-  TIP: 98,
-  COL: 70,
+  /** Virage de la voie professionnelle, entre la 3e et le bac. */
+  PRO: 368,
+  TURN0: 292,
+  STEP: 10,
+  R: 10,
+  TIP: 112,
+  COL: 46,
+};
+const C = LANES.indexOf("u");
+const N = LANES.length;
+
+/** Noms très courts, pour tenir sous les pointes de l'arbre. */
+const TIP_LABEL: Partial<Record<LaneId, string>> = {
+  courtes: "BTS, BUT",
+  parasocial: "Soin",
+  postbac: "Écoles",
 };
 
 function treePath(k: number) {
-  const xb = T.BX + (k - 4) * T.BS;
-  if (k === 4) return `M ${xb} ${T.BASE} V ${T.TIP}`;
-  const left = k < 4;
-  const xl = T.BX + (k - 4) * T.COL;
-  const yt = T.TURN0 - (left ? k : 8 - k) * T.STEP;
+  const xb = T.BX + (k - C) * T.BS;
+  if (k === C) return `M ${xb} ${T.BASE} V ${T.TIP}`;
+  const left = k < C;
+  const xl = T.BX + (k - C) * T.COL;
+  const yt = LANES[k] === "pro" ? T.PRO : T.TURN0 - (left ? k : N - 1 - k) * T.STEP;
   const dx = left ? -T.R : T.R;
   return [
     `M ${xb} ${T.BASE}`,
@@ -77,17 +89,17 @@ export function Hero() {
                 pathLength={1}
                 className="e-tree__line"
                 data-line={id}
-                style={{ ["--k" as string]: Math.abs(k - 4) }}
+                style={{ ["--k" as string]: Math.abs(k - C) }}
               />
             ))}
             {LANES.map((id, k) => {
-              const x = T.BX + (k - 4) * T.COL;
-              const high = k % 2 === 1;
+              const x = T.BX + (k - C) * T.COL;
+              const row = (k + 1) % 3;
               return (
-                <g key={id} data-line={id} style={{ ["--k" as string]: Math.abs(k - 4) }}>
-                  <circle className="e-tree__tip" cx={x} cy={T.TIP} r={8} />
-                  <text className="e-tree__label" x={x} y={high ? T.TIP - 50 : T.TIP - 24} textAnchor="middle">
-                    {laneShort(id)}
+                <g key={id} data-line={id} style={{ ["--k" as string]: Math.abs(k - C) }}>
+                  <circle className="e-tree__tip" cx={x} cy={T.TIP} r={7} />
+                  <text className="e-tree__label" x={x} y={T.TIP - 22 - row * 24} textAnchor="middle">
+                    {TIP_LABEL[id] ?? laneShort(id)}
                   </text>
                 </g>
               );

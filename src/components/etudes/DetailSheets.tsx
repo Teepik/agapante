@@ -561,6 +561,7 @@ export function PasserelleSheet({
           {x.note}
         </div>
       ) : null}
+      {x.sources?.length ? <Sources urls={x.sources} /> : null}
       <section className="e-sec">
         <h3>Les étapes concernées</h3>
         <ul className="e-rows">
@@ -588,7 +589,7 @@ export function PasserelleSheet({
 }
 
 /** Les sources d'une fiche, en liens discrets. */
-function Sources({ urls }: { urls: string[] }) {
+export function Sources({ urls }: { urls: string[] }) {
   return (
     <section className="e-sec">
       <h3>Sources</h3>

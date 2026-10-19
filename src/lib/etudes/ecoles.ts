@@ -1,5 +1,6 @@
 import type { LineId } from "./lines";
 import { ecolesPlus } from "./ecoles-plus";
+import { ecolesVoies } from "./ecoles-voies";
 import { etTypo as frTypo } from "./typo";
 
 export type Ecole = {
@@ -626,6 +627,6 @@ const base: Ecole[] = frTypo([
 ]);
 
 /** Les 40 établissements de départ, puis ceux ajoutés en octobre 2026. */
-export const ecoles: Ecole[] = [...base, ...ecolesPlus];
+export const ecoles: Ecole[] = [...base, ...ecolesPlus, ...frTypo(ecolesVoies)];
 
 export const ecoleById = Object.fromEntries(ecoles.map((e) => [e.id, e])) as Record<string, Ecole>;

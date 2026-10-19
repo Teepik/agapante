@@ -1,4 +1,5 @@
 import type { IconName } from "@/components/etudes/ui";
+import { stationsVoies } from "./stations-voies";
 import { etTypo as frTypo } from "./typo";
 
 export type Fact = {
@@ -25,9 +26,10 @@ export type StationContent = {
   apres?: string[];
   astuce?: string;
   ecoles?: string[];
+  sources?: string[];
 };
 
-export const stations: StationContent[] = frTypo([
+const base: StationContent[] = frTypo([
   /* ---------------- Tronc commun ---------------- */
   {
     id: "college",
@@ -944,5 +946,7 @@ export const stations: StationContent[] = frTypo([
     ],
   },
 ]);
+
+export const stations: StationContent[] = [...base, ...frTypo(stationsVoies)];
 
 export const stationById = Object.fromEntries(stations.map((s) => [s.id, s])) as Record<string, StationContent>;

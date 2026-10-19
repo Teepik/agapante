@@ -5,6 +5,7 @@ import { BrandMark, Icon } from "./ui";
 
 export const SECTIONS = [
   { id: "carte", label: "Carte" },
+  { id: "metiers", label: "Métiers" },
   { id: "test", label: "Test" },
   { id: "parcours", label: "Parcours" },
   { id: "lycees", label: "Lycées" },

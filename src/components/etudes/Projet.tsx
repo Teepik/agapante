@@ -42,6 +42,9 @@ function etapes(lane: LaneId) {
 
 /** La formation de référence de chaque voie, pour conseiller des spécialités. */
 const CIBLE: Partial<Record<LaneId, string>> = {
+  courtes: "but-sci",
+  parasocial: "ifsi",
+  postbac: "ing-postbac",
   sante: "sante",
   sciences: "mpsi",
   commerce: "ecg",

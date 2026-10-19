@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { enLettres, type LaneId, type LineId } from "@/lib/etudes/lines";
 import { LANES } from "@/lib/etudes/plan";
+import { metierById } from "@/lib/etudes/metiers";
 import { passerelleById } from "@/lib/etudes/passerelles";
 import { ecoles } from "@/lib/etudes/ecoles";
 import { CareerMap } from "./CareerMap";
@@ -15,6 +16,7 @@ import { FormationSheet } from "./FormationSheet";
 import { FormationsFrance } from "./FormationsFrance";
 import { Hero } from "./Hero";
 import { Lycees } from "./Lycees";
+import { Metiers } from "./Metiers";
 import { MyList } from "./MyList";
 import { Parcours } from "./Parcours";
 import { Passerelles } from "./Passerelles";
@@ -37,6 +39,26 @@ type Open =
   | { kind: "liste" }
   | { kind: "compare"; what: "lycee" | "ecole" | "formation"; ids: string[] }
   | null;
+
+/** L'ordre des sections : leur fond alterne, gris clair puis blanc. */
+const SECTION_ORDER = [
+  "carte",
+  "metiers",
+  "test",
+  "parcours",
+  "lycees",
+  "specialites",
+  "ecoles",
+  "couts",
+  "passerelles",
+  "calendrier",
+  "projet",
+  "lexique",
+];
+function tone(id: string, extra = ""): string {
+  const fog = SECTION_ORDER.indexOf(id) % 2 === 0;
+  return `e-section${fog ? " e-section--fog" : ""}${extra ? ` ${extra}` : ""}`;
+}
 
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -65,6 +87,7 @@ function App() {
   const [activePass, setActivePass] = useState<string | null>(null);
   const [trip, setTrip] = useState<LineId>("sciences");
   const [lexQuery, setLexQuery] = useState("");
+  const [metier, setMetierState] = useState<string | null>(null);
 
   // Lecture hors ligne et installation sur le téléphone (en production seulement).
   useEffect(() => {
@@ -78,6 +101,11 @@ function App() {
   useEffect(() => {
     const voie = readParam("voie");
     const pass = readParam("passerelle");
+    const job = readParam("metier");
+    if (job && metierById[job]) {
+      setMetierState(job);
+      setLaneLine(metierById[job].routes[0]?.lane ?? "u");
+    }
     if (pass && passerelleById[pass]) {
       setActivePass(pass);
       const to = passerelleById[pass].draw?.to;
@@ -126,6 +154,8 @@ function App() {
   const showPass = useCallback((id: string | null) => {
     setActivePass(id);
     if (!id) return;
+    setMetierState(null);
+    writeParam("metier", null);
     setFocusLine(null);
     setRoute(null);
     const to = passerelleById[id]?.draw?.to;
@@ -139,6 +169,25 @@ function App() {
       scrollToId("carte-plan");
     },
     [showPass],
+  );
+
+  const setMetier = useCallback((id: string | null) => {
+    setMetierState(id);
+    writeParam("metier", id);
+  }, []);
+
+  const showMetier = useCallback(
+    (id: string) => {
+      const m = metierById[id];
+      if (!m) return;
+      setMetier(id);
+      setFocusLine(null);
+      setRoute(null);
+      setActivePass(null);
+      setLaneLine(m.routes[0]?.lane ?? "u");
+      scrollToId("carte-plan");
+    },
+    [setMetier],
   );
 
   const showMot = useCallback((term: string) => {
@@ -156,7 +205,7 @@ function App() {
       <div className="e-page">
         <Hero />
 
-        <section id="carte" className="e-section e-section--fog e-map-section" aria-labelledby="t-carte">
+        <section id="carte" className={tone("carte", "e-map-section")} aria-labelledby="t-carte">
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-carte" className="e-title">
@@ -171,11 +220,14 @@ function App() {
           <CareerMap
             focusLine={focusLine}
             route={route}
+            metier={metier ? metierById[metier] : null}
+            onClearMetier={() => setMetier(null)}
             onOpen={openStation}
             onFocusLine={(l) => {
               setFocusLine(l);
               setRoute(null);
               setActivePass(null);
+              setMetier(null);
               if (l) setLaneLine(l);
             }}
             laneLine={laneLine}
@@ -186,7 +238,27 @@ function App() {
           />
         </section>
 
-        <section id="test" className="e-section" aria-labelledby="t-test">
+        <section id="metiers" className={tone("metiers")} aria-labelledby="t-metiers">
+          <div className="e-wrap">
+            <div className="e-head">
+              <h2 id="t-metiers" className="e-title">
+                Je veux devenir…
+              </h2>
+              <p className="e-lede">
+                Pars du métier : ses études, son salaire au début, ses perspectives, et les routes de la carte qui y
+                mènent, souvent plus d&apos;une.
+              </p>
+            </div>
+            <Metiers
+              selected={metier}
+              onSelect={setMetier}
+              onShowOnMap={showMetier}
+              onOpenStation={(id, line) => openStation(id, line)}
+            />
+          </div>
+        </section>
+
+        <section id="test" className={tone("test")} aria-labelledby="t-test">
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-test" className="e-title">
@@ -206,7 +278,7 @@ function App() {
           </div>
         </section>
 
-        <section id="parcours" className="e-section e-section--fog" aria-labelledby="t-parcours">
+        <section id="parcours" className={tone("parcours")} aria-labelledby="t-parcours">
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-parcours" className="e-title">
@@ -225,7 +297,7 @@ function App() {
           </div>
         </section>
 
-        <section id="lycees" className="e-section" aria-labelledby="t-lycees">
+        <section id="lycees" className={tone("lycees")} aria-labelledby="t-lycees">
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-lycees" className="e-title">
@@ -240,7 +312,7 @@ function App() {
           </div>
         </section>
 
-        <section id="specialites" className="e-section e-section--fog" aria-labelledby="t-spe">
+        <section id="specialites" className={tone("specialites")} aria-labelledby="t-spe">
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-spe" className="e-title">
@@ -255,7 +327,7 @@ function App() {
           </div>
         </section>
 
-        <section id="ecoles" className="e-section" aria-labelledby="t-ecoles">
+        <section id="ecoles" className={tone("ecoles")} aria-labelledby="t-ecoles">
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-ecoles" className="e-title">
@@ -292,7 +364,7 @@ function App() {
           </div>
         </section>
 
-        <section id="passerelles" className="e-section e-section--fog" aria-labelledby="t-pass">
+        <section id="passerelles" className={tone("passerelles")} aria-labelledby="t-pass">
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-pass" className="e-title">
@@ -307,7 +379,7 @@ function App() {
           </div>
         </section>
 
-        <section id="calendrier" className="e-section" aria-labelledby="t-cal">
+        <section id="calendrier" className={tone("calendrier")} aria-labelledby="t-cal">
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-cal" className="e-title">
@@ -321,7 +393,7 @@ function App() {
           </div>
         </section>
 
-        <section id="projet" className="e-section e-section--fog" aria-labelledby="t-projet">
+        <section id="projet" className={tone("projet")} aria-labelledby="t-projet">
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-projet" className="e-title">
@@ -341,7 +413,7 @@ function App() {
           </div>
         </section>
 
-        <section id="lexique" className="e-section" aria-labelledby="t-lex">
+        <section id="lexique" className={tone("lexique")} aria-labelledby="t-lex">
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-lex" className="e-title">

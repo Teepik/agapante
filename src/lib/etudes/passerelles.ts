@@ -1,5 +1,6 @@
 import type { LineId } from "./lines";
 import type { PassDraw } from "./plan";
+import { passerellesVoies } from "./passerelles-voies";
 import { etTypo as frTypo } from "./typo";
 
 export type Passerelle = {
@@ -17,6 +18,7 @@ export type Passerelle = {
   note?: string;
   /** Tracé sur la carte : les voies de départ, la voie d'arrivée, le moment (années après le bac). */
   draw?: PassDraw;
+  sources?: string[];
 };
 
 export type DoubleCursus = {
@@ -31,7 +33,7 @@ export type DoubleCursus = {
   url?: string;
 };
 
-export const passerelles: Passerelle[] = frTypo([
+const base: Passerelle[] = frTypo([
   {
     id: "prepa-universite",
     num: 1,
@@ -182,6 +184,12 @@ export const passerelles: Passerelle[] = frTypo([
     draw: { from: ["sciences", "lettres"], to: "u", t: 5 },
   },
 ]);
+
+/** Les passerelles, numérotées dans l'ordre : celles du site, puis celles des nouvelles voies. */
+export const passerelles: Passerelle[] = [
+  ...base,
+  ...frTypo(passerellesVoies).map((p, i) => ({ ...p, num: base.length + i + 1 })),
+];
 
 export const passerelleById = Object.fromEntries(passerelles.map((p) => [p.id, p])) as Record<string, Passerelle>;
 

@@ -7,6 +7,7 @@ import { stationById } from "@/lib/etudes/stations";
 import { ecoleById, ecoles } from "@/lib/etudes/ecoles";
 import { passerelles } from "@/lib/etudes/passerelles";
 import { useCohort } from "./cohorte";
+import { Sources } from "./DetailSheets";
 import { Sheet, StepButton } from "./Sheet";
 import { SaveButton } from "./store";
 import { Dot, Icon, Meter } from "./ui";
@@ -152,16 +153,20 @@ export function StationSheet({ id, line, onClose, onNavigate, onOpenEcole, onOpe
         </div>
       ) : null}
 
+      {st.sources?.length ? <Sources urls={st.sources} /> : null}
+
       {id === "college" || id === "seconde" ? (
         <section className="e-sec">
           <h3>Les lycées</h3>
           <ul className="e-rows">
             <li>
-              <a className="e-row" href="#annuaire-lycees" onClick={onClose}>
+              <a className="e-row" href="#lycees-france" onClick={onClose}>
                 <Icon name="school" />
                 <span>
-                  <span className="e-row__v">L&apos;annuaire des lycées</span>
-                  <span className="e-row__k">Pensionnats de l&apos;Ouest, grands lycées de Paris et de Versailles</span>
+                  <span className="e-row__v">Les lycées près de chez toi</span>
+                  <span className="e-row__k">
+                    Tous les lycées de France, avec leurs voies et leurs résultats au bac
+                  </span>
                 </span>
                 <Icon name="chevron-right" />
               </a>
@@ -174,7 +179,7 @@ export function StationSheet({ id, line, onClose, onNavigate, onOpenEcole, onOpe
         <section className="e-sec">
           <h3>Choisis ta voie</h3>
           <ul className="e-rows">
-            {LANES.map((l) => {
+            {LANES.filter((l) => l !== "pro").map((l) => {
               const first = LANE_DEFS[l].segs[0].id;
               return (
                 <li key={l}>

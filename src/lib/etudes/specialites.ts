@@ -137,9 +137,9 @@ export const destinations: Destination[] = frTypo([
   },
   {
     id: "ing-postbac",
-    name: "École d'ingénieurs après le bac (INSA, UT…)",
-    line: "sciences",
-    station: "ecole-ingenieurs",
+    name: "École d'ingénieurs après le bac (INSA, UT, Polytech…)",
+    line: "postbac",
+    station: "concours-postbac",
     judge: (s) => {
       const { T, mathsTle } = ctx(s);
       if (mathsTle && (T.has("pc") || T.has("si") || T.has("nsi")))
@@ -147,6 +147,70 @@ export const destinations: Destination[] = frTypo([
       if (mathsTle && T.has("svt")) return v("ouverte", "Maths et SVT : accepté dans la plupart de ces écoles.");
       if (mathsTle) return v("entrouverte", "Les maths sont là ; une seconde spécialité scientifique est attendue.");
       return v("fermee", "Ces écoles demandent la spécialité maths en Terminale.");
+    },
+  },
+  {
+    id: "commerce-postbac",
+    name: "École de commerce après le bac (bachelor, programme en cinq ans)",
+    line: "postbac",
+    station: "cycle-postbac",
+    judge: (s) => {
+      const { T, mathsAny } = ctx(s);
+      const ouverture = T.has("ses") || T.has("hggsp") || T.has("llcer");
+      if (mathsAny && ouverture)
+        return v("grande", "Des maths et une spécialité d'ouverture : le profil que regardent ces écoles.");
+      if (mathsAny || ouverture)
+        return v("ouverte", "Un bon profil ; l'anglais et l'entretien font ensuite la différence.");
+      return v("ouverte", "Tous les profils sont admis ; l'anglais, le dossier et l'entretien comptent beaucoup.");
+    },
+  },
+  {
+    id: "but-sci",
+    name: "BUT et BTS industriels et numériques (informatique, génie, réseaux)",
+    line: "courtes",
+    station: "bts-but",
+    judge: (s) => {
+      const { T, mathsTle, mathsAny } = ctx(s);
+      if (mathsTle && (T.has("nsi") || T.has("si") || T.has("pc")))
+        return v("grande", "Maths et une spécialité scientifique : le profil de ces formations.");
+      if (mathsAny) return v("ouverte", "Des maths en Terminale : un bon point de départ.");
+      return v("entrouverte", "Les maths comptent dans ces formations : garde au moins maths complémentaires.");
+    },
+  },
+  {
+    id: "but-tert",
+    name: "BUT et BTS de gestion, de commerce et de communication",
+    line: "courtes",
+    station: "bts-but",
+    judge: (s) => {
+      const { T, mathsAny } = ctx(s);
+      if (T.has("ses") || T.has("hggsp") || T.has("llcer") || mathsAny)
+        return v("grande", "Économie, langues ou maths : de quoi bien démarrer en gestion ou en commerce.");
+      return v("ouverte", "Tous les profils sont admis ; ton dossier et ta motivation comptent beaucoup.");
+    },
+  },
+  {
+    id: "ifsi",
+    name: "Institut de soins infirmiers (IFSI) et écoles paramédicales",
+    line: "parasocial",
+    station: "institut-parasocial",
+    judge: (s) => {
+      const { T } = ctx(s);
+      if (T.has("svt") || T.has("pc"))
+        return v("grande", "SVT ou physique-chimie : de bonnes bases pour la biologie et les soins.");
+      return v("ouverte", "Tous les bacs sont admis ; ton dossier, ta motivation et ton engagement comptent beaucoup.");
+    },
+  },
+  {
+    id: "staps",
+    name: "Licence STAPS (sport)",
+    line: "parasocial",
+    station: "u-staps",
+    judge: (s) => {
+      const { T } = ctx(s);
+      if (T.has("eppcs") || T.has("svt"))
+        return v("grande", "Le sport ou la biologie du corps humain : le cœur de la licence STAPS.");
+      return v("ouverte", "Tous les profils sont admis ; ton niveau sportif et ton engagement comptent.");
     },
   },
   {

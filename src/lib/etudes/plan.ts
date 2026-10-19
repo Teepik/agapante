@@ -1,19 +1,40 @@
 /**
  * Géométrie de la carte des études : une échelle de temps qui monte.
  *
- * La 3e est en bas. Le tronc commun (3e → bac) est un faisceau de neuf lignes ; après le bac,
- * il se ramifie en neuf voies verticales. La hauteur de chaque étape est sa durée réelle :
+ * La 3e est en bas. Le tronc commun (3e → bac) est un faisceau de treize lignes ; après le bac,
+ * il se ramifie en treize voies verticales. La hauteur de chaque étape est sa durée réelle :
  * une année d'études vaut PX pixels. L'université, au centre, prolonge le lycée tout droit.
+ * La voie professionnelle quitte le faisceau dès la 3e : elle commence au lycée professionnel.
  */
 import type { LaneId, LineId } from "./lines";
 
 /** Les voies, de gauche à droite (et ordre des lignes dans le faisceau). */
-export const LANES: LaneId[] = ["sante", "defense", "sciences", "commerce", "u", "scpo", "lettres", "monde", "arts"];
+export const LANES: LaneId[] = [
+  "pro",
+  "courtes",
+  "parasocial",
+  "sante",
+  "defense",
+  "sciences",
+  "u",
+  "postbac",
+  "commerce",
+  "scpo",
+  "lettres",
+  "monde",
+  "arts",
+];
 
-/** Les huit voies thématiques, sans l'université. */
+/** Rang de l'université, au centre du faisceau. */
+const CENTER = LANES.indexOf("u");
+
+/** Les douze voies thématiques, sans l'université. */
 export const ORDER: LineId[] = LANES.filter((l): l is LineId => l !== "u");
 
-/** Une étape qui dure (une formation), de `from` à `to` années après le bac ; `more` : sa fin la plus tardive. */
+/**
+ * Une étape qui dure (une formation), de `from` à `to` années après le bac ; `more` : sa fin la plus tardive.
+ * Avant le bac, les années sont négatives : -3 pour la rentrée de 2nde.
+ */
 export type Seg = {
   id: string;
   from: number;
@@ -24,13 +45,104 @@ export type Seg = {
 };
 /** Un moment (un concours), à `at` années après le bac. */
 export type Ev = { id: string; at: number; sub: string };
-/** Une sortie en chemin : des métiers qui s'ouvrent avant le haut de la voie. */
-export type Exit = { at: number; name: string; age: string };
+/** Une sortie en chemin : des métiers qui s'ouvrent avant le haut de la voie ; `flip` : libellé à gauche. */
+export type Exit = { at: number; name: string; age: string; flip?: boolean };
 /** Le premier métier, en haut de la voie. */
 export type End = { id: string; at: number; name: string; age: string };
 export type LaneDef = { segs: Seg[]; events: Ev[]; exits: Exit[]; end: End };
 
 export const LANE_DEFS: Record<LaneId, LaneDef> = {
+  pro: {
+    segs: [
+      {
+        id: "lycee-pro",
+        from: -3,
+        to: 0,
+        name: "Lycée professionnel",
+        dur: "CAP en 2 ans, bac pro en 3 ans",
+      },
+    ],
+    events: [],
+    exits: [],
+    end: {
+      id: "metiers-pro",
+      at: 0,
+      name: "Un premier métier",
+      age: "vers 17 à 18 ans",
+    },
+  },
+  courtes: {
+    segs: [
+      {
+        id: "bts-but",
+        from: 0,
+        to: 2,
+        name: "BTS ou BUT",
+        dur: "2 ans, souvent en alternance",
+      },
+      {
+        id: "but-lp",
+        from: 2,
+        to: 3,
+        name: "Licence pro",
+        dur: "ou BUT, 3e année",
+      },
+    ],
+    events: [],
+    exits: [{ at: 2, name: "Technicien supérieur", age: "vers 20 ans", flip: true }],
+    end: {
+      id: "metiers-courtes",
+      at: 3,
+      name: "Technicien, chef de projet",
+      age: "vers 21 ans",
+    },
+  },
+  parasocial: {
+    segs: [
+      {
+        id: "institut-parasocial",
+        from: 0,
+        to: 3,
+        name: "Institut ou école",
+        dur: "3 à 5 ans",
+        more: 5,
+      },
+    ],
+    events: [],
+    exits: [{ at: 3, name: "Infirmier, éducateur", age: "vers 21 ans" }],
+    end: {
+      id: "metiers-parasocial",
+      at: 5,
+      name: "Kiné, orthophoniste",
+      age: "vers 23 ans",
+    },
+  },
+  postbac: {
+    segs: [
+      {
+        id: "cycle-integre",
+        from: 0,
+        to: 2,
+        name: "Prépa intégrée",
+        dur: "2 ans",
+      },
+      {
+        id: "cycle-postbac",
+        from: 2,
+        to: 5,
+        name: "Cycle ingénieur ou master",
+        dur: "3 ans",
+      },
+    ],
+    events: [],
+    exits: [],
+    end: {
+      id: "metiers-postbac",
+      at: 5,
+      name: "Ingénieur, manager",
+      age: "vers 23 ans",
+    },
+  },
   sante: {
     segs: [
       {
@@ -268,6 +380,8 @@ export const LANE_DEFS: Record<LaneId, LaneDef> = {
 
 /** Les licences de chaque voie, à l'université : présentes dans les fiches, hors du dessin. */
 export const UNIVERSITY_TRACKS: Record<string, LineId> = {
+  "u-staps": "parasocial",
+  "u-psycho": "parasocial",
   "u-sante": "sante",
   "u-sciences": "sciences",
   "u-eco": "commerce",
@@ -278,14 +392,14 @@ export const UNIVERSITY_TRACKS: Record<string, LineId> = {
 };
 
 export const PLAN = {
-  W: 1232,
+  W: 1500,
   /** Pixels par année d'études après le bac. */
   PX: 48,
   /** Pixels par année au lycée. */
   PXT: 48,
   /** Abscisse de la première voie, et écart entre deux voies. */
   COL0: 116,
-  COL_STEP: 124,
+  COL_STEP: 106,
   /** Écart entre deux lignes du faisceau. */
   BS: 9,
   /** Rayon des virages. */
@@ -326,15 +440,24 @@ export function trunkY(id: TrunkId): number {
 
 export const PLAN_H = Math.round(trunkY("college") + 40);
 
+/** Ordonnée d'un moment du lycée, en années avant le bac (négatives) : juin du bac vaut Y_BAC. */
+export function yPre(t: number): number {
+  return Y_BAC - t * PLAN.PXT;
+}
+
+/** La voie professionnelle quitte le faisceau entre la 3e et la 2nde, entre leurs deux étiquettes. */
+export const PRO_TURN = Y_BAC + 140;
+
 /** Abscisse d'une ligne dans le faisceau du tronc commun. */
 export function bundleX(id: LaneId): number {
-  return BX + (LANES.indexOf(id) - 4) * PLAN.BS;
+  return BX + (LANES.indexOf(id) - CENTER) * PLAN.BS;
 }
 
 /** Les lignes extérieures quittent le faisceau les premières : aucune ne croise sa voisine. */
 function turnY(id: LaneId): number {
+  if (id === "pro") return PRO_TURN;
   const k = LANES.indexOf(id);
-  const rank = k < 4 ? k : 8 - k;
+  const rank = k < CENTER ? k : LANES.length - 1 - k;
   return PLAN.Y0 + 60 - rank * 12;
 }
 
@@ -407,24 +530,46 @@ const options: PlacedStation[] = [
     y: trunkY("seconde"),
     t: -2.5,
   },
+  {
+    id: "bac-techno",
+    kind: "option",
+    line: "courtes",
+    x: BX,
+    y: trunkY("premiere-terminale"),
+    t: -1,
+  },
+  {
+    id: "concours-postbac",
+    kind: "option",
+    line: "postbac",
+    x: BX,
+    y: trunkY("bac"),
+    t: -0.2,
+  },
 ];
 
 const laneStations: PlacedStation[] = LANES.flatMap((line) => {
   const def = LANE_DEFS[line];
   const x = laneX(line);
-  const segs: PlacedStation[] = def.segs.map((s) => ({
-    id: s.id,
-    kind: "seg",
-    line,
-    x,
-    y: yAt(s.from),
-    y1: yAt(s.from),
-    y2: yAt(s.to),
-    y3: s.more ? yAt(s.more) : undefined,
-    name: s.name,
-    dur: s.dur,
-    t: s.from,
-  }));
+  const segs: PlacedStation[] = def.segs.map((s) => {
+    // Au lycée professionnel, la barre part du virage de la voie et finit au bac, en juin.
+    const pre = s.to <= 0;
+    const y1 = pre ? PRO_TURN - PLAN.R : yAt(s.from);
+    const y2 = pre ? yPre(s.to) : yAt(s.to);
+    return {
+      id: s.id,
+      kind: "seg",
+      line,
+      x,
+      y: y1,
+      y1,
+      y2,
+      y3: s.more ? yAt(s.more) : undefined,
+      name: s.name,
+      dur: s.dur,
+      t: s.from,
+    };
+  });
   const events: PlacedStation[] = def.events.map((e) => ({
     id: e.id,
     kind: "event",
@@ -457,7 +602,7 @@ export const exitsPlaced = LANES.flatMap((line) =>
     ...e,
     line,
     x: laneX(line),
-    y: yAt(e.at),
+    y: e.at < 0 ? yPre(e.at) : yAt(e.at),
     station: LANE_DEFS[line].end.id,
   })),
 );
@@ -470,10 +615,16 @@ export function laneOf(stationId: string): LaneId | null {
 /** Itinéraire complet d'une voie, de la 3e à son premier métier, dans l'ordre du temps. */
 export function routeOf(line: LaneId): string[] {
   const def = LANE_DEFS[line];
-  const pre = ["college", "seconde"];
-  if (line === "defense") pre.push("lycee-defense");
-  if (line === "arts") pre.push("conservatoire");
-  pre.push("premiere-terminale", "bac");
+  const pre = ["college"];
+  if (line !== "pro") {
+    pre.push("seconde");
+    if (line === "defense") pre.push("lycee-defense");
+    if (line === "arts") pre.push("conservatoire");
+    pre.push("premiere-terminale");
+    if (line === "courtes") pre.push("bac-techno");
+    if (line === "postbac") pre.push("concours-postbac");
+    pre.push("bac");
+  }
   const steps = [
     ...def.segs.map((s) => ({ id: s.id, t: s.from })),
     ...def.events.map((e) => ({ id: e.id, t: e.at - 0.01 })),

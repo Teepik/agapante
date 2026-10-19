@@ -1,9 +1,22 @@
 /**
- * Les huit voies thématiques de la carte : chacune est une grande famille de parcours.
- * L'université, neuvième voie, est définie plus bas ; l'ordre des colonnes est celui de LANES (plan.ts).
+ * Les douze voies thématiques de la carte : chacune est une grande famille de parcours.
+ * L'université, treizième voie, est définie plus bas ; l'ordre des colonnes est celui de LANES (plan.ts),
+ * et le numéro de chaque voie suit cet ordre, de gauche à droite.
  */
 
-export type LineId = "defense" | "sante" | "sciences" | "commerce" | "scpo" | "lettres" | "monde" | "arts";
+export type LineId =
+  | "pro"
+  | "courtes"
+  | "parasocial"
+  | "sante"
+  | "defense"
+  | "sciences"
+  | "postbac"
+  | "commerce"
+  | "scpo"
+  | "lettres"
+  | "monde"
+  | "arts";
 
 export type Line = {
   id: LineId;
@@ -18,12 +31,29 @@ export type Line = {
 
 export const lines: Line[] = [
   {
-    id: "defense",
-    num: 6,
-    name: "Défense et officiers",
-    short: "Défense",
-    pitch: "Commander, servir le pays, partir en mission : la voie des écoles d'officiers.",
-    direction: "officier de l'armée de Terre, de la Marine ou de l'Air et de l'Espace",
+    id: "pro",
+    num: 1,
+    name: "Voie professionnelle",
+    short: "Pro",
+    pitch: "Apprendre un métier dès 15 ans : CAP ou bac pro, au lycée professionnel ou en apprentissage.",
+    direction: "électricien, cuisinier, mécanicien, accompagnant éducatif, technicien de maintenance",
+  },
+  {
+    id: "courtes",
+    num: 2,
+    name: "BTS, BUT et alternance",
+    short: "BTS, BUT",
+    pitch:
+      "Deux ou trois ans pour un métier qualifié, souvent en alternance, avec la possibilité de continuer ensuite.",
+    direction: "technicien supérieur, assistant ingénieur, chargé de clientèle, développeur",
+  },
+  {
+    id: "parasocial",
+    num: 3,
+    name: "Soin et social",
+    short: "Soin, social",
+    pitch: "Soigner, rééduquer, accompagner : instituts paramédicaux et écoles du travail social.",
+    direction: "infirmier, kinésithérapeute, orthophoniste, ergothérapeute, éducateur spécialisé",
   },
   {
     id: "sante",
@@ -34,16 +64,32 @@ export const lines: Line[] = [
     direction: "médecin, pharmacien, chirurgien-dentiste, sage-femme, vétérinaire",
   },
   {
+    id: "defense",
+    num: 5,
+    name: "Défense et officiers",
+    short: "Défense",
+    pitch: "Commander, servir le pays, partir en mission : la voie des écoles d'officiers.",
+    direction: "officier de l'armée de Terre, de la Marine ou de l'Air et de l'Espace",
+  },
+  {
     id: "sciences",
-    num: 1,
+    num: 6,
     name: "Sciences et ingénieur",
     short: "Sciences",
     pitch: "Résoudre, inventer, construire : prépas scientifiques et grandes écoles d'ingénieurs.",
     direction: "ingénieur, chercheur, fondateur d'entreprise technologique",
   },
   {
+    id: "postbac",
+    num: 7,
+    name: "Écoles en cinq ans",
+    short: "Écoles post-bac",
+    pitch: "Entrer dès le bac dans une école d'ingénieurs ou de commerce, pour cinq ans, prépa comprise.",
+    direction: "ingénieur, manager, chef de projet",
+  },
+  {
     id: "commerce",
-    num: 2,
+    num: 8,
     name: "Commerce et management",
     short: "Commerce",
     pitch: "Diriger, entreprendre, financer : prépa économique et grandes écoles de commerce.",
@@ -51,7 +97,7 @@ export const lines: Line[] = [
   },
   {
     id: "scpo",
-    num: 3,
+    num: 9,
     name: "Sciences Po, droit et État",
     short: "Sciences Po",
     pitch: "Défendre, juger, gouverner : Sciences Po, facultés de droit, grands concours de l'État.",
@@ -59,7 +105,7 @@ export const lines: Line[] = [
   },
   {
     id: "lettres",
-    num: 5,
+    num: 10,
     name: "Lettres et patrimoine",
     short: "Lettres",
     pitch: "Lire, écrire, transmettre : khâgne, École normale supérieure, École des chartes.",
@@ -67,7 +113,7 @@ export const lines: Line[] = [
   },
   {
     id: "monde",
-    num: 8,
+    num: 11,
     name: "International",
     short: "Monde",
     pitch: "Étudier en anglais ou en allemand dans les meilleures universités d'Europe et du monde.",
@@ -75,7 +121,7 @@ export const lines: Line[] = [
   },
   {
     id: "arts",
-    num: 7,
+    num: 12,
     name: "Musique et arts",
     short: "Arts",
     pitch: "Chanter, jouer, composer, bâtir : conservatoires supérieurs, architecture, beaux-arts.",
