@@ -265,7 +265,8 @@ function App() {
                 Quelle voie te ressemble ?
               </h2>
               <p className="e-lede">
-                Six questions, deux minutes. Le résultat classe les voies selon tes goûts d&apos;aujourd&apos;hui.
+                Sept questions, trois minutes. Le résultat classe les voies selon tes goûts d&apos;aujourd&apos;hui et
+                te propose des métiers à explorer.
               </p>
             </div>
             <Quiz
@@ -273,6 +274,10 @@ function App() {
               onShowParcours={(l) => {
                 setTrip(l);
                 scrollToId("parcours");
+              }}
+              onPickMetier={(id) => {
+                setMetier(id);
+                scrollToId("metiers");
               }}
             />
           </div>

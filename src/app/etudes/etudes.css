@@ -2015,6 +2015,50 @@ html.e-lock body {
 .e-quiz__back {
   margin-top: 18px;
 }
+.e-quiz__hint {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: var(--slate);
+}
+.e-quiz__hint + .e-quiz__opts {
+  margin-top: 18px;
+}
+.e-quiz__opts--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.e-quiz__opts--two .e-quiz__opt {
+  min-height: 52px;
+  padding: 10px 14px;
+  font-size: 0.96rem;
+}
+.e-quiz__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+.e-quiz__nav .e-quiz__back {
+  margin-top: 0;
+}
+.e-quiz__nav .e-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.e-quiz__jobs {
+  margin-top: 26px;
+}
+.e-quiz__jobs h4 {
+  margin-bottom: 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+.e-quiz__jobs-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 .e-quiz__aside {
   position: sticky;
   top: 96px;
@@ -4090,7 +4134,8 @@ html.e-lock body {
   .e-entry {
     grid-template-columns: minmax(0, 1fr);
   }
-  .e-jobs__list {
+  .e-jobs__list,
+  .e-quiz__opts--two {
     grid-template-columns: minmax(0, 1fr);
   }
   .e-jobs__start,
