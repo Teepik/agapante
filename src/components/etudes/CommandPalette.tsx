@@ -17,6 +17,16 @@ import { Icon, type IconName } from "./ui";
 type Group = "Sections" | "Métiers" | "Étapes" | "Lycées" | "Établissements" | "Passerelles" | "Mots";
 const GROUPS: Group[] = ["Sections", "Métiers", "Étapes", "Lycées", "Établissements", "Passerelles", "Mots"];
 
+/** Des mots qui mènent aussi aux sections : « bourse » ouvre les coûts, « Parcoursup » les formations. */
+const MOTS_CLES: Record<string, string> = {
+  couts:
+    "budget argent prix frais inscription cvec bourse aides crous loyer logement apl visale salaire apprenti etranger erasmus",
+  ecoles: "formations parcoursup taux d'acces admission bts but licence prepa ecole",
+  lycees: "lycee pres de chez moi internat resultats bac",
+  calendrier: "dates echeances agenda",
+  projet: "imprimer plan b agenda",
+};
+
 type Item = {
   key: string;
   group: Group;
@@ -70,7 +80,7 @@ export function CommandPalette({
         name: s.label,
         hint: "Aller à la section",
         icon: "arrow-down",
-        hay: norm(s.label),
+        hay: norm(`${s.label} ${MOTS_CLES[s.id] ?? ""}`),
         run: () => document.getElementById(s.id)?.scrollIntoView({ behavior: "smooth", block: "start" }),
       });
     }
