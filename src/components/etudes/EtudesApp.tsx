@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { ANNEE } from "@/lib/etudes/couts";
 import { enLettres, type LaneId, type LineId } from "@/lib/etudes/lines";
 import { LANES } from "@/lib/etudes/plan";
 import { metierById } from "@/lib/etudes/metiers";
@@ -11,6 +12,7 @@ import { CohortProvider, useCohort } from "./cohorte";
 import { CommandPalette } from "./CommandPalette";
 import { CompareSheet } from "./Compare";
 import { EcoleSheet, LyceeSheet, PasserelleSheet } from "./DetailSheets";
+import { Aides, Couts, Etranger } from "./Couts";
 import { Ecoles } from "./Ecoles";
 import { FormationSheet } from "./FormationSheet";
 import { FormationsFrance } from "./FormationsFrance";
@@ -365,6 +367,46 @@ function App() {
                 </div>
               </div>
               <Ecoles onOpenEcole={openEcole} />
+            </div>
+          </div>
+        </section>
+
+        <section id="couts" className={tone("couts")} aria-labelledby="t-couts">
+          <div className="e-wrap">
+            <div className="e-head">
+              <h2 id="t-couts" className="e-title">
+                Combien coûtent tes études ?
+              </h2>
+              <p className="e-lede">
+                Frais d&apos;inscription, loyer, vie courante, et la part que paient les aides : une estimation sur les
+                chiffres officiels de {ANNEE}, à affiner en famille.
+              </p>
+            </div>
+            <div className="e-block">
+              <Couts />
+            </div>
+            <div className="e-block">
+              <div className="e-block__head">
+                <div>
+                  <h3 className="e-h3">Les aides à connaître</h3>
+                  <p className="e-sub">
+                    Bourse, logement, repas, mobilité : les montants de {ANNEE} et les démarches, avec leurs sources.
+                  </p>
+                </div>
+              </div>
+              <Aides />
+            </div>
+            <div className="e-block">
+              <div className="e-block__head">
+                <div>
+                  <h3 className="e-h3">Étudier à l&apos;étranger</h3>
+                  <p className="e-sub">
+                    De 1 194 € à Bruxelles à plus de 34 000 € à Londres, les frais changent tout d&apos;un pays à
+                    l&apos;autre : des exemples réels pour {ANNEE}.
+                  </p>
+                </div>
+              </div>
+              <Etranger />
             </div>
           </div>
         </section>

@@ -66,7 +66,9 @@ export type IconName =
   | "list"
   | "arrow-down"
   | "ticket"
-  | "locate";
+  | "locate"
+  | "plus"
+  | "minus";
 
 const paths: Record<IconName, ReactNode> = {
   close: <path d="M6 6l12 12M18 6L6 18" />,
@@ -203,6 +205,8 @@ const paths: Record<IconName, ReactNode> = {
       <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3" />
     </>
   ),
+  plus: <path d="M12 5v14M5 12h14" />,
+  minus: <path d="M5 12h14" />,
 };
 
 export function Icon({ name, ...rest }: { name: IconName } & SVGProps<SVGSVGElement>) {

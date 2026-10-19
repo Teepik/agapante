@@ -11,6 +11,7 @@ export const SECTIONS = [
   { id: "lycees", label: "Lycées" },
   { id: "specialites", label: "Spécialités" },
   { id: "ecoles", label: "Écoles" },
+  { id: "couts", label: "Coûts" },
   { id: "passerelles", label: "Passerelles" },
   { id: "calendrier", label: "Calendrier" },
   { id: "projet", label: "Mon projet" },
