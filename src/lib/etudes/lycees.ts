@@ -989,7 +989,7 @@ export const lycees: Lycee[] = etTypo([
     ],
     musique: "Apprentissage du chant sacré et du service de l'autel ; messe chaque semaine.",
     frais:
-      "Barème progressif selon les revenus : de 4 500 € à 14 500 € par an tout compris (Aleteia, février 2025) ; grille 2026-2027 publiée sur le site, grille 2027-2028 annoncée pour novembre 2026 ; fonds de bourses interne.",
+      "Barème progressif selon le quotient familial, tout compris : internat, pension complète du lundi au vendredi, activités ; grille 2026-2027 publiée sur le site, grille 2027-2028 annoncée pour novembre 2026 ; fonds de financement pour les familles qui en ont besoin.",
     admission:
       "Pour la rentrée 2027 : réunion d'information à Paris le mardi 17 novembre 2026, portes ouvertes à Chalès les samedis 5 décembre 2026, 13 février, 10 avril et 5 juin 2027 ; dossier avec 70 € de frais, lettres de motivation des parents et de l'enfant (manuscrite), bulletins des deux dernières années ; entretien d'environ 45 minutes avec la direction, en présence de l'élève.",
     points:
@@ -1002,7 +1002,6 @@ export const lycees: Lycee[] = etTypo([
       "https://academies-saintlouis.fr/frais-de-scolarite-2026/",
       "https://academies-saintlouis.fr/projet-pastoral/",
       "https://academies-saintlouis.fr/projet-pedagogique/",
-      "https://fr.aleteia.org/2025/02/20/liesse-saint-louis-de-chales-vers-un-nouveau-modele-decole/",
       "https://unidivers.fr/ecole-catholique-sterin-sologne/",
       "https://lepetitjournal.com/expat-pratique/education/academie-saint-louis-de-chales-un-internat-dexcellence-au-modele-anglo-saxon-444053",
       "https://www.data.gouv.fr/fr/datasets/annuaire-de-leducation/",

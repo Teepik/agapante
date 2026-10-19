@@ -1,7 +1,7 @@
 /* Service worker de la page Études : lecture hors ligne, limité à /etudes.
  * La page passe par le réseau d'abord (pour rester à jour) et retombe sur la copie gardée hors connexion ;
  * les fichiers versionnés de Next.js (/_next/static) se servent depuis le cache. */
-const VERSION = "etudes-v2";
+const VERSION = "etudes-v3";
 const PAGE = "/etudes";
 
 self.addEventListener("install", (event) => {
