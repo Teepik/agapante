@@ -512,7 +512,7 @@ export function Couts() {
               <span>
                 {calc.fraisAn[1] > 0
                   ? `${exact(calc.fraisAn)} par an, répartis sur ${calc.mois} mois`
-                  : calc.boursier
+                  : calc.boursier && r(f.frais)[1] > 0
                     ? "Offerts aux boursiers"
                     : "Gratuits"}
               </span>
