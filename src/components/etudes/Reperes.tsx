@@ -4,30 +4,37 @@ import { useMemo } from "react";
 import { frise } from "@/lib/etudes/frise";
 import { lexique } from "@/lib/etudes/lexique";
 import { sourceCount, sourceGroups } from "@/lib/etudes/sources";
+import { useCohort } from "./cohorte";
 import { norm } from "./Lycees";
 import { Icon } from "./ui";
 
 export function Calendrier() {
+  const { bac, debut, y } = useCohort();
+  // Les années déjà passées s'effacent : le calendrier commence à l'année en cours.
+  const years = frise.filter((p) => bac + p.to > debut);
   return (
     <ol className="e-years">
-      {frise.map((y) => (
-        <li key={y.years} className={y.here ? "e-year is-here" : "e-year"}>
-          <div>
-            <p className="e-year__years">{y.years}</p>
-            <p className="e-year__stage">
-              {y.stage}, {y.age}
-            </p>
-          </div>
-          <ul className="e-year__items">
-            {y.items.map((it) => (
-              <li key={it.what} className={it.key ? "is-key" : undefined}>
-                <span className="e-year__when">{it.when}</span>
-                <span className="e-year__what">{it.what}</span>
-              </li>
-            ))}
-          </ul>
-        </li>
-      ))}
+      {years.map((p) => {
+        const here = bac + p.from === debut;
+        return (
+          <li key={p.stage} className={here ? "e-year is-here" : "e-year"}>
+            <div>
+              <p className="e-year__years">{y(p.years)}</p>
+              <p className="e-year__stage">
+                {p.stage}, {p.age}
+              </p>
+            </div>
+            <ul className="e-year__items">
+              {p.items.map((it) => (
+                <li key={it.what} className={it.key ? "is-key" : undefined}>
+                  <span className="e-year__when">{y(it.when)}</span>
+                  <span className="e-year__what">{it.what}</span>
+                </li>
+              ))}
+            </ul>
+          </li>
+        );
+      })}
     </ol>
   );
 }
@@ -95,8 +102,8 @@ export function Footer() {
           <p className="e-foot__title">Sources</p>
           <p className="e-foot__note">
             Informations vérifiées en octobre 2026 auprès des établissements, des ministères et de la presse
-            spécialisée. Les règles évoluent d&apos;ici 2030 : vérifie chaque année les sites des formations et de
-            Parcoursup.
+            spécialisée. Les règles évoluent d&apos;une année à l&apos;autre : vérifie chaque année les sites des
+            formations et de Parcoursup.
           </p>
           <p className="e-foot__note">
             Les sources propres à chaque lycée et à chaque établissement figurent dans sa fiche. Fond de carte : IGN,

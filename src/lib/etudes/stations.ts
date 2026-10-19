@@ -33,17 +33,17 @@ export const stations: StationContent[] = frTypo([
     id: "college",
     name: "3e",
     label: "3e",
-    sub: "Tu es ici, 2026-2027",
-    when: "Cette année, 2026-2027, vers 14 ans",
+    sub: "{B-4}-{B-3}",
+    when: "En {B-4}-{B-3}, vers 14 ans",
     what: "La dernière année de collège. Tu passes le brevet en juin et tu choisis ton lycée : c'est le moment de visiter, de comparer et de regarder les options qui comptent pour toi.",
     facts: [
-      { icon: "clock", label: "Brevet", value: "Juin 2027" },
-      { icon: "key", label: "Choix du lycée", value: "De janvier à mai 2027" },
+      { icon: "clock", label: "Brevet", value: "Juin {B-3}" },
+      { icon: "key", label: "Choix du lycée", value: "De janvier à mai {B-3}" },
     ],
     contenu: [
       "Passer le brevet : le passer est obligatoire, le conseil de classe décide ensuite du passage en 2nde.",
       "Visiter des lycées et leurs journées portes ouvertes, de janvier à mars.",
-      "Venant d'un collège hors contrat : préparer l'examen d'entrée d'un lycée public, ou le dossier d'un lycée privé.",
+      "Si ton collège est hors contrat : un lycée public te fait passer un examen d'entrée, un lycée privé étudie ton dossier.",
     ],
     apres: ["2nde générale et technologique", "Lycée de la Défense", "2nde professionnelle"],
     astuce:
@@ -53,8 +53,8 @@ export const stations: StationContent[] = frTypo([
     id: "seconde",
     name: "2nde",
     label: "2nde",
-    sub: "Tronc commun, 2027-2028",
-    when: "En 2027-2028, vers 15 ans",
+    sub: "Tronc commun, {B-3}-{B-2}",
+    when: "En {B-3}-{B-2}, vers 15 ans",
     what: "Une année de tronc commun, avec les mêmes matières pour tous. Au deuxième trimestre, tu choisis les trois spécialités de ta 1re : c'est ta première vraie correspondance.",
     contenu: [
       "Français, maths, histoire-géographie, deux langues, physique-chimie, SVT, SES, numérique.",
@@ -69,13 +69,13 @@ export const stations: StationContent[] = frTypo([
     name: "1re et Terminale",
     label: "1re et Terminale",
     sub: "3, puis 2 spécialités",
-    when: "De 2028 à 2030, vers 16 et 17 ans",
+    when: "De {B-2} à {B}, vers 16 et 17 ans",
     what: "Le cœur du lycée : trois spécialités en 1re, deux en Terminale, plus le tronc commun. Ce sont les bulletins de ces deux années que lisent les formations sélectives.",
     facts: [
       {
         icon: "clock",
         label: "Épreuves anticipées",
-        value: "Français et maths, juin 2029",
+        value: "Français et maths, juin {B-1}",
       },
       {
         icon: "key",
@@ -96,16 +96,16 @@ export const stations: StationContent[] = frTypo([
     id: "bac",
     name: "Bac",
     label: "Bac",
-    sub: "Juin 2030",
-    when: "En juin 2030, vers 18 ans",
+    sub: "Juin {B}",
+    when: "En juin {B}, vers 18 ans",
     what: "Le baccalauréat général ouvre toutes les formations du supérieur. Tes vœux se font sur Parcoursup de janvier à mars de Terminale, et les premières réponses arrivent début juin, avant les résultats du bac.",
     facts: [
       {
         icon: "key",
         label: "Vœux Parcoursup",
-        value: "Jusqu'à 10, de janvier à mars 2030",
+        value: "Jusqu'à 10, de janvier à mars {B}",
       },
-      { icon: "clock", label: "Premières réponses", value: "Début juin 2030" },
+      { icon: "clock", label: "Premières réponses", value: "Début juin {B}" },
     ],
     contenu: [
       "Épreuves finales : philosophie, les deux spécialités, le grand oral.",
@@ -166,7 +166,7 @@ export const stations: StationContent[] = frTypo([
       "Toutes les autres lignes",
     ],
     astuce:
-      "Ta pratique de chœur est un atout dans n'importe quel dossier : elle montre la rigueur, l'écoute et l'endurance.",
+      "Une pratique musicale régulière, au chœur ou à l'orchestre, est un atout dans n'importe quel dossier : elle montre la rigueur, l'écoute et l'endurance.",
   },
 
   /* ---------------- Ligne 6 : Défense ---------------- */
@@ -269,7 +269,7 @@ export const stations: StationContent[] = frTypo([
     ],
     apres: ["Médecine", "Pharmacie", "Odontologie", "Maïeutique", "Kinésithérapie"],
     astuce:
-      "Réforme annoncée le 17 avril 2026 : en octobre 2026, les textes définitifs étaient attendus et des doyens demandaient un report à 2028. Vérifie les règles exactes en 2029.",
+      "Réforme annoncée le 17 avril 2026 : en octobre 2026, les textes définitifs étaient attendus et des doyens demandaient un report à 2028. Vérifie les règles exactes l'année de ta terminale.",
     ecoles: ["fac-sante"],
   },
   {
@@ -602,7 +602,7 @@ export const stations: StationContent[] = frTypo([
     ],
     apres: ["INSP", "Diplomatie", "Journalisme", "Avocat", "Entreprise", "ONG"],
     astuce:
-      "Bonne nouvelle pour un élève du hors contrat : à Sciences Po Paris, les épreuves anticipées, notées de la même façon pour tous, remplacent le contrôle continu dans la note d'admission.",
+      "Pour un élève du hors contrat, à Sciences Po Paris, les épreuves anticipées, notées de la même façon pour tous, remplacent le contrôle continu dans la note d'admission.",
     ecoles: ["sciencespo", "iep"],
   },
   {

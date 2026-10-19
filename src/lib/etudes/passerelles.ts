@@ -117,7 +117,7 @@ export const passerelles: Passerelle[] = frTypo([
     title: "De la santé à une autre licence",
     when: "Après la 1re ou la 2e année",
     how: "Si la santé attend encore, ta licence continue dans la discipline que tu as choisie, avec tous tes crédits acquis.",
-    note: "Réforme de 2027 : les règles exactes sont à vérifier en 2029.",
+    note: "Réforme de 2027 : vérifie les règles exactes l'année de ta terminale.",
     draw: { from: ["sante"], to: "u", t: 1 },
   },
   {

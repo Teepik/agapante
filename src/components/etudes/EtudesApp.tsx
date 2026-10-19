@@ -6,6 +6,7 @@ import { passerelleById } from "@/lib/etudes/passerelles";
 import { ecoles } from "@/lib/etudes/ecoles";
 import { lycees } from "@/lib/etudes/lycees";
 import { CareerMap } from "./CareerMap";
+import { CohortProvider, useCohort } from "./cohorte";
 import { CommandPalette } from "./CommandPalette";
 import { EcoleSheet, LyceeSheet, PasserelleSheet } from "./DetailSheets";
 import { Ecoles } from "./Ecoles";
@@ -35,14 +36,17 @@ function scrollToId(id: string) {
 
 export function EtudesApp() {
   return (
-    <SelectionProvider>
-      <App />
-    </SelectionProvider>
+    <CohortProvider>
+      <SelectionProvider>
+        <App />
+      </SelectionProvider>
+    </CohortProvider>
   );
 }
 
 function App() {
   const { saved } = useSelection();
+  const { bac, debut } = useCohort();
   const [open, setOpen] = useState<Open>(null);
   const [cmd, setCmd] = useState(false);
   const [focusLine, setFocusLine] = useState<LaneId | null>(null);
@@ -250,7 +254,7 @@ function App() {
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-cal" className="e-title">
-                Ton calendrier, de 2026 à 2035
+                Ton calendrier, de {Math.max(debut, bac - 4)} à {bac + 5}
               </h2>
               <p className="e-lede">
                 Les dates à retenir, année après année. Les plus importantes sont marquées d&apos;un point.

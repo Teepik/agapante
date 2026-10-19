@@ -9,6 +9,7 @@ import { passerelles } from "@/lib/etudes/passerelles";
 import { UNIVERSITY_TRACKS, placed } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
 import { norm } from "./Lycees";
+import { useCohort } from "./cohorte";
 import { SECTIONS } from "./TopNav";
 import { Icon, type IconName } from "./ui";
 
@@ -56,6 +57,7 @@ export function CommandPalette({
     };
   }, []);
 
+  const { y } = useCohort();
   const items = useMemo<Item[]>(() => {
     const out: Item[] = [];
     for (const s of SECTIONS) {
@@ -88,7 +90,7 @@ export function CommandPalette({
         key: `st-${p.id}`,
         group: "Étapes",
         name: st.name,
-        hint: `${p.where}, ${st.when}`,
+        hint: `${p.where}, ${y(st.when)}`,
         icon: "station",
         hay: norm(`${st.name} ${st.label} ${st.sub ?? ""} ${p.where}`),
         run: () => onStation(p.id, p.line),
@@ -139,7 +141,7 @@ export function CommandPalette({
       });
     }
     return out;
-  }, [onStation, onLycee, onEcole, onPasserelle, onMot]);
+  }, [onStation, onLycee, onEcole, onPasserelle, onMot, y]);
 
   const results = useMemo(() => {
     const nq = norm(q.trim());

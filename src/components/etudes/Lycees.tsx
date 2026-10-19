@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { calendrier3e, lyceeTypes, questionsVisite } from "@/lib/etudes/lycee";
 import { internatTag, lyceeInternat, lycees, statutLabel, type Lycee } from "@/lib/etudes/lycees";
 import { FranceMap } from "./FranceMap";
+import { useCohort } from "./cohorte";
 import { useSelection } from "./store";
 import { Icon } from "./ui";
 
@@ -28,6 +29,7 @@ function sortName(l: Lycee) {
 }
 
 export function Lycees({ onOpenLycee }: { onOpenLycee: (id: string) => void }) {
+  const { classe } = useCohort();
   return (
     <>
       <div className="e-block">
@@ -90,7 +92,14 @@ export function Lycees({ onOpenLycee }: { onOpenLycee: (id: string) => void }) {
       <div className="e-block">
         <div className="e-split">
           <div>
-            <h3 className="e-h3">Ton calendrier de 3e</h3>
+            <h3 className="e-h3">{classe === "3e" ? "Ton calendrier de 3e" : "Le calendrier de la 3e"}</h3>
+            <p className="e-sub" style={{ marginBottom: 18 }}>
+              {classe === "4e"
+                ? "Les dates de l'année 2026-2027 : l'an prochain, elles reviendront à peu près aux mêmes moments."
+                : classe === "3e"
+                  ? "Les dates de l'année 2026-2027."
+                  : "Les dates de l'année 2026-2027 : utiles pour changer de lycée ou conseiller un plus jeune."}
+            </p>
             <ol className="e-dates">
               {calendrier3e.map((c) => (
                 <li key={c.when + c.what}>

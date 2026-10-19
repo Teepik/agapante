@@ -154,8 +154,6 @@ export const lycees: Lycee[] = etTypo([
     },
     options: ["latin", "grec", "section européenne allemand", "LV : allemand, anglais, espagnol, italien"],
     prepas: ["CPGE B/L (lettres et sciences sociales)"],
-    admission:
-      "Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
     points:
       "Collège-lycée fondé en 1850 par les jésuites ; la vie scolaire s'organise en « équipes » qui réunissent des élèves de la 2nde à la terminale ; classe préparatoire B/L sur place.",
     url: "https://www.saint-francois-xavier.com",
@@ -214,7 +212,7 @@ export const lycees: Lycee[] = etTypo([
     frais:
       "Contribution des familles 74,90 € à 84,90 € par mois sur 10 mois ; internat 376,60 € par mois sur 10 mois, soit ≈ 3 770 € par an (tarifs 2026-2027) ; réduction fratrie de 10 % à 20 % sur la pension.",
     admission:
-      "Demande d'inscription en ligne sur likes.org ; pour la rentrée 2026, dossiers de 2nde GT attendus avant le 3 avril 2026. Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
+      "Demande d'inscription en ligne sur likes.org ; pour la rentrée 2026, dossiers de 2nde GT attendus avant le 3 avril 2026.",
     points:
       "Fondé en 1838 et confié aux Frères des écoles chrétiennes en 1847, mixte depuis 1974 ; tradition d'internat plus que centenaire et forte valeur ajoutée sur les mentions en 2025 (+9 points).",
     url: "https://www.likes.org",
@@ -265,7 +263,7 @@ export const lycees: Lycee[] = etTypo([
       "voie technologique STMG, STL, ST2S",
     ],
     admission:
-      "Pré-inscription en ligne (EcoleDirecte) depuis la page « Infos pratiques » du lycée ; dossier sur demande à lycee@kreisker.fr. Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
+      "Pré-inscription en ligne (EcoleDirecte) depuis la page « Infos pratiques » du lycée ; dossier sur demande à lycee@kreisker.fr.",
     points:
       "Origines en 1580 (prébende scolastique de Saint-Pol), ancien collège du Léon devenu lycée privé en 1911 ; ensemble scolaire de deux collèges et deux lycées, avec un BTS Commerce international.",
     url: "https://www.lekreisker.fr",
@@ -323,7 +321,7 @@ export const lycees: Lycee[] = etTypo([
     ],
     musique: "Option musique en 2nde (Onisep) ; musique parmi les activités du soir à l'internat Sainte-Anne.",
     admission:
-      "Pré-inscription en ligne (EcoleDirecte) après choix du site, Sainte-Anne (31 rue d'Antrain) ou Sainte-Geneviève (14D rue Ginguené). Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
+      "Pré-inscription en ligne (EcoleDirecte) après choix du site, Sainte-Anne (31 rue d'Antrain) ou Sainte-Geneviève (14D rue Ginguené).",
     points:
       "Fondé en 1829 rue d'Antrain, uni en 2011 au collège-lycée Sainte-Geneviève ; 90 % de mentions au bac 2025 au quartier Sainte-Anne et une section orientale de chinois qui prépare la mention orientale au bac.",
     url: "https://www.saintmartin-rennes.org",
@@ -385,7 +383,7 @@ export const lycees: Lycee[] = etTypo([
     frais:
       "Contribution des familles 830 € par an (880 € au tarif solidarité) ; internat 3 603 € par an (hébergement 925 €, repas 2 653 €, activités 25 €), tarifs 2026-2027.",
     admission:
-      "Préinscription en ligne (EcoleDirecte) ; après étude de la candidature, la famille et l'élève peuvent être reçus par la directrice ou son adjointe. Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
+      "Préinscription en ligne (EcoleDirecte) ; après étude de la candidature, la famille et l'élève peuvent être reçus par la directrice ou son adjointe.",
     points:
       "Collège fondé en 1839 par les Eudistes dans l'ancienne abbaye bénédictine Saint-Sauveur (IXe siècle) ; lycée général et technologique avec un BTS SIO cybersécurité.",
     url: "https://www.lycee-saint-sauveur-redon.eu",
@@ -447,7 +445,7 @@ export const lycees: Lycee[] = etTypo([
     frais:
       "Interne en voie générale : 5 432 € par an (4 nuits) ou 5 867 € par an (5 nuits), contribution des familles de 1 051 € comprise ; externe 1 051 € par an (tarifs 2026-2027, prélèvement sur 9 mois).",
     admission:
-      "Pré-inscriptions en ligne pour la rentrée 2027 à partir du mercredi 25 novembre 2026 à 9 h ; rendez-vous avec la direction à partir de janvier, en présence de l'élève (dernier bulletin, 20 € de frais de dossier) ; admission définitive après l'avis de passage. Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
+      "Pré-inscriptions en ligne pour la rentrée 2027 à partir du mercredi 25 novembre 2026 à 9 h ; rendez-vous avec la direction à partir de janvier, en présence de l'élève (dernier bulletin, 20 € de frais de dossier) ; admission définitive après l'avis de passage.",
     points:
       "Institution fondée en 1815 par le pédagogue Urbain Mongazon, sur un domaine de 12 hectares au cœur d'Angers ; collège, lycée, pôle santé et classes préparatoires scientifiques.",
     url: "https://mongazon.org",
@@ -492,8 +490,7 @@ export const lycees: Lycee[] = etTypo([
       source: "https://www.data.gouv.fr/fr/datasets/6707515c84dfa4012c3ecd45/",
     },
     options: ["latin", "section européenne anglais", "LV : allemand, anglais, espagnol"],
-    admission:
-      "Contact : 15 rue Crossardière, Laval, 02 43 59 23 23, institution@immac.fr. Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
+    admission: "Contact : 15 rue Crossardière, Laval, 02 43 59 23 23, institution@immac.fr.",
     points:
       "Grande institution catholique du centre de Laval, du collège au BTS (cybersécurité, informatique et réseaux) ; internat de garçons sur place.",
     url: "https://www.immac.fr",
@@ -547,7 +544,7 @@ export const lycees: Lycee[] = etTypo([
     frais:
       "Interne : 717 € par mois en 2nde, 735 € en 1re et terminale, sur 10 mois (≈ 7 170 à 7 350 € par an) ; externe 125 € par mois ; arrhes 150 € (tarifs 2026-2027).",
     admission:
-      "Pré-inscriptions 2027-2028 en ligne, ouverture à venir (octobre 2026) ; portes ouvertes des lycées le vendredi 27 novembre 2026 ; entretien avec le responsable pour valider options et spécialités, selon les places disponibles. Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
+      "Pré-inscriptions 2027-2028 en ligne, ouverture à venir (octobre 2026) ; portes ouvertes des lycées le vendredi 27 novembre 2026 ; entretien avec le responsable pour valider options et spécialités, selon les places disponibles.",
     points:
       "Établissement des Frères de Saint-Gabriel depuis 1838, rejoint par les Filles de la Sagesse en 1951 ; classes de 24 élèves en 2nde et vie culturelle très riche (chœur, comédie musicale, cinéma).",
     url: "https://www.saint-gab.com",
@@ -602,7 +599,7 @@ export const lycees: Lycee[] = etTypo([
     frais:
       "Interne 5 nuits : 6 267 € à 8 177 € par an selon le quotient familial ; 4 nuits : 5 607 € à 7 518 € ; externe 943 € à 1 410 € (tarifs 2026-2027) ; remise de 20 % à 40 % sur la contribution à partir du 2e enfant ; navette des internes 364 € par an.",
     admission:
-      "Demande d'inscription 2027-2028 en ligne sur lplcp.fr (rubrique « Future Seconde »), frais d'inscription 65 € pour un interne. Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
+      "Demande d'inscription 2027-2028 en ligne sur lplcp.fr (rubrique « Future Seconde »), frais d'inscription 65 € pour un interne.",
     points:
       "Abbaye bénédictine fondée en 1034, érigée en collège royal militaire par Louis XVI en 1776 ; 2nde au prieuré, 1re et terminale dans l'abbaye, au milieu d'un parc de 4 hectares.",
     url: "https://www.lplcp.fr",
@@ -658,8 +655,7 @@ export const lycees: Lycee[] = etTypo([
       "Atelier de théâtre musical de la 4e à la terminale (chant, théâtre, danse), le vendredi de 15 h 35 à 17 h 50 et un mercredi par mois, encadré par 6 enseignants ; spectacle Mamma Mia en 2025-2026.",
     frais:
       "Internat et scolarité 479 € par mois sur 10 mois, soit 4 790 € par an ; externe 80 € par mois (tarifs 2026-2027) ; réduction de 10 % pour le 2e enfant, 60 % pour le 3e, 80 % pour le 4e, 100 % à partir du 5e.",
-    admission:
-      "Pré-inscription en ligne et contact avec le secrétariat (02 33 85 15 50). Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
+    admission: "Pré-inscription en ligne et contact avec le secrétariat (02 33 85 15 50).",
     points:
       "École fondée en 1897 par l'abbé Bignon, avec internat dès 1908 ; petit lycée du Perche, à moins d'une heure du Mans et d'Alençon, au cadre familial et à la vie spirituelle structurée.",
     url: "https://ensemblescolairebignon.fr",
@@ -721,7 +717,7 @@ export const lycees: Lycee[] = etTypo([
     frais:
       "Interne (5 déjeuners) : 640,17 € par mois sur 10 mois plus 400 € d'arrhes, soit ≈ 6 800 € par an ; externe 108,29 € par mois (tarifs indicatifs 2026-2027) ; réduction progressive selon le nombre d'enfants inscrits.",
     admission:
-      "Préinscriptions 2027-2028 uniquement en ligne, ouvertes à l'issue de la première matinée portes ouvertes (samedi 10 octobre) ; dossier étudié par la direction puis entretien obligatoire avec l'élève ; inscription définitive avec la fiche navette et le bulletin du 3e trimestre ; matinée portes ouvertes le 9 janvier 2027. Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
+      "Préinscriptions 2027-2028 uniquement en ligne, ouvertes à l'issue de la première matinée portes ouvertes (samedi 10 octobre) ; dossier étudié par la direction puis entretien obligatoire avec l'élève ; inscription définitive avec la fiche navette et le bulletin du 3e trimestre ; matinée portes ouvertes le 9 janvier 2027.",
     points:
       "Lycée lasallien installé au Loquidy depuis 1926, qui fête son centenaire en 2026-2027 ; 95 % de mentions et 30 % de mentions très bien au bac 2025.",
     url: "https://www.loquidy.net",
@@ -780,7 +776,7 @@ export const lycees: Lycee[] = etTypo([
     frais:
       "Interne : 5 210 € par an (contribution 1 230 € et pension complète 3 980 €), forfait dimanche soir 200 € par an ; externe 1 230 € par an (tarifs 2026-2027) ; réductions familles nombreuses de 20 % à 30 % sur la pension et de 20 % à 25 % sur la contribution.",
     admission:
-      "Demande d'information et d'inscription par le formulaire en ligne ou au 02 31 46 86 31 (lycée, 8 avenue Croix-Guérin). Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
+      "Demande d'information et d'inscription par le formulaire en ligne ou au 02 31 46 86 31 (lycée, 8 avenue Croix-Guérin).",
     points:
       "Ensemble scolaire diocésain présent à Caen depuis 1850 ; 85 % de mentions au bac 2025 et classes préparatoires MPSI-PSI sur place.",
     url: "https://www.saintemarie-saintpierre-caen.fr",
@@ -840,7 +836,7 @@ export const lycees: Lycee[] = etTypo([
     frais:
       "Contribution modulée selon les revenus, réduction famille nombreuse dès le 2e enfant ; montants détaillés publiés en PDF sur le site.",
     admission:
-      "Pré-inscription en ligne sur isaac-etoile.fr (prise de rendez-vous en ligne annoncée) ; journée portes ouvertes le samedi 20 mars 2027. Venant du hors contrat : candidature sur dossier auprès du lycée ; l'examen d'admission sur table concerne l'entrée dans un lycée public.",
+      "Pré-inscription en ligne sur isaac-etoile.fr (prise de rendez-vous en ligne annoncée) ; journée portes ouvertes le samedi 20 mars 2027.",
     points:
       "Héritier du collège jésuite Saint-Vincent-de-Paul ouvert en 1854, réuni en 2005 avec Saint-Stanislas et Le Porteau sur un campus neuf inauguré en 2011 ; propose aussi le bac technologique STD2A (design et arts appliqués).",
     url: "https://www.isaac-etoile.fr",

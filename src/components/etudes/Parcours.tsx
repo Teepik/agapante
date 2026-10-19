@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { itineraires } from "@/lib/etudes/itineraires";
 import { lineById, type LineId } from "@/lib/etudes/lines";
+import { useCohort } from "./cohorte";
 import { Dot, Icon, Meter } from "./ui";
 
 export function Parcours({
@@ -16,6 +17,7 @@ export function Parcours({
   onShowRoute: (line: LineId) => void;
   onOpenStation: (id: string, line: LineId) => void;
 }) {
+  const { y } = useCohort();
   const it = itineraires.find((x) => x.line === current) ?? itineraires[0];
   const l = lineById[it.line];
   const panelRef = useRef<HTMLDivElement>(null);
@@ -85,7 +87,7 @@ export function Parcours({
             <li key={s.title} className={s.choice ? "is-choice" : undefined}>
               <span className="e-climb__mark" aria-hidden="true" />
               <div>
-                <p className="e-climb__when">{s.when}</p>
+                <p className="e-climb__when">{y(s.when)}</p>
                 <p className="e-climb__title">
                   {s.station ? (
                     <button type="button" className="e-link" onClick={() => onOpenStation(s.station!, it.line)}>

@@ -1,6 +1,12 @@
+"use client";
+
+import { classeInfo } from "@/lib/etudes/cohorte";
 import { laneShort } from "@/lib/etudes/lines";
 import { LANES } from "@/lib/etudes/plan";
+import { ClassPicker, useCohort } from "./cohorte";
 import { Icon } from "./ui";
+
+const NOMBRES: Record<number, string> = { 9: "neuf", 10: "dix", 11: "onze", 12: "douze", 13: "treize", 14: "quatorze" };
 
 /* L'arbre de l'ouverture : un tronc qui monte de la 3e et se ramifie en neuf voies ; l'université, au centre, monte tout droit. */
 const T = {
@@ -35,6 +41,8 @@ function treePath(k: number) {
 }
 
 export function Hero() {
+  const { classe } = useCohort();
+  const here = classeInfo(classe).court;
   return (
     <header className="e-hero" id="top">
       <div className="e-wrap">
@@ -43,9 +51,10 @@ export function Hero() {
       <div className="e-wrap e-hero__grid">
         <div className="e-hero__text">
           <p className="e-hero__lede">
-            Du lycée au premier métier : neuf grandes voies d&apos;études, les établissements qui les jalonnent et les
-            passerelles qui les relient.
+            Du lycée au premier métier : {NOMBRES[LANES.length] ?? LANES.length} grandes voies d&apos;études, les
+            établissements qui les jalonnent et les passerelles qui les relient.
           </p>
+          <ClassPicker />
           <div className="e-hero__cta">
             <a className="e-btn e-btn--primary" href="#carte">
               <Icon name="map" />
@@ -60,7 +69,7 @@ export function Hero() {
 
         <figure
           className="e-tree"
-          aria-label="Le tronc commun monte de la 3e au bac, puis se ramifie en neuf voies d'études."
+          aria-label={`Le tronc commun monte jusqu'au bac, puis se ramifie en ${NOMBRES[LANES.length] ?? LANES.length} voies d'études.`}
         >
           <svg viewBox={`0 0 ${T.W} ${T.H}`} role="img" aria-hidden="true">
             {LANES.map((id, k) => (
@@ -97,7 +106,7 @@ export function Hero() {
               dominantBaseline="central"
               className="e-tree__cap e-tree__cap--here"
             >
-              3e
+              {here}
             </text>
             <text className="e-tree__here" x={T.BX + 52} y={T.BASE + 5}>
               Tu es ici

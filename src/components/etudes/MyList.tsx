@@ -6,6 +6,7 @@ import type { LaneId } from "@/lib/etudes/lines";
 import { laneOf } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
 import { Sheet } from "./Sheet";
+import { useCohort } from "./cohorte";
 import { useSelection, type SavedKind } from "./store";
 import { Dot, Icon } from "./ui";
 
@@ -21,6 +22,7 @@ export function MyList({
   onStation: (id: string, line: LaneId | null) => void;
 }) {
   const { saved, toggle } = useSelection();
+  const { y } = useCohort();
   const parsed = saved.map((k) => {
     const [kind, ...rest] = k.split(":");
     return { kind: kind as SavedKind, id: rest.join(":") };
@@ -102,7 +104,7 @@ export function MyList({
                   key={id}
                   icon={line ? <Dot line={line} /> : <Dot line="u" />}
                   name={s.name}
-                  hint={s.when}
+                  hint={y(s.when)}
                   onOpen={() => onStation(id, line)}
                   onRemove={() => toggle("station", id)}
                 />

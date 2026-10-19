@@ -21,6 +21,7 @@ import {
 } from "@/lib/etudes/plan";
 import { passerelleById, passerelles } from "@/lib/etudes/passerelles";
 import { stationById } from "@/lib/etudes/stations";
+import { useCohort } from "./cohorte";
 import { Dot, Icon } from "./ui";
 
 type Props = {
@@ -143,6 +144,7 @@ function Drawing({
   onOpenPasserelle,
 }: Props & { lit: LaneId | null }) {
   const [peek, setPeek] = useState<LaneId | null>(null);
+  const { y, ici, classe } = useCohort();
   const pass = activePass ? passerelleById[activePass] : null;
   const geo = pass?.draw ? passGeometry(pass.draw) : null;
   const hot = new Set(geo?.hot ?? []);
@@ -237,7 +239,9 @@ function Drawing({
         {trunk.map((p) => (
           <rect
             key={p.id}
-            className={p.id === "college" ? "e-cap e-cap--here" : "e-cap"}
+            className={
+              p.id === ici ? "e-cap e-cap--here" : classe === "4e" && p.id === "college" ? "e-cap e-cap--next" : "e-cap"
+            }
             x={BX - 49}
             y={p.y - 13}
             width={98}
@@ -281,7 +285,7 @@ function Drawing({
         {TIME_MARKS.map((m) => (
           <li key={m.y} style={{ top: m.y - 15 }}>
             <span className="e-time__age">{m.age}</span>
-            <span className="e-time__when">{m.when}</span>
+            <span className="e-time__when">{y(m.when)}</span>
           </li>
         ))}
       </ol>
@@ -293,13 +297,13 @@ function Drawing({
           <button
             key={p.id}
             type="button"
-            className={`e-ms e-ms--trunk${p.id === "college" ? " is-here" : ""}`}
+            className={`e-ms e-ms--trunk${p.id === ici ? " is-here" : ""}`}
             style={{ left: BX - 330, top: p.y - 24, width: 330 + 49 }}
-            aria-label={`${st.name}, tronc commun`}
+            aria-label={`${st.name}, tronc commun${p.id === ici ? ", tu es ici" : ""}`}
             onClick={() => onOpen(p.id, null)}
           >
             <span className="e-ms__name">{st.label}</span>
-            {st.sub ? <span className="e-ms__sub">{st.sub}</span> : null}
+            <span className="e-ms__sub">{trunkSub(p.id, y, ici, classe)}</span>
           </button>
         );
       })}
@@ -621,7 +625,22 @@ function laneRows(lane: LaneId): Row[] {
   return rows.sort((a, b) => a.key - b.key);
 }
 
-function stepMeta(id: string): string {
+/** Le sous-titre d'une classe du tronc commun : ses années, et « Tu es ici » pour celle de l'élève. */
+function trunkSub(id: string, y: (t: string) => string, ici: string | null, classe: string): string {
+  const st = stationById[id];
+  if (id === "college") {
+    const years = y("{B-4}-{B-3}");
+    if (ici === "college") return `Tu es ici, ${years}`;
+    return classe === "4e" ? `L'an prochain, ${years}` : years;
+  }
+  if (id === "seconde") return ici === "seconde" ? `Tu es ici, ${y("{B-3}-{B-2}")}` : y(st?.sub ?? "");
+  if (id === "premiere-terminale" && ici === "premiere-terminale") {
+    return classe === "1re" ? `Tu es ici, en 1re, ${y("{B-2}-{B-1}")}` : `Tu es ici, en terminale, ${y("{B-1}-{B}")}`;
+  }
+  return y(st?.sub ?? "");
+}
+
+function stepMeta(id: string, y: (t: string) => string): string {
   const p = placedById[id];
   const st = stationById[id];
   if (p?.kind === "seg") {
@@ -631,8 +650,8 @@ function stepMeta(id: string): string {
     const a = 18 + seg.from;
     return seg.more ? `${seg.dur}, à partir de ${a} ans` : `${seg.dur}, de ${a} à ${18 + seg.to} ans`;
   }
-  if (p?.kind === "end") return p.age ?? st?.when ?? "";
-  return st?.when ?? "";
+  if (p?.kind === "end") return p.age ?? y(st?.when ?? "");
+  return y(st?.when ?? "");
 }
 
 /** « A », « A et B », « A, B et C ». */
@@ -641,6 +660,7 @@ function joinFr(items: string[]): string {
 }
 
 function Lanes({ laneLine, onLaneLine, onOpen, activePass, onOpenPasserelle }: Props) {
+  const { y, ici } = useCohort();
   const rows = laneRows(laneLine);
   const listRef = useRef<HTMLOListElement>(null);
 
@@ -751,12 +771,14 @@ function Lanes({ laneLine, onLaneLine, onOpen, activePass, onOpenPasserelle }: P
                   ? " is-terminus"
                   : "";
           return (
-            <li key={r.id} className={`e-lanes__stop${kind}${r.id === "college" ? " is-here" : ""}`}>
+            <li key={r.id} className={`e-lanes__stop${kind}${r.id === ici ? " is-here" : ""}`}>
               <button type="button" onClick={() => onOpen(r.id, laneLine)}>
                 <span className="e-lanes__mark" aria-hidden="true" />
                 <span>
                   <span className="e-lanes__title">{st.name}</span>
-                  <span className="e-lanes__when">{stepMeta(r.id)}</span>
+                  <span className="e-lanes__when">
+                    {r.id === ici ? `Tu es ici. ${stepMeta(r.id, y)}` : stepMeta(r.id, y)}
+                  </span>
                 </span>
                 <Icon name="chevron-right" width={18} height={18} />
               </button>

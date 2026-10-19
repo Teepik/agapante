@@ -511,10 +511,10 @@ export const TIME_MARKS: { y: number; age: string; when: string }[] = [
   { y: yAt(5), age: "23 ans", when: "bac+5, master" },
   { y: yAt(3), age: "21 ans", when: "bac+3, licence" },
   { y: yAt(2), age: "20 ans", when: "bac+2" },
-  { y: Y_BAC, age: "18 ans", when: "le bac, juin 2030" },
-  { y: trunkY("premiere-terminale"), age: "16-17 ans", when: "2028-2030" },
-  { y: trunkY("seconde"), age: "15 ans", when: "2027-2028" },
-  { y: trunkY("college"), age: "14 ans", when: "2026-2027" },
+  { y: Y_BAC, age: "18 ans", when: "le bac, juin {B}" },
+  { y: trunkY("premiere-terminale"), age: "16-17 ans", when: "{B-2}-{B}" },
+  { y: trunkY("seconde"), age: "15 ans", when: "{B-3}-{B-2}" },
+  { y: trunkY("college"), age: "14 ans", when: "{B-4}-{B-3}" },
 ];
 
 /** Lignes de niveau : les paliers à retenir, tracés jusqu'à la dernière voie qui les atteint. */

@@ -789,6 +789,26 @@ html.e-lock body {
   color: var(--slate);
   text-wrap: pretty;
 }
+/* Le choix de la classe : il recalcule les dates de toute la page. */
+.e-classe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 14px;
+  margin-top: 28px;
+}
+.e-classe__label {
+  font-weight: 650;
+}
+.e-classe .e-seg button {
+  min-height: 40px;
+  padding: 0 16px;
+  font-size: 0.95rem;
+}
+.e-classe__bac {
+  font-size: 0.92rem;
+  color: var(--slate);
+}
 .e-hero__cta {
   display: flex;
   flex-wrap: wrap;
@@ -1000,6 +1020,9 @@ html.e-lock body {
 }
 .e-cap--here {
   fill: var(--ink);
+}
+.e-cap--next {
+  stroke-dasharray: 5 4;
 }
 .e-route-halo {
   fill: none;

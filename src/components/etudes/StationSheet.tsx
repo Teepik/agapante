@@ -1,10 +1,12 @@
 "use client";
 
+import { mapTexts } from "@/lib/etudes/cohorte";
 import { laneName, type LaneId } from "@/lib/etudes/lines";
 import { LANES, LANE_DEFS, UNIVERSITY_TRACKS, laneOf, placedById, routeOf } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
 import { ecoleById, ecoles } from "@/lib/etudes/ecoles";
 import { passerelles } from "@/lib/etudes/passerelles";
+import { useCohort } from "./cohorte";
 import { Sheet, StepButton } from "./Sheet";
 import { SaveButton } from "./store";
 import { Dot, Icon, Meter } from "./ui";
@@ -19,8 +21,10 @@ type Props = {
 };
 
 export function StationSheet({ id, line, onClose, onNavigate, onOpenEcole, onOpenPasserelle }: Props) {
-  const st = stationById[id];
-  if (!st) return null;
+  const { y } = useCohort();
+  const raw = stationById[id];
+  if (!raw) return null;
+  const st = mapTexts(raw, y);
   const p = placedById[id];
   const track = UNIVERSITY_TRACKS[id];
 

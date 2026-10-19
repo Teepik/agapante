@@ -16,7 +16,7 @@ export const lyceeTypes: LyceeType[] = frTypo([
     name: "Public",
     tagline: "Gratuit, ouvert à tous, avec de très grands lycées.",
     entree:
-      "Depuis un collège hors contrat : un examen d'entrée organisé par l'académie. Renseigne-toi dès janvier auprès de la direction académique de ton département (DSDEN).",
+      "Par l'affectation de ton académie (Affelnet), selon tes vœux, ton secteur et tes résultats. Depuis un collège hors contrat : un examen d'entrée organisé par l'académie ; renseigne-toi dès janvier auprès de la direction académique de ton département (DSDEN).",
     bac: "40 % de contrôle continu (moyennes de 1re et de terminale) et 60 % d'épreuves finales.",
     cout: "Gratuit ; l'internat est payant.",
     plus: "Les grands lycées publics abritent souvent des prépas : l'exigence de leurs professeurs donne le ton dès la 2nde.",
@@ -34,7 +34,7 @@ export const lyceeTypes: LyceeType[] = frTypo([
     id: "hors",
     name: "Privé hors contrat",
     tagline: "Un cadre et une pédagogie choisis librement, sans contrat avec l'État.",
-    entree: "Continuité : tu peux rester dans ton établissement jusqu'au bac.",
+    entree: "Un dossier et un entretien, propres à chaque établissement ; si ton collège est hors contrat, tu peux souvent y rester jusqu'au bac.",
     bac: "Tout se joue en examens : des épreuves ponctuelles remplacent le contrôle continu (en fin de 1re et au 2e trimestre de terminale), en plus des épreuves finales.",
     cout: "Les frais de scolarité de l'établissement.",
     plus: "Les repères nationaux pèsent lourd : l'épreuve anticipée de maths et le bac de français, notés partout de la même façon. Sciences Po Paris les compte même dans sa note d'admission depuis 2027.",
@@ -79,13 +79,13 @@ export const questionsVisite = frTypo([
   },
   {
     id: "hors-contrat",
-    q: "Accueillez-vous les élèves venant d'un collège hors contrat ?",
+    q: "Comment accueillez-vous les élèves venant d'un autre collège, public, privé ou hors contrat ?",
     why: "Certains lycées privés recrutent d'abord dans le public ou le privé sous contrat : pose la question dès le premier contact.",
   },
   {
     id: "musique",
     q: "Quelle place pour la musique et l'engagement ?",
-    why: "Chœur, orchestre, horaires aménagés, scoutisme : ce qui te fait grandir compte aussi dans un dossier.",
+    why: "Sport, musique, théâtre, engagement associatif : ce qui te fait grandir compte aussi dans un dossier.",
   },
 ]);
 
