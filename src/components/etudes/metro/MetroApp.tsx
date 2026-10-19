@@ -1,40 +1,54 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useId, useMemo, useState, type KeyboardEvent } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { cle } from "@/lib/etudes/communes";
-import { METRO_LINES, etapesDuTrajet, stopById, type MetroLine, type MetroLineId } from "@/lib/etudes/metro";
+import { enLettres, type LaneId } from "@/lib/etudes/lines";
+import { ALT_IDS, METRO_FICHES, type MetroLine } from "@/lib/etudes/metro";
 import { FAMILLES, metierById, metiers } from "@/lib/etudes/metiers";
-import { CohortProvider, ClassPicker, useCohort } from "../cohorte";
+import { passerelleById } from "@/lib/etudes/passerelles";
+import { LANES, UNIVERSITY_TRACKS } from "@/lib/etudes/plan";
+import { stationById } from "@/lib/etudes/stations";
+import { CareerMap } from "../CareerMap";
+import { CohortProvider, ClassPicker } from "../cohorte";
 import { EcoleSheet, PasserelleSheet } from "../DetailSheets";
 import { FormationSheet } from "../FormationSheet";
 import { PlaceProvider } from "../place";
 import { SelectionProvider } from "../store";
-import { BrandMark, Dot, Icon } from "../ui";
+import { BrandMark, Icon } from "../ui";
 import { AnnuaireSheet } from "./Annuaire";
 import { ComparerSheet } from "./Comparer";
-import { MetroDesktop } from "./MetroDesktop";
 import { MetroFiche } from "./MetroFiche";
-import { MetroMobile } from "./MetroMobile";
-import { BottomSheet, StopCard } from "./StopCard";
+import { BottomSheet, StopCard, nomEtape } from "./StopCard";
 
 type Overlay =
-  | { kind: "fiche"; id: string; section?: string }
+  | { kind: "fiche"; id: string; line: LaneId | null; section?: string }
   | { kind: "ecole"; id: string }
   | { kind: "formation"; id: string }
   | { kind: "pass"; id: string }
   | { kind: "annuaire" }
   | { kind: "comparer"; lines?: MetroLine["id"][] };
 
+/**
+ * L'étape ouverte, la voie d'où l'on vient, le bouton touché sur la carte, et la façon d'afficher la fiche :
+ * posée près de la station, ou montée du bas de l'écran (téléphone, ou liste voie par voie sur écran étroit).
+ */
+type Sel = { id: string; line: LaneId | null; anchor: HTMLElement | null; sheet: boolean };
+
+const CARD_W = 372;
+
 /** La note du ministère sur l'apprentissage dans le supérieur, situation au 31 décembre 2025. */
 const SOURCE_ALTERNANCE =
   "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2026-10/2026_10_NF_SIES_24_%20Apprentissage%202025.pdf";
 
-/** Les métiers que la carte sait tracer : au moins un trajet entièrement sur ses lignes. */
-const METIERS_CARTE = metiers
-  .map((m) => ({ m, routes: m.routes.filter((r) => etapesDuTrajet(r.via).length === r.via.length) }))
-  .filter((x) => x.routes.length)
-  .map((x) => ({ ...x, key: cle(`${x.m.name} ${FAMILLES[x.m.famille]}`) }));
+/** Les métiers à chercher : la carte trace la route de chacun. */
+const METIERS_CARTE = metiers.map((m) => ({ m, key: cle(`${m.name} ${FAMILLES[m.famille]}`) }));
+
+/** Une fiche hors du dessin se pose près de l'étape qui y mène : Mon Master et les licences, près de la licence. */
+function ancreDe(id: string): string {
+  if (id === "mon-master" || UNIVERSITY_TRACKS[id]) return "universite";
+  return id;
+}
 
 function useMedia(query: string): boolean {
   const [on, setOn] = useState(false);
@@ -61,56 +75,164 @@ export function MetroApp() {
 }
 
 function Metro() {
-  const { classe, bac, ici } = useCohort();
   const mobile = useMedia("(max-width: 760px)");
-  const [sel, setSel] = useState<string | null>(null);
-  const [focus, setFocus] = useState<MetroLineId | null>(null);
+  const [sel, setSel] = useState<Sel | null>(null);
+  const [focusLine, setFocusLine] = useState<LaneId | null>(null);
+  const [laneLine, setLaneLine] = useState<LaneId>("sciences");
+  const [activePass, setActivePass] = useState<string | null>(null);
   const [alternance, setAlternance] = useState(false);
-  const [passerelles, setPasserelles] = useState(false);
-  const [metier, setMetier] = useState<string | null>(null);
+  const [metier, setMetierState] = useState<string | null>(null);
   const [stack, setStack] = useState<Overlay[]>([]);
-
-  const here = classe === "4e" ? "4e" : ici;
-  const year = useCallback((t: number) => bac - 4 + Math.floor(t), [bac]);
-
-  const route = useMemo(() => {
-    if (!metier) return null;
-    const found = METIERS_CARTE.find((x) => x.m.id === metier);
-    if (!found) return null;
-    const ids = new Set<string>(["college", "seconde", "premiere-terminale", "bac"]);
-    for (const r of found.routes) for (const id of etapesDuTrajet(r.via)) ids.add(id);
-    return ids;
-  }, [metier]);
-
-  const routeCount = metier ? (METIERS_CARTE.find((x) => x.m.id === metier)?.routes.length ?? 0) : 0;
+  const planRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
+  const [tick, setTick] = useState(0);
 
   const push = useCallback((o: Overlay) => setStack((s) => [...s, o]), []);
   const pop = useCallback(() => setStack((s) => s.slice(0, -1)), []);
   const top = stack[stack.length - 1] ?? null;
 
-  const select = useCallback((id: string | null) => {
-    setSel(id);
-    const s = id ? stopById[id] : null;
-    if (s && s.line !== "tronc") setFocus((f) => (f === null ? null : s.line));
+  const open = useCallback(
+    (id: string, line: LaneId | null, anchor?: HTMLElement) => {
+      const wrap = planRef.current;
+      const liste = Boolean(wrap?.querySelector(".e-lanes"));
+      const sheet = mobile || (liste && (wrap?.clientWidth ?? 0) < 1000);
+      setSel({ id, line, anchor: anchor ?? null, sheet });
+    },
+    [mobile],
+  );
+
+  const selRef = useRef<Sel | null>(null);
+  useEffect(() => {
+    selRef.current = sel;
+  }, [sel]);
+  const close = useCallback(() => {
+    // Au clavier, le focus revient à la station d'où la fiche est partie.
+    const s = selRef.current;
+    if (s?.anchor?.isConnected && cardRef.current?.contains(document.activeElement)) {
+      s.anchor.focus({ preventScroll: true });
+    }
+    setSel(null);
+  }, []);
+
+  const toMap = useCallback(() => {
+    document.getElementById("carte-plan")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
+
+  const chooseMetier = useCallback((id: string | null) => {
+    setMetierState(id);
+    setSel(null);
+    if (!id) return;
+    setFocusLine(null);
+    setActivePass(null);
+    setLaneLine(metierById[id]?.routes[0]?.lane ?? "u");
+  }, []);
+
+  const showPass = useCallback((id: string | null) => {
+    setActivePass(id);
+    setSel(null);
+    if (!id) return;
+    setMetierState(null);
+    setFocusLine(null);
+    const to = passerelleById[id]?.draw?.to;
+    if (to) setLaneLine(to);
   }, []);
 
   const openFiche = useCallback(
-    (id: string, section?: string) => {
+    (id: string, line: LaneId | null, section?: string) => {
       setSel(null);
-      push({ kind: "fiche", id, section });
+      push({ kind: "fiche", id, line, section });
     },
     [push],
   );
 
+  const openStation = useCallback(
+    (id: string, line: LaneId | null) => {
+      if (stationById[id] || METRO_FICHES[id]) push({ kind: "fiche", id, line });
+    },
+    [push],
+  );
+
+  // La fiche courte se pose à côté de la station touchée, dans le cadre de la carte.
+  useLayoutEffect(() => {
+    if (!sel || sel.sheet) {
+      setPos(null);
+      return;
+    }
+    const wrap = planRef.current;
+    const anchor =
+      sel.anchor && wrap?.contains(sel.anchor)
+        ? sel.anchor
+        : wrap?.querySelector<HTMLElement>(`[data-station="${ancreDe(sel.id)}"]`);
+    const card = cardRef.current;
+    if (!wrap || !card) return;
+    const w = wrap.getBoundingClientRect();
+    const h = card.offsetHeight;
+    if (!anchor) {
+      setPos({ left: Math.max(8, (wrap.clientWidth - CARD_W) / 2), top: Math.max(8, 96 - w.top) });
+      return;
+    }
+    const r = anchor.getBoundingClientRect();
+    const right = r.right - w.left + 12;
+    // Une ligne de la liste voie par voie occupe toute la largeur : la fiche se range sur sa droite.
+    const left = anchor.closest(".e-lanes")
+      ? Math.max(8, wrap.clientWidth - CARD_W - 32)
+      : right + CARD_W <= wrap.clientWidth - 8
+        ? right
+        : Math.max(8, r.left - w.left - 12 - CARD_W);
+    const top = Math.min(Math.max(8, r.top - w.top - 28), Math.max(8, wrap.offsetHeight - h - 8));
+    setPos({ left, top });
+  }, [sel, tick]);
+
+  // La fiche ouverte reste en vue, et reçoit le focus pour se lire au clavier.
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!pos || !card) return;
+    const r = card.getBoundingClientRect();
+    if (r.top < 72 || r.bottom > window.innerHeight) card.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    card.focus({ preventScroll: true });
+  }, [pos]);
+
+  // La carte change d'échelle avec la fenêtre : la fiche suit sa station.
+  useEffect(() => {
+    if (!sel || sel.sheet) return;
+    const onResize = () => setTick((t) => t + 1);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [sel]);
+
+  // Un clic ailleurs sur la page ou la touche Échap referment la fiche courte.
+  useEffect(() => {
+    if (!sel || sel.sheet) return;
+    const onDown = (e: PointerEvent) => {
+      const t = e.target as HTMLElement;
+      if (cardRef.current?.contains(t) || t.closest?.("[data-station]")) return;
+      setSel(null);
+    };
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape" && !stack.length) close();
+    };
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [sel, stack.length, close]);
+
   const card = sel ? (
     <StopCard
-      id={sel}
-      onClose={() => setSel(null)}
-      onSelect={(id) => select(id)}
-      onFocus={(line) => {
-        setFocus(line);
+      id={sel.id}
+      line={sel.line}
+      onClose={close}
+      onSelect={(id, line) => open(id, line)}
+      onFocusLane={(l) => {
         setSel(null);
-        if (mobile) window.requestAnimationFrame(() => document.getElementById("m-mob-lines")?.scrollIntoView());
+        setFocusLine(l);
+        setLaneLine(l);
+        setActivePass(null);
+        setMetierState(null);
+        if (mobile) window.requestAnimationFrame(toMap);
       }}
       onOpenFiche={openFiche}
       onOpenEcole={(id) => push({ kind: "ecole", id })}
@@ -140,12 +262,14 @@ function Metro() {
         <div>
           <h1 className="e-mhead__title">La carte des études</h1>
           <p className="e-mhead__lede">
-            Touche une station&#8239;: ce qu&apos;on y fait, comment y entrer, ce que ça coûte, et où elle mène.
+            Du bas vers le haut&#8239;: le tronc commun jusqu&apos;au bac, puis {enLettres(LANES.length)} voies, chacune
+            à sa vraie durée, jusqu&apos;au premier métier. Touche une station&#8239;: ce qu&apos;on y fait, comment y
+            entrer, ce que ça coûte.
           </p>
         </div>
         <div className="e-mtools">
-          <MetierSearch value={metier} onChange={setMetier} />
-          <div className="e-mtools__layers" role="group" aria-label="Calques">
+          <MetierSearch value={metier} onChange={chooseMetier} />
+          <div className="e-mtools__layers" role="group" aria-label="Outils de la carte">
             <button
               type="button"
               className="e-chip e-mlayer"
@@ -155,14 +279,8 @@ function Metro() {
             >
               <Icon name="briefcase" /> Alternance
             </button>
-            <button
-              type="button"
-              className="e-chip e-mlayer"
-              data-layer="pass"
-              aria-pressed={passerelles}
-              onClick={() => setPasserelles((v) => !v)}
-            >
-              <Icon name="route" /> Passerelles
+            <button type="button" className="e-chip e-mlayer" onClick={() => push({ kind: "comparer" })}>
+              <Icon name="list" /> Comparer les voies
             </button>
           </div>
         </div>
@@ -176,7 +294,7 @@ function Metro() {
             apprentis. Sur la carte, les étapes où elle est possible portent un halo orange.
           </p>
           <p className="e-maltinfo__links">
-            <button type="button" className="e-link" onClick={() => push({ kind: "fiche", id: "alternance" })}>
+            <button type="button" className="e-link" onClick={() => openFiche("alternance", "courtes")}>
               Salaire, contrat, comment trouver une entreprise
             </button>
             <a href={SOURCE_ALTERNANCE} target="_blank" rel="noopener noreferrer" className="e-maltinfo__src">
@@ -186,75 +304,44 @@ function Metro() {
         </div>
       ) : null}
 
-      {metier && metierById[metier] ? (
-        <p className="e-mroute" role="status">
-          <span>
-            <strong>{metierById[metier].name}</strong> :{" "}
-            {routeCount > 1 ? `${routeCount} trajets sur cette carte` : "son trajet sur cette carte"}
-          </span>
-          <button type="button" className="e-link" onClick={() => setMetier(null)}>
-            Effacer
-          </button>
-        </p>
-      ) : null}
+      <div className="e-mplan" ref={planRef}>
+        <CareerMap
+          focusLine={focusLine}
+          route={null}
+          metier={metier ? metierById[metier] : null}
+          onClearMetier={() => chooseMetier(null)}
+          onOpen={open}
+          onFocusLine={(l) => {
+            setFocusLine(l);
+            setActivePass(null);
+            setMetierState(null);
+            if (l) setLaneLine(l);
+          }}
+          laneLine={laneLine}
+          onLaneLine={setLaneLine}
+          activePass={activePass}
+          onActivePass={showPass}
+          onOpenPasserelle={(id) => push({ kind: "pass", id })}
+          selected={sel?.id ?? null}
+          alt={alternance ? ALT_IDS : null}
+        />
 
-      <div className="e-mstage">
-        {mobile ? (
-          <MetroMobile
-            onCompare={() => push({ kind: "comparer" })}
-            sel={sel}
-            onSelect={select}
-            line={focus}
-            onLine={setFocus}
-            route={route}
-            ici={here}
-            year={year}
-          />
-        ) : (
-          <>
-            <MetroDesktop
-              sel={sel}
-              onSelect={select}
-              focus={focus}
-              onFocus={setFocus}
-              alternance={alternance}
-              passerelles={passerelles}
-              onOpenPass={(id) => push({ kind: "pass", id })}
-              route={route}
-              ici={here}
-              year={year}
-              card={card}
-            />
-            <ul className="e-mlegend">
-              {METRO_LINES.map((l) => (
-                <li key={l.id}>
-                  <button
-                    type="button"
-                    className="e-chip"
-                    data-line={l.lane}
-                    aria-pressed={focus === l.id}
-                    onClick={() => setFocus(focus === l.id ? null : l.id)}
-                  >
-                    <Dot line={l.lane} /> {l.name}
-                  </button>
-                </li>
-              ))}
-              <li>
-                <button type="button" className="e-chip e-mlegend__cmp" onClick={() => push({ kind: "comparer" })}>
-                  <Icon name="list" /> Comparer les lignes
-                </button>
-              </li>
-              {alternance ? <li className="e-mlegend__key is-alt">Alternance possible</li> : null}
-              {passerelles ? (
-                <li className="e-mlegend__key is-pass">Passerelle&#8239;: touche-la pour l&apos;ouvrir</li>
-              ) : null}
-            </ul>
-          </>
-        )}
+        {sel && !sel.sheet && card ? (
+          <div
+            ref={cardRef}
+            className="e-mcard-pop"
+            style={pos ? { left: pos.left, top: pos.top } : { left: 0, top: 0, visibility: "hidden" }}
+            role="dialog"
+            aria-label={nomEtape(sel.id)}
+            tabIndex={-1}
+          >
+            {card}
+          </div>
+        ) : null}
       </div>
 
-      {mobile && sel ? (
-        <BottomSheet label={stopById[sel]?.label ?? "Étape"} onClose={() => setSel(null)}>
+      {sel?.sheet ? (
+        <BottomSheet label={nomEtape(sel.id)} onClose={() => setSel(null)}>
           {card}
         </BottomSheet>
       ) : null}
@@ -262,12 +349,14 @@ function Metro() {
       {top?.kind === "fiche" ? (
         <MetroFiche
           id={top.id}
+          line={top.line}
           section={top.section}
           onClose={pop}
-          onSelect={(id) => setStack((s) => [...s.slice(0, -1), { kind: "fiche", id }])}
+          onSelect={(id, line) => setStack((s) => [...s.slice(0, -1), { kind: "fiche", id, line }])}
           onOpenEcole={(id) => push({ kind: "ecole", id })}
           onOpenFormation={(id) => push({ kind: "formation", id })}
           onOpenAnnuaire={() => push({ kind: "annuaire" })}
+          onOpenPasserelle={(id) => push({ kind: "pass", id })}
         />
       ) : null}
       {top?.kind === "comparer" ? <ComparerSheet onClose={pop} initial={top.lines} /> : null}
@@ -279,7 +368,7 @@ function Metro() {
           id={top.id}
           onClose={pop}
           onOpenEcole={(id) => setStack((s) => [...s.slice(0, -1), { kind: "ecole", id }])}
-          onOpenStation={(id) => (stopById[id] ? push({ kind: "fiche", id }) : undefined)}
+          onOpenStation={openStation}
           onOpenFormation={(id) => push({ kind: "formation", id })}
         />
       ) : null}
@@ -288,11 +377,12 @@ function Metro() {
         <PasserelleSheet
           id={top.id}
           onClose={pop}
-          onOpenStation={(id) => (stopById[id] ? push({ kind: "fiche", id }) : undefined)}
+          onOpenStation={openStation}
           onOpenPasserelle={(id) => setStack((s) => [...s.slice(0, -1), { kind: "pass", id }])}
-          onShowOnMap={() => {
+          onShowOnMap={(id) => {
             setStack([]);
-            setPasserelles(true);
+            showPass(id);
+            window.requestAnimationFrame(toMap);
           }}
         />
       ) : null}
@@ -300,7 +390,7 @@ function Metro() {
   );
 }
 
-/** « Je veux devenir… » : le trajet d'un métier s'allume sur la carte. */
+/** « Je veux devenir… » : les routes d'un métier s'allument sur la carte. */
 function MetierSearch({ value, onChange }: { value: string | null; onChange: (id: string | null) => void }) {
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
@@ -320,6 +410,9 @@ function MetierSearch({ value, onChange }: { value: string | null; onChange: (id
     onChange(id);
     setQ("");
     setOpen(false);
+    window.requestAnimationFrame(() =>
+      document.getElementById("carte-plan")?.scrollIntoView({ behavior: "smooth", block: "start" }),
+    );
   }
 
   function onKey(e: KeyboardEvent<HTMLInputElement>) {
@@ -365,7 +458,7 @@ function MetierSearch({ value, onChange }: { value: string | null; onChange: (id
           onFocus={() => setOpen(true)}
           onBlur={() => setOpen(false)}
           onKeyDown={onKey}
-          placeholder="Je veux devenir… ingénieur, technicien, chercheur"
+          placeholder="Je veux devenir… médecin, ingénieur"
           autoComplete="off"
         />
       </label>

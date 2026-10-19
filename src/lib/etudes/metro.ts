@@ -1,7 +1,8 @@
 /**
- * La carte interactive des études, version « plan de métro » : quatre lignes après le bac, le tronc commun
- * avant, chaque étape à sa vraie durée sur l'axe du temps. Les fiches reprennent le contenu vérifié de
- * stations.ts ; ce module décrit seulement le tracé, les durées et ce qui s'y ajoute (alternance, choix).
+ * Ce que la carte interactive ajoute au plan d'origine (plan.ts) : pour les quatre lignes approfondies,
+ * les pastilles des fiches courtes (durée, entrée, coût) et l'alternance ; l'alternance des autres voies ;
+ * les fiches propres à la carte (Mon Master). Les quatre lignes servent aussi à la comparaison.
+ * Les fiches reprennent le contenu vérifié de stations.ts.
  */
 import type { LaneId } from "./lines";
 import type { StationContent } from "./stations";
@@ -55,11 +56,6 @@ export const METRO_LINES: MetroLine[] = etTypo([
   },
 ]);
 
-export const metroLineById = Object.fromEntries(METRO_LINES.map((l) => [l.id, l])) as Record<
-  MetroLine["id"],
-  MetroLine
->;
-
 /** Une étape (un segment de ligne), un choix (une correspondance) ou un terminus (un métier). */
 export type StopKind = "etape" | "choix" | "terminus";
 
@@ -88,8 +84,6 @@ export type Stop = {
   /** L'essentiel, pour la fiche courte, quand le texte de la fiche complète est long. */
   resume?: string;
 };
-
-export const BAC_T = 4;
 
 export const STOPS: Stop[] = etTypo([
   /* Tronc commun */
@@ -244,16 +238,32 @@ export const STOPS: Stop[] = etTypo([
 
 export const stopById = Object.fromEntries(STOPS.map((s) => [s.id, s])) as Record<string, Stop>;
 
-/** Sous le nom d'une étape : sa durée, le lieu quand il éclaire, l'alternance quand elle est possible. */
-export function sousTitre(s: Stop): string {
-  const duree = s.duree && s.lieu ? `${s.duree} ${s.lieu}` : s.duree;
-  return [duree, s.alternance ? "alternance possible" : null].filter(Boolean).join(", ");
+/**
+ * L'alternance sur les autres voies du plan, d'après les fiches des stations et des écoles :
+ * le CAP et le bac pro en CFA, une partie des places du social, les dernières années d'école de commerce.
+ */
+const ALT_PLAN: Record<string, string> = etTypo({
+  "lycee-pro":
+    "Le CAP et le bac pro se préparent aussi en apprentissage, dans un centre de formation d'apprentis (CFA) : avec un contrat signé avec un employeur, tu es salarié et payé, cours compris.",
+  "institut-parasocial":
+    "Dans le social, une partie des places s'ouvre en apprentissage : éducateur spécialisé, assistant de service social, éducateur de jeunes enfants. L'employeur finance la formation et tu touches un salaire.",
+  "ecole-commerce":
+    "Plusieurs écoles proposent leurs dernières années en apprentissage : l'entreprise paie la scolarité et tu touches un salaire. À l'IÉSEG, par exemple, les 4e et 5e années sont gratuites en apprentissage.",
+  "master-droit":
+    "Un master peut se préparer en apprentissage : fin 2025, 8 % des étudiants de master étaient apprentis.",
+});
+
+/** Ce que permet l'alternance à une étape, sur n'importe quelle voie du plan. */
+export function alternanceDe(id: string): string | undefined {
+  return stopById[id]?.alternance ?? ALT_PLAN[id];
 }
 
-/** L'instant qui représente l'étape sur la carte : le milieu d'une étape, le point d'un choix. */
-export function stopT(s: Stop): number {
-  return typeof s.t1 === "number" ? (s.t0 + s.t1) / 2 : s.t0;
-}
+/** Les étapes où l'alternance est possible, et la station qui l'explique. */
+export const ALT_IDS: ReadonlySet<string> = new Set([
+  "alternance",
+  ...STOPS.filter((s) => s.alternance).map((s) => s.id),
+  ...Object.keys(ALT_PLAN),
+]);
 
 /** Les fiches propres à la carte, pour les étapes qui manquent à stations.ts. */
 export const METRO_FICHES: Record<string, StationContent> = etTypo({
@@ -299,33 +309,3 @@ export const METRO_FICHES: Record<string, StationContent> = etTypo({
     ],
   },
 });
-
-/* ---------- Passerelles dessinées ---------- */
-
-export type MetroPass = {
-  /** Identifiant dans passerelles.ts, pour ouvrir sa fiche. */
-  id: string;
-  from: string;
-  to: string;
-  /** Moment du saut, en années depuis la rentrée de 3e. */
-  t: number;
-};
-
-/** Les passerelles entre les lignes de cette carte, au moment où elles se prennent. */
-export const METRO_PASS: MetroPass[] = [
-  { id: "rebond-postbac", from: "universite", to: "cycle-integre", t: 5 },
-  { id: "postbac-universite", from: "cycle-integre", to: "universite", t: 5 },
-  { id: "prepa-universite", from: "prepa-scientifique", to: "universite", t: 6 },
-  { id: "prepa-cycle-postbac", from: "prepa-scientifique", to: "cycle-postbac", t: 6 },
-  { id: "bts-but-cycle-postbac", from: "bts-but", to: "cycle-postbac", t: 6 },
-  { id: "but-ingenieur", from: "but-lp", to: "ecole-ingenieurs", t: 7 },
-  { id: "licence-ingenieur", from: "universite", to: "ecole-ingenieurs", t: 7 },
-  { id: "licence-cycle-postbac", from: "universite", to: "cycle-postbac", t: 7 },
-  { id: "but-master", from: "but-lp", to: "u-master", t: 7 },
-  { id: "ecole-doctorat", from: "ecole-ingenieurs", to: "doctorat", t: 9 },
-];
-
-/** Les étapes de la carte qu'un métier traverse : les licences thématiques se lisent sur la ligne Université. */
-export function etapesDuTrajet(via: string[]): string[] {
-  return via.map((id) => (id.startsWith("u-") && id !== "u-master" ? "universite" : id)).filter((id) => stopById[id]);
-}

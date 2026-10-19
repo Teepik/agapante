@@ -3,23 +3,18 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { mapTexts } from "@/lib/etudes/cohorte";
 import { ecoleById, ecoles, nomCourt, type Ecole, type Recrutement } from "@/lib/etudes/ecoles";
-import {
-  METRO_FICHES,
-  METRO_LINES,
-  metroLineById,
-  stopById,
-  type MetroLine,
-  type MetroLineId,
-} from "@/lib/etudes/metro";
+import { laneName, laneShort, type LaneId } from "@/lib/etudes/lines";
+import { METRO_FICHES, alternanceDe, stopById, type MetroLine } from "@/lib/etudes/metro";
 import { GROUPES } from "@/lib/etudes/metro-groupes";
+import { LANES, placedById } from "@/lib/etudes/plan";
 import { etTypo } from "@/lib/etudes/typo";
 import { stationById, type StationContent } from "@/lib/etudes/stations";
 import { useCohort } from "../cohorte";
 import { Dot, Icon } from "../ui";
-import { neighbours } from "./geometry";
 import { GroupeChips } from "./Groupes";
 import { NEARBY } from "./Nearby";
 import { essentiel } from "./texte";
+import { pastilles, voieDe, voisins } from "./voie";
 
 /** Le contenu d'une étape : la fiche de stations.ts, ou celle propre à la carte. */
 export function useFiche(id: string): StationContent | null {
@@ -28,11 +23,22 @@ export function useFiche(id: string): StationContent | null {
   return raw ? mapTexts(raw, y) : null;
 }
 
+/** Le nom court d'une étape, pour les boutons « étape précédente » et « étape suivante ». */
+export function nomEtape(id: string): string {
+  return stationById[id]?.label ?? METRO_FICHES[id]?.label ?? id;
+}
+
 /** Les étapes où la question « laquelle choisir ? » se pose entre deux ou trois lignes. */
 const COMPARE_DUO: Record<string, MetroLine["id"][]> = {
   "prepa-scientifique": ["prepa", "postbac"],
   "cycle-integre": ["prepa", "postbac"],
   universite: ["univ", "but", "prepa"],
+};
+
+/** Les fiches à ouvrir depuis une étape, quand elles éclairent la suite. */
+const LIENS: Record<string, { id: string; label: string }[]> = {
+  universite: [{ id: "mon-master", label: "Mon Master : comment entrer en master" }],
+  "u-master": [{ id: "mon-master", label: "Mon Master : calendrier, candidatures, conseils" }],
 };
 
 /** Aux étapes d'école d'ingénieurs, toutes les écoles qui recrutent de cette façon. */
@@ -66,42 +72,54 @@ export const CRITERE_UNE: Record<string, string> = etTypo({
 /** La fiche courte qui s'ouvre au toucher d'une station. */
 export function StopCard({
   id,
+  line,
   onClose,
   onSelect,
-  onFocus,
+  onFocusLane,
   onOpenFiche,
   onOpenEcole,
   onCompare,
 }: {
   id: string;
+  /** La voie d'où l'on vient, quand l'étape en dessert plusieurs. */
+  line: LaneId | null;
   onClose: () => void;
-  onSelect: (id: string) => void;
-  onFocus: (line: MetroLineId) => void;
-  onOpenFiche: (id: string, section?: string) => void;
+  onSelect: (id: string, line: LaneId | null) => void;
+  onFocusLane: (line: LaneId) => void;
+  onOpenFiche: (id: string, line: LaneId | null, section?: string) => void;
   onOpenEcole: (id: string) => void;
   onCompare: (lines?: MetroLine["id"][]) => void;
 }) {
-  const s = stopById[id];
   const st = useFiche(id);
-  if (!s || !st) return null;
-  const line = s.line === "tronc" ? null : metroLineById[s.line];
-  const { prev, next } = neighbours(id);
+  if (!st) return null;
+  const s = stopById[id];
+  const p = placedById[id];
+  const voie = voieDe(id, line);
+  const { prev, next } = voisins(id, voie);
+  const fork = id === "bac" && !voie;
   const liste = ecolesDe(id, st);
   const nbEcoles = liste.length;
   const une = liste
     .filter((e) => e.une && e.uneVoie === RECRUTE[id])
     .sort((a, b) => (a.uneRang ?? 99) - (b.uneRang ?? 99))
     .slice(0, 6);
-  const chips = [s.duree, s.entree, s.cout, s.plus].filter(Boolean) as string[];
-  // Quand la fiche courte porte déjà des pastilles ou les quatre lignes, le texte se fait plus court.
-  const court = id === "bac" || Boolean(GROUPES[id]?.some((g) => g.popup !== false));
+  const chips = pastilles(id, st);
+  const alternance = alternanceDe(id);
+  // Quand la fiche courte porte déjà des pastilles ou le choix des voies, le texte se fait plus court.
+  const court = fork || Boolean(GROUPES[id]?.some((g) => g.popup !== false));
 
   return (
-    <div className="e-mcard" data-line={line?.lane}>
+    <div className="e-mcard" data-line={voie ?? undefined}>
       <div className="e-mcard__top">
         <span className="e-mcard__line">
-          {line ? <Dot line={line.lane} /> : null}
-          {line ? line.name : "Tronc commun"}
+          {voie && p?.kind !== "trunk" ? (
+            <>
+              <Dot line={voie} />
+              {laneName(voie)}
+            </>
+          ) : (
+            "Tronc commun, toutes les voies"
+          )}
         </span>
         <button type="button" className="e-iconbtn" onClick={onClose} aria-label="Fermer la fiche">
           <Icon name="close" />
@@ -116,48 +134,48 @@ export function StopCard({
           ))}
         </ul>
       ) : null}
-      <p className="e-mcard__lead">{s.resume ?? essentiel(st.what, court ? 140 : 220)}</p>
-      {s.alternance ? (
+      <p className="e-mcard__lead">{s?.resume ?? essentiel(st.what, court ? 140 : 220)}</p>
+      {alternance ? (
         <p className="e-mcard__alt">
           <Icon name="briefcase" />
-          <span>{s.alternance}</span>
+          <span>{alternance}</span>
         </p>
       ) : null}
 
       {(GROUPES[id] ?? []).map((g) => (
-        <GroupeChips key={g.id} groupe={g} onOpen={(section) => onOpenFiche(id, section)} />
+        <GroupeChips key={g.id} groupe={g} onOpen={(section) => onOpenFiche(id, voie, section)} />
       ))}
 
-      {id === "bac" ? (
-        <div className="e-mcard__lines">
-          <p className="e-mcard__k">Après le bac, quatre lignes sur cette carte</p>
+      {fork ? (
+        <div className="e-mcard__lanes">
+          <p className="e-mcard__k">Après le bac, choisis une voie</p>
           <ul>
-            {METRO_LINES.map((l) => (
-              <li key={l.id} data-line={l.lane}>
-                <button type="button" onClick={() => onFocus(l.id)}>
-                  <Dot line={l.lane} />
-                  <span>
-                    <strong>{l.name}</strong>
-                    <span>{l.pitch}</span>
-                  </span>
-                  <Icon name="chevron-right" />
+            {LANES.filter((l) => l !== "pro").map((l) => (
+              <li key={l}>
+                <button type="button" className="e-chip" data-line={l} onClick={() => onFocusLane(l)}>
+                  <Dot line={l} />
+                  {laneShort(l)}
                 </button>
               </li>
             ))}
           </ul>
           <button type="button" className="e-link e-mcard__cmp" onClick={() => onCompare()}>
-            Comparer les quatre lignes, côte à côte
+            Prépa, école post-bac, BUT ou université&#8239;: compare-les
           </button>
         </div>
       ) : null}
 
       {COMPARE_DUO[id] ? (
         <button type="button" className="e-link e-mcard__cmp" onClick={() => onCompare(COMPARE_DUO[id])}>
-          {id === "universite"
-            ? "Licence, BUT ou prépa\u202f? Compare-les"
-            : "Prépa ou prépa intégrée\u202f? Compare-les"}
+          {id === "universite" ? "Licence, BUT ou prépa ? Compare-les" : "Prépa ou prépa intégrée ? Compare-les"}
         </button>
       ) : null}
+
+      {(LIENS[id] ?? []).map((l) => (
+        <button key={l.id} type="button" className="e-link e-mcard__cmp" onClick={() => onOpenFiche(l.id, "u")}>
+          {l.label}
+        </button>
+      ))}
 
       {une.length ? (
         <div className="e-mcard__une">
@@ -175,33 +193,33 @@ export function StopCard({
       ) : null}
 
       <div className="e-mcard__actions">
-        <button type="button" className="e-btn e-btn--primary e-btn--sm" onClick={() => onOpenFiche(id)}>
+        <button type="button" className="e-btn e-btn--primary e-btn--sm" onClick={() => onOpenFiche(id, voie)}>
           Tout savoir
         </button>
         {nbEcoles ? (
-          <button type="button" className="e-btn e-btn--sm" onClick={() => onOpenFiche(id, "ecoles")}>
+          <button type="button" className="e-btn e-btn--sm" onClick={() => onOpenFiche(id, voie, "ecoles")}>
             <Icon name="school" /> {nbEcoles > 1 ? `${nbEcoles} établissements` : "L'établissement"}
           </button>
         ) : null}
         {NEARBY[id] ? (
-          <button type="button" className="e-btn e-btn--sm" onClick={() => onOpenFiche(id, "pres")}>
+          <button type="button" className="e-btn e-btn--sm" onClick={() => onOpenFiche(id, voie, "pres")}>
             <Icon name="pin" /> Près de chez toi
           </button>
         ) : null}
       </div>
 
-      {prev || next ? (
+      {prev || (next && !fork) ? (
         <div className="e-mcard__nav">
           {prev ? (
-            <button type="button" className="e-link" onClick={() => onSelect(prev.id)}>
-              <Icon name="chevron-left" /> {prev.label}
+            <button type="button" className="e-link" onClick={() => onSelect(prev, voie)}>
+              <Icon name="chevron-left" /> {nomEtape(prev)}
             </button>
           ) : (
             <span />
           )}
-          {next ? (
-            <button type="button" className="e-link" onClick={() => onSelect(next.id)}>
-              {next.label} <Icon name="chevron-right" />
+          {next && !fork ? (
+            <button type="button" className="e-link" onClick={() => onSelect(next, voie)}>
+              {nomEtape(next)} <Icon name="chevron-right" />
             </button>
           ) : null}
         </div>

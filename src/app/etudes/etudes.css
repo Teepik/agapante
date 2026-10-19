@@ -4598,7 +4598,7 @@ html.e-lock body {
   align-items: flex-end;
   justify-content: space-between;
   gap: 20px 40px;
-  max-width: 1440px;
+  max-width: 1240px;
   margin: 0 auto;
   padding: 36px 24px 8px;
 }
@@ -4611,18 +4611,18 @@ html.e-lock body {
 }
 .e-mhead__lede {
   margin-top: 12px;
-  max-width: 52ch;
+  max-width: 60ch;
   font-size: 1.08rem;
   color: var(--slate);
 }
 .e-mtools {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px 12px;
+  display: grid;
+  justify-items: start;
+  gap: 10px;
 }
 .e-msearch {
-  width: min(380px, 100%);
+  width: 380px;
+  max-width: 100%;
 }
 .e-mtools__layers {
   display: flex;
@@ -4638,246 +4638,71 @@ html.e-lock body {
     color: #000;
   }
 }
-.e-mroute {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 16px;
-  max-width: 1392px;
-  margin: 12px max(24px, calc((100% - 1392px) / 2)) 0;
-  padding: 10px 16px;
-  border-radius: 14px;
-  background: color-mix(in srgb, var(--focus) 10%, var(--paper));
-  font-size: 0.95rem;
+/* Le plan d'origine, sur sa bande grise : la fiche courte se pose à côté de la station touchée. */
+.e-mplan {
+  position: relative;
+  margin-top: 28px;
+  padding: 40px 0 88px;
+  background: var(--fog);
 }
-.e-mroute strong {
-  font-weight: 700;
+.e-mplan .e-map__frame {
+  scroll-margin-top: 84px;
 }
-.e-mstage {
-  max-width: 1440px;
-  margin: 0 auto;
-  padding: 8px 0 40px;
+@media (max-width: 760px) {
+  .e-mplan {
+    margin-top: 16px;
+    padding: 24px 0 64px;
+  }
 }
 
-/* Le plan, sur grand écran */
-.e-mdesk {
-  position: relative;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: thin;
+/* L'étape ouverte : son libellé se teinte de la couleur de sa voie, sa barre s'entoure d'un halo. */
+.e-map .e-ms.is-sel::before {
+  background: color-mix(in srgb, var(--lc, var(--ink)) 13%, var(--paper));
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--lc, var(--ink)) 70%, transparent);
 }
-.e-mdesk__svg {
-  display: block;
-  width: 100%;
-  min-width: 1180px;
-  height: auto;
-  font-family: var(--font);
+.e-map .e-dest__job.is-sel {
+  background: color-mix(in srgb, var(--lc, var(--ink)) 13%, var(--paper));
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--lc, var(--ink)) 70%, transparent);
 }
-.e-maxis__grid {
-  stroke: var(--hair);
-  stroke-width: 1;
-  stroke-dasharray: 2 5;
+.e-map .e-opt.is-sel {
+  box-shadow: inset 0 0 0 2px var(--lc, var(--ink));
 }
-.e-maxis__year {
-  fill: var(--slate);
-  font-size: 12.5px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-.e-maxis__step {
-  fill: var(--slate-2);
-  font-size: 11.5px;
-  font-weight: 520;
-}
-.e-mline {
-  fill: none;
-  stroke-width: 9;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.e-mline--stub {
-  stroke: var(--hair-2);
-  stroke-dasharray: 3 7;
-  stroke-width: 6;
-}
-.e-mline__hit {
-  fill: none;
-  stroke: transparent;
-  stroke-width: 26;
-  pointer-events: stroke;
-  cursor: pointer;
-}
-.e-mline-g,
-.e-mstop {
-  transition: opacity 0.25s var(--ease);
-}
-.e-mline-g.is-dim,
-.e-mstop.is-dim {
-  opacity: 0.16;
-}
-.e-malt {
+.e-bar-halo {
+  fill: color-mix(in srgb, var(--alt) 30%, transparent);
   stroke: var(--alt);
-  stroke-width: 4;
-  stroke-dasharray: 7 7;
-  stroke-linecap: round;
-  pointer-events: none;
+  stroke-width: 1.5;
+  stroke-dasharray: 3 3;
 }
-.e-mpass {
-  cursor: pointer;
-  outline: none;
+.e-bar-halo.is-sel {
+  fill: color-mix(in srgb, var(--lc) 28%, transparent);
+  stroke: none;
 }
-.e-mpass__line {
-  fill: none;
-  stroke: var(--slate);
-  stroke-width: 1.8;
-  stroke-dasharray: 5 4;
-  transition: stroke 0.15s var(--ease);
+.e-ev.is-sel {
+  fill: var(--lc);
 }
-.e-mpass__hit {
-  fill: none;
-  stroke: transparent;
-  stroke-width: 16;
-  pointer-events: stroke;
-}
-.e-mpass:hover .e-mpass__line,
-.e-mpass:focus-visible .e-mpass__line {
-  stroke: var(--focus);
-  stroke-width: 2.4;
-}
-.e-mstop {
-  cursor: pointer;
-  outline: none;
-}
-.e-mstop__hit {
-  fill: transparent;
-}
-.e-mstop:focus-visible .e-mstop__hit {
-  fill: color-mix(in srgb, var(--focus) 12%, transparent);
-  stroke: var(--focus);
-  stroke-width: 2;
-}
-.e-mstop__dot {
-  fill: var(--paper);
-  stroke: currentColor;
-  stroke-width: 4;
-  transition:
-    fill 0.15s var(--ease),
-    stroke-width 0.15s var(--ease);
-}
-.e-mstop.is-choix .e-mstop__dot {
+.e-end.is-sel {
   stroke: var(--ink);
-  stroke-width: 4.5;
 }
-.e-mstop.is-terminus .e-mstop__dot {
-  fill: currentColor;
-  stroke: var(--paper);
-  stroke-width: 3;
+
+/* Le calque de l'alternance : un halo orange, en pointillés, autour des barres. */
+.e-map .e-opt.is-alt {
+  box-shadow: inset 0 0 0 2px var(--alt);
 }
-.e-mstop:hover .e-mstop__dot {
-  stroke-width: 5.5;
-}
-.e-mstop.is-sel .e-mstop__dot {
-  fill: currentColor;
-}
-.e-mstop.is-choix.is-sel .e-mstop__dot {
-  fill: var(--ink);
-}
-.e-mstop__halo {
-  fill: none;
-  stroke: var(--alt);
-  stroke-width: 3;
-}
-.e-mlabel,
-.e-mlabel__sub,
-.e-mici__label {
-  paint-order: stroke;
-  stroke: var(--paper);
-  stroke-width: 5px;
-  stroke-linejoin: round;
-}
-.e-mlabel {
-  fill: var(--ink);
-  font-size: 14.5px;
-  font-weight: 680;
-  letter-spacing: -0.005em;
-}
-.e-mlabel__sub {
-  fill: var(--slate);
-  font-size: 12.5px;
-  font-weight: 520;
-}
-.e-mstop.is-alt .e-mlabel__sub {
-  fill: var(--alt-ink);
-  font-weight: 650;
-}
-.e-mici__dot {
-  fill: var(--paper);
-  stroke: var(--focus);
-  stroke-width: 4;
-}
-.e-mici__pulse {
-  fill: var(--focus);
-  opacity: 0.18;
-  transform-box: fill-box;
-  transform-origin: center;
-  pointer-events: none;
-}
-.e-mici__label {
-  fill: var(--focus);
-  font-size: 12.5px;
-  font-weight: 720;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .e-mici__pulse {
-    animation: e-mpulse 2.4s var(--ease) infinite;
-  }
-}
-@keyframes e-mpulse {
-  0% {
-    transform: scale(0.7);
-    opacity: 0.32;
-  }
-  70% {
-    transform: scale(1.35);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1.35);
-    opacity: 0;
-  }
-}
-.e-mlegend {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 24px 0;
-}
-.e-mlegend .e-chip {
-  font-size: 0.86rem;
-}
-.e-mlegend__key {
+.e-lanes__alt {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-left: 8px;
-  font-size: 0.86rem;
-  color: var(--slate);
-}
-.e-mlegend__key::before {
-  content: "";
-  width: 26px;
-  height: 0;
-  border-top: 3px dashed var(--alt);
-}
-.e-mlegend__key.is-pass::before {
-  border-top: 2px dashed var(--slate);
+  gap: 5px;
+  margin-top: 4px;
+  font-size: 0.82rem;
+  font-weight: 650;
+  color: var(--alt-ink);
 }
 
 /* La fiche courte, à côté de la station */
 .e-mcard-pop {
   position: absolute;
-  z-index: 5;
+  z-index: 20;
+  scroll-margin: 84px 0 16px;
   width: 372px;
   max-height: min(78vh, 560px);
   overflow-y: auto;
@@ -4965,51 +4790,9 @@ html.e-lock body {
   font-weight: 650;
   color: var(--slate);
 }
-.e-mcard__lines ul {
-  display: grid;
-  gap: 6px;
-}
-.e-mcard__lines button {
-  display: grid;
-  grid-template-columns: 12px minmax(0, 1fr) 18px;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 12px;
-  text-align: left;
-  box-shadow: inset 0 0 0 1px var(--hair);
-  transition: background-color 0.15s var(--ease);
-}
-.e-mcard__lines button:hover {
-  background: var(--fog);
-}
-.e-mcard__lines strong {
-  display: block;
-  font-size: 0.93rem;
-  font-weight: 680;
-}
-.e-mcard__lines span span {
-  display: block;
-  font-size: 0.84rem;
-  color: var(--slate);
-}
-.e-mcard__lines svg {
-  width: 16px;
-  height: 16px;
-  color: var(--slate);
-}
 .e-mcard__cmp {
   justify-self: start;
   font-size: 0.9rem;
-  font-weight: 620;
-}
-.e-mcard__lines .e-mcard__cmp {
-  margin-top: 8px;
-}
-.e-mmob__cmp {
-  margin-top: 10px;
-  font-size: 0.92rem;
   font-weight: 620;
 }
 .e-mcard__group ul {
@@ -5035,6 +4818,22 @@ html.e-lock body {
 .e-mcard__group li button:hover {
   background: color-mix(in srgb, var(--lc, var(--ink)) 10%, var(--paper));
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lc, var(--ink)) 35%, transparent);
+}
+.e-mcard__lanes ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.e-mcard__lanes .e-chip {
+  min-height: 32px;
+  padding: 0 11px;
+  font-size: 0.84rem;
+}
+.e-mcard__lanes .e-mcard__cmp {
+  margin-top: 10px;
+}
+.e-mcard-pop:focus {
+  outline: none;
 }
 .e-mcard__une ul {
   display: flex;
@@ -5253,8 +5052,8 @@ html.e-lock body {
 .e-maltinfo {
   display: grid;
   gap: 6px;
-  max-width: 1392px;
-  margin: 12px max(24px, calc((100% - 1392px) / 2)) 0;
+  max-width: 1192px;
+  margin: 12px max(24px, calc((100% - 1192px) / 2)) 0;
   padding: 14px 18px;
   border-radius: 16px;
   font-size: 0.95rem;
@@ -5277,8 +5076,7 @@ html.e-lock body {
   color: var(--slate);
 }
 @media (max-width: 760px) {
-  .e-maltinfo,
-  .e-mroute {
+  .e-maltinfo {
     margin: 12px 16px 0;
   }
 }
@@ -5622,164 +5420,8 @@ button.e-annu__item:hover {
   font-size: 0.82rem;
   font-weight: 620;
 }
-
 /* Le plan, sur téléphone */
-.e-mmob {
-  padding: 4px 16px 24px;
-}
-.e-mmob__k {
-  margin: 18px 0 8px;
-  font-size: 0.85rem;
-  font-weight: 680;
-  color: var(--slate);
-}
-.e-mmob__pitch {
-  margin: 14px 0 4px;
-  font-size: 0.95rem;
-  color: var(--slate);
-}
-.e-mmob__list {
-  display: grid;
-}
-.e-mrow button,
-.e-mrow.is-stub {
-  display: grid;
-  grid-template-columns: 30px minmax(0, 1fr) 18px;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  min-height: 62px;
-  text-align: left;
-}
-.e-mrow.is-stub {
-  grid-template-columns: 30px minmax(0, 1fr);
-}
-.e-mrow button > svg {
-  width: 18px;
-  height: 18px;
-  color: var(--slate);
-}
-.e-mrow__rail {
-  position: relative;
-  align-self: stretch;
-  display: grid;
-  place-items: center;
-}
-.e-mrow__rail::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 7px;
-  margin-left: -3.5px;
-  background: var(--lc, var(--ink));
-}
-.e-mrow:first-child .e-mrow__rail::before {
-  top: 50%;
-}
-.e-mrow:last-child .e-mrow__rail::before {
-  bottom: 50%;
-}
-.e-mrow__dot {
-  position: relative;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--paper);
-  box-shadow: inset 0 0 0 4px var(--lc, var(--ink));
-}
-.e-mrow.is-choix .e-mrow__dot {
-  width: 22px;
-  height: 22px;
-  box-shadow: inset 0 0 0 4.5px var(--ink);
-}
-.e-mrow.is-terminus .e-mrow__dot {
-  border-radius: 6px;
-  background: var(--lc, var(--ink));
-  box-shadow: 0 0 0 3px var(--paper);
-}
-.e-mrow.is-here .e-mrow__dot {
-  box-shadow:
-    inset 0 0 0 4px var(--focus),
-    0 0 0 5px color-mix(in srgb, var(--focus) 22%, transparent);
-}
-.e-mrow.is-stub .e-mrow__rail::before {
-  background: var(--hair-2);
-}
-.e-mrow button[aria-pressed="true"] .e-mrow__dot {
-  background: var(--lc, var(--ink));
-}
-.e-mrow__body {
-  display: grid;
-  gap: 1px;
-  padding: 10px 0;
-}
-.e-mrow__name {
-  font-weight: 680;
-  font-size: 1.02rem;
-}
-.e-mrow__meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px 10px;
-  font-size: 0.86rem;
-  color: var(--slate);
-}
-.e-mrow__alt {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-weight: 650;
-  color: var(--alt-ink);
-}
-.e-mrow__alt svg {
-  width: 14px;
-  height: 14px;
-}
-.e-mrow__here {
-  font-size: 0.82rem;
-  font-weight: 720;
-  color: var(--focus);
-}
-.e-mrow.is-dim {
-  opacity: 0.3;
-}
-.e-mmob__lines {
-  display: grid;
-  gap: 8px;
-}
-.e-mline-btn {
-  display: grid;
-  grid-template-columns: 12px minmax(0, 1fr) 18px;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 16px;
-  text-align: left;
-  box-shadow: inset 0 0 0 1px var(--hair-2);
-}
-.e-mline-btn[aria-pressed="true"] {
-  box-shadow: inset 0 0 0 2px var(--lc, var(--ink));
-}
-.e-mline-btn.is-dim {
-  opacity: 0.4;
-}
-.e-mline-btn strong {
-  display: block;
-  font-weight: 700;
-}
-.e-mline-btn span span {
-  display: block;
-  font-size: 0.86rem;
-  color: var(--slate);
-}
-.e-mline-btn > svg {
-  width: 18px;
-  height: 18px;
-  color: var(--slate);
-}
+
 .e-mbottom {
   position: fixed;
   inset: 0;
@@ -5816,6 +5458,13 @@ button.e-annu__item:hover {
   from {
     transform: translateY(40px);
     opacity: 0;
+  }
+}
+/* Sur une tablette, la fiche monte du bas sans s'étirer sur toute la largeur. */
+@media (min-width: 761px) {
+  .e-mbottom__panel {
+    left: max(0px, calc((100% - 560px) / 2));
+    right: max(0px, calc((100% - 560px) / 2));
   }
 }
 @media (max-width: 760px) {

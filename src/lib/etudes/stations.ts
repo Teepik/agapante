@@ -437,7 +437,7 @@ const base: StationContent[] = frTypo([
     label: "Grande école d'ingénieurs",
     sub: "3 ans",
     when: "De bac+2 à bac+5",
-    what: "Trois années pour devenir ingénieur : sciences, projets, stages en entreprise ou en laboratoire, semestre à l'étranger. Les écoles les plus prestigieuses ouvrent aussi la recherche et les grands corps de l'État.",
+    what: "Trois années pour devenir ingénieur : sciences, projets, stages en entreprise ou en laboratoire, semestre à l'étranger. Les écoles les plus sélectives ouvrent aussi la recherche et les grands corps de l'État.",
     facts: [
       {
         icon: "clock",

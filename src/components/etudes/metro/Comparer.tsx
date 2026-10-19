@@ -8,7 +8,7 @@ import { Dot } from "../ui";
 
 type LigneId = MetroLine["id"];
 
-/** Les quatre lignes, côte à côte, sur les mêmes questions ; on peut n'en garder que deux ou trois. */
+/** Quatre voies après le bac, côte à côte, sur les mêmes questions ; on peut n'en garder que deux ou trois. */
 export function ComparerSheet({ onClose, initial }: { onClose: () => void; initial?: LigneId[] }) {
   const [on, setOn] = useState<LigneId[]>(initial?.length ? initial : METRO_LINES.map((l) => l.id));
   const lignes = METRO_LINES.filter((l) => on.includes(l.id));
@@ -24,10 +24,10 @@ export function ComparerSheet({ onClose, initial }: { onClose: () => void; initi
       onClose={onClose}
       wide
       meta={<span>Après le bac</span>}
-      title="Les quatre lignes, côte à côte"
-      when="Les mêmes questions pour chaque ligne : où, comment, à quel rythme, pour quel diplôme."
+      title="Prépa, école post-bac, BUT ou université"
+      when="Les mêmes questions pour chaque voie : où, comment, à quel rythme, pour quel diplôme."
     >
-      <div className="e-cmp__pick" role="group" aria-label="Lignes à comparer">
+      <div className="e-cmp__pick" role="group" aria-label="Voies à comparer">
         {METRO_LINES.map((l) => (
           <button
             key={l.id}
