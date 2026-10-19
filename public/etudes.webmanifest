@@ -1,0 +1,16 @@
+{
+  "name": "Études : toutes les routes après la 3e",
+  "short_name": "Études",
+  "description": "De la 4e au premier métier : lycées, spécialités, voies d'études, établissements et passerelles, sur une carte à explorer.",
+  "lang": "fr",
+  "start_url": "/etudes",
+  "scope": "/etudes",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f1218",
+  "icons": [
+    { "src": "/etudes-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/etudes-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/etudes-icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

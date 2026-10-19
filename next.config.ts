@@ -24,6 +24,13 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: securityHeaders,
       },
+      {
+        // « Autour de moi » sur la page Études : la position sert au calcul des distances, dans le navigateur.
+        source: "/etudes",
+        headers: [
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(self), browsing-topics=()" },
+        ],
+      },
     ];
   },
 };
