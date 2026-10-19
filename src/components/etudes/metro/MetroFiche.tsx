@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { annuaire } from "@/lib/etudes/annuaire-ingenieurs";
 import { metroLineById, stopById } from "@/lib/etudes/metro";
 import { GROUPES } from "@/lib/etudes/metro-groupes";
@@ -34,6 +34,8 @@ export function MetroFiche({
 }) {
   const s = stopById[id];
   const st = useFiche(id);
+  // Le mot cherché près de chez toi, quand on vient d'une spécialité (« génie électrique »).
+  const [mot, setMot] = useState<{ cle: string; n: number } | null>(null);
 
   useEffect(() => {
     if (!section) return;
@@ -140,7 +142,20 @@ export function MetroFiche({
       ) : null}
 
       {(GROUPES[id] ?? []).map((g) => (
-        <GroupeSection key={g.id} groupe={g} />
+        <GroupeSection
+          key={g.id}
+          groupe={g}
+          onNearby={
+            NEARBY[id]
+              ? (cle) => {
+                  setMot((m) => ({ cle, n: (m?.n ?? 0) + 1 }));
+                  window.requestAnimationFrame(() =>
+                    document.getElementById("m-pres")?.scrollIntoView({ block: "start", behavior: "smooth" }),
+                  );
+                }
+              : undefined
+          }
+        />
       ))}
 
       {st.apres?.length ? (
@@ -178,7 +193,7 @@ export function MetroFiche({
       {NEARBY[id] ? (
         <section className="e-sec" id="m-pres">
           <h3>Près de chez toi</h3>
-          <Nearby id={id} onOpenFormation={onOpenFormation} />
+          <Nearby id={id} onOpenFormation={onOpenFormation} mot={mot} />
         </section>
       ) : null}
 

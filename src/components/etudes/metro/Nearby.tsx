@@ -29,13 +29,30 @@ export const NEARBY: Record<string, Filtre[]> = {
 const MAX = 8;
 
 /** « Près de chez toi » : les formations les plus proches, avec leur taux d'accès sur Parcoursup. */
-export function Nearby({ id, onOpenFormation }: { id: string; onOpenFormation: (id: string) => void }) {
+export function Nearby({
+  id,
+  onOpenFormation,
+  mot: impose,
+}: {
+  id: string;
+  onOpenFormation: (id: string) => void;
+  /** Un mot choisi ailleurs dans la fiche (une spécialité) : il remplit la recherche. */
+  mot?: { cle: string; n: number } | null;
+}) {
   const filtres = NEARBY[id] ?? [];
   const { place } = usePlace();
   const [data, setData] = useState<Formations | null>(null);
   const [failed, setFailed] = useState(false);
   const [filtre, setFiltre] = useState(filtres[0]?.id ?? "");
   const [mot, setMot] = useState("");
+
+  useEffect(() => {
+    if (!impose) return;
+    setMot(impose.cle);
+    const but = filtres.find((x) => x.cat === "BUT");
+    if (but) setFiltre(but.id);
+    // n change à chaque clic : le même mot choisi deux fois remplit de nouveau la recherche.
+  }, [impose?.n]);
 
   useEffect(() => {
     let alive = true;

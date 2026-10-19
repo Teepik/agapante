@@ -36,7 +36,7 @@ export function GroupeChips({ groupe, onOpen }: { groupe: Groupe; onOpen: (secti
 }
 
 /** Dans la fiche complète : chaque élément se déplie, avec ses détails et ses sources. */
-export function GroupeSection({ groupe }: { groupe: Groupe }) {
+export function GroupeSection({ groupe, onNearby }: { groupe: Groupe; onNearby?: (cle: string) => void }) {
   const [q, setQ] = useState("");
   const longue = groupe.elements.length > PASTILLES_MAX;
   const shown = useMemo(() => {
@@ -70,6 +70,11 @@ export function GroupeSection({ groupe }: { groupe: Groupe }) {
               <span className="e-mgroup__head">
                 {el.titre !== el.chip ? <span className="e-mgroup__titre">{el.titre}</span> : null}
                 <span className="e-mgroup__phrase">{el.phrase}</span>
+                {el.cle && onNearby ? (
+                  <button type="button" className="e-link e-mgroup__near" onClick={() => onNearby(el.cle!)}>
+                    <Icon name="pin" /> Près de chez toi
+                  </button>
+                ) : null}
               </span>
             </li>
           ) : (

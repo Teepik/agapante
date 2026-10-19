@@ -29,7 +29,9 @@ export type Ecole = {
   station?: string;
   url?: string;
   sources?: string[];
-  /** Pourquoi y aller : métiers, secteurs, débouchés réels. */
+  /** Pourquoi y aller, en une phrase ou deux : pour les listes et les cartes à la une. */
+  accroche?: string;
+  /** Pourquoi y aller : métiers, secteurs, débouchés réels (texte entier, chargé avec la fiche). */
   pourquoi?: string;
   /** Ce que tu y apprends : tronc commun, spécialités, stages, étranger. */
   apprendre?: string;

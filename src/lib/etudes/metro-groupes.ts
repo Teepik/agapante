@@ -16,6 +16,8 @@ export type Element = {
   phrase: string;
   details: Detail[];
   sources?: string[];
+  /** Un mot à chercher parmi les formations de Parcoursup, pour « Près de chez toi ». */
+  cle?: string;
 };
 
 export type Groupe = {
@@ -676,6 +678,7 @@ const BUT: Groupe = {
   elements: [
     {
       id: "but-cj",
+      cle: "Carrières juridiques",
       chip: "CJ",
       titre: "Carrières juridiques",
       phrase:
@@ -684,6 +687,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-cs",
+      cle: "Carrières sociales",
       chip: "CS",
       titre: "Carrières sociales",
       phrase:
@@ -692,6 +696,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-chimie",
+      cle: "BUT Chimie",
       chip: "Chimie",
       titre: "Chimie",
       phrase:
@@ -700,6 +705,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-gb",
+      cle: "Génie biologique",
       chip: "GB",
       titre: "Génie biologique",
       phrase:
@@ -708,6 +714,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-gcgp",
+      cle: "Génie chimique",
       chip: "GCGP",
       titre: "Génie chimique, génie des procédés",
       phrase:
@@ -716,6 +723,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-gccd",
+      cle: "Génie civil",
       chip: "GCCD",
       titre: "Génie civil - construction durable",
       phrase:
@@ -724,6 +732,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-geii",
+      cle: "Génie électrique",
       chip: "GEII",
       titre: "Génie électrique et informatique industrielle",
       phrase:
@@ -732,6 +741,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-gim",
+      cle: "Génie industriel",
       chip: "GIM",
       titre: "Génie industriel et maintenance",
       phrase:
@@ -740,6 +750,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-gmp",
+      cle: "Génie mécanique",
       chip: "GMP",
       titre: "Génie mécanique et productique",
       phrase:
@@ -748,6 +759,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-gaco",
+      cle: "Gestion administrative",
       chip: "GACO",
       titre: "Gestion administrative et commerciale des organisations",
       phrase:
@@ -756,6 +768,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-gea",
+      cle: "Gestion des entreprises",
       chip: "GEA",
       titre: "Gestion des entreprises et des administrations",
       phrase:
@@ -764,6 +777,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-hse",
+      cle: "Hygiène",
       chip: "HSE",
       titre: "Hygiène, sécurité, environnement",
       phrase:
@@ -772,6 +786,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-info-com",
+      cle: "Information communication",
       chip: "Info-Com",
       titre: "Information-communication",
       phrase:
@@ -780,6 +795,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-info",
+      cle: "BUT Informatique",
       chip: "Info",
       titre: "Informatique",
       phrase:
@@ -788,6 +804,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-mlt",
+      cle: "Logistique et des transports",
       chip: "MLT",
       titre: "Management de la logistique et des transports",
       phrase:
@@ -796,6 +813,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-mp",
+      cle: "Mesures physiques",
       chip: "MP",
       titre: "Mesures physiques",
       phrase:
@@ -804,6 +822,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-mt2e",
+      cle: "Efficacité énergétique",
       chip: "MT2E",
       titre: "Métiers de la transition et de l'efficacité énergétiques",
       phrase:
@@ -812,6 +831,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-mmi",
+      cle: "Multimédia",
       chip: "MMI",
       titre: "Métiers du multimédia et de l'internet",
       phrase:
@@ -820,6 +840,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-pec",
+      cle: "Packaging",
       chip: "PEC",
       titre: "Packaging, emballage et conditionnement",
       phrase:
@@ -828,6 +849,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-qlio",
+      cle: "Qualité, logistique",
       chip: "QLIO",
       titre: "Qualité, logistique industrielle et organisation",
       phrase:
@@ -836,6 +858,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-r-t",
+      cle: "Réseaux et télécommunications",
       chip: "R&T",
       titre: "Réseaux et télécommunications",
       phrase:
@@ -844,6 +867,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-sd",
+      cle: "Science des données",
       chip: "SD",
       titre: "Science des données",
       phrase:
@@ -852,6 +876,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-sgm",
+      cle: "Génie des matériaux",
       chip: "SGM",
       titre: "Science et génie des matériaux",
       phrase:
@@ -860,6 +885,7 @@ const BUT: Groupe = {
     },
     {
       id: "but-tc",
+      cle: "Techniques de commercialisation",
       chip: "TC",
       titre: "Techniques de commercialisation",
       phrase:

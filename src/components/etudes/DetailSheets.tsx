@@ -1,6 +1,6 @@
 "use client";
 
-import { ecoleById, ecoles } from "@/lib/etudes/ecoles";
+import { ecoles } from "@/lib/etudes/ecoles";
 import { ECOLE_UAI } from "@/lib/etudes/ecoles-psup";
 import { lineById, type LaneId } from "@/lib/etudes/lines";
 import { lyceeById, lyceeInternat, lycees, statutLabel, type Lycee, type Resultats } from "@/lib/etudes/lycees";
@@ -10,6 +10,7 @@ import { laneOf } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
 import { PsupSection } from "./FormationSheet";
 import { Sheet, StepButton } from "./Sheet";
+import { useEcole } from "./useEcole";
 import { SaveButton } from "./store";
 import { Dot, Icon } from "./ui";
 
@@ -30,7 +31,7 @@ export function EcoleSheet({
   onOpenStation: (id: string, line: LaneId | null) => void;
   onOpenFormation: (id: string) => void;
 }) {
-  const e = ecoleById[id];
+  const e = useEcole(id);
   if (!e) return null;
   const same = ecoles.filter((x) => x.line === e.line);
   const i = same.findIndex((x) => x.id === id);
@@ -108,11 +109,11 @@ export function EcoleSheet({
           </div>
         ) : null}
       </dl>
-      {e.pourquoi ? (
+      {e.pourquoi || e.accroche ? (
         <>
           <section className="e-sec">
             <h3>Pourquoi y aller</h3>
-            <p>{e.pourquoi}</p>
+            <p>{e.pourquoi ?? e.accroche}</p>
           </section>
           <section className="e-sec">
             <h3>Ce que tu y apprends</h3>

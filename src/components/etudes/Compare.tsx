@@ -66,9 +66,9 @@ const ECOLE_ROWS: Row<Ecole>[] = [
   { label: "Durée", get: (e) => e.duree },
   { label: "Places", get: (e) => e.places ?? null },
   { label: "Coût", get: (e) => e.cout ?? null },
-  { label: "Formations", get: (e) => e.formations },
-  { label: "Débouchés", get: (e) => e.debouches },
-  { label: "À savoir", get: (e) => e.plus },
+  { label: "Pourquoi y aller", get: (e) => e.pourquoi ?? e.accroche ?? e.debouches },
+  { label: "Ce qu'on y apprend", get: (e) => e.apprendre ?? e.formations },
+  { label: "Ce qui la distingue", get: (e) => e.specificite ?? e.plus },
 ];
 
 const fr = (n?: number) => (typeof n === "number" ? n.toLocaleString("fr-FR") : null);

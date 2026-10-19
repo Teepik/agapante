@@ -5186,6 +5186,18 @@ html.e-lock body {
   line-height: 1.45;
   color: var(--slate);
 }
+.e-mgroup__near {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  justify-self: start;
+  margin-top: 4px;
+  font-size: 0.86rem;
+}
+.e-mgroup__near svg {
+  width: 15px;
+  height: 15px;
+}
 .e-mgroup__body {
   display: grid;
   gap: 12px;

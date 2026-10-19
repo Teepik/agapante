@@ -24,7 +24,7 @@ const FILTRES: { id: Filtre; label: string; test: (e: Ecole) => boolean }[] = [
 const LONGUE = 8;
 
 function texte(e: Ecole): string {
-  return essentiel(e.pourquoi ?? e.formations, 150);
+  return essentiel(e.accroche ?? e.formations, 150);
 }
 
 /**
