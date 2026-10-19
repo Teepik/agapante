@@ -282,6 +282,12 @@ function Metro() {
             <button type="button" className="e-chip e-mlayer" onClick={() => push({ kind: "comparer" })}>
               <Icon name="list" /> Comparer les voies
             </button>
+            <Link className="e-chip e-mlayer" href="/etudes/bac">
+              <Icon name="cap" /> Le bac
+            </Link>
+            <Link className="e-chip e-mlayer" href="/etudes/parcoursup">
+              <Icon name="route" /> Parcoursup
+            </Link>
           </div>
         </div>
       </section>

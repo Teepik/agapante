@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ecoles } from "@/lib/etudes/ecoles";
 import { lexique } from "@/lib/etudes/lexique";
@@ -16,6 +17,22 @@ import { Icon, type IconName } from "./ui";
 
 type Group = "Sections" | "Métiers" | "Étapes" | "Lycées" | "Établissements" | "Passerelles" | "Mots";
 const GROUPS: Group[] = ["Sections", "Métiers", "Étapes", "Lycées", "Établissements", "Passerelles", "Mots"];
+
+/** Les guides pas à pas, avec les mots qui y mènent. */
+const GUIDES: { href: string; name: string; hint: string; mots: string }[] = [
+  {
+    href: "/etudes/bac",
+    name: "Le bac, pas à pas",
+    hint: "Les voies, les spécialités, la note, les épreuves, les résultats",
+    mots: "bac baccalaureat voie generale technologique professionnelle bac pro cap specialites options coefficients controle continu note moyenne epreuves anticipees francais maths philosophie grand oral mention oral de controle rattrapage redoublement candidat libre hors contrat cned amenagements tiers temps stmg sti2d stl st2s std2a sthr s2tmd stav",
+  },
+  {
+    href: "/etudes/parcoursup",
+    name: "Parcoursup, pas à pas",
+    hint: "Le calendrier, les vœux, le dossier, les réponses et quoi faire",
+    mots: "parcoursup voeux sous-voeux dossier fiche avenir lettre de motivation reponses oui en attente non amenagement oui-si classement phase complementaire caes inscription cvec bourse dossier social etudiant mobilite cesure",
+  },
+];
 
 /** Des mots qui mènent aussi aux sections : « bourse » ouvre les coûts, « Parcoursup » les formations. */
 const MOTS_CLES: Record<string, string> = {
@@ -71,8 +88,20 @@ export function CommandPalette({
   }, []);
 
   const { y } = useCohort();
+  const router = useRouter();
   const items = useMemo<Item[]>(() => {
     const out: Item[] = [];
+    for (const g of GUIDES) {
+      out.push({
+        key: `g-${g.href}`,
+        group: "Sections",
+        name: g.name,
+        hint: g.hint,
+        icon: "book",
+        hay: norm(`${g.name} ${g.mots}`),
+        run: () => router.push(g.href),
+      });
+    }
     for (const s of SECTIONS) {
       out.push({
         key: `s-${s.id}`,
@@ -165,7 +194,7 @@ export function CommandPalette({
       });
     }
     return out;
-  }, [onStation, onLycee, onEcole, onPasserelle, onMot, onMetier, y]);
+  }, [onStation, onLycee, onEcole, onPasserelle, onMot, onMetier, y, router]);
 
   const results = useMemo(() => {
     const nq = norm(q.trim());

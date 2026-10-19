@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { classeInfo } from "@/lib/etudes/cohorte";
 import { enLettres, laneShort, type LaneId } from "@/lib/etudes/lines";
 import { LANES } from "@/lib/etudes/plan";
@@ -74,6 +75,17 @@ export function Hero() {
               Faire le test
             </a>
           </div>
+          <p className="e-hero__guides">
+            Pas à pas&#8239;:{" "}
+            <Link className="e-link" href="/etudes/bac">
+              le bac
+            </Link>{" "}
+            et{" "}
+            <Link className="e-link" href="/etudes/parcoursup">
+              Parcoursup
+            </Link>
+            , expliqués du choix des spécialités jusqu&apos;aux réponses.
+          </p>
           <p className="e-hero__note">Informations vérifiées en octobre 2026. Les sources sont en bas de page.</p>
         </div>
 

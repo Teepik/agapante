@@ -6,6 +6,8 @@ import { annuaire } from "@/lib/etudes/annuaire-ingenieurs";
 import { laneName, type LaneId } from "@/lib/etudes/lines";
 import { alternanceDe } from "@/lib/etudes/metro";
 import { GROUPES } from "@/lib/etudes/metro-groupes";
+import { GUIDES_DE } from "@/lib/etudes/guides-liens";
+import { GuidesSection } from "../guides/GuidesSection";
 import { passerelles } from "@/lib/etudes/passerelles";
 import { LANES, LANE_DEFS, UNIVERSITY_TRACKS, placedById } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
@@ -281,6 +283,8 @@ export function MetroFiche({
           </ul>
         </section>
       ) : null}
+
+      {GUIDES_DE[id]?.length ? <GuidesSection id={id} /> : null}
 
       {outgoing.length || incoming.length ? (
         <section className="e-sec">

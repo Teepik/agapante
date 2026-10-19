@@ -6,6 +6,8 @@ import { LANES, LANE_DEFS, UNIVERSITY_TRACKS, laneOf, placedById, routeOf } from
 import { stationById } from "@/lib/etudes/stations";
 import { ecoleById, ecoles } from "@/lib/etudes/ecoles";
 import { passerelles } from "@/lib/etudes/passerelles";
+import { GuidesSection } from "./guides/GuidesSection";
+import { GUIDES_DE } from "@/lib/etudes/guides-liens";
 import { useCohort } from "./cohorte";
 import { Sources } from "./DetailSheets";
 import { Sheet, StepButton } from "./Sheet";
@@ -152,6 +154,8 @@ export function StationSheet({ id, line, onClose, onNavigate, onOpenEcole, onOpe
           {st.astuce}
         </div>
       ) : null}
+
+      {GUIDES_DE[id]?.length ? <GuidesSection id={id} /> : null}
 
       {st.sources?.length ? <Sources urls={st.sources} /> : null}
 

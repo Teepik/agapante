@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, type ReactNode } from "react";
 import { mapTexts } from "@/lib/etudes/cohorte";
 import { ecoleById, ecoles, nomCourt, type Ecole, type Recrutement } from "@/lib/etudes/ecoles";
 import { laneName, laneShort, type LaneId } from "@/lib/etudes/lines";
 import { METRO_FICHES, alternanceDe, stopById, type MetroLine } from "@/lib/etudes/metro";
 import { GROUPES } from "@/lib/etudes/metro-groupes";
+import { GUIDES_DE } from "@/lib/etudes/guides-liens";
 import { LANES, placedById } from "@/lib/etudes/plan";
 import { etTypo } from "@/lib/etudes/typo";
 import { stationById, type StationContent } from "@/lib/etudes/stations";
@@ -175,6 +177,12 @@ export function StopCard({
         <button key={l.id} type="button" className="e-link e-mcard__cmp" onClick={() => onOpenFiche(l.id, "u")}>
           {l.label}
         </button>
+      ))}
+
+      {(GUIDES_DE[id] ?? []).map((g) => (
+        <Link key={g.href} className="e-link e-mcard__cmp" href={g.href}>
+          {g.label}
+        </Link>
       ))}
 
       {une.length ? (
