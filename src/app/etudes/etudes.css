@@ -2985,7 +2985,10 @@ html.e-lock body {
   gap: 6px;
   font-size: 0.8rem;
   font-weight: 600;
-  color: var(--lc, var(--ink));
+  color: var(--ink);
+}
+.e-recit__etape svg {
+  color: var(--lc, var(--slate));
 }
 
 /* ---------- Lycées de toute la France ---------- */

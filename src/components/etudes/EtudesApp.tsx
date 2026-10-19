@@ -493,6 +493,10 @@ function App() {
           onEcole={openEcole}
           onPasserelle={openPasserelle}
           onMot={showMot}
+          onMetier={(id) => {
+            setMetier(id);
+            scrollToId("metiers");
+          }}
         />
       ) : null}
     </>

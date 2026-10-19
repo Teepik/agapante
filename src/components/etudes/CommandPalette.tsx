@@ -5,6 +5,7 @@ import { ecoles } from "@/lib/etudes/ecoles";
 import { lexique } from "@/lib/etudes/lexique";
 import { laneName, type LaneId } from "@/lib/etudes/lines";
 import { lycees, statutLabel } from "@/lib/etudes/lycees";
+import { FAMILLES, metiers } from "@/lib/etudes/metiers";
 import { passerelles } from "@/lib/etudes/passerelles";
 import { UNIVERSITY_TRACKS, placed } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
@@ -13,8 +14,8 @@ import { useCohort } from "./cohorte";
 import { SECTIONS } from "./TopNav";
 import { Icon, type IconName } from "./ui";
 
-type Group = "Sections" | "Étapes" | "Lycées" | "Établissements" | "Passerelles" | "Mots";
-const GROUPS: Group[] = ["Sections", "Étapes", "Lycées", "Établissements", "Passerelles", "Mots"];
+type Group = "Sections" | "Métiers" | "Étapes" | "Lycées" | "Établissements" | "Passerelles" | "Mots";
+const GROUPS: Group[] = ["Sections", "Métiers", "Étapes", "Lycées", "Établissements", "Passerelles", "Mots"];
 
 type Item = {
   key: string;
@@ -33,8 +34,10 @@ export function CommandPalette({
   onEcole,
   onPasserelle,
   onMot,
+  onMetier,
 }: {
   onClose: () => void;
+  onMetier: (id: string) => void;
   onStation: (id: string, line: LaneId | null) => void;
   onLycee: (id: string) => void;
   onEcole: (id: string) => void;
@@ -96,6 +99,17 @@ export function CommandPalette({
         run: () => onStation(p.id, p.line),
       });
     }
+    for (const m of metiers) {
+      out.push({
+        key: `me-${m.id}`,
+        group: "Métiers",
+        name: m.name,
+        hint: `${FAMILLES[m.famille]}, ${m.etudes}`,
+        icon: "briefcase",
+        hay: norm(`${m.name} ${FAMILLES[m.famille]}`),
+        run: () => onMetier(m.id),
+      });
+    }
     for (const l of lycees) {
       out.push({
         key: `ly-${l.id}`,
@@ -141,7 +155,7 @@ export function CommandPalette({
       });
     }
     return out;
-  }, [onStation, onLycee, onEcole, onPasserelle, onMot, y]);
+  }, [onStation, onLycee, onEcole, onPasserelle, onMot, onMetier, y]);
 
   const results = useMemo(() => {
     const nq = norm(q.trim());
