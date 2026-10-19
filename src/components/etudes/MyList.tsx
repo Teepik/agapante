@@ -15,11 +15,13 @@ export function MyList({
   onLycee,
   onEcole,
   onStation,
+  onCompare,
 }: {
   onClose: () => void;
   onLycee: (id: string) => void;
   onEcole: (id: string) => void;
   onStation: (id: string, line: LaneId | null) => void;
+  onCompare: (what: "lycee" | "ecole", ids: string[]) => void;
 }) {
   const { saved, toggle } = useSelection();
   const { y } = useCohort();
@@ -52,7 +54,23 @@ export function MyList({
 
       {ly.length ? (
         <section className="e-mylist__group">
-          <h3>Lycées</h3>
+          <div className="e-mylist__head">
+            <h3>Lycées</h3>
+            {ly.length > 1 ? (
+              <button
+                type="button"
+                className="e-btn e-btn--sm"
+                onClick={() =>
+                  onCompare(
+                    "lycee",
+                    ly.slice(0, 4).map((x) => x.id),
+                  )
+                }
+              >
+                Comparer {ly.length > 4 ? "les quatre premiers" : ly.length === 2 ? "les deux" : `les ${ly.length}`}
+              </button>
+            ) : null}
+          </div>
           <ul className="e-rows">
             {ly.map(({ id }) => {
               const l = lyceeById[id];
@@ -73,7 +91,23 @@ export function MyList({
 
       {ec.length ? (
         <section className="e-mylist__group">
-          <h3>Établissements</h3>
+          <div className="e-mylist__head">
+            <h3>Établissements</h3>
+            {ec.length > 1 ? (
+              <button
+                type="button"
+                className="e-btn e-btn--sm"
+                onClick={() =>
+                  onCompare(
+                    "ecole",
+                    ec.slice(0, 4).map((x) => x.id),
+                  )
+                }
+              >
+                Comparer {ec.length > 4 ? "les quatre premiers" : ec.length === 2 ? "les deux" : `les ${ec.length}`}
+              </button>
+            ) : null}
+          </div>
           <ul className="e-rows">
             {ec.map(({ id }) => {
               const e = ecoleById[id];

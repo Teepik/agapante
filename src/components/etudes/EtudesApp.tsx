@@ -1,13 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { LaneId, LineId } from "@/lib/etudes/lines";
+import { enLettres, type LaneId, type LineId } from "@/lib/etudes/lines";
+import { LANES } from "@/lib/etudes/plan";
 import { passerelleById } from "@/lib/etudes/passerelles";
 import { ecoles } from "@/lib/etudes/ecoles";
 import { lycees } from "@/lib/etudes/lycees";
 import { CareerMap } from "./CareerMap";
 import { CohortProvider, useCohort } from "./cohorte";
 import { CommandPalette } from "./CommandPalette";
+import { CompareSheet } from "./Compare";
 import { EcoleSheet, LyceeSheet, PasserelleSheet } from "./DetailSheets";
 import { Ecoles } from "./Ecoles";
 import { Hero } from "./Hero";
@@ -15,12 +17,14 @@ import { Lycees } from "./Lycees";
 import { MyList } from "./MyList";
 import { Parcours } from "./Parcours";
 import { Passerelles } from "./Passerelles";
+import { Projet } from "./Projet";
 import { Quiz } from "./Quiz";
 import { Calendrier, Footer, Lexique } from "./Reperes";
 import { Specialites } from "./Specialites";
 import { StationSheet } from "./StationSheet";
 import { SelectionProvider, useSelection } from "./store";
 import { TopNav } from "./TopNav";
+import { readParam, writeParam } from "./url";
 
 type Open =
   | { kind: "station"; id: string; line: LaneId | null }
@@ -28,6 +32,7 @@ type Open =
   | { kind: "ecole"; id: string }
   | { kind: "lycee"; id: string }
   | { kind: "liste" }
+  | { kind: "compare"; what: "lycee" | "ecole"; ids: string[] }
   | null;
 
 function scrollToId(id: string) {
@@ -55,6 +60,30 @@ function App() {
   const [activePass, setActivePass] = useState<string | null>(null);
   const [trip, setTrip] = useState<LineId>("sciences");
   const [lexQuery, setLexQuery] = useState("");
+
+  // Lecture hors ligne et installation sur le téléphone (en production seulement).
+  useEffect(() => {
+    if (process.env.NODE_ENV !== "production" || !("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.register("/etudes-sw.js", { scope: "/etudes" }).catch(() => {
+      /* sans service worker, la page fonctionne en ligne */
+    });
+  }, []);
+
+  // L'adresse garde la voie et la passerelle affichées : un lien partagé rouvre la même carte.
+  useEffect(() => {
+    const voie = readParam("voie");
+    const pass = readParam("passerelle");
+    if (pass && passerelleById[pass]) {
+      setActivePass(pass);
+      const to = passerelleById[pass].draw?.to;
+      if (to) setLaneLine(to);
+    } else if (voie && (LANES as string[]).includes(voie)) {
+      setFocusLine(voie as LaneId);
+      setLaneLine(voie as LaneId);
+    }
+  }, []);
+  useEffect(() => writeParam("voie", activePass ? null : (route ?? focusLine)), [focusLine, route, activePass]);
+  useEffect(() => writeParam("passerelle", activePass), [activePass]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -128,8 +157,8 @@ function App() {
                 La carte des études
               </h2>
               <p className="e-lede">
-                Du bas vers le haut : le tronc commun jusqu&apos;au bac, puis neuf voies, chacune à sa vraie durée,
-                jusqu&apos;au premier métier. Touche une étape pour ouvrir sa fiche.
+                Du bas vers le haut : le tronc commun jusqu&apos;au bac, puis {enLettres(LANES.length)} voies, chacune à
+                sa vraie durée, jusqu&apos;au premier métier. Touche une étape pour ouvrir sa fiche.
               </p>
             </div>
           </div>
@@ -212,8 +241,8 @@ function App() {
                 Tes spécialités ouvrent des portes
               </h2>
               <p className="e-lede">
-                En 1re, tu suis trois spécialités ; en terminale, tu en gardes deux. Compose ton trio : la liste montre
-                ce qu&apos;il ouvre.
+                En 1re, tu suis trois spécialités ; en terminale, tu en gardes deux. Compose ton trio pour voir ce
+                qu&apos;il ouvre, ou pars de la formation que tu vises.
               </p>
             </div>
             <Specialites onOpenStation={(id) => openStation(id)} />
@@ -264,6 +293,21 @@ function App() {
           </div>
         </section>
 
+        <section id="projet" className="e-section e-section--fog" aria-labelledby="t-projet">
+          <div className="e-wrap">
+            <div className="e-head">
+              <h2 id="t-projet" className="e-title">
+                Ton projet, sur une page
+              </h2>
+              <p className="e-lede">
+                Choisis une à trois voies : la page en tire tes spécialités, tes étapes, tes échéances et un plan B, à
+                garder dans ton agenda et à imprimer pour en parler en famille.
+              </p>
+            </div>
+            <Projet onShowLine={(l) => showLine(l)} onOpenPasserelle={openPasserelle} onOpenLycee={openLycee} />
+          </div>
+        </section>
+
         <section id="lexique" className="e-section" aria-labelledby="t-lex">
           <div className="e-wrap">
             <div className="e-head">
@@ -303,7 +347,22 @@ function App() {
       ) : null}
       {open?.kind === "lycee" ? <LyceeSheet id={open.id} onClose={close} onOpenLycee={openLycee} /> : null}
       {open?.kind === "liste" ? (
-        <MyList onClose={close} onLycee={openLycee} onEcole={openEcole} onStation={openStation} />
+        <MyList
+          onClose={close}
+          onLycee={openLycee}
+          onEcole={openEcole}
+          onStation={openStation}
+          onCompare={(what, ids) => setOpen({ kind: "compare", what, ids })}
+        />
+      ) : null}
+
+      {open?.kind === "compare" ? (
+        <CompareSheet
+          what={open.what}
+          ids={open.ids}
+          onClose={() => setOpen({ kind: "liste" })}
+          onOpen={(id) => (open.what === "lycee" ? openLycee(id) : openEcole(id))}
+        />
       ) : null}
 
       {cmd ? (

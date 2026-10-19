@@ -1,12 +1,10 @@
 "use client";
 
 import { classeInfo } from "@/lib/etudes/cohorte";
-import { laneShort } from "@/lib/etudes/lines";
+import { enLettres, laneShort } from "@/lib/etudes/lines";
 import { LANES } from "@/lib/etudes/plan";
 import { ClassPicker, useCohort } from "./cohorte";
 import { Icon } from "./ui";
-
-const NOMBRES: Record<number, string> = { 9: "neuf", 10: "dix", 11: "onze", 12: "douze", 13: "treize", 14: "quatorze" };
 
 /* L'arbre de l'ouverture : un tronc qui monte de la 3e et se ramifie en neuf voies ; l'université, au centre, monte tout droit. */
 const T = {
@@ -51,8 +49,8 @@ export function Hero() {
       <div className="e-wrap e-hero__grid">
         <div className="e-hero__text">
           <p className="e-hero__lede">
-            Du lycée au premier métier : {NOMBRES[LANES.length] ?? LANES.length} grandes voies d&apos;études, les
-            établissements qui les jalonnent et les passerelles qui les relient.
+            Du lycée au premier métier : {enLettres(LANES.length)} grandes voies d&apos;études, les établissements qui
+            les jalonnent et les passerelles qui les relient.
           </p>
           <ClassPicker />
           <div className="e-hero__cta">
@@ -69,7 +67,7 @@ export function Hero() {
 
         <figure
           className="e-tree"
-          aria-label={`Le tronc commun monte jusqu'au bac, puis se ramifie en ${NOMBRES[LANES.length] ?? LANES.length} voies d'études.`}
+          aria-label={`Le tronc commun monte jusqu'au bac, puis se ramifie en ${enLettres(LANES.length)} voies d'études.`}
         >
           <svg viewBox={`0 0 ${T.W} ${T.H}`} role="img" aria-hidden="true">
             {LANES.map((id, k) => (

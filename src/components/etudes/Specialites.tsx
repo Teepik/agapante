@@ -2,10 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { lineById, linesByNum } from "@/lib/etudes/lines";
+import { laneShort } from "@/lib/etudes/lines";
+import { LANES } from "@/lib/etudes/plan";
 import {
   destinations,
   doorLabel,
   presets,
+  recommend,
   specialites,
   speById,
   type Door,
@@ -18,8 +21,141 @@ import { Dot, Icon } from "./ui";
 const DOORS: Door[] = ["grande", "ouverte", "entrouverte", "fermee"];
 
 export function Specialites({ onOpenStation }: { onOpenStation: (id: string) => void }) {
+  const [mode, setMode] = useState<"spe" | "cible">("spe");
   const [sel, setSel] = useState<Selection>(presets[0].sel);
+  return (
+    <>
+      <div className="e-seg e-sim__mode" role="group" aria-label="Sens du simulateur">
+        <button type="button" aria-pressed={mode === "spe"} onClick={() => setMode("spe")}>
+          Je choisis mes spécialités
+        </button>
+        <button type="button" aria-pressed={mode === "cible"} onClick={() => setMode("cible")}>
+          Je pars de ma cible
+        </button>
+      </div>
+      {mode === "spe" ? (
+        <Forward sel={sel} setSel={setSel} onOpenStation={onOpenStation} />
+      ) : (
+        <Reverse
+          onTry={(x) => {
+            setSel(x);
+            setMode("spe");
+          }}
+          onOpenStation={onOpenStation}
+        />
+      )}
+    </>
+  );
+}
 
+/* --------------------------------------------------------------------------
+   À l'envers : de la formation visée aux spécialités
+   -------------------------------------------------------------------------- */
+
+function Reverse({ onTry, onOpenStation }: { onTry: (s: Selection) => void; onOpenStation: (id: string) => void }) {
+  const [target, setTarget] = useState(destinations[0].id);
+  const dest = destinations.find((d) => d.id === target) ?? destinations[0];
+  const recos = useMemo(() => recommend(dest), [dest]);
+
+  return (
+    <div className="e-sim">
+      <div className="e-sim__panel">
+        <p className="e-sub" style={{ margin: 0 }}>
+          Choisis la formation que tu vises :
+        </p>
+        <div className="e-cibles">
+          {LANES.filter((l) => destinations.some((d) => d.line === l)).map((l) => (
+            <div key={l} className="e-cibles__group" data-line={l}>
+              <p className="e-cibles__lane">
+                <Dot line={l} /> {laneShort(l)}
+              </p>
+              <div className="e-sim__chips">
+                {destinations
+                  .filter((d) => d.line === l)
+                  .map((d) => (
+                    <button
+                      key={d.id}
+                      type="button"
+                      className="e-chip"
+                      aria-pressed={d.id === dest.id}
+                      onClick={() => setTarget(d.id)}
+                    >
+                      {d.name}
+                    </button>
+                  ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div aria-live="polite">
+        <h3 className="e-h3" style={{ marginBottom: 6 }}>
+          {dest.station ? (
+            <button type="button" className="e-link" onClick={() => onOpenStation(dest.station!)}>
+              {dest.name}
+            </button>
+          ) : (
+            dest.name
+          )}
+        </h3>
+        <p className="e-sub" style={{ marginBottom: 18 }}>
+          Les duos de terminale qui ouvrent cette porte le plus grand, en gardant le plus d&apos;autres portes ouvertes.
+        </p>
+        <ol className="e-recos">
+          {recos.map((r) => (
+            <li key={r.duo.join("+")} className="e-reco">
+              <p className="e-reco__state">
+                <span className={`e-door e-door--${r.door}`} aria-hidden="true" />
+                {doorLabel[r.door]}
+              </p>
+              <p className="e-reco__duo">
+                {speById[r.duo[0]].name} et {speById[r.duo[1]].name}
+              </p>
+              <p className="e-reco__opts">{optionsText(r.sel, r.thirds)}</p>
+              <p className="e-reco__why">{r.why}</p>
+              <div className="e-reco__foot">
+                <span className="e-muted e-small">
+                  Ce profil ouvre grand {r.breadth} formation{r.breadth > 1 ? "s" : ""} sur {destinations.length}.
+                </span>
+                <button type="button" className="e-btn e-btn--sm" onClick={() => onTry(r.sel)}>
+                  Essayer ce profil
+                </button>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
+function optionsText(sel: Selection, thirds: SpeId[]): string {
+  const parts: string[] = [];
+  const names = thirds.map((t) => speById[t].short);
+  if (thirds.length >= specialites.length - 2) parts.push("En 1re, une troisième spécialité de ton choix");
+  else if (thirds.length <= 3) parts.push(`En 1re, ajoute ${names.join(" ou ")}`);
+  else parts.push(`En 1re, une troisième spécialité au choix, par exemple ${names.slice(0, 2).join(" ou ")}`);
+  if (sel.maths === "expertes") parts.push("en terminale, l'option maths expertes");
+  if (sel.maths === "complementaires") parts.push("en terminale, l'option maths complémentaires");
+  if (sel.latin) parts.push("l'option latin");
+  if (sel.droit) parts.push("l'option droit et grands enjeux du monde contemporain");
+  return `${parts.join(" ; ")}.`;
+}
+
+/* --------------------------------------------------------------------------
+   À l'endroit : des spécialités aux portes
+   -------------------------------------------------------------------------- */
+
+function Forward({
+  sel,
+  setSel,
+  onOpenStation,
+}: {
+  sel: Selection;
+  setSel: (f: Selection | ((s: Selection) => Selection)) => void;
+  onOpenStation: (id: string) => void;
+}) {
   const verdicts = useMemo(
     () => (sel.terminale.length === 2 ? destinations.map((d) => ({ d, v: d.judge(sel) })) : []),
     [sel],

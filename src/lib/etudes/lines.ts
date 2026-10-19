@@ -114,3 +114,25 @@ export function lanePitch(id: LaneId): string {
 export function laneDirection(id: LaneId): string {
   return id === "u" ? uLane.direction : lineById[id].direction;
 }
+
+const EN_LETTRES: Record<number, string> = {
+  2: "deux",
+  3: "trois",
+  4: "quatre",
+  5: "cinq",
+  6: "six",
+  7: "sept",
+  8: "huit",
+  9: "neuf",
+  10: "dix",
+  11: "onze",
+  12: "douze",
+  13: "treize",
+  14: "quatorze",
+  15: "quinze",
+};
+
+/** Un petit nombre écrit en lettres, pour les phrases. */
+export function enLettres(n: number): string {
+  return EN_LETTRES[n] ?? String(n);
+}

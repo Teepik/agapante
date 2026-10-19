@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     "De la 3e au premier métier : lycées, spécialités, prépas, universités et grandes écoles, conditions d'accès, débouchés et passerelles, sur une carte à explorer.",
   robots: { index: false, follow: false },
   alternates: { canonical: "/etudes" },
+  manifest: "/etudes.webmanifest",
+  appleWebApp: { capable: true, title: "Études", statusBarStyle: "default" },
+  icons: { apple: "/etudes-apple-touch-icon.png" },
 };
 
 export const viewport: Viewport = {

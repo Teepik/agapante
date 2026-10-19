@@ -12,6 +12,7 @@ export const SECTIONS = [
   { id: "ecoles", label: "Écoles" },
   { id: "passerelles", label: "Passerelles" },
   { id: "calendrier", label: "Calendrier" },
+  { id: "projet", label: "Mon projet" },
   { id: "lexique", label: "Lexique" },
 ] as const;
 

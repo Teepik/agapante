@@ -468,7 +468,7 @@ function Sources({ urls }: { urls: string[] }) {
   );
 }
 
-function internatText(l: Lycee): string {
+export function internatText(l: Lycee): string {
   const k = lyceeInternat(l);
   if (!k) return "Externat";
   if (k === "prepas") return "Réservé aux élèves de prépa";

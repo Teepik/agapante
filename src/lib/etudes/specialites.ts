@@ -7,18 +7,7 @@ import type { LineId } from "./lines";
 import { etTypo as frTypo } from "./typo";
 
 export type SpeId =
-  | "maths"
-  | "pc"
-  | "svt"
-  | "si"
-  | "nsi"
-  | "ses"
-  | "hggsp"
-  | "hlp"
-  | "llcer"
-  | "llca"
-  | "arts"
-  | "eppcs";
+  "maths" | "pc" | "svt" | "si" | "nsi" | "ses" | "hggsp" | "hlp" | "llcer" | "llca" | "arts" | "eppcs";
 
 export type Spe = { id: SpeId; name: string; short: string; family: "sciences" | "humanites" | "autres" };
 
@@ -108,7 +97,8 @@ export const destinations: Destination[] = frTypo([
         return expertes
           ? v("grande", "Maths et une science en Terminale, plus maths expertes : exactement le profil attendu.")
           : v("ouverte", "Le bon duo. Ajoute maths expertes : les prépas l'attendent presque toujours.");
-      if (mathsTle) return v("entrouverte", "Les maths sont là, mais il manque physique-chimie, SI ou NSI en Terminale.");
+      if (mathsTle)
+        return v("entrouverte", "Les maths sont là, mais il manque physique-chimie, SI ou NSI en Terminale.");
       return v("fermee", "Il faut la spécialité maths en Terminale.");
     },
   },
@@ -166,13 +156,19 @@ export const destinations: Destination[] = frTypo([
     station: "pass-las",
     judge: (s) => {
       const { T, mathsAny } = ctx(s);
-      if (T.has("svt") && T.has("pc")) return v("grande", "SVT et physique-chimie : les bases du bloc santé de la première année.");
+      if (T.has("svt") && T.has("pc"))
+        return v("grande", "SVT et physique-chimie : les bases du bloc santé de la première année.");
       if (T.has("svt") || T.has("pc"))
         return v(
           "ouverte",
-          mathsAny ? "Une science et des maths : un bon socle." : "Une science en Terminale : faisable, avec du travail en biologie ou en chimie.",
+          mathsAny
+            ? "Une science et des maths : un bon socle."
+            : "Une science en Terminale : faisable, avec du travail en biologie ou en chimie.",
         );
-      return v("entrouverte", "Accessible, mais la biologie et la chimie démarrent très vite : prévois de les travailler avant la rentrée.");
+      return v(
+        "entrouverte",
+        "Accessible, mais la biologie et la chimie démarrent très vite : prévois de les travailler avant la rentrée.",
+      );
     },
   },
   {
@@ -203,7 +199,8 @@ export const destinations: Destination[] = frTypo([
     judge: (s) => {
       const { mathsTle } = ctx(s);
       if (mathsTle) return v("grande", "Maths de spécialité en Terminale : le premier critère de Dauphine.");
-      if (s.maths === "complementaires") return v("entrouverte", "Maths complémentaires : possible dans certaines licences, plus difficile.");
+      if (s.maths === "complementaires")
+        return v("entrouverte", "Maths complémentaires : possible dans certaines licences, plus difficile.");
       return v("fermee", "Les licences de Dauphine demandent un vrai bagage en maths.");
     },
   },
@@ -228,7 +225,10 @@ export const destinations: Destination[] = frTypo([
       const { T } = ctx(s);
       if (T.has("hggsp") || T.has("ses") || T.has("hlp") || s.droit)
         return v("grande", "Un profil qui argumente et écrit : exactement ce que le droit demande.");
-      return v("ouverte", "Le droit accueille tous les profils ; les doubles licences regardent surtout l'excellence du dossier.");
+      return v(
+        "ouverte",
+        "Le droit accueille tous les profils ; les doubles licences regardent surtout l'excellence du dossier.",
+      );
     },
   },
   {
@@ -274,7 +274,8 @@ export const destinations: Destination[] = frTypo([
     station: "concours-cnsmd",
     judge: (s) => {
       const { T } = ctx(s);
-      if (T.has("arts")) return v("grande", "La spécialité musique t'appuie ; le concours juge ton niveau d'interprète.");
+      if (T.has("arts"))
+        return v("grande", "La spécialité musique t'appuie ; le concours juge ton niveau d'interprète.");
       return v("ouverte", "Le concours se joue sur ton niveau musical, quelle que soit ta spécialité.");
     },
   },
@@ -313,17 +314,35 @@ export const presets: { id: string; label: string; sel: Selection }[] = frTypo([
   {
     id: "sci",
     label: "Scientifique",
-    sel: { premiere: ["maths", "pc", "svt"], terminale: ["maths", "pc"], maths: "expertes", latin: false, droit: false },
+    sel: {
+      premiere: ["maths", "pc", "svt"],
+      terminale: ["maths", "pc"],
+      maths: "expertes",
+      latin: false,
+      droit: false,
+    },
   },
   {
     id: "num",
     label: "Ingénieur numérique",
-    sel: { premiere: ["maths", "pc", "nsi"], terminale: ["maths", "nsi"], maths: "expertes", latin: false, droit: false },
+    sel: {
+      premiere: ["maths", "pc", "nsi"],
+      terminale: ["maths", "nsi"],
+      maths: "expertes",
+      latin: false,
+      droit: false,
+    },
   },
   {
     id: "eco",
     label: "Économie",
-    sel: { premiere: ["maths", "ses", "hggsp"], terminale: ["maths", "ses"], maths: "aucune", latin: false, droit: false },
+    sel: {
+      premiere: ["maths", "ses", "hggsp"],
+      terminale: ["maths", "ses"],
+      maths: "aucune",
+      latin: false,
+      droit: false,
+    },
   },
   {
     id: "sante",
@@ -339,7 +358,13 @@ export const presets: { id: string; label: string; sel: Selection }[] = frTypo([
   {
     id: "scpo",
     label: "Sciences Po",
-    sel: { premiere: ["hggsp", "ses", "llcer"], terminale: ["hggsp", "ses"], maths: "aucune", latin: false, droit: true },
+    sel: {
+      premiere: ["hggsp", "ses", "llcer"],
+      terminale: ["hggsp", "ses"],
+      maths: "aucune",
+      latin: false,
+      droit: true,
+    },
   },
   {
     id: "lettres",
@@ -347,3 +372,67 @@ export const presets: { id: string; label: string; sel: Selection }[] = frTypo([
     sel: { premiere: ["hlp", "llca", "hggsp"], terminale: ["hlp", "llca"], maths: "aucune", latin: true, droit: false },
   },
 ]);
+
+/* --------------------------------------------------------------------------
+   Le simulateur à l'envers : pour une formation visée, les duos de terminale
+   qui l'ouvrent le plus grand, avec les options nécessaires.
+   -------------------------------------------------------------------------- */
+
+const RANK: Record<Door, number> = { grande: 3, ouverte: 2, entrouverte: 1, fermee: 0 };
+
+export type Reco = {
+  duo: [SpeId, SpeId];
+  door: Door;
+  why: string;
+  sel: Selection;
+  /** Troisièmes spécialités de 1re qui donnent ce résultat. */
+  thirds: SpeId[];
+  /** Nombre de formations que ce profil ouvre en grand. */
+  breadth: number;
+};
+
+function bestFor(dest: Destination, a: SpeId, b: SpeId) {
+  let best: { score: number; door: Door; why: string; sel: Selection; thirds: SpeId[] } | null = null;
+  for (const third of specialites.map((x) => x.id)) {
+    if (third === a || third === b) continue;
+    const opts: MathsOption[] = ["aucune"];
+    if (a === "maths" || b === "maths") opts.push("expertes");
+    if (third === "maths") opts.push("complementaires");
+    for (const maths of opts)
+      for (const latin of [false, true])
+        for (const droit of [false, true]) {
+          const sel: Selection = { premiere: [a, b, third], terminale: [a, b], maths, latin, droit };
+          const v = dest.judge(sel);
+          const cost = (maths !== "aucune" ? 1 : 0) + (latin ? 1 : 0) + (droit ? 1 : 0);
+          const score = RANK[v.door] * 10 - cost;
+          if (!best || score > best.score) best = { score, door: v.door, why: v.why, sel, thirds: [third] };
+          else if (
+            score === best.score &&
+            best.sel.maths === maths &&
+            best.sel.latin === latin &&
+            best.sel.droit === droit &&
+            !best.thirds.includes(third)
+          )
+            best.thirds.push(third);
+        }
+  }
+  return best!;
+}
+
+/** Les meilleurs duos de terminale pour une formation, du plus ouvert au plus étroit. */
+export function recommend(dest: Destination, max = 4): Reco[] {
+  const ids = specialites.map((x) => x.id);
+  const all: Reco[] = [];
+  for (let i = 0; i < ids.length; i++)
+    for (let j = i + 1; j < ids.length; j++) {
+      const r = bestFor(dest, ids[i], ids[j]);
+      const breadth = destinations.filter((d) => d.judge(r.sel).door === "grande").length;
+      all.push({ duo: [ids[i], ids[j]], door: r.door, why: r.why, sel: r.sel, thirds: r.thirds, breadth });
+    }
+  const top = Math.max(...all.map((r) => RANK[r.door]));
+  const cost = (r: Reco) => (r.sel.maths !== "aucune" ? 1 : 0) + (r.sel.latin ? 1 : 0) + (r.sel.droit ? 1 : 0);
+  return all
+    .filter((r) => RANK[r.door] === top)
+    .sort((x, y) => y.breadth - x.breadth || cost(x) - cost(y))
+    .slice(0, max);
+}

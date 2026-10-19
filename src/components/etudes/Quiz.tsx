@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { maxByLine, questions } from "@/lib/etudes/boussole";
 import { lineById, linesByNum, type LineId } from "@/lib/etudes/lines";
+import { TEST_KEY } from "./Projet";
 import { Dot, Icon } from "./ui";
 
 const LETTERS = "ABCDEFG";
@@ -35,6 +36,16 @@ export function Quiz({
       }))
       .sort((a, b) => b.pct - a.pct);
   }, [answers, max]);
+
+  // Le résultat sert de point de départ à « Mon projet ».
+  useEffect(() => {
+    if (!done) return;
+    try {
+      window.localStorage.setItem(TEST_KEY, JSON.stringify(scores.slice(0, 3).map((x) => x.id)));
+    } catch {
+      /* stockage indisponible */
+    }
+  }, [done, scores]);
 
   function choose(i: number) {
     setAnswers((prev) => prev.map((v, k) => (k === step ? i : v)));

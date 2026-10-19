@@ -18,6 +18,7 @@ export function Sheet({
   resetKey,
   onClose,
   footer,
+  wide = false,
   children,
 }: {
   labelId: string;
@@ -30,6 +31,8 @@ export function Sheet({
   resetKey: string;
   onClose: () => void;
   footer?: ReactNode;
+  /** Fiche large, pour les tableaux de comparaison. */
+  wide?: boolean;
   children: ReactNode;
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -81,7 +84,7 @@ export function Sheet({
       <button type="button" className="e-sheet-backdrop" aria-label="Fermer" tabIndex={-1} onClick={onClose} />
       <div
         ref={panelRef}
-        className="e-sheet"
+        className={wide ? "e-sheet e-sheet--wide" : "e-sheet"}
         role="dialog"
         aria-modal="true"
         aria-labelledby={labelId}

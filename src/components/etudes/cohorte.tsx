@@ -23,6 +23,8 @@ import {
   type Classe,
 } from "@/lib/etudes/cohorte";
 
+import { writeParam } from "./url";
+
 const KEY = "etudes:classe";
 
 type Ctx = {
@@ -70,13 +72,7 @@ export function CohortProvider({ children }: { children: ReactNode }) {
     } catch {
       /* stockage indisponible : le choix vit le temps de la visite */
     }
-    try {
-      const u = new URL(window.location.href);
-      u.searchParams.set("classe", c);
-      window.history.replaceState(window.history.state, "", u);
-    } catch {
-      /* adresse inchangée */
-    }
+    writeParam("classe", c);
   }, []);
 
   const value = useMemo<Ctx>(() => {
