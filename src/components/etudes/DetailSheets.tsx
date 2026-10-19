@@ -1,6 +1,6 @@
 "use client";
 
-import { ecoleById, ecoles } from "@/lib/etudes/ecoles";
+import { ecoles } from "@/lib/etudes/ecoles";
 import { ECOLE_UAI } from "@/lib/etudes/ecoles-psup";
 import { lineById, type LaneId } from "@/lib/etudes/lines";
 import { lyceeById, lyceeInternat, lycees, statutLabel, type Lycee, type Resultats } from "@/lib/etudes/lycees";
@@ -10,6 +10,7 @@ import { laneOf } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
 import { PsupSection } from "./FormationSheet";
 import { Sheet, StepButton } from "./Sheet";
+import { useEcole } from "./useEcole";
 import { SaveButton } from "./store";
 import { Dot, Icon } from "./ui";
 
@@ -30,7 +31,7 @@ export function EcoleSheet({
   onOpenStation: (id: string, line: LaneId | null) => void;
   onOpenFormation: (id: string) => void;
 }) {
-  const e = ecoleById[id];
+  const e = useEcole(id);
   if (!e) return null;
   const same = ecoles.filter((x) => x.line === e.line);
   const i = same.findIndex((x) => x.id === id);
@@ -108,18 +109,61 @@ export function EcoleSheet({
           </div>
         ) : null}
       </dl>
-      <section className="e-sec">
-        <h3>Ce qu&apos;on y apprend</h3>
-        <p>{e.formations}</p>
-      </section>
-      <section className="e-sec">
-        <h3>Où cela mène</h3>
-        <p>{e.debouches}</p>
-      </section>
-      <div className="e-note">
-        <strong>Le détail qui compte</strong>
-        {e.plus}
-      </div>
+      {e.pourquoi || e.accroche ? (
+        <>
+          <section className="e-sec">
+            <h3>Pourquoi y aller</h3>
+            <p>{e.pourquoi ?? e.accroche}</p>
+          </section>
+          <section className="e-sec">
+            <h3>Ce que tu y apprends</h3>
+            <p>{e.apprendre ?? e.formations}</p>
+          </section>
+          <div className="e-note">
+            <strong>Ce qui la distingue</strong>
+            {e.specificite ?? e.plus}
+          </div>
+        </>
+      ) : (
+        <>
+          <section className="e-sec">
+            <h3>Ce qu&apos;on y apprend</h3>
+            <p>{e.formations}</p>
+          </section>
+          <section className="e-sec">
+            <h3>Où cela mène</h3>
+            <p>{e.debouches}</p>
+          </section>
+          <div className="e-note">
+            <strong>Le détail qui compte</strong>
+            {e.plus}
+          </div>
+        </>
+      )}
+      {e.alternance ? (
+        <div className="e-note e-note--alt">
+          <strong>
+            <Icon name="briefcase" /> En alternance
+          </strong>
+          {e.alternance}
+        </div>
+      ) : null}
+      {e.chiffres?.length ? (
+        <section className="e-sec">
+          <h3>En chiffres</h3>
+          <dl className="e-facts">
+            {e.chiffres.map((c) => (
+              <div key={c.label}>
+                <dt>{c.label}</dt>
+                <dd>
+                  {c.valeur}
+                  {c.date ? <span className="e-sub e-small"> ({c.date})</span> : null}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      ) : null}
       {ECOLE_UAI[e.id] ? <PsupSection uais={ECOLE_UAI[e.id]} onOpenFormation={onOpenFormation} /> : null}
       {e.sources?.length ? <Sources urls={e.sources} /> : null}
       {e.station && stationById[e.station] ? (

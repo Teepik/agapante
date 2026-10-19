@@ -18,7 +18,11 @@ export const frise: FriseYear[] = frTypo([
     stage: "3e",
     age: "14 ans",
     items: [
-      { when: "Janvier-février {B-3}", what: "Préinscription dans un lycée de la Défense, si tu y as accès.", key: true },
+      {
+        when: "Janvier-février {B-3}",
+        what: "Préinscription dans un lycée de la Défense, si tu y as accès.",
+        key: true,
+      },
       {
         when: "Février à avril {B-3}",
         what: "Portes ouvertes, dossiers des lycées privés, examen d'entrée pour un lycée public.",
@@ -46,8 +50,16 @@ export const frise: FriseYear[] = frTypo([
     stage: "1re",
     age: "16 ans",
     items: [
-      { when: "Toute l'année", what: "Tes bulletins entrent dans ton dossier Parcoursup : c'est ici qu'il commence.", key: true },
-      { when: "Printemps {B-1}", what: "Choix des deux spécialités gardées en Terminale et de l'option de maths.", key: true },
+      {
+        when: "Toute l'année",
+        what: "Tes bulletins entrent dans ton dossier Parcoursup : c'est ici qu'il commence.",
+        key: true,
+      },
+      {
+        when: "Printemps {B-1}",
+        what: "Choix des deux spécialités gardées en Terminale et de l'option de maths.",
+        key: true,
+      },
       { when: "Juin {B-1}", what: "Épreuves anticipées : français (écrit et oral) et mathématiques." },
     ],
   },
@@ -89,7 +101,11 @@ export const frise: FriseYear[] = frTypo([
     age: "18-19 ans",
     items: [
       { when: "Septembre {B}", what: "Entrée en prépa, en licence, en école ou à l'étranger." },
-      { when: "Printemps {B+2}", what: "Concours des grandes écoles : écrits au printemps, oraux en juin-juillet.", key: true },
+      {
+        when: "Printemps {B+2}",
+        what: "Concours des grandes écoles : écrits au printemps, oraux en juin-juillet.",
+        key: true,
+      },
     ],
   },
   {

@@ -1,7 +1,16 @@
 import type { LineId } from "./lines";
+import { ecolesIngenieurs, enrichissements } from "./ecoles-ingenieurs";
 import { ecolesPlus } from "./ecoles-plus";
 import { ecolesVoies } from "./ecoles-voies";
 import { etTypo as frTypo } from "./typo";
+
+/** Public, privé reconnu par l'État (EESPIG) ou privé. */
+export type Statut = "public" | "eespig" | "prive";
+
+/** Après le bac, après une prépa, ou sur titre (après un BUT, une licence, une prépa ATS). */
+export type Recrutement = "postbac" | "prepa" | "titre";
+
+export type Chiffre = { label: string; valeur: string; source?: string; date?: string };
 
 export type Ecole = {
   id: string;
@@ -20,7 +29,31 @@ export type Ecole = {
   station?: string;
   url?: string;
   sources?: string[];
+  /** Pourquoi y aller, en une phrase ou deux : pour les listes et les cartes à la une. */
+  accroche?: string;
+  /** Pourquoi y aller : métiers, secteurs, débouchés réels (texte entier, chargé avec la fiche). */
+  pourquoi?: string;
+  /** Ce que tu y apprends : tronc commun, spécialités, stages, étranger. */
+  apprendre?: string;
+  /** Ce qui la distingue des autres écoles. */
+  specificite?: string;
+  statut?: Statut;
+  recrutement?: Recrutement[];
+  /** Ce que l'école propose en apprentissage. */
+  alternance?: string;
+  chiffres?: Chiffre[];
+  /** Pourquoi elle est à la une, selon un critère public (banque de concours, taux d'accès). */
+  une?: string;
+  /** L'ordre parmi les écoles à la une : le plus petit d'abord. */
+  uneRang?: number;
+  /** La voie où elle est à la une : après une prépa, ou après le bac. */
+  uneVoie?: Recrutement;
 };
+
+/** Le nom à afficher quand la place manque : le nom complet s'il est court, sinon le sigle. */
+export function nomCourt(e: Ecole, max = 24): string {
+  return e.name.length <= max || !e.short ? e.name : e.short;
+}
 
 const base: Ecole[] = frTypo([
   /* ---------- Sciences et ingénieur ---------- */
@@ -138,7 +171,7 @@ const base: Ecole[] = frTypo([
     kind: "École d'ingénieurs après le bac",
     acces: "Parcoursup, sur dossier et entretien",
     duree: "5 ans",
-    cout: "628 € par an",
+    cout: "630 € par an en 2026-2027, gratuit pour les boursiers",
     formations: "Tronc commun de deux ans, puis génie informatique, mécanique, biologique, urbain…",
     debouches: "Ingénieur, innovation, conseil, entrepreneuriat.",
     plus: "Un modèle à la carte : chaque étudiant compose une partie de son cursus.",
@@ -626,7 +659,18 @@ const base: Ecole[] = frTypo([
   },
 ]);
 
-/** Les 40 établissements de départ, puis ceux ajoutés en octobre 2026. */
-export const ecoles: Ecole[] = [...base, ...ecolesPlus, ...frTypo(ecolesVoies)];
+/** Les 40 établissements de départ, puis ceux ajoutés en octobre 2026, enrichis des fiches d'écoles d'ingénieurs. */
+export const ecoles: Ecole[] = [...base, ...ecolesPlus, ...frTypo(ecolesVoies), ...ecolesIngenieurs].map((e) => {
+  const plus = enrichissements[e.id];
+  if (!plus) return e;
+  return {
+    ...e,
+    ...plus,
+    // Les places et le coût de la fiche d'origine restent ; l'enrichissement comble ceux qui manquent.
+    places: e.places ?? plus.places,
+    cout: e.cout ?? plus.cout,
+    sources: [...new Set([...(e.sources ?? []), ...(plus.sources ?? [])])],
+  };
+});
 
 export const ecoleById = Object.fromEntries(ecoles.map((e) => [e.id, e])) as Record<string, Ecole>;

@@ -12,7 +12,7 @@ export function frTypoString(input: string): string {
     .replace(/« /g, `«${NARROW_NBSP}`)
     .replace(/ »/g, `${NARROW_NBSP}»`)
     .replace(/(\d) ?%/g, `$1${NBSP}%`)
-    .replace(/(\d) (€|h|km|m²)\b/g, `$1${NBSP}$2`);
+    .replace(/(\d) (€|h|km|m²)(?![\p{L}\d])/gu, `$1${NBSP}$2`);
 }
 
 export function frTypo<T>(value: T): T {

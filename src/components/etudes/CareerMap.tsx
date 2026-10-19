@@ -31,13 +31,18 @@ type Props = {
   /** Un métier choisi : ses routes s'allument sur la carte. */
   metier?: Metier | null;
   onClearMetier?: () => void;
-  onOpen: (id: string, line: LaneId | null) => void;
+  /** Ouvre la fiche d'une étape ; le bouton touché sert d'ancre à une fiche posée près de lui. */
+  onOpen: (id: string, line: LaneId | null, anchor?: HTMLElement) => void;
   onFocusLine: (line: LaneId | null) => void;
   laneLine: LaneId;
   onLaneLine: (line: LaneId) => void;
   activePass: string | null;
   onActivePass: (id: string | null) => void;
   onOpenPasserelle: (id: string) => void;
+  /** L'étape ouverte : elle se distingue sur la carte. */
+  selected?: string | null;
+  /** Le calque de l'alternance : les étapes où elle est possible portent un halo. */
+  alt?: ReadonlySet<string> | null;
 };
 
 /** Les options du lycée, posées à côté de la 2nde. */
@@ -103,7 +108,9 @@ export function CareerMap(props: Props) {
   const lit = props.route ?? props.focusLine;
 
   return (
-    <div className={`e-map${lit || props.metier ? " is-focus" : ""}${props.activePass ? " is-pass" : ""}`}>
+    <div
+      className={`e-map${lit || props.metier ? " is-focus" : ""}${props.activePass ? " is-pass" : ""}${props.alt ? " is-alt" : ""}`}
+    >
       <div className="e-wrap">
         <div className="e-map__bar">
           {mode === "carte" ? (
@@ -194,6 +201,8 @@ function Drawing({
   activePass,
   onActivePass,
   onOpenPasserelle,
+  selected,
+  alt,
 }: Props & { lit: LaneId | null }) {
   const [peek, setPeek] = useState<LaneId | null>(null);
   const { y, ici, classe } = useCohort();
@@ -211,6 +220,8 @@ function Drawing({
   const dimSt = (p: PlacedStation) =>
     geo ? !hot.has(p.id) : job ? p.kind !== "trunk" && !job.stations.has(p.id) : dimLane(p.line);
   const cls = (base: string, dim: boolean) => (dim ? `${base} is-dim` : base);
+  /** L'étape ouverte, et celles où l'alternance est possible quand le calque est actif. */
+  const mark = (id: string) => `${selected === id ? " is-sel" : ""}${alt?.has(id) ? " is-alt" : ""}`;
 
   const segs = placed.filter((p) => p.kind === "seg");
   /** Un repère (concours, sortie) au bord d'une étape : son libellé s'en écarte. */
@@ -252,7 +263,17 @@ function Drawing({
         ))}
 
         {segs.map((p) => (
-          <g key={p.id} data-line={p.line} className={cls("e-mk", dimSt(p))}>
+          <g key={p.id} data-line={p.line} className={cls(`e-mk${mark(p.id)}`, dimSt(p))}>
+            {alt?.has(p.id) || selected === p.id ? (
+              <rect
+                className={selected === p.id ? "e-bar-halo is-sel" : "e-bar-halo"}
+                x={p.x - 11}
+                y={(p.y3 ?? p.y2!) - 4.5}
+                width={22}
+                height={p.y1! - (p.y3 ?? p.y2!) + 9}
+                rx={11}
+              />
+            ) : null}
             <rect className="e-bar" x={p.x - 5} y={p.y2! + 1.5} width={10} height={p.y1! - p.y2! - 3} rx={5} />
             {p.y3 ? (
               <rect
@@ -282,7 +303,7 @@ function Drawing({
           <rect
             key={p.id}
             data-line={p.line}
-            className={cls("e-mk e-ev", dimSt(p))}
+            className={cls(`e-mk e-ev${mark(p.id)}`, dimSt(p))}
             x={p.x - 6.5}
             y={p.y - 6.5}
             width={13}
@@ -293,7 +314,14 @@ function Drawing({
         ))}
 
         {ends.map((p) => (
-          <circle key={p.id} data-line={p.line} className={cls("e-mk e-end", dimSt(p))} cx={p.x} cy={p.y} r={8} />
+          <circle
+            key={p.id}
+            data-line={p.line}
+            className={cls(`e-mk e-end${mark(p.id)}`, dimSt(p))}
+            cx={p.x}
+            cy={p.y}
+            r={8}
+          />
         ))}
 
         {trunk.map((p) => (
@@ -357,10 +385,11 @@ function Drawing({
           <button
             key={p.id}
             type="button"
-            className={`e-ms e-ms--trunk${p.id === ici ? " is-here" : ""}`}
+            className={`e-ms e-ms--trunk${p.id === ici ? " is-here" : ""}${mark(p.id)}`}
+            data-station={p.id}
             style={{ left: BX - 330, top: p.y - (p.id === "seconde" ? 28 : 24), width: 330 + 49 }}
             aria-label={`${st.name}, tronc commun${p.id === ici ? ", tu es ici" : ""}`}
-            onClick={() => onOpen(p.id, null)}
+            onClick={(e) => onOpen(p.id, null, e.currentTarget)}
           >
             <span className="e-ms__name">{st.label}</span>
             <span className="e-ms__sub">{trunkSub(p.id, y, ici, classe)}</span>
@@ -376,10 +405,11 @@ function Drawing({
               <button
                 key={p.id}
                 type="button"
-                className={cls("e-opt", geo ? true : dimLane(p.line))}
+                className={cls(`e-opt${mark(p.id)}`, geo ? true : dimLane(p.line))}
                 data-line={p.line}
+                data-station={p.id}
                 aria-label={`${stationById[p.id]?.name ?? OPTION_LABEL[p.id]}, au lycée`}
-                onClick={() => onOpen(p.id, p.line ?? null)}
+                onClick={(e) => onOpen(p.id, p.line ?? null, e.currentTarget)}
               >
                 <Dot line={p.line!} />
                 {OPTION_LABEL[p.id] ?? stationById[p.id]?.label}
@@ -392,7 +422,8 @@ function Drawing({
         <button
           key={p.id}
           type="button"
-          className={cls(`e-ms e-ms--seg${segEdge(p)}`, dimSt(p))}
+          className={cls(`e-ms e-ms--seg${segEdge(p)}${mark(p.id)}`, dimSt(p))}
+          data-station={p.id}
           style={{
             left: p.x - 9,
             top: p.y2! + 2,
@@ -400,8 +431,8 @@ function Drawing({
             height: p.y1! - p.y2! - 4,
           }}
           data-line={p.line}
-          aria-label={`${stationById[p.id]?.name ?? p.name}, ${laneName(p.line!)}, ${p.dur}`}
-          onClick={() => onOpen(p.id, p.line ?? null)}
+          aria-label={`${stationById[p.id]?.name ?? p.name}, ${laneName(p.line!)}, ${p.dur}${alt?.has(p.id) ? ", alternance possible" : ""}`}
+          onClick={(e) => onOpen(p.id, p.line ?? null, e.currentTarget)}
         >
           <span className="e-ms__name">{p.name}</span>
           <span className="e-ms__sub">{p.dur}</span>
@@ -412,7 +443,8 @@ function Drawing({
         <button
           key={p.id}
           type="button"
-          className={cls(`e-ms e-ms--ev${lift === p.id ? " is-flip" : ""}`, dimSt(p))}
+          className={cls(`e-ms e-ms--ev${lift === p.id ? " is-flip" : ""}${mark(p.id)}`, dimSt(p))}
+          data-station={p.id}
           style={{
             left: lift === p.id ? p.x - COL + 9 : p.x - 9,
             // Un concours au moment du bac : son libellé monte dans la barre, loin des virages de l'éventail.
@@ -422,7 +454,7 @@ function Drawing({
           }}
           data-line={p.line}
           aria-label={`${stationById[p.id]?.name ?? p.name}, ${laneName(p.line!)}`}
-          onClick={() => onOpen(p.id, p.line ?? null)}
+          onClick={(e) => onOpen(p.id, p.line ?? null, e.currentTarget)}
         >
           <span className="e-ms__name">{p.name}</span>
           <span className="e-ms__sub">{p.sub}</span>
@@ -437,7 +469,7 @@ function Drawing({
           style={{ left: e.flip ? e.x - COL + 9 : e.x - 9, top: e.y - (e.flip ? 30 : 23), width: COL, height: 46 }}
           data-line={e.line}
           aria-label={`${e.name}, ${e.age}`}
-          onClick={() => onOpen(e.station, e.line)}
+          onClick={(ev) => onOpen(e.station, e.line, ev.currentTarget)}
         >
           <span className="e-ms__name">{e.name}</span>
           <span className="e-ms__sub">{e.age}</span>
@@ -468,9 +500,10 @@ function Drawing({
             </button>
             <button
               type="button"
-              className="e-dest__job"
+              className={`e-dest__job${mark(p.id)}`}
+              data-station={p.id}
               aria-label={`${stationById[p.id]?.name ?? p.name}, ${p.age}`}
-              onClick={() => onOpen(p.id, line)}
+              onClick={(e) => onOpen(p.id, line, e.currentTarget)}
             >
               <span className="e-ms__name">{p.name}</span>
               <span className="e-ms__sub">{p.age}</span>
@@ -722,7 +755,7 @@ function joinFr(items: string[]): string {
   return items.length < 2 ? (items[0] ?? "") : `${items.slice(0, -1).join(", ")} et ${items[items.length - 1]}`;
 }
 
-function Lanes({ laneLine, onLaneLine, onOpen, activePass, onOpenPasserelle }: Props) {
+function Lanes({ laneLine, onLaneLine, onOpen, activePass, onOpenPasserelle, alt }: Props) {
   const { y, ici } = useCohort();
   const rows = laneRows(laneLine);
   const listRef = useRef<HTMLOListElement>(null);
@@ -777,78 +810,83 @@ function Lanes({ laneLine, onLaneLine, onOpen, activePass, onOpenPasserelle }: P
         </div>
       </div>
 
-      <ol
-        ref={listRef}
-        className="e-lanes__list"
-        role="tabpanel"
-        aria-label={`${laneName(laneLine)}, de la 3e au premier métier`}
-        style={
-          {
-            ["--trunk" as string]: `${Math.round(((trunkCount - 0.5) / rows.length) * 100)}%`,
-          } as CSSProperties
-        }
-      >
-        {rows.map((r) => {
-          if (r.kind === "pass") {
-            const x = passerelleById[r.id];
-            return (
-              <li key={`p-${r.id}`} className={`e-lanes__stop is-pass${activePass === r.id ? " is-spot" : ""}`}>
-                <button type="button" onClick={() => onOpenPasserelle(r.id)}>
-                  <span className="e-numbadge">{x.num}</span>
-                  <span>
-                    <span className="e-lanes__kicker">
-                      {r.out
-                        ? `Passerelle vers ${laneShort(x.draw!.to)}`
-                        : `Passerelle depuis ${joinFr(x.draw!.from.map(laneShort))}`}
-                    </span>
-                    <span className="e-lanes__title">{x.title}</span>
-                  </span>
-                  <Icon name="chevron-right" width={18} height={18} />
-                </button>
-              </li>
-            );
+      <div role="tabpanel" aria-label={`${laneName(laneLine)}, de la 3e au premier métier`}>
+        <ol
+          ref={listRef}
+          className="e-lanes__list"
+          style={
+            {
+              ["--trunk" as string]: `${Math.round(((trunkCount - 0.5) / rows.length) * 100)}%`,
+            } as CSSProperties
           }
-          if (r.kind === "exit") {
+        >
+          {rows.map((r) => {
+            if (r.kind === "pass") {
+              const x = passerelleById[r.id];
+              return (
+                <li key={`p-${r.id}`} className={`e-lanes__stop is-pass${activePass === r.id ? " is-spot" : ""}`}>
+                  <button type="button" onClick={() => onOpenPasserelle(r.id)}>
+                    <span className="e-numbadge">{x.num}</span>
+                    <span>
+                      <span className="e-lanes__kicker">
+                        {r.out
+                          ? `Passerelle vers ${laneShort(x.draw!.to)}`
+                          : `Passerelle depuis ${joinFr(x.draw!.from.map(laneShort))}`}
+                      </span>
+                      <span className="e-lanes__title">{x.title}</span>
+                    </span>
+                    <Icon name="chevron-right" width={18} height={18} />
+                  </button>
+                </li>
+              );
+            }
+            if (r.kind === "exit") {
+              return (
+                <li key={`x-${r.key}`} className="e-lanes__stop is-exit">
+                  <button type="button" onClick={(e) => onOpen(r.station, laneLine, e.currentTarget)}>
+                    <span className="e-lanes__mark" aria-hidden="true" />
+                    <span>
+                      <span className="e-lanes__title">{r.name}</span>
+                      <span className="e-lanes__when">{r.age}</span>
+                    </span>
+                    <Icon name="chevron-right" width={18} height={18} />
+                  </button>
+                </li>
+              );
+            }
+            const st = stationById[r.id];
+            const p = placedById[r.id];
+            if (!st || !p) return null;
+            const kind =
+              p.kind === "trunk" || p.kind === "option"
+                ? " is-trunk"
+                : p.kind === "event"
+                  ? " is-event"
+                  : p.kind === "end"
+                    ? " is-terminus"
+                    : "";
             return (
-              <li key={`x-${r.key}`} className="e-lanes__stop is-exit">
-                <button type="button" onClick={() => onOpen(r.station, laneLine)}>
+              <li key={r.id} className={`e-lanes__stop${kind}${r.id === ici ? " is-here" : ""}`}>
+                <button type="button" data-station={r.id} onClick={(e) => onOpen(r.id, laneLine, e.currentTarget)}>
                   <span className="e-lanes__mark" aria-hidden="true" />
                   <span>
-                    <span className="e-lanes__title">{r.name}</span>
-                    <span className="e-lanes__when">{r.age}</span>
+                    <span className="e-lanes__title">{st.name}</span>
+                    <span className="e-lanes__when">
+                      {r.id === ici ? `Tu es ici. ${stepMeta(r.id, y)}` : stepMeta(r.id, y)}
+                    </span>
+                    {alt?.has(r.id) ? (
+                      <span className="e-lanes__alt">
+                        <Icon name="briefcase" width={14} height={14} /> Alternance possible
+                      </span>
+                    ) : null}
                   </span>
                   <Icon name="chevron-right" width={18} height={18} />
                 </button>
               </li>
             );
-          }
-          const st = stationById[r.id];
-          const p = placedById[r.id];
-          if (!st || !p) return null;
-          const kind =
-            p.kind === "trunk" || p.kind === "option"
-              ? " is-trunk"
-              : p.kind === "event"
-                ? " is-event"
-                : p.kind === "end"
-                  ? " is-terminus"
-                  : "";
-          return (
-            <li key={r.id} className={`e-lanes__stop${kind}${r.id === ici ? " is-here" : ""}`}>
-              <button type="button" onClick={() => onOpen(r.id, laneLine)}>
-                <span className="e-lanes__mark" aria-hidden="true" />
-                <span>
-                  <span className="e-lanes__title">{st.name}</span>
-                  <span className="e-lanes__when">
-                    {r.id === ici ? `Tu es ici. ${stepMeta(r.id, y)}` : stepMeta(r.id, y)}
-                  </span>
-                </span>
-                <Icon name="chevron-right" width={18} height={18} />
-              </button>
-            </li>
-          );
-        })}
-      </ol>
+          })}
+        </ol>
+      </div>
       <p className="e-lanes__dir">
         <Icon name="arrow-up" width={16} height={16} style={{ display: "inline", verticalAlign: -3 }} /> Vers :{" "}
         {laneDirection(laneLine)}.
