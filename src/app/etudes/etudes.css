@@ -108,19 +108,45 @@ html.e-lock body {
   box-sizing: border-box;
 }
 
-.etudes [data-line="pro"] { --lc: var(--l-pro); }
-.etudes [data-line="courtes"] { --lc: var(--l-courtes); }
-.etudes [data-line="parasocial"] { --lc: var(--l-parasocial); }
-.etudes [data-line="postbac"] { --lc: var(--l-postbac); }
-.etudes [data-line="defense"] { --lc: var(--l-defense); }
-.etudes [data-line="sante"] { --lc: var(--l-sante); }
-.etudes [data-line="sciences"] { --lc: var(--l-sciences); }
-.etudes [data-line="commerce"] { --lc: var(--l-commerce); }
-.etudes [data-line="scpo"] { --lc: var(--l-scpo); }
-.etudes [data-line="lettres"] { --lc: var(--l-lettres); }
-.etudes [data-line="monde"] { --lc: var(--l-monde); }
-.etudes [data-line="arts"] { --lc: var(--l-arts); }
-.etudes [data-line="u"] { --lc: var(--ink); }
+.etudes [data-line="pro"] {
+  --lc: var(--l-pro);
+}
+.etudes [data-line="courtes"] {
+  --lc: var(--l-courtes);
+}
+.etudes [data-line="parasocial"] {
+  --lc: var(--l-parasocial);
+}
+.etudes [data-line="postbac"] {
+  --lc: var(--l-postbac);
+}
+.etudes [data-line="defense"] {
+  --lc: var(--l-defense);
+}
+.etudes [data-line="sante"] {
+  --lc: var(--l-sante);
+}
+.etudes [data-line="sciences"] {
+  --lc: var(--l-sciences);
+}
+.etudes [data-line="commerce"] {
+  --lc: var(--l-commerce);
+}
+.etudes [data-line="scpo"] {
+  --lc: var(--l-scpo);
+}
+.etudes [data-line="lettres"] {
+  --lc: var(--l-lettres);
+}
+.etudes [data-line="monde"] {
+  --lc: var(--l-monde);
+}
+.etudes [data-line="arts"] {
+  --lc: var(--l-arts);
+}
+.etudes [data-line="u"] {
+  --lc: var(--ink);
+}
 
 /* Remises à zéro sans poids : les classes du système l'emportent toujours. */
 :where(.etudes) :where(p, h1, h2, h3, h4, dl, dd, ul, ol, figure) {
@@ -5354,10 +5380,12 @@ html.e-lock body {
 /* Les écoles d'une étape : à la une, puis toutes */
 .e-mecoles {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 14px;
 }
 .e-mune {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
   padding: 16px;
   border-radius: 18px;
@@ -5370,6 +5398,7 @@ html.e-lock body {
 }
 .e-mune__group {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 6px;
   margin-top: 6px;
 }
@@ -5453,6 +5482,11 @@ html.e-lock body {
 }
 .e-mecoles__all {
   justify-self: start;
+  max-width: 100%;
+  padding-block: 10px;
+  line-height: 1.25;
+  white-space: normal;
+  text-align: left;
 }
 
 /* L'annuaire des écoles d'ingénieurs */

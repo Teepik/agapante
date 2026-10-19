@@ -138,17 +138,12 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
   },
   "ens-lyon": {
     pourquoi:
-      "Tu te destines à l'enseignement ou à la recherche : le diplôme de l'ENS de Lyon y prépare d'abord, et ouvre aussi l'administration et l'entreprise. Reçu au concours, tu touches 1 500 € bruts par mois pendant 4 ans. Tu étudies au contact d'environ 30 structures de recherche et de 700 enseignants-chercheurs.",
+      "Tu te destines à l'enseignement ou à la recherche : le diplôme de l'ENS de Lyon y prépare d'abord, et ouvre aussi l'administration et l'entreprise. Reçu au concours, tu es payé pendant tes 4 années d'études, comme fonctionnaire stagiaire. Tu étudies au contact d'environ 30 structures de recherche et de 700 enseignants-chercheurs.",
     apprendre:
       "Trois années orientées recherche (L3, M1, M2), avec au moins trois rapports de recherche en sciences, puis une année de parcours, souvent la 4e : préparation à l'agrégation, aux concours de la haute fonction publique ou formation complémentaire. Six départements de sciences exactes : biologie, chimie, informatique, mathématiques, physique, sciences de la Terre. Au moins 3 mois de mobilité à l'étranger.",
     specificite:
       "Le diplôme associe deux volets : 240 ECTS de licence et de master, plus 50 ECTS d'activités propres à l'École, dont la mobilité internationale. Sciences exactes et sciences humaines cohabitent dans la même école, ce qui ouvre des parcours croisés.",
     chiffres: [
-      {
-        label: "Traitement des normaliens élèves",
-        valeur: "1 500 € bruts par mois pendant 4 ans",
-        source: "https://www.ens-lyon.fr/formation/admission/financement-des-etudes",
-      },
       {
         label: "Bourse des élèves admis à titre étranger",
         valeur: "1 000 € par mois, 4 ans au plus",
@@ -164,6 +159,12 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Structure du diplôme",
         valeur: "4 ans, 240 ECTS + 50 ECTS d'activités spécifiques, 3 mois de mobilité au minimum",
         source: "https://www.ens-lyon.fr/formation/offre-de-formation/diplome-de-lens-de-lyon",
+      },
+      {
+        label: "Communauté",
+        valeur: "2 400 étudiants, 700 enseignants-chercheurs, 30 structures de recherche",
+        source: "https://www.ens-lyon.fr/",
+        date: "film de présentation de 2023",
       },
     ],
     sources: [
@@ -1101,7 +1102,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
     apprendre:
       "Deux ans de premier cycle (FIMI) pour poser les bases scientifiques, en filière classique, internationale, sport de haut niveau (en 3 ans) ou musique-études. De la 3e à la 5e année, tu rejoins un département : biotechnologies et bioinformatique, génie civil et urbain, génie électrique, énergétique et environnement, industriel, mécanique, informatique, matériaux ou télécommunications.",
     specificite:
-      "Le premier cycle se décline en sections internationales (EURINSA, AMERINSA, GLOBALINSA), en section sport de haut niveau et en musique-études. La voie INS'Avenir, en 6 ans avec une année préparatoire, accueille les bacheliers STI2D et STL.",
+      "Le premier cycle se décline en sections internationales, en section sport de haut niveau et en musique-études. La voie INS'Avenir, en 6 ans avec une année préparatoire, accueille les bacheliers STI2D et STL.",
     chiffres: [
       {
         label: "Places en 1re année (bac général)",
@@ -1234,7 +1235,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
   },
   utc: {
     pourquoi:
-      "Selon l'école, 97,2 % des diplômés ont un emploi, trouvé en 1 mois en moyenne, et 61,5 % sont embauchés avant même leur sortie. Ils travaillent dans de grands groupes, des PME ou des entreprises publiques, comme chefs de projet, en R&D, en développement produit ou en qualité. Le réseau des anciens compte 28 300 diplômés.",
+      "Selon l'école (plaquette d'avril 2024), 97,2 % des diplômés ont un emploi, trouvé en 1 mois en moyenne, et 61,5 % sont embauchés avant même leur sortie. Ils travaillent dans de grands groupes, des PME ou des entreprises publiques, comme chefs de projet, en R&D, en développement produit ou en qualité. Le réseau des anciens compte 28 300 diplômés.",
     apprendre:
       "Le tronc commun mêle sciences, techniques et sciences humaines, avec des modules que tu choisis toi-même. Tu entres ensuite dans une branche : génie biologique, informatique, ingénierie mécanique, génie des procédés ou génie urbain. En ingénierie mécanique, la plus grosse branche avec 1 100 élèves, le cycle comprend deux stages de six mois.",
     specificite:
@@ -1647,6 +1648,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places en 1re année (concours Advance, 5 campus)",
         valeur: "783",
         source: "https://www.concours-advance.fr/admission-post-bac/presentation-concours-advance/",
+        date: "session 2027",
       },
       {
         label: "Salaire médian brut annuel avec primes, en France",
@@ -3168,6 +3170,55 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "http://formations.enac.fr/fr/formations/feuilleter-le-catalogue/sciences-technologies-sante-STS/formation-d-ingenieur-classique-FI/ingenieur-enac-program-47517.html",
       "https://www.enac.fr/en/full-time-graduate-engineer-eu-0",
       "https://www.enac.fr/sites/default/files/2025-11/Tarifs%20ENAC%20CA%20NOV%202025.pdf",
+      "https://www.concours-commun-inp.fr/_resource/R%C3%A8glement_VF_13-05_26.pdf?download=true",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-mp.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-pc.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-psi.html",
+    ],
+  },
+  eae: {
+    pourquoi:
+      "Tu deviens officier de l'armée de l'Air et de l'Espace, avec un diplôme d'ingénieur. Selon ton corps, tu seras pilote de chasse, de transport ou d'hélicoptère, navigateur ou pilote de drone ; officier mécanicien (aéronautique, cybersécurité, systèmes d'information) ; ou officier des bases (contrôle aérien, renseignement, défense sol-air, commando). Salaire brut moyen à l'embauche : 30 000 € par an en 2024.",
+    apprendre:
+      "Une formation d'ingénieur adossée à la recherche, où la formation militaire et aéronautique occupe plus de la moitié des heures : formation militaire initiale de 4 semaines, vol à voile et initiation au pilotage sur SR20 et SR22. Stages de fin d'études possibles chez Thales, Dassault Aviation ou au CNES. Huit langues au choix, et la possibilité de préparer en parallèle le diplôme de Sciences Po Aix, de niveau master.",
+    specificite:
+      "Tu es militaire dès l'entrée : élève officier, avec une scolarité gratuite et payée. L'école forme tous les officiers de l'armée de l'Air et de l'Espace, plus de 1 100 élèves-officiers par an, sur la base aérienne de Salon-de-Provence.",
+    chiffres: [
+      {
+        label: "Places au concours ouvert aux prépas, rentrée 2026",
+        valeur: "77 (47 officiers de l'air, 16 officiers mécaniciens, 14 officiers des bases)",
+        source:
+          "https://www.onisep.fr/ressources/structures-enseignement/provence-alpes-cote-d-azur/bouches-du-rhone/ecole-de-l-air-et-de-l-espace/diplome-d-ingenieur-de-l-ecole-de-l-air-et-de-l-espace",
+        date: "2026",
+      },
+      {
+        label: "Salaire annuel brut moyen à l'embauche",
+        valeur: "30 000 €",
+        source:
+          "https://www.onisep.fr/ressources/structures-enseignement/provence-alpes-cote-d-azur/bouches-du-rhone/ecole-de-l-air-et-de-l-espace/diplome-d-ingenieur-de-l-ecole-de-l-air-et-de-l-espace",
+        date: "2024",
+      },
+      {
+        label: "Candidats inscrits au concours après prépa",
+        valeur: "environ 3 700 par an en moyenne",
+        source:
+          "https://www.ecole-air-espace.fr/wp-content/uploads/2025/02/20250207-S2024-1567-Ecole-de-lair-et-de-lespace.pdf",
+        date: "moyenne 2017-2022",
+      },
+      {
+        label: "Coût de la scolarité",
+        valeur: "0 € (scolarité rémunérée)",
+        source:
+          "https://www.onisep.fr/ressources/structures-enseignement/provence-alpes-cote-d-azur/bouches-du-rhone/ecole-de-l-air-et-de-l-espace/diplome-d-ingenieur-de-l-ecole-de-l-air-et-de-l-espace",
+        date: "2026",
+      },
+    ],
+    sources: [
+      "https://www.ecole-air-espace.fr/wp-content/uploads/2025/12/20251204_NP_DRHAAE-SDEF__notice-ce-eae-cpge-mp-mpi-pc-psi-2026.pdf",
+      "https://www.onisep.fr/ressources/structures-enseignement/provence-alpes-cote-d-azur/bouches-du-rhone/ecole-de-l-air-et-de-l-espace/diplome-d-ingenieur-de-l-ecole-de-l-air-et-de-l-espace",
+      "https://ecole-air-espace.fr/wp-content/uploads/2025/01/Brochure-EAE-2024.pdf",
+      "https://ecole-air-espace.fr/wp-content/uploads/2025/01/triptyque-devenir-aviateur-EAE-avec-marge.pdf",
+      "https://www.ecole-air-espace.fr/wp-content/uploads/2025/02/20250207-S2024-1567-Ecole-de-lair-et-de-lespace.pdf",
       "https://www.concours-commun-inp.fr/_resource/R%C3%A8glement_VF_13-05_26.pdf?download=true",
       "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-mp.html",
       "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-pc.html",

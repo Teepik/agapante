@@ -20,6 +20,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Concours X-ENS",
     uneRang: 1,
     uneVoie: "prepa",
+    places: "Concours 2025 : 431 élèves français admis, dont MP 163, PC 131 et PSI 56, plus les élèves internationaux",
+    cout: "Élèves français rémunérés, scolarité gratuite contre 10 ans de service public ; élèves de l'UE : 19 000 € sur 3 ans (barème depuis 2019)",
   },
   "ens-ulm": {
     accroche:
@@ -30,6 +32,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     uneRang: 2,
     uneVoie: "prepa",
     short: "ENS Ulm",
+    places: "Session 2025 : 95 postes d'élèves en sciences (MP 38, BCPST 21, PC 18, MPI 12, PSI 6)",
+    cout: "Normaliens élèves rémunérés pendant 4 ans comme fonctionnaires stagiaires, contre un engagement décennal (notice Inter-ENS 2026)",
   },
   "ens-paris-saclay": {
     accroche:
@@ -39,6 +43,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Concours X-ENS",
     uneRang: 13,
     uneVoie: "prepa",
+    places: "Session 2026 : 215 postes d'élèves, dont PT 38, PSI 36, MP 21, PC 18, BCPST 15 et MPI 14",
+    cout: "Élèves fonctionnaires stagiaires rémunérés pendant 4 ans, contre un engagement décennal, études comprises (notice Inter-ENS 2026)",
   },
   "ens-lyon": {
     accroche:
@@ -48,6 +54,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Concours X-ENS",
     uneRang: 14,
     uneVoie: "prepa",
+    places: "Session 2026 : 226 places aux concours, lettres et sciences réunies",
+    cout: "Normaliens élèves : 1 500 € bruts par mois pendant 4 ans, contre un engagement décennal",
   },
   espci: {
     accroche:
@@ -57,6 +65,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Concours X-ENS",
     uneRang: 16,
     uneVoie: "prepa",
+    places: "Concours 2026 : 57 élèves en PC, 5 en MP, 2 en BCPST ; environ 90 élèves en 1re année",
+    cout: "Frais annuels à confirmer. Bourses Joliot depuis 2010 : près de 400 000 € de bourses et aides par promotion",
   },
   mines: {
     accroche:
@@ -66,6 +76,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Concours Mines-Ponts",
     uneRang: 3,
     uneVoie: "prepa",
+    places: "Concours 2026 : 130 places (MP 52, PSI 36, PC 30, MPI 5, PT 5, TSI 2) ; environ 150 entrants en 1re année",
+    cout: "4 150 € par an (notice du concours 2026), exonération pour les boursiers, français ou étrangers",
   },
   ponts: {
     accroche:
@@ -75,6 +87,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Concours Mines-Ponts",
     uneRang: 4,
     uneVoie: "prepa",
+    places: "Concours 2026 : 215 places, soit MP 82, PSI 70, PC 39, PT 18, MPI 5 et TSI 1",
+    cout: "3 800 € par an (2025-2026) ; dès 2026-2027, bourses sur critères sociaux versées par le Crous de Créteil",
   },
   supaero: {
     accroche:
@@ -86,6 +100,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Concours Mines-Ponts",
     uneRang: 6,
     uneVoie: "prepa",
+    places: "193 places au concours Mines-Ponts 2026, dont 80 en PSI et 63 en MP",
+    cout: "2 926 € par an pour un élève de l'Union européenne (notice Mines-Ponts 2026) ; gratuit pour les boursiers",
   },
   ensta: {
     accroche:
@@ -97,6 +113,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Concours Mines-Ponts",
     uneRang: 20,
     uneVoie: "prepa",
+    places: "238 places au concours Mines-Ponts 2026 : 131 à Paris-Saclay, 91 à Brest, 16 en apprentissage",
+    cout: "2 936 € par an en 2026-2027 (Union européenne) ; boursiers du Crous exonérés ; élèves militaires (IETA) et apprentis rémunérés",
   },
   "telecom-paris": {
     accroche:
@@ -108,6 +126,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Concours Mines-Ponts",
     uneRang: 21,
     uneVoie: "prepa",
+    places: "185 places au concours Mines-Ponts 2026, dont 80 en MP et 45 en MPI, plus 7 en apprentissage",
+    cout: "3 600 € par an en 2026-2027 (France, Union européenne) ; gratuit pour les boursiers du Crous ; apprentis exonérés en 2e et 3e années",
   },
   ensae: {
     accroche:
@@ -118,6 +138,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Concours Mines-Ponts",
     uneRang: 22,
     uneVoie: "prepa",
+    places: "80 places au concours Mines-Ponts 2026 ; aussi 18 en ECG et 25 en B/L (tableau 2025)",
+    cout: "3 500 € par an pour un élève entré en 2026-2027 ; exonération pour les boursiers sur critères sociaux",
   },
   centralesupelec: {
     accroche:
@@ -129,6 +151,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Écoles Centrale, concours Centrale-Supélec",
     uneRang: 5,
     uneVoie: "prepa",
+    places: "555 places au concours Centrale-Supélec 2026 (MP, MPI, PC, PSI), dont 34 en apprentissage",
+    cout: "Depuis 2026, de 2 500 à 5 000 € par an selon le revenu des parents ; gratuit pour les boursiers et les apprentis",
   },
   "centrale-nantes": {
     accroche:
@@ -140,6 +164,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Écoles Centrale, concours Centrale-Supélec",
     uneRang: 26,
     uneVoie: "prepa",
+    places: "260 places au concours Centrale-Supélec 2026, dont 110 en MP et 85 en PSI, plus 10 en TSI",
+    cout: "Depuis 2026, selon le revenu : jusqu'à 4 770 € par an (plafond 2026) ; gratuit pour les boursiers ; 2 613 € pour les élèves entrés avant",
   },
   "imt-atlantique": {
     accroche: "IMT Atlantique forme des ingénieurs du numérique, de l'énergie et de l'industrie.",
@@ -150,6 +176,9 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Concours Mines-Ponts",
     uneRang: 30,
     uneVoie: "prepa",
+    places:
+      "Concours Mines-Ponts 2026 : 290 places (85 MP, 20 MPI, 85 PC, 85 PSI, 13 PT, 2 TSI) ; GEI-UNIV : 45 en 1re année, 10 en 2e",
+    cout: "3 600 € par an en 2026-2027 (étudiants européens), plus 105 € de CVEC ; boursiers du Crous exonérés ; apprentis salariés, formation gratuite",
   },
   utt: {
     accroche:
@@ -158,6 +187,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["postbac", "prepa", "titre"],
     alternance:
       "Dès la 3e année en Matériaux et mécanique ; dès la 4e en Génie industriel, Génie mécanique et Systèmes numériques",
+    places: "314 places en 1re année en 2026, pour 5 395 vœux",
+    cout: "630 € par an en 2026-2027, plus 105 € de CVEC ; gratuit pour les boursiers",
   },
   insa: {
     accroche:
@@ -169,10 +200,12 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Taux d'accès Parcoursup 2025 : 12 %",
     uneRang: 12,
     uneVoie: "postbac",
+    places: "665 places en 2026 (bac général), plus 26 en INS'Avenir pour les bacs STI2D et STL",
+    cout: "630 € par an en 2026-2027, plus 105 € de CVEC ; gratuit pour les boursiers",
   },
   utc: {
     accroche:
-      "Selon l'école, 97,2 % des diplômés ont un emploi, trouvé en 1 mois en moyenne, et 61,5 % sont embauchés avant même leur sortie.",
+      "Selon l'école (plaquette d'avril 2024), 97,2 % des diplômés ont un emploi, trouvé en 1 mois en moyenne, et 61,5 % sont embauchés avant même leur sortie.",
     statut: "public",
     recrutement: ["postbac", "prepa", "titre"],
     alternance:
@@ -180,6 +213,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     une: "Taux d'accès Parcoursup 2025 : 22 %",
     uneRang: 22,
     uneVoie: "postbac",
+    places: "400 places en 1re année en 2026, pour 6 635 vœux",
+    cout: "630 € par an en 2026-2027, plus 105 € de CVEC ; gratuit pour les boursiers",
   },
   utbm: {
     accroche:
@@ -188,6 +223,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["postbac", "prepa", "titre"],
     alternance:
       "Dès la 3e année : mécanique et transports, énergie et génie électrique, informatique, logistique industrielle",
+    places: "290 places en 1re année en 2026, pour 4 577 vœux",
+    cout: "630 € par an en 2026-2027, plus 105 € de CVEC ; gratuit pour les boursiers",
   },
   "reseau-polytech": {
     accroche:
@@ -195,6 +232,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     statut: "public",
     recrutement: ["postbac", "prepa", "titre"],
     alternance: "Dès la 1re année du cycle ingénieur (3e année après le bac), avec un contrat de 2 ou 3 ans",
+    places: "200 places en 2026 à Polytech Marseille ; environ 2 400 places de PeiP dans le réseau en 2025",
+    cout: "630 € par an en 2026-2027, plus 105 € de CVEC ; gratuit pour les boursiers, concours compris (60 € sinon)",
   },
   "prepa-des-inp": {
     accroche:
@@ -202,6 +241,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     statut: "public",
     recrutement: ["postbac"],
     alternance: "Prépa sous statut étudiant ; l'apprentissage dépend ensuite de l'école d'ingénieurs obtenue",
+    places: "365 places en 2026 sur 4 sites : Grenoble 113, Toulouse 96, Nancy 86, Bordeaux 70",
+    cout: "630 € par an en 2026-2027, plus 105 € de CVEC ; gratuit pour les boursiers ; candidature 90 € (5 € boursiers)",
   },
   epf: {
     accroche: "Une formation d'ingénieur généraliste : tu choisis ton domaine en 4e année seulement.",
@@ -209,6 +250,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["postbac", "prepa", "titre"],
     alternance:
       "4e et 5e années en apprentissage, gratuites et rémunérées ; contrat de professionnalisation possible en 5e année",
+    places: "231 places en 2026 à Cachan ; 100 places ParityLab, 24 en STI2D, 20 en franco-québécois",
+    cout: "10 180 € par an en 2026-2027 ; boursiers du Crous : 20 % de réduction sur les 3 premières années",
   },
   epita: {
     accroche: "L'EPITA forme des ingénieurs en informatique.",
@@ -216,6 +259,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["postbac", "titre", "prepa"],
     alternance:
       "Cycle ingénieur en apprentissage après une L2, une L3, un BUT ou un bachelor ; 5 majeures ; 2 semaines à l'école, 2 en entreprise",
+    places: "783 places en 1re année sur 5 campus",
+    cout: "2027-2028 : 10 350 € en prépa, 12 950 € en cycle ingénieur ; boursiers : concours gratuit, même grille",
   },
   "esiee-paris": {
     accroche:
@@ -223,6 +268,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["titre", "postbac", "prepa"],
     alternance:
       "Cycle ingénieur en apprentissage dès la 1re année, après un bac + 2 ou le premier cycle : 418 places dans 10 filières, de l'IA au génie civil",
+    places: "Rentrée 2026 : 255 places + 20 en cycle renforcé après le bac ; 420 apprentis en cycle ingénieur",
+    cout: "8 280 € par an en premier cycle, 8 680 € en cycle ingénieur (2026) ; boursiers : 3 312 € au plus bas, 2 070 € dès 2027",
   },
   ipsa: {
     accroche:
@@ -231,6 +278,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["postbac", "titre", "prepa"],
     alternance:
       "Aéro 3 à Aéro 5 en apprentissage à Paris-Ivry, après un bac + 2 ou l'Aéro 2 ; systèmes autonomes ou propulsion ; 3 semaines école, 3 semaines entreprise",
+    places: "400 places en 1re année : Paris 200, Toulouse 130, Lyon 70",
+    cout: "11 640 € par an en 2026-2027, de la 1re à la 5e année ; boursiers : concours gratuit, même montant",
   },
   estaca: {
     accroche:
@@ -239,6 +288,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["postbac", "prepa", "titre"],
     alternance:
       "Deux diplômes par apprentissage : véhicules, systèmes autonomes et connectés ; génie industriel pour l'aéronautique et l'espace. 5e année possible en alternance",
+    places: "Places 2026 à confirmer sur le site du concours Avenir ; les 3 campus recrutent en 1re année",
+    cout: "10 130 € en 2026-2027 ; boursiers : bourses du CROUS, concours à 30 € au lieu de 120 €",
   },
   icam: {
     accroche:
@@ -247,6 +298,9 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["postbac", "titre", "prepa"],
     alternance:
       "De la 3e à la 5e année (ingénieur généraliste) à Lille, Grand Paris Sud, Bretagne, Vendée et Toulouse, après la prépa professionnalisante ou un bac+2",
+    places:
+      "Lille, prépa scientifique : 100 places en 2026 (1 922 candidats en 2025) ; une fiche par campus et par voie",
+    cout: "Prépa à Lille 4 500 € par an selon les revenus, cycle ingénieur 9 700 € (2026) ; boursiers : bourse Icam de 1 200 € à 2 700 € par an",
   },
   "arts-et-metiers": {
     accroche:
@@ -255,11 +309,15 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["prepa", "titre"],
     alternance:
       "Programme Grande École en apprentissage dès la 1re année, à Angers et Paris : 24 places par campus (rentrée 2025), 60 % du temps en entreprise",
+    places: "Rentrée 2026 : 540 places en PT, 346 en MP, MPI, PC, PSI, 25 en ATS ; TSI : 35 places en 2025",
+    cout: "618 € par an en 2025, 630 € au tarif national en 2026-2027 ; boursiers exonérés ; cursus militaire gratuit et rémunéré",
   },
   navale: {
     accroche: "Tu y deviens officier de la Marine nationale.",
     statut: "public",
     recrutement: ["prepa", "titre"],
+    places: "Rentrée 2026 : 85 places au concours CentraleSupélec (56 en filière navigation, 29 en filière énergie)",
+    cout: "0 € en 2026 : scolarité gratuite et rémunérée, avec le statut d'élève militaire dès l'incorporation",
   },
   agroparistech: {
     accroche:
@@ -268,6 +326,16 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["prepa", "titre"],
     alternance:
       "Sur les trois ans (concours dédié après un BTSA, un BTS, un BUT ou une licence pro) ou sur les deux dernières années ; 50 places au concours 2026",
+    places: "Rentrée 2026 : 281 places en BCPST, 12 en TB, 15 en MP et PC ; 50 places en apprentissage",
+    cout: "1 959 € par an au taux plein (2024) ; boursiers des échelons 0,5 à 7 exonérés ; gratuit en apprentissage",
+  },
+  eae: {
+    accroche: "Tu deviens officier de l'armée de l'Air et de l'Espace, avec un diplôme d'ingénieur.",
+    statut: "public",
+    recrutement: ["prepa", "titre"],
+    places:
+      "Rentrée 2026 : 77 places après prépa (47 officiers de l'air, 16 mécaniciens, 14 des bases) et 21 sur titre",
+    cout: "0 € en 2026 : scolarité gratuite et rémunérée pour tout élève officier",
   },
 });
 
@@ -1033,7 +1101,8 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     line: "sciences",
     ville: "Douai (1re année), Lille, Valenciennes, Dunkerque, Alençon",
     kind: "École d'ingénieurs publique",
-    acces: "Prépa MP, MPI, PC, PSI, PT, TSI, BCPST, puis concours Mines-Télécom ; aussi sur titre",
+    acces:
+      "Prépa MP, MPI, PC, PSI, PT, TSI, BCPST, puis concours Mines-Télécom ; après le bac, sur Parcoursup (160 places en 2025) ; aussi sur titre",
     duree: "3 ans après bac + 2",
     places: "Plus de 15 % des 1 500 places annuelles du concours Mines-Télécom ; une dizaine d'élèves fonctionnaires",
     cout: "Environ 3 200 € par an en 2025 (UE) ; exonération possible pour les boursiers ; élèves fonctionnaires rémunérés, engagés huit ans",
@@ -1047,9 +1116,12 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     accroche:
       "IMT Nord Europe forme des ingénieurs généralistes aux compétences techniques, scientifiques et managériales, avec une place forte pour le management de projet, l'innovation et les transitions écologique et numérique.",
     statut: "public",
-    recrutement: ["prepa", "titre"],
+    recrutement: ["prepa", "postbac", "titre"],
     alternance:
       "Cinq diplômes de spécialité en apprentissage, en 3 ans après un bac + 2 : génie industriel, matériaux, énergie et nucléaire, ferroviaire, informatique et réseaux",
+    une: "Taux d'accès Parcoursup 2025 : 24 %",
+    uneRang: 24,
+    uneVoie: "postbac",
   },
   {
     id: "imt-mines-albi",
@@ -1124,7 +1196,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "public",
     recrutement: ["prepa", "titre"],
     alternance:
-      "Systèmes embarqués, architecture navale ou systèmes pyrotechniques, en 3 ans ; 16 places en apprentissage (2e et 3e années) à Paris-Saclay",
+      "Trois cycles d'ingénieur en apprentissage, sur 3 ans : systèmes embarqués, architecture navale, systèmes pyrotechniques",
     une: "Concours Mines-Ponts",
     uneRang: 71,
     uneVoie: "prepa",

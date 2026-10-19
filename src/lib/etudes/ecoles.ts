@@ -663,7 +663,14 @@ const base: Ecole[] = frTypo([
 export const ecoles: Ecole[] = [...base, ...ecolesPlus, ...frTypo(ecolesVoies), ...ecolesIngenieurs].map((e) => {
   const plus = enrichissements[e.id];
   if (!plus) return e;
-  return { ...e, ...plus, sources: [...new Set([...(e.sources ?? []), ...(plus.sources ?? [])])] };
+  return {
+    ...e,
+    ...plus,
+    // Les places et le coût de la fiche d'origine restent ; l'enrichissement comble ceux qui manquent.
+    places: e.places ?? plus.places,
+    cout: e.cout ?? plus.cout,
+    sources: [...new Set([...(e.sources ?? []), ...(plus.sources ?? [])])],
+  };
 });
 
 export const ecoleById = Object.fromEntries(ecoles.map((e) => [e.id, e])) as Record<string, Ecole>;

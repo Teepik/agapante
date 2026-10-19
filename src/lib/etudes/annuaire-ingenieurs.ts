@@ -322,6 +322,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["prepa"],
     concours: "après prépa : banque CCINP",
     site: "https://www.ecole-air-espace.fr/",
+    fiche: "eae",
   },
   {
     id: "eivp",
