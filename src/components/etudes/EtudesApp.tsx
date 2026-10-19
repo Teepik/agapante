@@ -11,11 +11,14 @@ import { CommandPalette } from "./CommandPalette";
 import { CompareSheet } from "./Compare";
 import { EcoleSheet, LyceeSheet, PasserelleSheet } from "./DetailSheets";
 import { Ecoles } from "./Ecoles";
+import { FormationSheet } from "./FormationSheet";
+import { FormationsFrance } from "./FormationsFrance";
 import { Hero } from "./Hero";
 import { Lycees } from "./Lycees";
 import { MyList } from "./MyList";
 import { Parcours } from "./Parcours";
 import { Passerelles } from "./Passerelles";
+import { PlaceProvider } from "./place";
 import { Projet } from "./Projet";
 import { Quiz } from "./Quiz";
 import { Calendrier, Footer, Lexique } from "./Reperes";
@@ -30,8 +33,9 @@ type Open =
   | { kind: "passerelle"; id: string }
   | { kind: "ecole"; id: string }
   | { kind: "lycee"; id: string }
+  | { kind: "formation"; id: string }
   | { kind: "liste" }
-  | { kind: "compare"; what: "lycee" | "ecole"; ids: string[] }
+  | { kind: "compare"; what: "lycee" | "ecole" | "formation"; ids: string[] }
   | null;
 
 function scrollToId(id: string) {
@@ -42,7 +46,9 @@ export function EtudesApp() {
   return (
     <CohortProvider>
       <SelectionProvider>
-        <App />
+        <PlaceProvider>
+          <App />
+        </PlaceProvider>
       </SelectionProvider>
     </CohortProvider>
   );
@@ -106,6 +112,7 @@ function App() {
   const openPasserelle = useCallback((id: string) => setOpen({ kind: "passerelle", id }), []);
   const openEcole = useCallback((id: string) => setOpen({ kind: "ecole", id }), []);
   const openLycee = useCallback((id: string) => setOpen({ kind: "lycee", id }), []);
+  const openFormation = useCallback((id: string) => setOpen({ kind: "formation", id }), []);
   const close = useCallback(() => setOpen(null), []);
 
   const showLine = useCallback((line: LaneId, asRoute = false) => {
@@ -252,14 +259,36 @@ function App() {
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-ecoles" className="e-title">
-                Les établissements après le bac
+                Les études après le bac
               </h2>
               <p className="e-lede">
-                {ecoles.length} prépas, universités, grandes écoles et conservatoires : comment on y entre, combien de
-                temps on y reste, ce qu&apos;on y apprend et où cela mène.
+                Toutes les formations de Parcoursup autour de chez toi, avec leurs vrais chiffres d&apos;admission, et{" "}
+                {ecoles.length} prépas, universités, grandes écoles et conservatoires expliqués en détail.
               </p>
             </div>
-            <Ecoles onOpenEcole={openEcole} />
+            <div className="e-block" id="formations-france">
+              <div className="e-block__head">
+                <div>
+                  <h3 className="e-h3">Les formations près de chez toi</h3>
+                  <p className="e-sub">
+                    Places, candidats, taux d&apos;accès, mentions et bacs des admis : les chiffres officiels de
+                    Parcoursup.
+                  </p>
+                </div>
+              </div>
+              <FormationsFrance onOpenFormation={openFormation} />
+            </div>
+            <div className="e-block">
+              <div className="e-block__head">
+                <div>
+                  <h3 className="e-h3">Les établissements en détail</h3>
+                  <p className="e-sub">
+                    Comment on y entre, combien de temps on y reste, ce qu&apos;on y apprend et où cela mène.
+                  </p>
+                </div>
+              </div>
+              <Ecoles onOpenEcole={openEcole} />
+            </div>
           </div>
         </section>
 
@@ -303,7 +332,12 @@ function App() {
                 garder dans ton agenda et à imprimer pour en parler en famille.
               </p>
             </div>
-            <Projet onShowLine={(l) => showLine(l)} onOpenPasserelle={openPasserelle} onOpenLycee={openLycee} />
+            <Projet
+              onShowLine={(l) => showLine(l)}
+              onOpenPasserelle={openPasserelle}
+              onOpenLycee={openLycee}
+              onOpenFormation={openFormation}
+            />
           </div>
         </section>
 
@@ -342,15 +376,23 @@ function App() {
         />
       ) : null}
       {open?.kind === "ecole" ? (
-        <EcoleSheet id={open.id} onClose={close} onOpenEcole={openEcole} onOpenStation={openStation} />
+        <EcoleSheet
+          id={open.id}
+          onClose={close}
+          onOpenEcole={openEcole}
+          onOpenStation={openStation}
+          onOpenFormation={openFormation}
+        />
       ) : null}
       {open?.kind === "lycee" ? <LyceeSheet id={open.id} onClose={close} onOpenLycee={openLycee} /> : null}
+      {open?.kind === "formation" ? <FormationSheet id={open.id} onClose={close} /> : null}
       {open?.kind === "liste" ? (
         <MyList
           onClose={close}
           onLycee={openLycee}
           onEcole={openEcole}
           onStation={openStation}
+          onFormation={openFormation}
           onCompare={(what, ids) => setOpen({ kind: "compare", what, ids })}
         />
       ) : null}
@@ -360,7 +402,9 @@ function App() {
           what={open.what}
           ids={open.ids}
           onClose={() => setOpen({ kind: "liste" })}
-          onOpen={(id) => (open.what === "lycee" ? openLycee(id) : openEcole(id))}
+          onOpen={(id) =>
+            open.what === "lycee" ? openLycee(id) : open.what === "ecole" ? openEcole(id) : openFormation(id)
+          }
         />
       ) : null}
 

@@ -1,12 +1,14 @@
 "use client";
 
 import { ecoleById, ecoles } from "@/lib/etudes/ecoles";
+import { ECOLE_UAI } from "@/lib/etudes/ecoles-psup";
 import { lineById, type LaneId } from "@/lib/etudes/lines";
 import { lyceeById, lyceeInternat, lycees, statutLabel, type Lycee, type Resultats } from "@/lib/etudes/lycees";
 import { voiesTexte } from "@/lib/etudes/lycees-fr";
 import { passerelleById, passerelles } from "@/lib/etudes/passerelles";
 import { laneOf } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
+import { PsupSection } from "./FormationSheet";
 import { Sheet, StepButton } from "./Sheet";
 import { SaveButton } from "./store";
 import { Dot, Icon } from "./ui";
@@ -20,11 +22,13 @@ export function EcoleSheet({
   onClose,
   onOpenEcole,
   onOpenStation,
+  onOpenFormation,
 }: {
   id: string;
   onClose: () => void;
   onOpenEcole: (id: string) => void;
   onOpenStation: (id: string, line: LaneId | null) => void;
+  onOpenFormation: (id: string) => void;
 }) {
   const e = ecoleById[id];
   if (!e) return null;
@@ -116,6 +120,7 @@ export function EcoleSheet({
         <strong>Le détail qui compte</strong>
         {e.plus}
       </div>
+      {ECOLE_UAI[e.id] ? <PsupSection uais={ECOLE_UAI[e.id]} onOpenFormation={onOpenFormation} /> : null}
       {e.sources?.length ? <Sources urls={e.sources} /> : null}
       {e.station && stationById[e.station] ? (
         <section className="e-sec">

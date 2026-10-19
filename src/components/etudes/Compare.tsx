@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { ecoleById, type Ecole } from "@/lib/etudes/ecoles";
+import { contratLabel, formationById, type Formation } from "@/lib/etudes/formations";
 import { laneName } from "@/lib/etudes/lines";
 import { lyceeById, statutLabel, type Lycee } from "@/lib/etudes/lycees";
 import { voiesTexte } from "@/lib/etudes/lycees-fr";
@@ -70,21 +71,43 @@ const ECOLE_ROWS: Row<Ecole>[] = [
   { label: "À savoir", get: (e) => e.plus },
 ];
 
-/** Deux à quatre lycées ou établissements de « Ma liste », côte à côte. */
+const fr = (n?: number) => (typeof n === "number" ? n.toLocaleString("fr-FR") : null);
+
+const FORMATION_ROWS: Row<Formation>[] = [
+  { label: "Établissement", get: (f) => f.etab },
+  { label: "Ville", get: (f) => f.ville },
+  { label: "Statut", get: (f) => contratLabel[f.contrat] },
+  { label: "Sélection", get: (f) => (f.selective ? "Sélective" : "Ouverte à tous les bacheliers") },
+  { label: "Places", get: (f) => fr(f.places) },
+  { label: "Candidats", get: (f) => fr(f.candidats) },
+  { label: "Taux d'accès", get: (f) => pct(f.acces) },
+  { label: "Admis avec mention très bien", get: (f) => pct(f.tb) },
+  { label: "Admis avec mention bien", get: (f) => pct(f.b) },
+  { label: "Admis boursiers", get: (f) => pct(f.boursiers) },
+  {
+    label: "Bac des admis",
+    get: (f) => (typeof f.bg === "number" ? `${f.bg} % général, ${f.bt ?? 0} % techno, ${f.bp ?? 0} % pro` : null),
+  },
+];
+
+/** Deux à quatre lycées, formations ou établissements de « Ma liste », côte à côte. */
 export function CompareSheet({
   what,
   ids,
   onClose,
   onOpen,
 }: {
-  what: "lycee" | "ecole";
+  what: "lycee" | "ecole" | "formation";
   ids: string[];
   onClose: () => void;
   onOpen: (id: string) => void;
 }) {
-  const items =
-    what === "lycee" ? ids.map((id) => lyceeById[id]).filter(Boolean) : ids.map((id) => ecoleById[id]).filter(Boolean);
-  const rows = (what === "lycee" ? LYCEE_ROWS : ECOLE_ROWS) as Row<Lycee | Ecole>[];
+  const items: (Lycee | Ecole | Formation)[] = ids
+    .map((id) => (what === "lycee" ? lyceeById[id] : what === "ecole" ? ecoleById[id] : formationById[id]))
+    .filter(Boolean);
+  const rows = (what === "lycee" ? LYCEE_ROWS : what === "ecole" ? ECOLE_ROWS : FORMATION_ROWS) as Row<
+    Lycee | Ecole | Formation
+  >[];
 
   return (
     <Sheet
@@ -93,7 +116,13 @@ export function CompareSheet({
       onClose={onClose}
       wide
       meta={<span>Ma liste</span>}
-      title={what === "lycee" ? "Comparer les lycées" : "Comparer les établissements"}
+      title={
+        what === "lycee"
+          ? "Comparer les lycées"
+          : what === "ecole"
+            ? "Comparer les établissements"
+            : "Comparer les formations"
+      }
       when={`${items.length} côte à côte`}
     >
       <div className="e-compare">
@@ -104,7 +133,7 @@ export function CompareSheet({
               {items.map((x) => (
                 <th key={x.id} scope="col">
                   <button type="button" className="e-link" onClick={() => onOpen(x.id)}>
-                    {x.short ?? x.name}
+                    {"short" in x && x.short ? x.short : x.name}
                   </button>
                 </th>
               ))}

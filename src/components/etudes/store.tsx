@@ -1,10 +1,11 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { garderFormation, restaurerFormationsGardees } from "@/lib/etudes/formations";
 import { garderLycee, restaurerLyceesGardes } from "@/lib/etudes/lycees-fr";
 import { Icon } from "./ui";
 
-export type SavedKind = "lycee" | "ecole" | "station";
+export type SavedKind = "lycee" | "ecole" | "station" | "formation";
 
 const KEY = "etudes:liste";
 
@@ -16,12 +17,13 @@ type Ctx = {
 
 const SelectionContext = createContext<Ctx | null>(null);
 
-/** « Ma liste » : les lycées, écoles et étapes que l'on garde de côté, sur cet appareil. */
+/** « Ma liste » : les lycées, écoles, formations et étapes que l'on garde de côté, sur cet appareil. */
 export function SelectionProvider({ children }: { children: ReactNode }) {
   const [saved, setSaved] = useState<string[]>([]);
 
   useEffect(() => {
     restaurerLyceesGardes();
+    restaurerFormationsGardees();
     try {
       const raw = window.localStorage.getItem(KEY);
       if (raw) setSaved(JSON.parse(raw) as string[]);
@@ -36,6 +38,7 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
       const on = !list.includes(key);
       const next = on ? [...list, key] : list.filter((x) => x !== key);
       if (kind === "lycee") garderLycee(id, on);
+      if (kind === "formation") garderFormation(id, on);
       try {
         window.localStorage.setItem(KEY, JSON.stringify(next));
       } catch {

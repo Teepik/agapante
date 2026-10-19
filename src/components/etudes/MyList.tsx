@@ -1,6 +1,7 @@
 "use client";
 
 import { ecoleById } from "@/lib/etudes/ecoles";
+import { formationById } from "@/lib/etudes/formations";
 import { lyceeById, statutLabel } from "@/lib/etudes/lycees";
 import type { LaneId } from "@/lib/etudes/lines";
 import { laneOf } from "@/lib/etudes/plan";
@@ -15,13 +16,15 @@ export function MyList({
   onLycee,
   onEcole,
   onStation,
+  onFormation,
   onCompare,
 }: {
   onClose: () => void;
   onLycee: (id: string) => void;
   onEcole: (id: string) => void;
   onStation: (id: string, line: LaneId | null) => void;
-  onCompare: (what: "lycee" | "ecole", ids: string[]) => void;
+  onFormation: (id: string) => void;
+  onCompare: (what: "lycee" | "ecole" | "formation", ids: string[]) => void;
 }) {
   const { saved, toggle } = useSelection();
   const { y } = useCohort();
@@ -32,6 +35,7 @@ export function MyList({
   const ly = parsed.filter((x) => x.kind === "lycee" && lyceeById[x.id]);
   const ec = parsed.filter((x) => x.kind === "ecole" && ecoleById[x.id]);
   const st = parsed.filter((x) => x.kind === "station" && stationById[x.id]);
+  const fo = parsed.filter((x) => x.kind === "formation" && formationById[x.id]);
 
   return (
     <Sheet
@@ -47,8 +51,8 @@ export function MyList({
       {!saved.length ? (
         <div className="e-empty">
           <strong>Garde ici ce qui te plaît</strong>
-          Dans la fiche d&apos;un lycée, d&apos;une école ou d&apos;une étape, touche « Ajouter à ma liste » : tout se
-          retrouve ici pour comparer et en parler à la maison.
+          Dans la fiche d&apos;un lycée, d&apos;une formation, d&apos;une école ou d&apos;une étape, touche « Ajouter à
+          ma liste » : tout se retrouve ici pour comparer et en parler à la maison.
         </div>
       ) : null}
 
@@ -119,6 +123,43 @@ export function MyList({
                   hint={`${e.ville}, ${e.kind}`}
                   onOpen={() => onEcole(id)}
                   onRemove={() => toggle("ecole", id)}
+                />
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
+
+      {fo.length ? (
+        <section className="e-mylist__group">
+          <div className="e-mylist__head">
+            <h3>Formations</h3>
+            {fo.length > 1 ? (
+              <button
+                type="button"
+                className="e-btn e-btn--sm"
+                onClick={() =>
+                  onCompare(
+                    "formation",
+                    fo.slice(0, 4).map((x) => x.id),
+                  )
+                }
+              >
+                Comparer {fo.length > 4 ? "les quatre premières" : fo.length === 2 ? "les deux" : `les ${fo.length}`}
+              </button>
+            ) : null}
+          </div>
+          <ul className="e-rows">
+            {fo.map(({ id }) => {
+              const f = formationById[id];
+              return (
+                <ListRow
+                  key={id}
+                  icon={<Icon name="cap" />}
+                  name={f.name}
+                  hint={`${f.etab}, ${f.ville}${typeof f.acces === "number" ? `, ${f.acces} % d'accès` : ""}`}
+                  onOpen={() => onFormation(id)}
+                  onRemove={() => toggle("formation", id)}
                 />
               );
             })}

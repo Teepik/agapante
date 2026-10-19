@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { laneName, lanePitch, laneShort, type LaneId } from "@/lib/etudes/lines";
+import { formationById } from "@/lib/etudes/formations";
 import { lyceeById, statutLabel } from "@/lib/etudes/lycees";
 import { passerelles } from "@/lib/etudes/passerelles";
 import { LANES, LANE_DEFS } from "@/lib/etudes/plan";
@@ -68,10 +69,12 @@ export function Projet({
   onShowLine,
   onOpenPasserelle,
   onOpenLycee,
+  onOpenFormation,
 }: {
   onShowLine: (line: LaneId) => void;
   onOpenPasserelle: (id: string) => void;
   onOpenLycee: (id: string) => void;
+  onOpenFormation: (id: string) => void;
 }) {
   const { bac, classe } = useCohort();
   const { saved } = useSelection();
@@ -106,6 +109,10 @@ export function Projet({
   const lycees = saved
     .filter((k) => k.startsWith("lycee:"))
     .map((k) => lyceeById[k.slice(6)])
+    .filter(Boolean);
+  const formations = saved
+    .filter((k) => k.startsWith("formation:"))
+    .map((k) => formationById[k.slice(10)])
     .filter(Boolean);
 
   const echeances = useMemo(() => {
@@ -243,6 +250,33 @@ export function Projet({
                 l&apos;annuaire
               </a>{" "}
               : ils s&apos;affichent ici.
+            </p>
+          )}
+        </section>
+
+        <section>
+          <p className="e-projet__k">Tes formations repérées</p>
+          {formations.length ? (
+            <ul className="e-projet__list">
+              {formations.map((f) => (
+                <li key={f.id}>
+                  <button type="button" className="e-link" onClick={() => onOpenFormation(f.id)}>
+                    {f.name}
+                  </button>
+                  <span className="e-muted e-small">
+                    {f.etab}, {f.ville}
+                    {typeof f.acces === "number" ? `, ${f.acces} % de taux d'accès` : ""}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="e-sub e-small">
+              Repère des formations{" "}
+              <a className="e-link" href="#formations-france">
+                près de chez toi
+              </a>{" "}
+              et ajoute-les à ta liste : elles préparent tes vœux Parcoursup.
             </p>
           )}
         </section>

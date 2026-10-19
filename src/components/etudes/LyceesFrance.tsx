@@ -1,58 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
-import { FRANCE_VIEW, project, regions } from "@/lib/etudes/france";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { distanceKm, distanceTexte } from "@/lib/etudes/communes";
 import { statutLabel, type Lycee, type Resultats } from "@/lib/etudes/lycees";
-import {
-  FRANCE_SESSION,
-  SELECTION_PAR_UAI,
-  SOURCES_FRANCE,
-  chargerFrance,
-  chercherCommunes,
-  communeLaPlusProche,
-  distanceKm,
-  type Commune,
-  type FranceData,
-} from "@/lib/etudes/lycees-fr";
+import { FRANCE_SESSION, SELECTION_PAR_UAI, SOURCES_FRANCE, chargerLycees } from "@/lib/etudes/lycees-fr";
+import { PlaceExamples, PlacePicker, usePlace } from "./place";
+import { Overview, Radar, rayonAdapte } from "./Radar";
 import { useSelection } from "./store";
 import { Icon } from "./ui";
 
-type Place = { kind: "commune" | "position"; name: string; lat: number; lon: number };
 type Voie = "toutes" | "gt" | "pro";
 type Statut = "tous" | "public" | "prive";
 type Tri = "distance" | "reussite" | "va";
 type Hit = { l: Lycee; d: number; bac?: Resultats; sel?: string };
 
-const PLACE_KEY = "etudes:autour";
 const RAYONS = [5, 10, 25, 50, 100];
 const PAGE = 30;
-const EXEMPLES = ["Nantes", "Lyon", "Bordeaux", "Lille", "75015"];
 const NBSP = " ";
-
-function lirePlace(): Place | null {
-  try {
-    const raw = window.localStorage.getItem(PLACE_KEY);
-    if (!raw) return null;
-    const p = JSON.parse(raw) as Place;
-    return typeof p.lat === "number" && typeof p.lon === "number" && typeof p.name === "string" ? p : null;
-  } catch {
-    return null;
-  }
-}
-
-function garderPlace(p: Place) {
-  try {
-    // La position se garde arrondie au kilomètre, sur cet appareil seulement.
-    const kept = p.kind === "position" ? { ...p, lat: +p.lat.toFixed(2), lon: +p.lon.toFixed(2) } : p;
-    window.localStorage.setItem(PLACE_KEY, JSON.stringify(kept));
-  } catch {
-    /* stockage indisponible */
-  }
-}
-
-function distanceTexte(d: number) {
-  return d < 1 ? `à moins d'1${NBSP}km` : `à ${Math.round(d)}${NBSP}km`;
-}
 
 function signe(v: number) {
   return `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v)}`;
@@ -74,35 +38,18 @@ function voieTag(l: Lycee): string | null {
   return null;
 }
 
-export function LyceesFrance({ onOpenLycee }: { onOpenLycee: (id: string) => void }) {
+/** Charge les lycées de France au premier besoin. */
+function useLycees() {
   const [state, setState] = useState<"idle" | "loading" | "ready" | "error">("idle");
-  const [data, setData] = useState<FranceData | null>(null);
-  const [q, setQ] = useState("");
-  const [open, setOpen] = useState(false);
-  const [active, setActive] = useState(0);
-  const [place, setPlace] = useState<Place | null>(null);
-  const [want, setWant] = useState<string | null>(null);
-  const [rayon, setRayon] = useState(25);
-  const [voie, setVoie] = useState<Voie>("toutes");
-  const [statut, setStatut] = useState<Statut>("tous");
-  const [internat, setInternat] = useState(false);
-  const [tri, setTri] = useState<Tri>("distance");
-  const [shown, setShown] = useState(PAGE);
-  const [hot, setHot] = useState<string | null>(null);
-  const [geo, setGeo] = useState<"idle" | "asking" | "off">("idle");
-  const root = useRef<HTMLDivElement>(null);
-  const listId = useId();
-  const { has } = useSelection();
-
+  const [list, setList] = useState<Lycee[] | null>(null);
   const started = useRef(false);
-
   const load = useCallback(() => {
     if (started.current) return;
     started.current = true;
     setState("loading");
-    chargerFrance()
-      .then((d) => {
-        setData(d);
+    chargerLycees()
+      .then((l) => {
+        setList(l);
         setState("ready");
       })
       .catch(() => {
@@ -110,13 +57,14 @@ export function LyceesFrance({ onOpenLycee }: { onOpenLycee: (id: string) => voi
         setState("error");
       });
   }, []);
+  return { state, list, load };
+}
 
-  // Un lieu déjà choisi lors d'une visite précédente : les lycées se chargent quand le bloc approche.
+/** Charge des données quand le bloc approche de l'écran, si un lieu est déjà choisi. */
+export function useLoadWhenNear(active: boolean, load: () => void) {
+  const root = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const p = lirePlace();
-    if (!p) return;
-    setPlace(p);
-    if (p.kind === "commune") setQ(p.name);
+    if (!active) return;
     const el = root.current;
     if (!el || !("IntersectionObserver" in window)) {
       load();
@@ -133,95 +81,40 @@ export function LyceesFrance({ onOpenLycee }: { onOpenLycee: (id: string) => voi
     );
     io.observe(el);
     return () => io.disconnect();
-  }, [load]);
+  }, [active, load]);
+  return root;
+}
 
-  const suggestions = useMemo(() => (data && open ? chercherCommunes(data, q) : []), [data, q, open]);
+export function LyceesFrance({ onOpenLycee }: { onOpenLycee: (id: string) => void }) {
+  const { place, where } = usePlace();
+  const { state, list, load } = useLycees();
+  const [rayon, setRayon] = useState(25);
+  const [voie, setVoie] = useState<Voie>("toutes");
+  const [statut, setStatut] = useState<Statut>("tous");
+  const [internat, setInternat] = useState(false);
+  const [tri, setTri] = useState<Tri>("distance");
+  const [shown, setShown] = useState(PAGE);
+  const [hot, setHot] = useState<string | null>(null);
+  const root = useLoadWhenNear(Boolean(place), load);
+  const uid = useId();
+  const { has } = useSelection();
 
   // Un rayon à la mesure du lieu : le plus petit qui montre au moins dix lycées.
   useEffect(() => {
-    if (!data || !place) return;
-    const ds = data.lycees.map((l) => distanceKm(place.lat, place.lon, l.lat, l.lon));
-    setRayon(RAYONS.find((r) => ds.filter((d) => d <= r).length >= 10) ?? RAYONS[RAYONS.length - 1]);
-  }, [data, place]);
-
-  const choose = useCallback((c: Commune) => {
-    const p: Place = { kind: "commune", name: c.name, lat: c.lat, lon: c.lon };
-    setPlace(p);
-    setQ(c.name);
-    setOpen(false);
-    setShown(PAGE);
-    garderPlace(p);
-  }, []);
-
-  // Un exemple touché avant la fin du chargement : choisi dès que les communes sont là.
-  useEffect(() => {
-    if (!data || !want) return;
-    const c = chercherCommunes(data, want, 1)[0];
-    if (c) choose(c);
-    setWant(null);
-  }, [data, want, choose]);
-
-  function onKey(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setOpen(true);
-      setActive((a) => Math.min(a + 1, Math.max(suggestions.length - 1, 0)));
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setActive((a) => Math.max(a - 1, 0));
-    } else if (e.key === "Enter") {
-      const c = suggestions[active] ?? suggestions[0];
-      if (c) {
-        e.preventDefault();
-        choose(c);
-      } else if (!data && q.trim()) {
-        e.preventDefault();
-        setWant(q.trim());
-        load();
-      }
-    } else if (e.key === "Escape" && open) {
-      e.preventDefault();
-      setOpen(false);
-    }
-  }
-
-  function locate() {
-    if (!("geolocation" in navigator)) {
-      setGeo("off");
-      return;
-    }
-    setGeo("asking");
-    load();
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setGeo("idle");
-        const p: Place = { kind: "position", name: "ta position", lat: pos.coords.latitude, lon: pos.coords.longitude };
-        setPlace(p);
-        setQ("");
-        setShown(PAGE);
-        garderPlace(p);
-      },
-      () => setGeo("off"),
-      { enableHighAccuracy: false, timeout: 12000, maximumAge: 10 * 60 * 1000 },
+    if (!list || !place) return;
+    setRayon(
+      rayonAdapte(
+        list.map((l) => distanceKm(place.lat, place.lon, l.lat, l.lon)),
+        RAYONS,
+      ),
     );
-  }
-
-  const near = useMemo(
-    () => (data && place?.kind === "position" ? communeLaPlusProche(data, place.lat, place.lon) : null),
-    [data, place],
-  );
-  const where = place
-    ? place.kind === "position"
-      ? near
-        ? `de toi, près de ${near.name}`
-        : "de toi"
-      : `de ${place.name}`
-    : "";
+    setShown(PAGE);
+  }, [list, place]);
 
   const hits = useMemo<Hit[]>(() => {
-    if (!data || !place) return [];
+    if (!list || !place) return [];
     const out: Hit[] = [];
-    for (const l of data.lycees) {
+    for (const l of list) {
       const d = distanceKm(place.lat, place.lon, l.lat, l.lon);
       if (d > rayon) continue;
       const v = l.national!.voies;
@@ -243,97 +136,36 @@ export function LyceesFrance({ onOpenLycee }: { onOpenLycee: (id: string) => voi
       if (vb === undefined) return -1;
       return vb - va || a.d - b.d;
     });
-  }, [data, place, rayon, voie, statut, internat, tri]);
+  }, [list, place, rayon, voie, statut, internat, tri]);
 
   const status =
     state === "loading"
       ? "Chargement des lycées de France…"
       : state === "error"
-        ? "Le chargement a échoué : vérifie ta connexion, puis réessaie."
-        : geo === "asking"
-          ? "Recherche de ta position…"
-          : geo === "off"
-            ? "Ta position reste privée : tape plutôt ta ville ou ton code postal."
-            : "";
+        ? "Le chargement des lycées a échoué : vérifie ta connexion, puis réessaie."
+        : "";
 
-  const expanded = open && suggestions.length > 0;
+  const ready = Boolean(place && list);
+  const open = (h: Hit) => onOpenLycee(h.sel ?? h.l.id);
 
   return (
     <div className="e-dir e-fr" ref={root}>
       <div className="e-fr__head">
-        <div className="e-dir__bar">
-          <div className="e-fr__combo">
-            <label className="e-field">
-              <Icon name="search" />
-              <span className="e-sr">Ta ville ou ton code postal</span>
-              <input
-                type="search"
-                role="combobox"
-                aria-autocomplete="list"
-                aria-expanded={expanded}
-                aria-controls={listId}
-                aria-activedescendant={expanded ? `${listId}-${active}` : undefined}
-                value={q}
-                onChange={(e) => {
-                  setQ(e.target.value);
-                  setOpen(true);
-                  setActive(0);
-                }}
-                onFocus={() => {
-                  load();
-                  setOpen(true);
-                }}
-                onBlur={() => setOpen(false)}
-                onKeyDown={onKey}
-                placeholder="Ta ville ou ton code postal"
-                autoComplete="off"
-                enterKeyHint="search"
-              />
-            </label>
-            <ul id={listId} role="listbox" aria-label="Communes" className="e-suggest" hidden={!expanded}>
-              {suggestions.map((c, i) => (
-                <li
-                  key={`${c.name}-${c.cps[0] ?? c.dep}`}
-                  id={`${listId}-${i}`}
-                  role="option"
-                  aria-selected={i === active}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    choose(c);
-                  }}
-                  onMouseEnter={() => setActive(i)}
-                >
-                  <span className="e-suggest__name">{c.name}</span>
-                  <span className="e-suggest__detail">{[c.cps[0], c.depName].filter(Boolean).join(", ")}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <button type="button" className="e-btn" onClick={locate} aria-pressed={place?.kind === "position"}>
-            <Icon name="locate" /> Autour de moi
+        <PlacePicker onUse={load} status={status} />
+        {state === "error" ? (
+          <button type="button" className="e-link e-fr__retry" onClick={load}>
+            Réessayer
           </button>
-        </div>
+        ) : null}
 
-        <p className="e-dir__count" aria-live="polite">
-          {status}
-          {state === "error" ? (
-            <>
-              {" "}
-              <button type="button" className="e-link" onClick={load}>
-                Réessayer
-              </button>
-            </>
-          ) : null}
-        </p>
-
-        {place && data ? (
+        {ready ? (
           <>
             <div className="e-fr__filters">
               <div className="e-fgroup">
-                <span className="e-fgroup__k" id={`${listId}-r`}>
+                <span className="e-fgroup__k" id={`${uid}-r`}>
                   Rayon
                 </span>
-                <div className="e-seg e-seg--sm" role="group" aria-labelledby={`${listId}-r`}>
+                <div className="e-seg e-seg--sm" role="group" aria-labelledby={`${uid}-r`}>
                   {RAYONS.map((r) => (
                     <button
                       key={r}
@@ -351,10 +183,10 @@ export function LyceesFrance({ onOpenLycee }: { onOpenLycee: (id: string) => voi
                 </div>
               </div>
               <div className="e-fgroup">
-                <span className="e-fgroup__k" id={`${listId}-v`}>
+                <span className="e-fgroup__k" id={`${uid}-v`}>
                   Voie
                 </span>
-                <div className="e-seg e-seg--sm" role="group" aria-labelledby={`${listId}-v`}>
+                <div className="e-seg e-seg--sm" role="group" aria-labelledby={`${uid}-v`}>
                   {(
                     [
                       ["toutes", "Toutes"],
@@ -369,10 +201,10 @@ export function LyceesFrance({ onOpenLycee }: { onOpenLycee: (id: string) => voi
                 </div>
               </div>
               <div className="e-fgroup">
-                <span className="e-fgroup__k" id={`${listId}-s`}>
+                <span className="e-fgroup__k" id={`${uid}-s`}>
                   Statut
                 </span>
-                <div className="e-seg e-seg--sm" role="group" aria-labelledby={`${listId}-s`}>
+                <div className="e-seg e-seg--sm" role="group" aria-labelledby={`${uid}-s`}>
                   {(
                     [
                       ["tous", "Tous"],
@@ -396,7 +228,7 @@ export function LyceesFrance({ onOpenLycee }: { onOpenLycee: (id: string) => voi
                 {hits.length} {hits.length > 1 ? "lycées" : "lycée"} à moins de {rayon}
                 {NBSP}km {where}
               </p>
-              <div className="e-seg e-seg--sm" role="group" aria-label="Trier">
+              <div className="e-seg e-seg--sm" role="group" aria-label="Trier les lycées">
                 {(
                   [
                     ["distance", "Plus proches"],
@@ -417,36 +249,46 @@ export function LyceesFrance({ onOpenLycee }: { onOpenLycee: (id: string) => voi
               Tape ta ville ou ton code postal, ou touche « Autour de moi » : les lycées s&apos;affichent du plus proche
               au plus lointain, publics et privés, avec leurs résultats au bac.
             </p>
-            <p className="e-fr__try">
-              <span className="e-muted">Pour essayer :</span>
-              {EXEMPLES.map((x) => (
-                <button
-                  key={x}
-                  type="button"
-                  className="e-chip"
-                  onClick={() => {
-                    setQ(x);
-                    setWant(x);
-                    load();
-                  }}
-                >
-                  {x}
-                </button>
-              ))}
-            </p>
+            <PlaceExamples examples={["Nantes", "Lyon", "Bordeaux", "Lille", "75015"]} onUse={load} />
           </div>
         )}
       </div>
 
       <div className="e-fr__map">
-        {place && data ? (
-          <Radar place={place} rayon={rayon} hits={hits} hot={hot} onHot={setHot} onOpen={onOpenLycee} />
+        {ready && place ? (
+          <Radar
+            place={place}
+            rayon={rayon}
+            points={hits.map((h) => ({
+              id: h.l.id,
+              lat: h.l.lat,
+              lon: h.l.lon,
+              name: h.l.name,
+              filled: !(h.l.statut === "public" || h.l.statut === "defense"),
+            }))}
+            hot={hot}
+            onHot={setHot}
+            onOpen={(id) => {
+              const h = hits.find((x) => x.l.id === id);
+              if (h) open(h);
+            }}
+            label={`Carte des lycées à moins de ${rayon} km`}
+            legend={{ filled: "Privé", hollow: "Public" }}
+          />
         ) : (
-          <Overview data={data} />
+          <Overview
+            points={list}
+            label={list ? `Carte des ${list.length} lycées de France` : "Carte de France"}
+            caption={
+              list
+                ? `${list.length.toLocaleString("fr-FR")} lycées, de Dunkerque à Mayotte. Outre-mer : cherche ta ville.`
+                : "Tous les lycées de France, publics et privés."
+            }
+          />
         )}
       </div>
 
-      {place && data ? (
+      {ready ? (
         <div className="e-fr__body">
           {hits.length ? (
             <ul className="e-dir__list">
@@ -457,7 +299,7 @@ export function LyceesFrance({ onOpenLycee }: { onOpenLycee: (id: string) => voi
                     hot={hot === h.l.id}
                     saved={has("lycee", h.sel ?? h.l.id)}
                     onHot={setHot}
-                    onOpen={() => onOpenLycee(h.sel ?? h.l.id)}
+                    onOpen={() => open(h)}
                   />
                 </li>
               ))}
@@ -546,139 +388,5 @@ function Entry({
         </dl>
       ) : null}
     </button>
-  );
-}
-
-/** Avant de choisir une ville : tous les lycées de métropole, en semis de points. */
-function Overview({ data }: { data: FranceData | null }) {
-  const dots = useMemo(() => {
-    if (!data) return "";
-    let d = "";
-    for (const l of data.lycees) {
-      if (l.lat < 41 || l.lat > 51.5 || l.lon < -5.6 || l.lon > 9.8) continue;
-      const p = project(l.lat, l.lon);
-      d += `M${p.x.toFixed(1)} ${p.y.toFixed(1)}h0`;
-    }
-    return d;
-  }, [data]);
-  return (
-    <div className="e-france">
-      <div className="e-france__map">
-        <svg
-          viewBox={`0 0 ${FRANCE_VIEW.w} ${FRANCE_VIEW.h}`}
-          role="img"
-          aria-label={data ? `Carte des ${data.lycees.length} lycées de France` : "Carte de France"}
-        >
-          {regions.map((r) => (
-            <path key={r.code} d={r.d} className="e-france__region" />
-          ))}
-          {dots ? <path d={dots} className="e-radar__all" /> : null}
-        </svg>
-      </div>
-      <p className="e-france__legend">
-        {data ? (
-          <span>
-            {data.lycees.length.toLocaleString("fr-FR")} lycées, de Dunkerque à Mayotte. Outre-mer : cherche ta ville.
-          </span>
-        ) : (
-          <span>Tous les lycées de France, publics et privés.</span>
-        )}
-      </p>
-    </div>
-  );
-}
-
-/** Autour de la ville choisie : des cercles de distance et les lycées retenus. */
-function Radar({
-  place,
-  rayon,
-  hits,
-  hot,
-  onHot,
-  onOpen,
-}: {
-  place: Place;
-  rayon: number;
-  hits: Hit[];
-  hot: string | null;
-  onHot: (id: string | null) => void;
-  onOpen: (id: string) => void;
-}) {
-  const S = 400;
-  const C = S / 2;
-  const R = 182;
-  const k = R / rayon;
-  const cos = Math.cos((place.lat * Math.PI) / 180);
-  const pos = (lat: number, lon: number) => ({
-    x: C + (lon - place.lon) * 111.32 * cos * k,
-    y: C - (lat - place.lat) * 110.57 * k,
-  });
-  const [tip, setTip] = useState<{ x: number; y: number; name: string } | null>(null);
-  const small = hits.length > 80;
-  const ordered = hot ? [...hits.filter((h) => h.l.id !== hot), ...hits.filter((h) => h.l.id === hot)] : hits;
-
-  return (
-    <div className="e-france">
-      <div className="e-france__map">
-        <div style={{ position: "relative" }}>
-          <svg viewBox={`0 0 ${S} ${S}`} role="img" aria-label={`Carte des lycées à moins de ${rayon} km`}>
-            <circle cx={C} cy={C} r={R} className="e-radar__disc" />
-            <circle cx={C} cy={C} r={R / 2} className="e-radar__ring" />
-            <text x={C} y={C - R / 2 - 6} textAnchor="middle" className="e-france__label">
-              {(rayon / 2).toLocaleString("fr-FR")}
-              {NBSP}km
-            </text>
-            <text x={C} y={C - R - 6} textAnchor="middle" className="e-france__label">
-              {rayon}
-              {NBSP}km
-            </text>
-            {ordered.map(({ l, sel }) => {
-              const p = pos(l.lat, l.lon);
-              const pub = l.statut === "public" || l.statut === "defense";
-              return (
-                <circle
-                  key={l.id}
-                  cx={p.x}
-                  cy={p.y}
-                  r={hot === l.id ? 8 : small ? 3.6 : 5.5}
-                  className={`e-france__dot${pub ? " e-france__dot--public" : ""}${hot === l.id ? " is-hot" : ""}`}
-                  onMouseEnter={() => {
-                    onHot(l.id);
-                    setTip({ x: p.x, y: p.y, name: l.name });
-                  }}
-                  onMouseLeave={() => {
-                    onHot(null);
-                    setTip(null);
-                  }}
-                  onClick={() => onOpen(sel ?? l.id)}
-                >
-                  <title>{`${l.name}, ${l.ville}`}</title>
-                </circle>
-              );
-            })}
-            <circle cx={C} cy={C} r={7} className="e-radar__home" />
-          </svg>
-          {tip ? (
-            <span
-              className="e-france__tip"
-              style={{ left: `${(tip.x / S) * 100}%`, top: `calc(${(tip.y / S) * 100}% + 16px)` }}
-            >
-              {tip.name}
-            </span>
-          ) : null}
-        </div>
-      </div>
-      <p className="e-france__legend">
-        <span>
-          <i className="is-home" aria-hidden="true" /> {place.kind === "position" ? "Toi" : place.name}
-        </span>
-        <span>
-          <i aria-hidden="true" /> Privé
-        </span>
-        <span>
-          <i className="is-public" aria-hidden="true" /> Public
-        </span>
-      </p>
-    </div>
   );
 }

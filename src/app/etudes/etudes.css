@@ -2771,6 +2771,76 @@ html.e-lock body {
   margin-top: 18px;
   max-width: 640px;
 }
+.e-fr__retry {
+  display: inline-block;
+  margin: -6px 0 14px;
+}
+.e-fr__mot {
+  flex: 1 1 240px;
+  min-height: 38px;
+}
+.e-fr__mot input {
+  min-height: 38px;
+  font-size: 0.92rem;
+}
+.e-fr__try + .e-dir__countrow {
+  margin-top: 14px;
+}
+.e-psup__more {
+  margin-top: 12px;
+}
+.e-stack {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 18px;
+}
+.e-stack figcaption {
+  font-size: 0.8rem;
+  color: var(--slate);
+}
+.e-stack__bar {
+  display: flex;
+  gap: 2px;
+  height: 12px;
+  border-radius: 99px;
+  overflow: hidden;
+}
+.e-stack__bar span {
+  min-width: 3px;
+}
+.e-stack [data-k="0"] {
+  background: var(--ink);
+}
+.e-stack [data-k="1"] {
+  background: color-mix(in srgb, var(--ink) 62%, var(--paper));
+}
+.e-stack [data-k="2"] {
+  background: color-mix(in srgb, var(--ink) 34%, var(--paper));
+}
+.e-stack [data-k="3"] {
+  background: color-mix(in srgb, var(--ink) 14%, var(--paper));
+}
+.e-stack__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  font-size: 0.84rem;
+  color: var(--slate);
+}
+.e-stack__legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.e-stack__legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+.e-stack__legend strong {
+  color: var(--ink);
+  font-weight: 650;
+}
 .e-radar__disc {
   fill: var(--paper);
   stroke: var(--hair-2);

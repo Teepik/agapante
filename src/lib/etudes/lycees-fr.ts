@@ -3,8 +3,7 @@
  *
  * Le fichier public/etudes-data/lycees-france-2025.json se construit hors ligne à partir des données
  * ouvertes de l'Éducation nationale (Licence Ouverte) : l'annuaire de l'éducation pour les lycées,
- * leurs coordonnées et leurs voies ; les indicateurs de résultats des lycées (IVAL) de la session
- * 2025 ; l'annuaire agrégé par commune pour chercher une ville ou un code postal.
+ * leurs coordonnées et leurs voies ; les indicateurs de résultats des lycées (IVAL) de la session 2025.
  * Une fois chargé, il reste sur l'appareil grâce au service worker de la page.
  */
 import { lyceeById, type Lycee, type LyceeStatut, type Resultats } from "./lycees";
@@ -39,24 +38,8 @@ type Raw = {
   v: number;
   session: number;
   deps: Record<string, string>;
-  /** Une commune par ligne : nom|codes postaux|lat×1000|lon×1000|écoles|département. */
-  communes: string;
   lycees: RawLycee[];
 };
-
-export type Commune = {
-  name: string;
-  cps: string[];
-  lat: number;
-  lon: number;
-  /** Nombre d'écoles, collèges et lycées : sert à classer les villes par taille. */
-  n: number;
-  dep: string;
-  depName: string;
-  key: string;
-};
-
-export type FranceData = { communes: Commune[]; lycees: Lycee[] };
 
 const STATUTS: LyceeStatut[] = ["public", "prive-contrat", "hors-contrat", "defense"];
 
@@ -98,27 +81,6 @@ export const SELECTION_PAR_UAI: Record<string, string> = {
   "0950762M": "saint-martin-de-france",
   "0754086J": "charles-de-foucauld",
 };
-
-/** Clé de recherche : sans accents ni ponctuation, « saint » et « st » se valent. */
-export function cle(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/œ/g, "oe")
-    .replace(/æ/g, "ae")
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9]+/g, " ")
-    .replace(/\bsainte\b/g, "ste")
-    .replace(/\bsaint\b/g, "st")
-    .trim();
-}
-
-function depDuCodePostal(cp: string): string {
-  if (!cp) return "";
-  if (cp.startsWith("97")) return cp.slice(0, 3);
-  if (cp.startsWith("20")) return Number(cp) < 20200 ? "2A" : "2B";
-  return cp.slice(0, 2);
-}
 
 function resultats(r: RawIndic | 0 | undefined, source: string): Resultats | undefined {
   if (!r) return undefined;
@@ -172,32 +134,17 @@ function lycee(r: RawLycee, deps: Record<string, string>): Lycee {
   };
 }
 
-function decode(raw: Raw): FranceData {
-  const communes = raw.communes.split("\n").map((line): Commune => {
-    const [name, cps, lat, lon, n, dep] = line.split("|");
-    const list = cps ? cps.split(",") : [];
-    const d = dep || depDuCodePostal(list[0] ?? "");
-    return {
-      name,
-      cps: list,
-      lat: Number(lat) / 1000,
-      lon: Number(lon) / 1000,
-      n: n ? Number(n) : 1,
-      dep: d,
-      depName: raw.deps[d] ?? "",
-      key: cle(name),
-    };
-  });
+function decode(raw: Raw): Lycee[] {
   const lycees = raw.lycees.map((r) => lycee(r, raw.deps));
   // Les fiches s'ouvrent par leur identifiant, comme celles de la sélection.
   for (const l of lycees) lyceeById[l.id] ??= l;
-  return { communes, lycees };
+  return lycees;
 }
 
-let pending: Promise<FranceData> | null = null;
+let pending: Promise<Lycee[]> | null = null;
 
-/** Charge les lycées de France une seule fois (environ 420 Ko compressés). */
-export function chargerFrance(): Promise<FranceData> {
+/** Charge les lycées de France une seule fois (environ 200 Ko compressés). */
+export function chargerLycees(): Promise<Lycee[]> {
   pending ??= fetch(FRANCE_URL)
     .then((res) => {
       if (!res.ok) throw new Error(`lycées de France : ${res.status}`);
@@ -209,53 +156,6 @@ export function chargerFrance(): Promise<FranceData> {
       throw err;
     });
   return pending;
-}
-
-/** Les communes qui répondent à une recherche : nom ou début de code postal. */
-export function chercherCommunes(data: FranceData, query: string, max = 7): Commune[] {
-  const q = query.trim();
-  if (!q) return [];
-  if (/^\d{2,5}$/.test(q)) {
-    let hits = data.communes.filter((c) => c.cps.some((cp) => cp.startsWith(q)));
-    // Un code postal sans école : les communes dont le code commence pareil
-    if (!hits.length && q.length === 5)
-      hits = data.communes.filter((c) => c.cps.some((cp) => cp.startsWith(q.slice(0, 4))));
-    return hits.sort((a, b) => b.n - a.n).slice(0, max);
-  }
-  const k = cle(q);
-  if (k.length < 2) return [];
-  const scored: { c: Commune; s: number }[] = [];
-  for (const c of data.communes) {
-    const s = c.key === k ? 0 : c.key.startsWith(k) ? 1 : c.key.includes(` ${k}`) ? 2 : -1;
-    if (s >= 0) scored.push({ c, s });
-  }
-  return scored
-    .sort((a, b) => a.s - b.s || b.c.n - a.c.n || a.c.name.localeCompare(b.c.name, "fr"))
-    .slice(0, max)
-    .map((x) => x.c);
-}
-
-/** La commune la plus proche d'un point (pour nommer « ta position »). */
-export function communeLaPlusProche(data: FranceData, lat: number, lon: number): Commune | null {
-  let best: Commune | null = null;
-  let d = Infinity;
-  for (const c of data.communes) {
-    const x = distanceKm(lat, lon, c.lat, c.lon);
-    if (x < d) {
-      d = x;
-      best = c;
-    }
-  }
-  return best;
-}
-
-/** Distance à vol d'oiseau, en kilomètres. */
-export function distanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const r = Math.PI / 180;
-  const dLat = (lat2 - lat1) * r;
-  const dLon = (lon2 - lon1) * r;
-  const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * r) * Math.cos(lat2 * r) * Math.sin(dLon / 2) ** 2;
-  return 12742 * Math.asin(Math.min(1, Math.sqrt(a)));
 }
 
 /** Les voies d'un lycée, en clair. */
