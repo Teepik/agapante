@@ -32,7 +32,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "3il",
     nom: "3iL Ingénieurs",
-    court: "3iL",
     ville: "Limoges",
     region: "Nouvelle-Aquitaine",
     statut: "eespig",
@@ -65,7 +64,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "builders",
     nom: "Builders École d'ingénieurs (ex-ESITC Caen)",
-    court: "Builders",
     ville: "Épron",
     region: "Normandie",
     statut: "eespig",
@@ -99,7 +97,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "cesi",
     nom: "CESI École d'ingénieurs",
-    court: "CESI",
     ville: "Nanterre",
     region: "Île-de-France",
     statut: "prive",
@@ -120,7 +117,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "cy-tech",
     nom: "CY Tech (CY Cergy Paris Université)",
-    court: "CY Tech",
     ville: "Cergy",
     region: "Île-de-France",
     statut: "public",
@@ -154,7 +150,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "ece",
     nom: "ECE École d'ingénieurs",
-    court: "ECE",
     ville: "Paris",
     region: "Île-de-France",
     statut: "prive",
@@ -280,7 +275,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "paoli-tech",
     nom: "École d'ingénieurs Paoli Tech (Université de Corse)",
-    court: "Paoli Tech",
     ville: "Corte",
     region: "Corse",
     statut: "public",
@@ -290,7 +284,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "sigma-clermont",
     nom: "École d'ingénieurs SIGMA Clermont (Clermont Auvergne INP)",
-    court: "SIGMA Clermont",
     ville: "Aubière",
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
@@ -567,7 +560,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "arts-et-metiers",
     nom: "École nationale supérieure d'arts et métiers",
-    court: "Arts et Métiers",
     ville: "Paris",
     region: "Île-de-France",
     statut: "public",
@@ -1598,7 +1590,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "eidd",
     nom: "EIDD - École d'ingénieurs Denis Diderot (Université Paris Cité)",
-    court: "EIDD",
     ville: "Paris",
     region: "Île-de-France",
     statut: "public",
@@ -1608,7 +1599,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "eijv",
     nom: "EiJV (école d'ingénieurs, Amiens - Saint-Quentin)",
-    court: "EiJV",
     ville: "Amiens",
     region: "Hauts-de-France",
     recrutement: ["prepa"],
@@ -1617,7 +1607,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "epf",
     nom: "EPF École d'ingénieurs",
-    court: "EPF",
     ville: "Cachan",
     region: "Île-de-France",
     statut: "eespig",
@@ -1630,7 +1619,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "episen",
     nom: "EPISEN (Université Paris-Est Créteil)",
-    court: "EPISEN",
     ville: "Créteil",
     region: "Île-de-France",
     statut: "public",
@@ -1640,7 +1628,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "eseo",
     nom: "ESEO - Grande école d'ingénieurs généralistes",
-    court: "ESEO",
     ville: "Angers",
     region: "Pays de la Loire",
     statut: "eespig",
@@ -1653,7 +1640,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "esiee-paris",
     nom: "ESIEE Paris (Université Gustave Eiffel)",
-    court: "ESIEE Paris",
     ville: "Noisy-le-Grand",
     region: "Île-de-France",
     statut: "public",
@@ -1667,7 +1653,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "esix",
     nom: "ESIX Normandie (Université de Caen Normandie)",
-    court: "ESIX",
     ville: "Caen",
     region: "Normandie",
     statut: "public",
@@ -1679,7 +1664,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "esme",
     nom: "ESME (École spéciale de mécanique et d'électricité)",
-    court: "ESME",
     ville: "Paris",
     region: "Île-de-France",
     statut: "prive",
@@ -1700,7 +1684,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "ig2i",
     nom: "IG2I - École d'ingénieurs de Centrale Lille Institut à Lens",
-    court: "IG2I",
     ville: "Lens",
     region: "Hauts-de-France",
     statut: "public",
@@ -1712,7 +1695,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "imt-mines-albi",
     nom: "IMT Mines Albi-Carmaux",
-    court: "IMT Mines Albi",
     ville: "Albi",
     region: "Occitanie",
     statut: "public",
@@ -1736,7 +1718,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "imt-nord-europe",
     nom: "IMT Nord Europe (Institut Mines-Télécom)",
-    court: "IMT Nord Europe",
     ville: "Villeneuve-d'Ascq",
     region: "Hauts-de-France",
     statut: "public",
@@ -1750,7 +1731,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "institut-agro-dijon",
     nom: "Institut Agro Dijon (École nationale supérieure des sciences agronomiques, de l'alimentation et de l'environnement)",
-    court: "Institut Agro Dijon",
     ville: "Dijon",
     region: "Bourgogne-Franche-Comté",
     statut: "public",
@@ -1773,7 +1753,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "institut-agro-rennes-angers",
     nom: "Institut Agro Rennes-Angers (École nationale supérieure des sciences agronomiques, agroalimentaires, horticoles et du paysage)",
-    court: "Institut Agro Rennes-Angers",
     ville: "Rennes",
     region: "Bretagne",
     statut: "public",
@@ -1948,7 +1927,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "unilasalle",
     nom: "Institut polytechnique UniLaSalle",
-    court: "UniLaSalle",
     ville: "Beauvais",
     region: "Hauts-de-France",
     statut: "eespig",
@@ -2075,7 +2053,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "isae-ensma",
     nom: "ISAE-ENSMA (École nationale supérieure de mécanique et d'aérotechnique)",
-    court: "ISAE-ENSMA",
     ville: "Chasseneuil-du-Poitou",
     region: "Nouvelle-Aquitaine",
     statut: "public",
@@ -2087,7 +2064,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "isae-supmeca",
     nom: "ISAE-Supméca (Institut supérieur de mécanique de Paris)",
-    court: "ISAE-Supméca",
     ville: "Saint-Ouen-sur-Seine",
     region: "Île-de-France",
     statut: "public",
@@ -2099,7 +2075,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "isen-mediterranee",
     nom: "ISEN Méditerranée (Yncréa Méditerranée)",
-    court: "ISEN Méditerranée",
     ville: "Toulon",
     region: "Provence-Alpes-Côte d'Azur",
     statut: "eespig",
@@ -2110,7 +2085,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "isis",
     nom: "ISIS - École d'ingénieurs de l'Institut national universitaire Champollion",
-    court: "ISIS",
     ville: "Castres",
     region: "Occitanie",
     statut: "public",
@@ -2130,7 +2104,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "istom",
     nom: "ISTOM - École supérieure d'agro-développement international",
-    court: "ISTOM",
     ville: "Angers",
     region: "Pays de la Loire",
     statut: "eespig",
@@ -2141,7 +2114,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "iteem",
     nom: "ITEEM - Centrale Lille Institut",
-    court: "ITEEM",
     ville: "Villeneuve-d'Ascq",
     region: "Hauts-de-France",
     statut: "public",
@@ -2151,7 +2123,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "hei",
     nom: "Junia HEI (Hautes études d'ingénieur)",
-    court: "HEI",
     ville: "Lille",
     region: "Hauts-de-France",
     statut: "eespig",
@@ -2187,7 +2158,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "oniris",
     nom: "Oniris VetAgroBio Nantes",
-    court: "Oniris",
     ville: "Nantes",
     region: "Pays de la Loire",
     statut: "public",
@@ -2199,7 +2169,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "seatech",
     nom: "SeaTech - École d'ingénieurs de l'Université de Toulon",
-    court: "SeaTech",
     ville: "La Garde",
     region: "Provence-Alpes-Côte d'Azur",
     statut: "public",
@@ -2220,7 +2189,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "sup-enr",
     nom: "Sup EnR (Université de Perpignan Via Domitia)",
-    court: "Sup EnR",
     ville: "Perpignan",
     region: "Occitanie",
     statut: "public",
@@ -2230,7 +2198,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "sup-galilee",
     nom: "Sup Galilée (Université Sorbonne Paris Nord)",
-    court: "Sup Galilée",
     ville: "Villetaneuse",
     region: "Île-de-France",
     statut: "public",
@@ -2242,7 +2209,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "telecom-nancy",
     nom: "Télécom Nancy (Université de Lorraine)",
-    court: "Télécom Nancy",
     ville: "Villers-lès-Nancy",
     region: "Grand Est",
     statut: "public",
@@ -2278,7 +2244,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "telecom-saint-etienne",
     nom: "Télécom Saint-Étienne (Université Jean Monnet)",
-    court: "Télécom Saint-Étienne",
     ville: "Saint-Étienne",
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
@@ -2341,7 +2306,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "upssitech",
     nom: "UPSSITECH (Université de Toulouse)",
-    court: "UPSSITECH",
     ville: "Toulouse",
     region: "Occitanie",
     statut: "public",
@@ -2351,7 +2315,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
   {
     id: "vetagro-sup",
     nom: "VetAgro Sup (campus agronomique de Lempdes)",
-    court: "VetAgro Sup",
     ville: "Lempdes",
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
