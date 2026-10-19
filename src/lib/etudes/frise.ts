@@ -64,11 +64,20 @@ export const frise: FriseYear[] = frTypo([
       },
       { when: "Décembre {B-1}", what: "Ouverture de Parcoursup pour découvrir les formations." },
       { when: "Janvier à mars {B}", what: "Inscription et vœux sur Parcoursup, jusqu'à dix vœux.", key: true },
+      {
+        when: "Mars à mai {B}",
+        what: "Dossier social étudiant : ta demande de bourse et de logement au Crous, en même temps que Parcoursup.",
+        key: true,
+      },
       { when: "Début avril {B}", what: "Dossiers complétés, lettres de motivation, vœux confirmés." },
       {
         when: "Juin {B}",
         what: "Premières réponses de Parcoursup début juin, puis le bac : philosophie, spécialités, grand oral.",
         key: true,
+      },
+      {
+        when: "Juillet {B}",
+        what: "Boursier admis hors de ton académie : l'aide à la mobilité Parcoursup, 500 €, se demande dès la mi-juillet.",
       },
     ],
   },

@@ -131,4 +131,29 @@ export const lexique: Mot[] = frTypo([
     def: "Bac technologique sciences et techniques du théâtre, de la musique et de la danse : un lycée associé à un conservatoire, avec beaucoup de pratique.",
     station: "conservatoire",
   },
+  {
+    term: "Apprentissage",
+    def: "Des études en alternance avec un contrat de travail : l'entreprise paie la formation et te verse un salaire, de 27 % à 100 % du SMIC selon ton âge et ton année de contrat.",
+    station: "alternance",
+  },
+  {
+    term: "Bourse sur critères sociaux",
+    def: "L'aide du Crous selon les revenus et les charges de ta famille : de 1 454 € à 6 335 € par an en 2026-2027, en dix mensualités. Elle dispense aussi des droits d'inscription et de la CVEC dans le public.",
+  },
+  {
+    term: "Crous",
+    def: "Le service public de la vie étudiante : bourses, logements en résidence, restaurants universitaires où le repas coûte 1 €.",
+  },
+  {
+    term: "CVEC",
+    def: "La contribution de vie étudiante et de campus : 105 € par an en 2026-2027, payée par les étudiants du supérieur ; les boursiers en sont dispensés.",
+  },
+  {
+    term: "Dossier social étudiant",
+    def: "La demande de bourse et de logement au Crous, à remplir au printemps de l'année du bac sur messervices.etudiant.gouv.fr.",
+  },
+  {
+    term: "Échelon de bourse",
+    def: "Le niveau de ta bourse, de 0 bis à 7 : il monte quand les revenus de la famille baissent ou quand ses charges augmentent (frères et sœurs, distance).",
+  },
 ]);
