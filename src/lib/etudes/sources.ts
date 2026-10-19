@@ -230,6 +230,43 @@ const raw: SourceGroup[] = [
     ],
   },
   {
+    title: "Coûts et aides",
+    items: [
+      {
+        title: "Service-public.fr : le coût d'une inscription dans le supérieur (2026-2027)",
+        url: "https://www.service-public.gouv.fr/particuliers/vosdroits/F2865",
+      },
+      {
+        title: "Service-public.fr : la bourse sur critères sociaux",
+        url: "https://www.service-public.gouv.fr/particuliers/vosdroits/F12214",
+      },
+      {
+        title: "Bulletin officiel : les règles d'attribution des bourses 2026-2027",
+        url: "https://www.enseignementsup-recherche.gouv.fr/fr/bo/2026/Hebdo9/ESRS2604201C",
+      },
+      {
+        title: "Service-public.fr : le simulateur de bourse",
+        url: "https://www.service-public.gouv.fr/particuliers/vosdroits/R18296",
+      },
+      {
+        title: "Service-public.fr : le contrat d'apprentissage et son salaire",
+        url: "https://www.service-public.gouv.fr/particuliers/vosdroits/F2918",
+      },
+      {
+        title: "UNEF : le classement des villes universitaires 2026",
+        url: "https://unef.fr/wp-content/uploads/2026/08/UNEF-Classement-des-villes-universitaires-2026.pdf",
+      },
+      {
+        title: "UNEF : l'enquête sur le coût de la vie étudiante 2026",
+        url: "https://unef.fr/wp-content/uploads/2026/08/Enquete-UNEF-2026-VF.pdf",
+      },
+      {
+        title: "Parcoursup : l'aide à la mobilité",
+        url: "https://parcoursup.gouv.fr/preparer-sa-vie-etudiante/l-aide-la-mobilite-parcoursup-1667",
+      },
+    ],
+  },
+  {
     title: "Passerelles",
     items: [
       {
