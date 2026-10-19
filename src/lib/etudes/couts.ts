@@ -26,8 +26,8 @@ export const SRC = {
     label: "Université de Strasbourg, inscription des élèves de prépa (juin 2026)",
     url: "https://lycee-kleber.com.fr/wp-content/uploads/2026/07/CPGE-2026-Procedure-inscription-Universite-de-Strasbourg.pdf",
   },
-  cefdg: {
-    label: "L'Etudiant, les frais des écoles de commerce (9 avril 2026, chiffres de la CEFDG)",
+  commerce: {
+    label: "L'Etudiant, les frais des écoles de commerce (9 avril 2026)",
     url: "https://www.letudiant.fr/etudes/ecole-de-commerce/ecoles-de-commerce-les-frais-de-scolarite-ne-cessent-d-augmenter.html",
   },
   hec: {
@@ -123,7 +123,7 @@ export const SRC = {
 /* ---------- Frais d'inscription ---------- */
 
 /** Droits d'inscription dans le public, 2026-2027 : licence, master, ingénieur. */
-export const DROITS = { licence: 178, master: 255, ingenieur: 630, centrales: 2620 };
+export const DROITS = { licence: 178, master: 255, ingenieur: 630 };
 /** Contribution de vie étudiante et de campus, payée chaque année par les étudiants du supérieur. */
 export const CVEC = 105;
 
@@ -214,7 +214,7 @@ export const FORMATIONS: FormationCout[] = etTypo([
     annees: 5,
     frais: DROITS.ingenieur + CVEC,
     boursier: 0,
-    detail: `${DROITS.ingenieur} € de droits et ${CVEC} € de CVEC par an ; les écoles centrales demandent 2 620 €. Les boursiers en sont dispensés.`,
+    detail: `${DROITS.ingenieur} € de droits et ${CVEC} € de CVEC par an dans les écoles rattachées au ministère de l'Enseignement supérieur, 2 620 € dans quelques-unes. Les boursiers en sont dispensés.`,
     sources: [SRC.frais],
   },
   {
@@ -237,9 +237,9 @@ export const FORMATIONS: FormationCout[] = etTypo([
     frais: 13400 + CVEC,
     boursier: 13400,
     detail:
-      "13 400 € par an en moyenne dans 23 écoles en 2024-2025, plus de 20 000 € dans les plus demandées. Beaucoup réduisent leurs frais pour les boursiers : HEC selon l'échelon, l'ESSEC supprime ses frais de scolarité dès l'échelon 4.",
+      "Autour de 13 400 € par an en moyenne dans les 23 écoles du classement de L'Etudiant, plus de 20 000 € dans les plus demandées. Beaucoup réduisent leurs frais pour les boursiers : HEC selon l'échelon, l'ESSEC supprime ses frais de scolarité dès l'échelon 4.",
     prive: true,
-    sources: [SRC.cefdg, SRC.hec, SRC.essec],
+    sources: [SRC.commerce, SRC.hec, SRC.essec],
   },
   {
     id: "master",
@@ -441,7 +441,7 @@ export const APPRENTI_SANS_COTISATIONS = SMIC_BRUT / 2;
 
 /* ---------- Étudier à l'étranger ---------- */
 
-export type Etranger = { pays: string; ecole: string; frais: string; texte: string; source: Source };
+export type Etranger = { pays: string; ecole: string; frais: string; texte: string; sources: Source[] };
 
 /** Des frais d'inscription réels pour un bachelier français, convertis au taux de la BCE du 16 octobre 2026. */
 export const ETRANGER: Etranger[] = etTypo([
@@ -449,51 +449,70 @@ export const ETRANGER: Etranger[] = etTypo([
     pays: "Belgique",
     ecole: "Université libre de Bruxelles",
     frais: "1 194 € par an",
-    texte: "Le plein tarif, qui s'applique à un étudiant venu de France.",
-    source: {
-      label: "ULB, droits d'inscription 2026-2027",
-      url: "https://www.ulb.be/fr/inscriptions/droits-d-inscription",
-    },
+    texte: "Le plein tarif des étudiants européens, qui s'applique à un étudiant venu de France.",
+    sources: [
+      {
+        label: "ULB, droits d'inscription",
+        url: "https://www.ulb.be/fr/inscriptions/droits-d-inscription",
+      },
+    ],
   },
   {
     pays: "Pays-Bas",
     ecole: "Université d'Amsterdam",
     frais: "2 694 € par an",
     texte: "Le tarif légal pour un étudiant de l'Union européenne.",
-    source: {
-      label: "Universiteit van Amsterdam, tuition fees 2026-2027",
-      url: "https://www.uva.nl/en/education/fees-and-funding/tuition-fees/tuition-fees.html",
-    },
+    sources: [
+      {
+        label: "Universiteit van Amsterdam, tuition fees 2026-2027",
+        url: "https://www.uva.nl/en/education/fees-and-funding/tuition-fees/tuition-fees.html",
+      },
+    ],
   },
   {
     pays: "Suisse",
     ecole: "ETH Zurich",
     frais: "4 380 CHF par an, environ 4 720 €",
-    texte: "Le tarif des étudiants qui ont passé leur bac hors de Suisse.",
-    source: {
-      label: "ETH Zurich, tuition fees",
-      url: "https://ethz.ch/students/en/studies/financial/tuition-fees.html",
-    },
+    texte: "Le tarif des étudiants qui vivaient hors de Suisse en obtenant leur bac, comme un bachelier français.",
+    sources: [
+      {
+        label: "ETH Zurich, tuition fees",
+        url: "https://ethz.ch/students/en/studies/financial/tuition-fees.html",
+      },
+    ],
   },
   {
     pays: "Québec",
     ecole: "Université de Montréal",
     frais: "9 730 $ CA par an en licence, environ 6 100 €",
-    texte: "En maîtrise, l'entente France-Québec donne le tarif québécois : environ 1 960 € par an.",
-    source: {
-      label: "Université de Montréal, coûts des études",
-      url: "https://registraire.umontreal.ca/droits-de-scolarite/couts/",
-    },
+    texte:
+      "L'entente France-Québec donne aux Français le tarif des Canadiens hors Québec en licence, puis le tarif québécois en maîtrise : environ 1 960 € par an.",
+    sources: [
+      {
+        label: "Université de Montréal, coûts des études",
+        url: "https://registraire.umontreal.ca/droits-de-scolarite/couts/",
+      },
+      {
+        label: "Université Laval, l'étudiant français",
+        url: "https://www.ulaval.ca/etudes/droits-de-scolarite/etudiant-francais",
+      },
+    ],
   },
   {
     pays: "Royaume-Uni",
     ecole: "London School of Economics",
     frais: "28 900 à 39 900 £ par an, 34 000 à 47 000 €",
     texte: "Depuis 2021, un étudiant français paie le tarif international.",
-    source: {
-      label: "LSE, table of fees 2026-2027",
-      url: "https://info.lse.ac.uk/staff/divisions/Planning-Division/Assets/Documents/Table-of-Fees-2026-27-and-PGR-structure-combined-29July26.pdf",
-    },
+    sources: [
+      {
+        label: "LSE, table of fees 2026-2027",
+        url: "https://info.lse.ac.uk/staff/divisions/Planning-Division/Assets/Documents/Table-of-Fees-2026-27-and-PGR-structure-combined-29July26.pdf",
+      },
+      {
+        label: "King's College London, tuition fees",
+        url: "https://www.kcl.ac.uk/study/undergraduate/fees-and-funding/tuition-fees",
+      },
+    ],
   },
 ]);
 

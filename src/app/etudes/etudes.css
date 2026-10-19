@@ -4429,6 +4429,10 @@ html.e-lock body {
 .e-cost__how {
   margin-top: 16px;
 }
+.e-cost__src {
+  max-width: 900px;
+  margin-top: 28px;
+}
 
 .e-aides {
   display: grid;
