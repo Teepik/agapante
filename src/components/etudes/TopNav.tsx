@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BrandMark, Icon } from "./ui";
 
 export const SECTIONS = [
@@ -31,6 +31,7 @@ export function TopNav({
   const [scrolled, setScrolled] = useState(false);
   const [menu, setMenu] = useState(false);
   const [mac, setMac] = useState(true);
+  const linksRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMac(/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent));
@@ -57,6 +58,18 @@ export function TopNav({
     };
   }, []);
 
+  // Sur un écran étroit, la liste des sections défile : la section en cours reste visible.
+  useEffect(() => {
+    const box = linksRef.current;
+    if (!box || !active || box.scrollWidth <= box.clientWidth) return;
+    const link = box.querySelector<HTMLElement>(`a[href="#${active}"]`);
+    if (!link) return;
+    const delta = link.getBoundingClientRect().left - box.getBoundingClientRect().left;
+    const left = box.scrollLeft + delta - (box.clientWidth - link.offsetWidth) / 2;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    box.scrollTo({ left: Math.max(0, left), behavior: reduce ? "auto" : "smooth" });
+  }, [active]);
+
   useEffect(() => {
     if (!menu) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenu(false);
@@ -72,7 +85,7 @@ export function TopNav({
           études
         </a>
 
-        <div className="e-nav__links">
+        <div className="e-nav__links" ref={linksRef}>
           {SECTIONS.map((s) => (
             <a key={s.id} href={`#${s.id}`} aria-current={active === s.id ? "true" : undefined}>
               {s.label}
