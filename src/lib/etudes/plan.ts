@@ -546,6 +546,14 @@ const options: PlacedStation[] = [
     y: trunkY("bac"),
     t: -0.2,
   },
+  {
+    id: "alternance",
+    kind: "option",
+    line: "courtes",
+    x: BX,
+    y: trunkY("bac"),
+    t: -0.1,
+  },
 ];
 
 const laneStations: PlacedStation[] = LANES.flatMap((line) => {
@@ -616,12 +624,13 @@ export function laneOf(stationId: string): LaneId | null {
 export function routeOf(line: LaneId): string[] {
   const def = LANE_DEFS[line];
   const pre = ["college"];
+  if (line === "pro") pre.push("alternance");
   if (line !== "pro") {
     pre.push("seconde");
     if (line === "defense") pre.push("lycee-defense");
     if (line === "arts") pre.push("conservatoire");
     pre.push("premiere-terminale");
-    if (line === "courtes") pre.push("bac-techno");
+    if (line === "courtes") pre.push("bac-techno", "alternance");
     if (line === "postbac") pre.push("concours-postbac");
     pre.push("bac");
   }

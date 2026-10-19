@@ -46,6 +46,7 @@ const OPTION_LABEL: Record<string, string> = {
   conservatoire: "Conservatoire",
   "bac-techno": "Bac technologique",
   "concours-postbac": "Concours post-bac",
+  alternance: "Alternance",
 };
 
 /** Le nom de la voie, en haut de sa colonne : court, pour tenir dans la largeur d'une voie. */

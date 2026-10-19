@@ -45,20 +45,23 @@ export const itineraires: Itineraire[] = frTypo([
       {
         when: "Janvier à mars {B}",
         title: "Parcoursup : MPSI, PCSI ou MP2I",
-        detail: "Vise quelques prépas très exigeantes, ajoute de bonnes prépas de ta région et une valeur sûre : école d'ingénieurs après le bac ou double licence.",
+        detail:
+          "Vise quelques prépas très exigeantes, ajoute de bonnes prépas de ta région et une valeur sûre : école d'ingénieurs après le bac ou double licence.",
         choice: true,
         station: "bac",
       },
       {
         when: "{B}-{B+2}",
         title: "Deux ans de prépa scientifique",
-        detail: "Des colles chaque semaine et un devoir de quatre heures le samedi : tu apprends à travailler vite et juste.",
+        detail:
+          "Des colles chaque semaine et un devoir de quatre heures le samedi : tu apprends à travailler vite et juste.",
         station: "prepa-scientifique",
       },
       {
         when: "Printemps {B+2}",
         title: "Les concours",
-        detail: "Banques X-ENS, Mines-Ponts, Centrale-Supélec, CCINP : tu en passes plusieurs, les écrits puis les oraux.",
+        detail:
+          "Banques X-ENS, Mines-Ponts, Centrale-Supélec, CCINP : tu en passes plusieurs, les écrits puis les oraux.",
         choice: true,
         station: "concours-ingenieurs",
       },
@@ -89,7 +92,12 @@ export const itineraires: Itineraire[] = frTypo([
     duree: "8 ans, de la 3e au diplôme",
     exigence: 5,
     steps: [
-      { when: "{B-3}, en 2nde", title: "Un lycée général exigeant", detail: "Les maths et les langues comptent dès maintenant.", station: "seconde" },
+      {
+        when: "{B-3}, en 2nde",
+        title: "Un lycée général exigeant",
+        detail: "Les maths et les langues comptent dès maintenant.",
+        station: "seconde",
+      },
       {
         when: "Printemps {B-2}",
         title: "Maths, SES ou HGGSP, et une troisième spécialité",
@@ -110,7 +118,12 @@ export const itineraires: Itineraire[] = frTypo([
         choice: true,
         station: "bac",
       },
-      { when: "{B}-{B+2}", title: "Deux ans de prépa ECG", detail: "Maths, économie ou géopolitique, culture générale, deux langues.", station: "prepa-ecg" },
+      {
+        when: "{B}-{B+2}",
+        title: "Deux ans de prépa ECG",
+        detail: "Maths, économie ou géopolitique, culture générale, deux langues.",
+        station: "prepa-ecg",
+      },
       {
         when: "Printemps {B+2}",
         title: "Concours BCE et Ecricome",
@@ -124,7 +137,12 @@ export const itineraires: Itineraire[] = frTypo([
         detail: "Stages, année de césure possible, échanges dans le monde entier.",
         station: "ecole-commerce",
       },
-      { when: "{B+5}", title: "Dirigeant, financier, consultant, entrepreneur", detail: "Finance, conseil, industrie, création d'entreprise.", station: "metiers-commerce" },
+      {
+        when: "{B+5}",
+        title: "Dirigeant, financier, consultant, entrepreneur",
+        detail: "Finance, conseil, industrie, création d'entreprise.",
+        station: "metiers-commerce",
+      },
     ],
     cles: [
       "Lire la presse économique et internationale chaque semaine.",
@@ -139,7 +157,12 @@ export const itineraires: Itineraire[] = frTypo([
     duree: "8 ans, puis les concours",
     exigence: 5,
     steps: [
-      { when: "{B-3}, en 2nde", title: "Un lycée exigeant, avec une vraie culture de l'écrit", detail: "Dissertations, débats, lectures : tout compte.", station: "seconde" },
+      {
+        when: "{B-3}, en 2nde",
+        title: "Un lycée exigeant, avec une vraie culture de l'écrit",
+        detail: "Dissertations, débats, lectures : tout compte.",
+        station: "seconde",
+      },
       {
         when: "Printemps {B-2}",
         title: "HGGSP, SES et une troisième spécialité",
@@ -172,7 +195,12 @@ export const itineraires: Itineraire[] = frTypo([
         choice: true,
         station: "concours-etat",
       },
-      { when: "Ensuite", title: "Haut fonctionnaire, diplomate, avocat, magistrat", detail: "Servir l'État, défendre, juger, négocier.", station: "metiers-scpo" },
+      {
+        when: "Ensuite",
+        title: "Haut fonctionnaire, diplomate, avocat, magistrat",
+        detail: "Servir l'État, défendre, juger, négocier.",
+        station: "metiers-scpo",
+      },
     ],
     cles: [
       "L'écrit fait la différence : rédige souvent et fais-toi corriger.",
@@ -187,7 +215,12 @@ export const itineraires: Itineraire[] = frTypo([
     duree: "9 à 12 ans après le bac",
     exigence: 5,
     steps: [
-      { when: "{B-3}, en 2nde", title: "Un lycée solide en sciences", detail: "Biologie, chimie et maths se travaillent dès la 2nde.", station: "seconde" },
+      {
+        when: "{B-3}, en 2nde",
+        title: "Un lycée solide en sciences",
+        detail: "Biologie, chimie et maths se travaillent dès la 2nde.",
+        station: "seconde",
+      },
       {
         when: "Printemps {B-2}",
         title: "SVT, physique-chimie et maths",
@@ -204,26 +237,39 @@ export const itineraires: Itineraire[] = frTypo([
       {
         when: "Janvier à mars {B}",
         title: "Parcoursup : la licence santé",
-        detail: "Depuis 2027, une licence unique remplace le PASS et la LAS : un seul vœu, avec des sous-vœux par université.",
+        detail:
+          "Depuis 2027, une licence unique remplace le PASS et la LAS : un seul vœu, avec des sous-vœux par université.",
         choice: true,
         station: "pass-las",
       },
       {
         when: "{B}-{B+1}",
         title: "Une ou deux années de licence santé",
-        detail: "Au moins 10 sur 20 dans chaque bloc, puis un classement : tu candidates en médecine après la 1re ou la 2e année.",
+        detail:
+          "Au moins 10 sur 20 dans chaque bloc, puis un classement : tu candidates en médecine après la 1re ou la 2e année.",
         choice: true,
         station: "pass-las",
       },
-      { when: "{B+1}-{B+6}", title: "Les études de médecine", detail: "Cours, puis stages à l'hôpital de plus en plus nombreux.", station: "etudes-sante" },
+      {
+        when: "{B+1}-{B+6}",
+        title: "Les études de médecine",
+        detail: "Cours, puis stages à l'hôpital de plus en plus nombreux.",
+        station: "etudes-sante",
+      },
       {
         when: "{B+6}",
         title: "EDN et ECOS, puis l'internat",
-        detail: "En 6e année, ton classement décide de ta spécialité et de ta ville d'internat : quatre à six ans de plus.",
+        detail:
+          "En 6e année, ton classement décide de ta spécialité et de ta ville d'internat : quatre à six ans de plus.",
         choice: true,
         station: "internat",
       },
-      { when: "Vers {B+10}", title: "Médecin", detail: "Généraliste, chirurgien, cardiologue, psychiatre, chercheur…", station: "metiers-sante" },
+      {
+        when: "Vers {B+10}",
+        title: "Médecin",
+        detail: "Généraliste, chirurgien, cardiologue, psychiatre, chercheur…",
+        station: "metiers-sante",
+      },
     ],
     cles: [
       "Une régularité de travail à toute épreuve, dès le lycée.",
@@ -238,7 +284,12 @@ export const itineraires: Itineraire[] = frTypo([
     duree: "7 à 9 ans",
     exigence: 5,
     steps: [
-      { when: "{B-3}, en 2nde", title: "Un lycée qui propose latin et grec", detail: "Les langues anciennes se commencent tôt.", station: "seconde" },
+      {
+        when: "{B-3}, en 2nde",
+        title: "Un lycée qui propose latin et grec",
+        detail: "Les langues anciennes se commencent tôt.",
+        station: "seconde",
+      },
       {
         when: "Printemps {B-2}",
         title: "HLP, latin ou grec, HGGSP ou langues",
@@ -259,7 +310,12 @@ export const itineraires: Itineraire[] = frTypo([
         choice: true,
         station: "bac",
       },
-      { when: "{B}-{B+2}", title: "Hypokhâgne et khâgne", detail: "Lettres, philosophie, histoire, langues : deux années d'une richesse unique.", station: "khagne" },
+      {
+        when: "{B}-{B+2}",
+        title: "Hypokhâgne et khâgne",
+        detail: "Lettres, philosophie, histoire, langues : deux années d'une richesse unique.",
+        station: "khagne",
+      },
       {
         when: "Printemps {B+2}",
         title: "Concours ENS, Chartes et BEL",
@@ -267,10 +323,24 @@ export const itineraires: Itineraire[] = frTypo([
         choice: true,
         station: "concours-lettres",
       },
-      { when: "{B+2}-{B+6}", title: "ENS, École des chartes ou master", detail: "Recherche, agrégation, patrimoine.", station: "ens-chartes" },
-      { when: "Ensuite", title: "Professeur, chercheur, conservateur, journaliste", detail: "Enseigner, chercher, transmettre, écrire.", station: "metiers-lettres" },
+      {
+        when: "{B+2}-{B+6}",
+        title: "ENS, École des chartes ou master",
+        detail: "Recherche, agrégation, patrimoine.",
+        station: "ens-chartes",
+      },
+      {
+        when: "Ensuite",
+        title: "Professeur, chercheur, conservateur, journaliste",
+        detail: "Enseigner, chercher, transmettre, écrire.",
+        station: "metiers-lettres",
+      },
     ],
-    cles: ["Lire chaque jour : romans, essais, histoire.", "Garder le latin jusqu'au bac.", "Écrire souvent : dissertations, commentaires, journal."],
+    cles: [
+      "Lire chaque jour : romans, essais, histoire.",
+      "Garder le latin jusqu'au bac.",
+      "Écrire souvent : dissertations, commentaires, journal.",
+    ],
   },
   {
     line: "defense",
@@ -289,7 +359,8 @@ export const itineraires: Itineraire[] = frTypo([
       {
         when: "Printemps {B-2}",
         title: "Les spécialités de la prépa visée",
-        detail: "Maths et physique-chimie pour la voie scientifique ; maths et SES ou HGGSP pour la voie économique ; lettres pour la voie littéraire.",
+        detail:
+          "Maths et physique-chimie pour la voie scientifique ; maths et SES ou HGGSP pour la voie économique ; lettres pour la voie littéraire.",
         choice: true,
         station: "premiere-terminale",
       },
@@ -300,7 +371,12 @@ export const itineraires: Itineraire[] = frTypo([
         choice: true,
         station: "bac",
       },
-      { when: "{B}-{B+2}", title: "Deux ans de prépa", detail: "Le programme de la prépa, plus le sport et la préparation militaire.", station: "prepa-officiers" },
+      {
+        when: "{B}-{B+2}",
+        title: "Deux ans de prépa",
+        detail: "Le programme de la prépa, plus le sport et la préparation militaire.",
+        station: "prepa-officiers",
+      },
       {
         when: "Printemps {B+2}",
         title: "Concours d'officier",
@@ -308,8 +384,18 @@ export const itineraires: Itineraire[] = frTypo([
         choice: true,
         station: "concours-officiers",
       },
-      { when: "{B+2}-{B+5}", title: "École d'officiers", detail: "Formation académique, militaire et humaine.", station: "ecole-officiers" },
-      { when: "{B+5}", title: "Lieutenant", detail: "Ton premier commandement, à la tête d'une section ou d'une équipe.", station: "metiers-defense" },
+      {
+        when: "{B+2}-{B+5}",
+        title: "École d'officiers",
+        detail: "Formation académique, militaire et humaine.",
+        station: "ecole-officiers",
+      },
+      {
+        when: "{B+5}",
+        title: "Lieutenant",
+        detail: "Ton premier commandement, à la tête d'une section ou d'une équipe.",
+        station: "metiers-defense",
+      },
     ],
     cles: [
       "Du sport chaque semaine : les épreuves physiques comptent.",
@@ -324,7 +410,11 @@ export const itineraires: Itineraire[] = frTypo([
     duree: "5 ans au conservatoire supérieur",
     exigence: 5,
     steps: [
-      { when: "Dès maintenant", title: "Une pratique intense", detail: "Chant, instrument, formation musicale : le niveau se construit pendant le lycée." },
+      {
+        when: "Dès maintenant",
+        title: "Une pratique intense",
+        detail: "Chant, instrument, formation musicale : le niveau se construit pendant le lycée.",
+      },
       {
         when: "{B-3}-{B}",
         title: "Lycée et conservatoire en parallèle",
@@ -332,8 +422,17 @@ export const itineraires: Itineraire[] = frTypo([
         choice: true,
         station: "conservatoire",
       },
-      { when: "Terminale", title: "Le cycle qui prépare aux concours", detail: "Au conservatoire, le cycle préparatoire mène au niveau des écoles supérieures." },
-      { when: "Après le bac", title: "Pôle supérieur, université ou préparation", detail: "Musicologie ou pôle supérieur selon ton projet.", station: "pole-superieur" },
+      {
+        when: "Terminale",
+        title: "Le cycle qui prépare aux concours",
+        detail: "Au conservatoire, le cycle préparatoire mène au niveau des écoles supérieures.",
+      },
+      {
+        when: "Après le bac",
+        title: "Pôle supérieur, université ou préparation",
+        detail: "Musicologie ou pôle supérieur selon ton projet.",
+        station: "pole-superieur",
+      },
       {
         when: "Selon ton niveau",
         title: "Concours du CNSMD",
@@ -341,8 +440,18 @@ export const itineraires: Itineraire[] = frTypo([
         choice: true,
         station: "concours-cnsmd",
       },
-      { when: "5 ans", title: "Licence puis master d'interprète", detail: "Cours individuels, orchestre ou chœur, concerts.", station: "cnsmd" },
-      { when: "Ensuite", title: "Musicien, chef de chœur, professeur", detail: "Interprète, enseignant en conservatoire, direction de chœur.", station: "metiers-arts" },
+      {
+        when: "5 ans",
+        title: "Licence puis master d'interprète",
+        detail: "Cours individuels, orchestre ou chœur, concerts.",
+        station: "cnsmd",
+      },
+      {
+        when: "Ensuite",
+        title: "Musicien, chef de chœur, professeur",
+        detail: "Interprète, enseignant en conservatoire, direction de chœur.",
+        station: "metiers-arts",
+      },
     ],
     cles: [
       "Travailler ta voix ou ton instrument chaque jour.",
@@ -369,21 +478,277 @@ export const itineraires: Itineraire[] = frTypo([
         choice: true,
         station: "premiere-terminale",
       },
-      { when: "Été {B-1}", title: "Préparer le dossier", detail: "Lettre de motivation, tests d'admission, lettres de recommandation." },
+      {
+        when: "Été {B-1}",
+        title: "Préparer le dossier",
+        detail: "Lettre de motivation, tests d'admission, lettres de recommandation.",
+      },
       {
         when: "15 octobre {B-1}",
         title: "Candidature à Oxford ou Cambridge",
-        detail: "Sur la plateforme UCAS, avec des tests d'admission à la même période ; les universités américaines suivent en novembre ou en janvier.",
+        detail:
+          "Sur la plateforme UCAS, avec des tests d'admission à la même période ; les universités américaines suivent en novembre ou en janvier.",
         choice: true,
       },
-      { when: "{B}-{B+3}", title: "Bachelor à l'étranger", detail: "Trois ou quatre ans, en anglais, en français ou en allemand. L'EPFL demande au moins 16 sur 20 en maths, en physique et de moyenne.", station: "bachelor-etranger" },
-      { when: "{B+3}-{B+5}", title: "Master, en France ou ailleurs", detail: "Tu peux revenir en France pour ton master.", station: "master-etranger" },
-      { when: "Ensuite", title: "Recherche, organisations internationales, entreprises", detail: "Une carrière ouverte sur le monde.", station: "metiers-monde" },
+      {
+        when: "{B}-{B+3}",
+        title: "Bachelor à l'étranger",
+        detail:
+          "Trois ou quatre ans, en anglais, en français ou en allemand. L'EPFL demande au moins 16 sur 20 en maths, en physique et de moyenne.",
+        station: "bachelor-etranger",
+      },
+      {
+        when: "{B+3}-{B+5}",
+        title: "Master, en France ou ailleurs",
+        detail: "Tu peux revenir en France pour ton master.",
+        station: "master-etranger",
+      },
+      {
+        when: "Ensuite",
+        title: "Recherche, organisations internationales, entreprises",
+        detail: "Une carrière ouverte sur le monde.",
+        station: "metiers-monde",
+      },
     ],
     cles: [
       "Lire et écrire en anglais chaque semaine.",
       "Garder un dossier excellent dans toutes les matières.",
       "Regarder tôt les frais : de 1 200 € par an à Louvain à plus de 60 000 £ à Oxford.",
+    ],
+  },
+  {
+    line: "pro",
+    destination: "Un métier qualifié dès 18 ans : électricien, cuisinier, mécanicien…",
+    why: "La voie professionnelle t'apprend un métier dès la 2nde, en classe, en atelier et en entreprise. Après le bac pro, tu peux travailler tout de suite ou continuer en BTS, souvent en alternance.",
+    duree: "3 ans après la 3e",
+    exigence: 2,
+    steps: [
+      {
+        when: "Janvier à mars {B-3}",
+        title: "Visiter des lycées professionnels et des CFA",
+        detail:
+          "Portes ouvertes et mini-stages : regarde les ateliers, les familles de métiers et les chiffres d'insertion publiés sur InserJeunes.",
+        station: "college",
+      },
+      {
+        when: "Mai {B-3}",
+        title: "Les vœux d'affectation",
+        detail:
+          "Sur le service en ligne Affectation, tes moyennes de 3e comptent ; certaines formations ajoutent un entretien ou un mini-stage.",
+        choice: true,
+        station: "college",
+      },
+      {
+        when: "{B-3}-{B-2}, en 2nde pro",
+        title: "Une famille de métiers",
+        detail:
+          "La plupart des élèves découvrent un domaine pendant un an, avec 4 à 6 semaines de stage payées 50 € par semaine.",
+        station: "lycee-pro",
+      },
+      {
+        when: "Printemps {B-2}",
+        title: "Ta spécialité de bac pro",
+        detail:
+          "Tu choisis ta spécialité pour la 1re ; tu peux aussi passer en apprentissage, souvent dans le même lycée.",
+        choice: true,
+        station: "lycee-pro",
+      },
+      {
+        when: "{B-1}-{B}, en terminale",
+        title: "Préparer l'après-bac",
+        detail:
+          "Deux semaines de parcours personnalisé, en entreprise ou au lycée ; tes vœux Parcoursup si tu vises un BTS.",
+        choice: true,
+        station: "lycee-pro",
+      },
+      {
+        when: "Juin {B}, vers 18 ans",
+        title: "Le bac pro, puis un métier ou un BTS",
+        detail:
+          "Avec un avis favorable de leur conseil de classe, plus de 9 bacheliers pro sur 10 ont reçu une proposition en BTS en 2025.",
+        station: "metiers-pro",
+      },
+    ],
+    cles: [
+      "Choisir un domaine qui te plaît vraiment, après des mini-stages.",
+      "Soigner tes stages : ils construisent ton réseau et ton CV.",
+      "Regarder InserJeunes : formation par formation, l'emploi et la poursuite d'études des anciens élèves.",
+      "Penser à l'apprentissage : tu es payé, et l'embauche suit souvent.",
+    ],
+  },
+  {
+    line: "courtes",
+    destination: "Technicien supérieur en deux ans, ou bac+3 en alternance",
+    why: "Le BTS et le BUT mêlent cours, projets et stages. Ils mènent à l'emploi à bac+2 ou bac+3, et ouvrent ensuite les écoles d'ingénieurs, les écoles de commerce ou le master.",
+    duree: "2 à 3 ans après le bac",
+    exigence: 3,
+    steps: [
+      {
+        when: "{B-3}-{B-2}, en 2nde",
+        title: "2nde générale et technologique",
+        detail:
+          "Une année pour tous ; au printemps, tu choisis la voie générale ou l'une des huit séries technologiques.",
+        station: "seconde",
+      },
+      {
+        when: "Printemps {B-2}",
+        title: "Bac général ou bac technologique",
+        detail: "STI2D, STMG, ST2S, STL… : les bacheliers technologiques ont des places réservées en BUT.",
+        choice: true,
+        station: "bac-techno",
+      },
+      {
+        when: "Janvier à mars {B}",
+        title: "Parcoursup : BTS ou BUT",
+        detail:
+          "81 spécialités de BTS et 24 de BUT : vise plusieurs formations proches, en lycée, en IUT et en alternance.",
+        choice: true,
+        station: "bac",
+      },
+      {
+        when: "{B}-{B+2}",
+        title: "Deux ans de BTS ou de BUT",
+        detail: "Cours, travaux pratiques, projets et stages ; le BTS est gratuit en lycée public.",
+        station: "bts-but",
+      },
+      {
+        when: "{B+2}, vers 20 ans",
+        title: "Travailler ou continuer",
+        detail:
+          "Technicien supérieur tout de suite, ou une 3e année : BUT 3, licence pro, école d'ingénieurs, école de commerce.",
+        choice: true,
+        station: "bts-but",
+      },
+      {
+        when: "{B+2}-{B+3}",
+        title: "BUT 3 ou licence pro",
+        detail:
+          "Souvent en alternance : à Nantes Université, près d'un diplômé de licence pro en poste sur trois a été embauché à la suite de son alternance.",
+        station: "but-lp",
+      },
+      {
+        when: "{B+3}, vers 21 ans",
+        title: "Technicien, chef de projet, assistant ingénieur",
+        detail: "À l'atelier, au bureau d'études, sur un chantier, au laboratoire ou auprès des clients.",
+        station: "metiers-courtes",
+      },
+    ],
+    cles: [
+      "Viser une spécialité précise, et plusieurs formations proches sur Parcoursup.",
+      "Chercher l'alternance tôt : un employeur se trouve souvent dès le printemps.",
+      "Garder de bonnes notes : elles ouvrent ensuite les écoles et le master.",
+      "Regarder les chiffres d'admission de chaque formation : places et taux d'accès.",
+    ],
+  },
+  {
+    line: "parasocial",
+    destination: "Infirmier, kinésithérapeute, éducateur : soigner et accompagner",
+    why: "Chaque métier du soin et du social a son diplôme d'État, préparé en institut, en école ou à l'université, avec beaucoup de stages. La plupart durent trois ans ; l'orthophonie et la kinésithérapie, cinq.",
+    duree: "3 à 5 ans après le bac",
+    exigence: 3,
+    steps: [
+      {
+        when: "Juin {B-2}, en 2nde",
+        title: "Un stage auprès des gens",
+        detail: "Ton stage d'observation peut se faire dans un hôpital, un cabinet ou une association.",
+        station: "seconde",
+      },
+      {
+        when: "Printemps {B-2}",
+        title: "Des spécialités qui parlent du vivant",
+        detail:
+          "SVT et physique-chimie aident en soins ; tous les bacs sont admis, et le bac technologique ST2S prépare au sanitaire et au social.",
+        choice: true,
+        station: "premiere-terminale",
+      },
+      {
+        when: "Janvier à mars {B}",
+        title: "Parcoursup : instituts ou licence",
+        detail:
+          "Soins infirmiers sur dossier ; orthophonie avec des oraux ; pour la kiné, une 1re année de licence santé, de STAPS ou de biologie.",
+        choice: true,
+        station: "bac",
+      },
+      {
+        when: "{B}-{B+3}",
+        title: "Trois ans d'institut ou d'école",
+        detail: "Sciences du corps, techniques de soin ou d'accompagnement, et des stages dès la 1re année.",
+        station: "institut-parasocial",
+      },
+      {
+        when: "{B+3}, vers 21 ans",
+        title: "Infirmier, ergothérapeute, éducateur",
+        detail: "Un métier à bac+3, puis des spécialisations : puériculture, bloc opératoire, pratique avancée.",
+        station: "metiers-parasocial",
+      },
+      {
+        when: "{B+5}, vers 23 ans",
+        title: "Kinésithérapeute, orthophoniste",
+        detail: "Cinq ans d'études et le grade de master.",
+        station: "metiers-parasocial",
+      },
+    ],
+    cles: [
+      "Montrer ton engagement : bénévolat, aide aux personnes, animation.",
+      "Comparer les instituts : stages, coût, aides de la Région.",
+      "Préparer les oraux de l'orthophonie et du travail social : motivation et écoute.",
+      "Pour la kiné, réussir ta 1re année d'université : le classement décide.",
+    ],
+  },
+  {
+    line: "postbac",
+    destination: "Ingénieur ou manager en cinq ans, dès le bac",
+    why: "Les écoles post-bac recrutent pendant la terminale, par concours communs ou sur dossier. Deux ans de cycle intégré, puis trois ans de spécialité, sans concours entre les deux.",
+    duree: "5 ans après le bac",
+    exigence: 4,
+    steps: [
+      {
+        when: "{B-3}-{B-2}, en 2nde",
+        title: "Un lycée général",
+        detail: "Garde un bon niveau en maths et en anglais : ces écoles les regardent de près.",
+        station: "seconde",
+      },
+      {
+        when: "Printemps {B-2}",
+        title: "Tes spécialités",
+        detail:
+          "Ingénieur : maths et physique-chimie, NSI ou sciences de l'ingénieur. Commerce : des maths, avec SES, HGGSP ou une langue.",
+        choice: true,
+        station: "premiere-terminale",
+      },
+      {
+        when: "Janvier à mai {B}",
+        title: "Les concours post-bac",
+        detail:
+          "Geipi Polytech, Avenir, Puissance Alpha, Advance, INSA, universités de technologie ; Sésame et Accès pour le commerce : des vœux Parcoursup, puis des épreuves en avril et en mai.",
+        choice: true,
+        station: "concours-postbac",
+      },
+      {
+        when: "{B}-{B+2}",
+        title: "Le cycle préparatoire intégré",
+        detail: "Maths, physique, informatique et projets ; le passage en cycle ingénieur se joue au contrôle continu.",
+        station: "cycle-integre",
+      },
+      {
+        when: "{B+2}-{B+5}",
+        title: "Le cycle ingénieur ou le programme grande école",
+        detail: "Une spécialité, des stages longs, souvent un semestre à l'étranger et l'apprentissage possible.",
+        station: "cycle-postbac",
+      },
+      {
+        when: "{B+5}, vers 23 ans",
+        title: "Ingénieur, manager, chef de projet",
+        detail:
+          "En 2026, un jeune ingénieur gagnait en moyenne 39 284 € bruts par an à l'embauche, hors primes (enquête de la CGE).",
+        station: "metiers-postbac",
+      },
+    ],
+    cles: [
+      "Comparer les réseaux : Polytech, INSA, universités de technologie, La Prépa des INP.",
+      "Regarder les frais : 630 € par an en école publique, environ 10 000 à 11 500 € en école d'ingénieurs privée (2026).",
+      "Préparer les QCM de maths, de sciences et d'anglais des concours.",
+      "Garder sur Parcoursup une prépa ou une licence : un plan B solide.",
     ],
   },
 ]);
