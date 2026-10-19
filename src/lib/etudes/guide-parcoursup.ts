@@ -235,8 +235,7 @@ export const GUIDE_PSUP: Guide = etTypo({
             },
             {
               titre: "Aucune course de vitesse",
-              texte:
-                "Un vœu formulé le dernier jour vaut un vœu du premier : aucun avantage à se presser, tout l'intérêt à bien choisir.",
+              texte: "Un vœu formulé le dernier jour vaut un vœu du premier : prends le temps de bien choisir.",
             },
           ],
         },
@@ -353,7 +352,7 @@ export const GUIDE_PSUP: Guide = etTypo({
             "Tes bulletins de 1re et des deux premiers trimestres de Terminale, ou du premier semestre, transmis par ton lycée.",
             "Tes notes du bac déjà connues : les épreuves anticipées de français et de maths, et ton contrôle continu de 1re.",
             "La fiche Avenir, remplie par ton lycée pour chacun de tes vœux.",
-            "Ta lettre de motivation, si la formation en demande une, comme plus de 70 % d'entre elles : 1 500 caractères au plus, 4 500 pour les IFSI, sans ton nom ni ton prénom.",
+            "Ta lettre de motivation, si la formation en demande une, comme plus de 70 % d'entre elles : 1 500 caractères au plus, 4 500 pour les IFSI, écrite de façon anonyme.",
             "Ta rubrique « Activités et centres d'intérêt », facultative et recommandée : engagements, responsabilités, job, sport, musique, bénévolat, BAFA, secourisme.",
             "L'attestation Pix, si tu l'as passée en Terminale.",
             "Les pièces ou questionnaires demandés par certaines formations, toujours listés sur leur fiche. En licence de droit, un questionnaire d'autoévaluation est obligatoire ; son résultat reste pour toi.",
@@ -380,7 +379,7 @@ export const GUIDE_PSUP: Guide = etTypo({
               points: [
                 "Seulement pour les formations qui la demandent",
                 "1 500 caractères au plus",
-                "Ni nom ni prénom",
+                "Anonyme : ton nom et ton prénom restent hors de la lettre",
               ],
             },
           ],
@@ -417,7 +416,7 @@ export const GUIDE_PSUP: Guide = etTypo({
           ton: "repere",
           titre: "Hors contrat, CNED, candidat libre",
           texte:
-            "Si ton établissement ne transmet pas tes bulletins, tu les saisis toi-même ; ils pourront t'être demandés à l'inscription. Au CNED en inscription libre, tu t'inscris avec ton INE si tu en as un, sinon une case le prévoit ; un candidat libre au bac utilise son numéro d'inscription à l'examen.",
+            "Ton établissement transmet tes bulletins ; à défaut, tu les saisis toi-même, et ils pourront t'être demandés à l'inscription. Au CNED en inscription libre, tu t'inscris avec ton INE si tu en as un, sinon une case le prévoit ; un candidat libre au bac utilise son numéro d'inscription à l'examen.",
         },
       ],
       sources: [P.examen, P.faqDossier, P.conseilsDossier, P.comite, P.ficheAvenir, P.ficheAvenirFaq, P.plateforme],
@@ -500,7 +499,7 @@ export const GUIDE_PSUP: Guide = etTypo({
               titre: "Non",
               sous: "Seulement en formation sélective",
               texte:
-                "La formation n'a pas retenu ton dossier. Tu peux lui en demander les motifs ; tes autres vœux continuent.",
+                "La formation a retenu d'autres candidats. Tu peux lui en demander les motifs ; tes autres vœux continuent.",
             },
           ],
         },
@@ -543,6 +542,16 @@ export const GUIDE_PSUP: Guide = etTypo({
               texte:
                 "Les vœux classés après lui sont retirés, même si tu refuses cette proposition. Si tu l'acceptes, elle remplace celle que tu avais acceptée.",
             },
+          ],
+        },
+        {
+          type: "liste",
+          titre: "Un exemple, pas à pas",
+          numerotee: true,
+          items: [
+            "Tu as accepté un BTS, et trois vœux restent en attente. Tu les classes : 1, un BUT ; 2, une licence ; 3, une prépa.",
+            "Une proposition arrive pour la licence, ton numéro 2. La prépa, classée après elle, est retirée ; le BUT, ton numéro 1, reste en attente.",
+            "Si tu acceptes la licence, elle remplace ton BTS. Si tu la refuses, tu gardes ton BTS, et le BUT reste en attente.",
           ],
         },
         {
@@ -634,7 +643,7 @@ export const GUIDE_PSUP: Guide = etTypo({
           ton: "alt",
           titre: "Bac pro ou techno, cap sur le BTS",
           texte:
-            "Avec une mention bien ou très bien et aucune proposition, tu peux être admis de droit en BTS, dans une spécialité cohérente avec ton bac. Bachelier professionnel avec un avis favorable, sans place en BTS ? Une classe passerelle d'un an t'y prépare.",
+            "Avec une mention bien ou très bien, et encore sans proposition, tu peux être admis de droit en BTS, dans une spécialité cohérente avec ton bac. Bachelier professionnel avec un avis favorable, sans place en BTS ? Une classe passerelle d'un an t'y prépare.",
         },
       ],
       sources: [P.solutions, P.complementaire, P.caes, P.juin2026, P.juillet2026, P.bilan2026, P.bts],

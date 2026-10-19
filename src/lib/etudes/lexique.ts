@@ -40,7 +40,7 @@ export const lexique: Mot[] = frTypo([
   },
   {
     term: "Contrôle continu",
-    def: "40 % de la note du bac, calculés sur tes moyennes de 1re et de Terminale. Dans un lycée hors contrat, des épreuves ponctuelles le remplacent.",
+    def: "40 % de la note du bac, calculés sur tes moyennes de 1re et de Terminale. Dans un lycée hors contrat, des évaluations ponctuelles le remplacent.",
   },
   {
     term: "CPGE (prépa)",

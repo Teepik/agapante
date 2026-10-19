@@ -13,7 +13,7 @@ export const GUIDES_DE: Record<string, LienGuide[]> = etTypo({
   ],
   seconde: [
     {
-      href: "/etudes/bac#lycee",
+      href: "/etudes/bac#specialites",
       label: "Le bac, pas à pas",
       detail: "Choisir sa voie et ses spécialités en fin de 2nde, puis la suite jusqu'au bac",
     },

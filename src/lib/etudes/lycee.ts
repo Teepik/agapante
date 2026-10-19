@@ -36,7 +36,7 @@ export const lyceeTypes: LyceeType[] = frTypo([
     tagline: "Un cadre et une pédagogie choisis librement, sans contrat avec l'État.",
     entree:
       "Un dossier et un entretien, propres à chaque établissement ; si ton collège est hors contrat, tu peux souvent y rester jusqu'au bac.",
-    bac: "Tout se joue en examens : des épreuves ponctuelles remplacent le contrôle continu (en fin de 1re et au 2e trimestre de terminale), en plus des épreuves finales.",
+    bac: "Tout se joue en examens : des évaluations ponctuelles remplacent le contrôle continu, en fin de 1re puis en fin de terminale, ou en une seule série l'année du bac, en plus des épreuves finales.",
     cout: "Les frais de scolarité de l'établissement.",
     plus: "Les repères nationaux pèsent lourd : l'épreuve anticipée de maths et le bac de français, notés partout de la même façon. Sciences Po Paris les compte même dans sa note d'admission depuis 2027.",
   },

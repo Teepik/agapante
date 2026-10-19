@@ -714,7 +714,7 @@ export const GUIDE_BAC: Guide = etTypo({
               texte:
                 "Chaque BTS public réserve des places aux bacheliers professionnels, et l'avis favorable de ton conseil de classe te garantit d'être classé. En 2025, plus de 71 % des bacheliers pro ont reçu une proposition en BTS ; avec cet avis favorable, plus de 9 sur 10 ont reçu une proposition.",
               points: [
-                "Mention bien ou très bien, et aucune proposition : une admission de droit en BTS, dans une spécialité cohérente",
+                "Mention bien ou très bien, et encore sans proposition : une admission de droit en BTS, dans une spécialité cohérente",
                 "Sans place en BTS malgré un avis favorable : une classe passerelle d'un an t'y prépare, dans une cinquantaine de lycées",
               ],
               ton: "courtes",
