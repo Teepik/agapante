@@ -138,7 +138,7 @@ export const STOPS: Stop[] = etTypo([
     label: "Grande école d'ingénieurs",
     duree: "3 ans",
     entree: "Sur concours ou sur titre",
-    cout: "630 € par an dans le public",
+    cout: "630 € par an dans la plupart des écoles publiques",
     alternance:
       "De nombreuses écoles proposent leur cycle ingénieur en apprentissage, souvent dans des spécialités dédiées : ta scolarité est prise en charge et tu touches un salaire.",
   },
@@ -166,7 +166,7 @@ export const STOPS: Stop[] = etTypo([
     label: "Cycle ingénieur",
     duree: "3 ans",
     entree: "Au contrôle continu, ou par admission parallèle",
-    cout: "630 € par an dans le public",
+    cout: "630 € par an dans la plupart des écoles publiques",
     alternance:
       "Possible dès la 3e ou la 4e année selon l'école : ta scolarité est prise en charge et tu touches un salaire.",
   },
@@ -184,7 +184,7 @@ export const STOPS: Stop[] = etTypo([
     entree: "Sur Parcoursup",
     cout: "BTS public gratuit, BUT 178 € par an",
     alternance:
-      "Le BTS et le BUT se préparent aussi en alternance : salarié d'une entreprise, tu partages ton temps entre les cours et le travail, tu touches un salaire et tu prépares le même diplôme. Fin 2025, 44 % des étudiants de BTS étaient apprentis ; en BUT, l'alternance s'ouvre surtout en 2e année.",
+      "Le BTS et le BUT se préparent aussi en alternance : salarié d'une entreprise, tu partages ton temps entre les cours et le travail, tu touches un salaire et tu prépares le même diplôme. Fin 2025, 44 % des étudiants de BTS étaient apprentis ; en BUT, en 2025-2026, 21 % des étudiants de 2e année et 57 % de ceux de 3e année.",
   },
   {
     id: "but-lp",
@@ -261,7 +261,7 @@ export const METRO_FICHES: Record<string, StationContent> = etTypo({
     id: "mon-master",
     name: "Mon Master, l'entrée en master",
     label: "Mon Master",
-    when: "Au printemps de la 3e année de licence",
+    when: "De février à juillet de ta 3e année de licence",
     what: "Après la licence, l'entrée en master se fait sur dossier, par la plateforme nationale Mon Master : tu consultes les formations, tu déposes tes candidatures, puis tu reçois les réponses des universités.",
     facts: [
       {

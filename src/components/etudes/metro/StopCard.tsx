@@ -49,7 +49,9 @@ export function ecolesDe(id: string, st: StationContent | null): Ecole[] {
     ...(st?.ecoles ?? []),
     ...ecoles.filter((e) => e.station === id || (r && e.recrutement?.includes(r))).map((e) => e.id),
   ]);
-  return [...ids].map((x) => ecoleById[x]).filter(Boolean);
+  const list = [...ids].map((x) => ecoleById[x]).filter(Boolean);
+  // Sur les lignes d'ingénieurs, les écoles de commerce post-bac de la page complète restent à part.
+  return r ? list.filter((e) => !/commerce/i.test(e.kind)) : list;
 }
 
 /** Ce qui met une école à la une, étape par étape : un critère public, dit en clair. */
@@ -105,7 +107,7 @@ export function StopCard({
           <Icon name="close" />
         </button>
       </div>
-      <h3 className="e-mcard__title">{st.name}</h3>
+      <h2 className="e-mcard__title">{st.name}</h2>
       <p className="e-mcard__when">{st.when}</p>
       {chips.length ? (
         <ul className="e-mcard__chips">

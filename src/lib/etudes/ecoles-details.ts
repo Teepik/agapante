@@ -869,6 +869,95 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://concoursminesponts.fr/wp-content/uploads/2025/12/notice-des-ecoles-2026-22.12.25.pdf",
     ],
   },
+  supoptique: {
+    pourquoi:
+      "SupOptique forme des ingénieurs de l'optique et de la photonique : systèmes optiques, imagerie, vision artificielle, nanosciences. D'après l'Onisep, 96,2 % des diplômés trouvent un emploi en 2 mois, pour un salaire brut moyen d'embauche de 40 873 € en 2024. Ils travaillent en conseil et ingénierie (37,9 %), en R&D (17,2 %), en enseignement et recherche (10,3 %) ; 19 % sont embauchés à l'étranger.",
+    apprendre:
+      "La 1re année, commune, se passe à Palaiseau. En 2e et 3e années, tu rejoins un site thématique : Paris-Saclay (interaction lumière-matière, nanosciences, signal et image, systèmes optiques avancés), Bordeaux (optique numérique, données, images et neurosciences) ou Saint-Étienne (systèmes optiques, vision artificielle, énergie). Les stages se font en entreprise ou en laboratoire.",
+    specificite:
+      "Une école tout entière consacrée à l'optique, fondée en 1917, adossée à trois laboratoires : Charles Fabry à Palaiseau, LP2N à Bordeaux, Hubert Curien à Saint-Étienne. Sa filière entrepreneuriat accompagne les élèves qui créent leur entreprise.",
+    chiffres: [
+      {
+        label: "Places au concours Centrale-Supélec (MP, MPI, PC, PSI, dont 6 pour candidats étrangers)",
+        valeur: "124",
+        source:
+          "https://www.onisep.fr/ressources/structures-enseignement/ile-de-france/essonne/institut-d-optique-theorique-et-appliquee-campus-de-palaiseau-universite-paris-saclay/diplome-d-ingenieur-de-l-institut-d-optique-theorique-et-appliquee",
+        date: "2026",
+      },
+      {
+        label: "Diplômés en emploi en 2 mois",
+        valeur: "96,2 %",
+        source:
+          "https://www.onisep.fr/ressources/structures-enseignement/ile-de-france/essonne/institut-d-optique-theorique-et-appliquee-campus-de-palaiseau-universite-paris-saclay/diplome-d-ingenieur-de-l-institut-d-optique-theorique-et-appliquee",
+      },
+      {
+        label: "Salaire annuel brut moyen à l'embauche",
+        valeur: "40 873 €",
+        source:
+          "https://www.onisep.fr/ressources/structures-enseignement/ile-de-france/essonne/institut-d-optique-theorique-et-appliquee-campus-de-palaiseau-universite-paris-saclay/diplome-d-ingenieur-de-l-institut-d-optique-theorique-et-appliquee",
+        date: "2024",
+      },
+      {
+        label: "Frais de scolarité annuels",
+        valeur: "3 200 €",
+        source:
+          "https://www.onisep.fr/ressources/structures-enseignement/auvergne-rhone-alpes/loire/institut-d-optique-theorique-et-appliquee-campus-de-saint-etienne/diplome-d-ingenieur-de-l-institut-d-optique-theorique-et-appliquee",
+        date: "2026",
+      },
+    ],
+    sources: [
+      "https://www.onisep.fr/ressources/structures-enseignement/ile-de-france/essonne/institut-d-optique-theorique-et-appliquee-campus-de-palaiseau-universite-paris-saclay/diplome-d-ingenieur-de-l-institut-d-optique-theorique-et-appliquee",
+      "https://www.onisep.fr/ressources/structures-enseignement/auvergne-rhone-alpes/loire/institut-d-optique-theorique-et-appliquee-campus-de-saint-etienne/diplome-d-ingenieur-de-l-institut-d-optique-theorique-et-appliquee",
+      "https://www.onisep.fr/ressources/structures-enseignement/nouvelle-aquitaine/gironde/institut-d-optique-theorique-et-appliquee-campus-de-bordeaux-universite-paris-saclay/diplome-d-ingenieur-de-l-institut-d-optique-theorique-et-appliquee",
+      "https://www.onisep.fr/ressources/univers-formation/formations/post-bac/diplome-d-ingenieur-de-l-institut-d-optique-theorique-et-appliquee",
+      "https://www.letudiant.fr/etudes/ecole-ingenieur/ecoles-d-ingenieurs-post-prepa-le-concours-centrale-supelec-mode-d-emploi.html",
+      "https://www.banquept.fr/documents/livret/2026/Livret_PT_2026.pdf",
+      "https://www.francealumni.fr/docs/2021162943_institut-d-optique-english-brochure-lr.pdf",
+      "https://diplomeo.com/etablissement-iota_institut_d_optique_graduate_school-1098",
+    ],
+  },
+  "chimie-paristech": {
+    pourquoi:
+      "Chimie ParisTech forme des ingénieurs chimistes pour l'industrie chimique, les matériaux, l'énergie, la cosmétique, les biotechnologies ou le conseil, et pour la recherche publique. L'école héberge 3 laboratoires, et le parcours recherche de 3e année prépare au doctorat. D'après la notice du concours 2026, 95 % des diplômés trouvent un emploi dans les 3 mois.",
+    apprendre:
+      "1re année : chimie moléculaire, chimie des matériaux, économie et management, stage ouvrier de 1 à 2 mois. En 2e année, un tronc commun (génie chimique, polymères, chimie analytique, énergies…), puis une option parmi six et un stage de 5 mois. En 3e année, parcours ingénierie (énergie, cosmétologie, chimie verte, biotechnologies, procédés…) ou recherche, puis projet de fin d'études de 6 mois. 40 % de la formation est expérimentale.",
+    specificite:
+      "Une école d'environ 500 étudiants, membre de l'Université PSL, qui délivre son diplôme au nom de PSL. Options et doubles diplômes avec l'ESPCI, AgroParisTech, Dauphine-PSL ou IFP School ; mobilité internationale obligatoire, en stage ou en semestre d'études.",
+    chiffres: [
+      {
+        label: "Places au concours Mines-Ponts (68 PC, 3 PSI)",
+        valeur: "71",
+        source: "https://concoursminesponts.fr/wp-content/uploads/2025/12/notice-des-ecoles-2026-22.12.25.pdf",
+        date: "2026",
+      },
+      {
+        label: "Droits de scolarité des nouveaux entrants en 1re année (étudiants européens)",
+        valeur: "1 200 €",
+        source: "https://www.chimieparistech.psl.eu/formation/cycle-ingenieur/cvec-frais-scolarite/",
+        date: "2026-2027",
+      },
+      {
+        label: "Diplômés en emploi dans les 3 mois",
+        valeur: "95 %",
+        source: "https://concoursminesponts.fr/wp-content/uploads/2025/12/notice-des-ecoles-2026-22.12.25.pdf",
+        date: "notice du concours 2026",
+      },
+      {
+        label: "Diplômés par an",
+        valeur: "115",
+        source: "https://concoursminesponts.fr/wp-content/uploads/2025/12/notice-des-ecoles-2026-22.12.25.pdf",
+        date: "notice du concours 2026",
+      },
+    ],
+    sources: [
+      "https://concoursminesponts.fr/wp-content/uploads/2025/12/notice-des-ecoles-2026-22.12.25.pdf",
+      "https://psl.eu/formation/cycle-ingenieur-chimie-paristech",
+      "https://www.chimieparistech.psl.eu/formations/cycle-ingenieur/",
+      "https://www.chimieparistech.psl.eu/formation/cycle-ingenieur/cvec-frais-scolarite/",
+      "https://www.chimieparistech.psl.eu/wp-content/uploads/2025/06/chimie-paris-formation-2025-depliant.pdf",
+      "https://www.chimieparistech.psl.eu/wp-content/uploads/2023/12/2023-11plaquette-alternance-3a.pdf",
+    ],
+  },
   utt: {
     pourquoi:
       "Pour un métier d'ingénieur ouvert : chef de projet, consultant, développeur, sécurité informatique, R&D. Dans la promotion 2024, 92 % des diplômés ont un emploi et 67 % étaient embauchés avant le diplôme, à 42 520 € bruts par an en moyenne, primes comprises. Les premiers secteurs : informatique (33 %), conseil et études (20 %), puis transports.",
@@ -1054,9 +1143,9 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
     pourquoi:
       "Selon l'école, 97,2 % des diplômés ont un emploi, trouvé en 1 mois en moyenne, et 61,5 % sont embauchés avant même leur sortie. Ils travaillent dans de grands groupes, des PME ou des entreprises publiques, comme chefs de projet, en R&D, en développement produit ou en qualité. Le réseau des anciens compte 28 300 diplômés.",
     apprendre:
-      "Le tronc commun mêle sciences, techniques et sciences humaines, avec des modules que tu choisis toi-même. Tu entres ensuite dans une branche : génie biologique, informatique, ingénierie mécanique, génie des procédés ou génie urbain. Le semestre à l'étranger est obligatoire, parmi 204 universités partenaires.",
+      "Le tronc commun mêle sciences, techniques et sciences humaines, avec des modules que tu choisis toi-même. Tu entres ensuite dans une branche : génie biologique, informatique, ingénierie mécanique, génie des procédés ou génie urbain. En ingénierie mécanique, la plus grosse branche avec 1 100 élèves, le cycle comprend deux stages de six mois.",
     specificite:
-      "Tu composes ton emploi du temps en choisissant tes modules, puis ta branche à la fin du tronc commun. Le cursus « Humanités et technologie » (Hutech), à recrutement séparé, a ouvert 25 places en 2025.",
+      "Le semestre à l'étranger est obligatoire, parmi 204 universités partenaires. Le cursus « Humanités et technologie » (Hutech), à recrutement séparé, a ouvert 25 places en 2025.",
     chiffres: [
       {
         label: "Places en 1re année",
@@ -1090,6 +1179,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
     sources: [
       "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=55&typeBac=0&originePc=0",
       "https://www.utc.fr/wp-content/uploads/sites/28/2024/05/plaquettechiffres24-fr.pdf",
+      "https://www.utc.fr/wp-content/uploads/sites/28/2025/10/im-2025.pdf",
       "https://www.utc.fr/formations/candidater-a-lutc/candidater-au-diplome-dingenieur-utc/",
       "https://www.service-public.gouv.fr/particuliers/vosdroits/F2865",
       "https://data.enseignementsup-recherche.gouv.fr/api/explore/v2.1/catalog/datasets/fr-esr-parcoursup/records",
@@ -1234,7 +1324,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
   },
   "prepa-des-inp": {
     pourquoi:
-      "La Prépa des INP te mène en deux ans, sur contrôle continu, à l'une des plus de 40 écoles publiques du Groupe INP et de ses partenaires. En 2025, 99 % des élèves sont entrés en école, et plus de 90 % ont obtenu l'un de leurs trois premiers vœux. Tu gardes ainsi un large choix de spécialités, avec les droits d'une école publique.",
+      "La Prépa des INP te mène en deux ans, sur contrôle continu, à l'une des plus de 40 écoles du Groupe INP et de ses partenaires. En 2025, 99 % des élèves sont entrés en école, et plus de 90 % ont obtenu l'un de leurs trois premiers vœux. Tu gardes ainsi un large choix de spécialités, avec les droits d'une école publique.",
     apprendre:
       "Environ 1 800 heures en deux ans, soit 30 heures par semaine : un tronc commun scientifique de 1 450 heures, puis 320 heures d'enseignements à choix en 2e année, tournés vers les écoles visées. Un stage en entreprise ou en laboratoire en mai-juin de la 2e année et un projet professionnel construit sur les deux ans complètent la formation.",
     specificite:
@@ -1284,7 +1374,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
     apprendre:
       "Deux ans de prépa intégrée, avec un parcours en anglais possible dès la 1re année, puis trois ans de cycle ingénieur. En 4e année, tu choisis l'une des 15 majeures : data et IA, fintech, actuariat, aérospatial et défense, cybersécurité, robotique, énergie et villes durables, santé… Au total, 14 mois de stages et au moins un semestre à l'international.",
     specificite:
-      "Chaque année, un projet technologique en équipe ; en 4e et 5e années, 11 parcours transversaux à combiner avec ta majeure, de la recherche aux sciences quantiques en passant par l'entrepreneuriat. Au concours, les écrits comptent pour 60 % : prépare les QCM.",
+      "Chaque année, un projet technologique en équipe ; en 4e et 5e années, 11 parcours transversaux à combiner avec ta majeure, de la recherche aux sciences quantiques en passant par l'entrepreneuriat. Au concours, les épreuves écrites pèsent le plus lourd : prépare les QCM.",
     chiffres: [
       {
         label: "Places à Paris-La Défense",
@@ -1345,7 +1435,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       },
       {
         label: "Mentions des admis à Paris",
-        valeur: "4 % très bien, 37 % bien, 43 % assez bien, 16 % sans mention",
+        valeur: "4 % très bien, 37 % bien, 43 % assez bien",
         source:
           "https://data.enseignementsup-recherche.gouv.fr/api/explore/v2.1/catalog/datasets/fr-esr-parcoursup/records",
         date: "Parcoursup 2025",
@@ -1581,6 +1671,48 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.puissance-alpha.fr/media/4672.pdf",
     ],
   },
+  isep: {
+    pourquoi:
+      "L'Isep forme des ingénieurs du numérique : logiciel, cybersécurité, IA, systèmes embarqués, data, ingénierie biomédicale. D'après sa dernière enquête emploi, 60 % des diplômés ont un poste avant le diplôme et 97 % dans les 6 mois, avec un salaire moyen de 47 000 € primes incluses. Recruteurs cités : Capgemini, Thales, Orange, Dassault Aviation, Engie, Crédit Agricole.",
+    apprendre:
+      "Deux ans de prépa intégrée : maths, physique, signaux et systèmes, projets d'électronique, de robotique et d'informatique, économie, anglais et LV2, puis un semestre à l'étranger ou un stage en 2e année. Ensuite, 3 ans de cycle ingénieur : tronc commun, puis un parcours parmi 11 dès la 2e année (cybersécurité, IA, software engineering, ingénierie biomédicale…), au moins 11 mois de stage et un semestre à l'étranger.",
+    specificite:
+      "Passage au cycle ingénieur sur contrôle continu à la fin de la prépa. 25 doubles diplômes à l'étranger et d'autres en France, avec Polytechnique, Télécom Paris ou l'Université Paris Cité ; stages de recherche possibles à Stanford.",
+    chiffres: [
+      {
+        label: "Places en prépa intégrée Informatique et technologies numériques (Paris), Puissance Alpha",
+        valeur: "60",
+        source:
+          "https://www.onisep.fr/ressources/structures-enseignement/ile-de-france/paris/isep-ecole-d-ingenieurs-du-numerique-site-de-paris/cycle-integre-international-cii-de-l-isep-option-informatique-et-technologies-numeriques",
+        date: "2026",
+      },
+      {
+        label: "Frais annuels de la prépa intégrée (paiement comptant)",
+        valeur: "9 000 €",
+        source: "https://www.isep.fr/frais-de-scolarite-et-aide-au-financement/",
+        date: "2026-2027",
+      },
+      {
+        label: "Salaire moyen à l'embauche, primes incluses",
+        valeur: "47 000 €",
+        source: "https://www.puissance-alpha.fr/ecole-ingenieurs-isep.html",
+      },
+      {
+        label: "Part d'apprentis parmi les ingénieurs Isep",
+        valeur: "40 %",
+        source: "https://www.isep.fr/formation/cycle-ingenieur/",
+      },
+    ],
+    sources: [
+      "https://www.isep.fr/formation/cycle-ingenieur-integre/",
+      "https://www.isep.fr/formation/cycle-ingenieur/",
+      "https://isep.fr/lp/cycle-ingenieur-2026/",
+      "https://www.isep.fr/frais-de-scolarite-et-aide-au-financement/",
+      "https://www.puissance-alpha.fr/ecole-ingenieurs-isep.html",
+      "https://www.puissance-alpha.fr/media/4672.pdf",
+      "https://www.onisep.fr/ressources/structures-enseignement/ile-de-france/paris/isep-ecole-d-ingenieurs-du-numerique-site-de-paris/cycle-integre-international-cii-de-l-isep-option-informatique-et-technologies-numeriques",
+    ],
+  },
   ipsa: {
     pourquoi:
       "L'IPSA forme des ingénieurs pour l'aéronautique et le spatial : 85 % des jeunes diplômés y travaillent, ou dans les nouvelles mobilités, chez Airbus, Safran, Dassault Aviation, Thales, ArianeGroup, au CNES ou à la DGA. Métiers visés : ingénieur propulsion, essais, structures, intégration satellite, maintenance aéronautique. Promotion 2023 : salaire médian de 42 350 € par an.",
@@ -1661,6 +1793,49 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.estaca.fr/formations/ingenieur-apprentissage-2/",
       "https://www.estaca.fr/actualites/suivre-sa-5e-annee-en-alternance/",
       "https://www.estaca.fr/entreprises/recrutez/insertion-diplomes-estaca/",
+    ],
+  },
+  junia: {
+    pourquoi:
+      "JUNIA réunit trois écoles d'ingénieurs : HEI (bâtiment, énergie, industrie), ISEN (numérique, cybersécurité, IA, robotique) et ISA (agriculture, agroalimentaire, environnement). Promotion 2023 : 88,2 % des diplômés HEI et 83,5 % des diplômés ISEN en emploi en moins de 2 mois, avec un salaire moyen de 38 906 € et de 38 230 € brut par an hors primes.",
+    apprendre:
+      "Deux ans de cycle préparatoire. En prépa HEI : maths, physique, mécanique, informatique, électronique, sciences de l'ingénieur, gestion de projet, langues et management, avec des projets en équipe. Autres prépas : ISEN numérique, ISA, Adimaker par projets, prépa en anglais. Le parcours HEI prévoit 12 semaines à l'étranger (stage, mission ou projet). Puis 3 ans de cycle ingénieur HEI, ISEN ou ISA, en formation initiale ou en apprentissage.",
+    specificite:
+      "Trois diplômes d'ingénieur dans une même école, du numérique à l'agriculture, et une prépa Adimaker fondée sur les projets, ouverte aussi dans des lycées partenaires jusqu'à l'île Maurice. Réseau de 36 000 anciens élèves.",
+    chiffres: [
+      {
+        label: "Diplômés HEI en emploi en moins de 2 mois",
+        valeur: "88,2 %",
+        source: "https://www.puissance-alpha.fr/ecole-ingenieurs-junia-hei-isen.html",
+        date: "promotion 2023",
+      },
+      {
+        label: "Salaire annuel brut moyen à l'embauche, hors primes (HEI)",
+        valeur: "38 906 €",
+        source: "https://www.puissance-alpha.fr/ecole-ingenieurs-junia-hei-isen.html",
+        date: "promotion 2023",
+      },
+      {
+        label: "Diplômés ISEN en emploi en moins de 2 mois",
+        valeur: "83,5 %",
+        source: "https://www.puissance-alpha.fr/ecole-ingenieurs-junia-hei-isen.html",
+        date: "promotion 2023",
+      },
+      {
+        label: "Frais annuels du cycle préparatoire (HEI, ISEN, ISA, Adimaker)",
+        valeur: "7 722 €",
+        source: "https://www.junia.com/frais-scolarite/",
+        date: "2026-2027",
+      },
+    ],
+    sources: [
+      "https://www.junia.com/fr/formations-admissions/prepa-classes-preparatoires-ingenieur/",
+      "https://www.junia.com/fr/formations-admissions/prepa-classes-preparatoires-ingenieur/cycle-preparatoire-integre-ingenieur-generaliste-hei/",
+      "https://www.junia.com/fr/formations-admissions/cycle-ingenieur/",
+      "https://www.junia.com/fr/formations-admissions/alternance-et-apprentissage/",
+      "https://www.junia.com/frais-scolarite/",
+      "https://www.puissance-alpha.fr/ecole-ingenieurs-junia-hei-isen.html",
+      "https://www.puissance-alpha.fr/media/4672.pdf",
     ],
   },
   cesi: {
@@ -1781,6 +1956,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.esigelec.fr/fr/le-programme-ingenieur",
       "https://www.esigelec.fr/fr/lapprentissage",
       "https://www.esigelec.fr/fr/16-majeures",
+      "https://eigsi.fr/formation/cycle-preparatoire",
     ],
   },
   eseo: {
@@ -1822,6 +1998,46 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.eseo.fr/formations-ingenieurs/cycle-ingenieur-eseo-parcours-ingenieurs/",
       "https://www.eseo.fr/faq/quels-sont-frais-scolarite/",
       "https://www.eseo.fr/formations-ingenieurs/admissions/",
+    ],
+  },
+  eigsi: {
+    pourquoi:
+      "L'EIGSI forme des ingénieurs généralistes pour l'industrie, l'énergie et l'environnement, le BTP, les transports et la logistique, le numérique ou la santé. Selon l'école, 96 % des diplômés sont en poste en moins de 4 mois, et un élève sur deux reçoit une offre d'emploi à l'issue de son stage de fin d'études. L'école compte 1 600 élèves-ingénieurs.",
+    apprendre:
+      "En prépa (2 ans) : maths, physique, mécanique, électronique, informatique, automatique, avec 40 % de travaux pratiques en petits groupes et un stage ouvrier de 6 semaines en 1re année. En cycle ingénieur, tronc commun, puis une dominante choisie en fin de 3e année : énergie et environnement, BTP, robotique, IA et big data, cybersécurité, supply chain, santé… Stages de 16 puis 24 semaines ; cours en anglais au 1er semestre de 4e année.",
+    specificite:
+      "Près de 500 heures de projets sur le cycle ingénieur et 45 parcours bi-diplômants. Un second campus à Casablanca, où tu peux passer un semestre (BTP, logistique, IA et big data). L'école est l'héritière de l'école Violet, fondée en 1901.",
+    chiffres: [
+      {
+        label: "Diplômés en poste en moins de 4 mois",
+        valeur: "96 %",
+        source: "https://www.eigsi.fr/ecole-ingenieur-eigsi/chiffres-cles-ingenieurs-generalistes-statistiques/",
+        date: "2023",
+      },
+      {
+        label: "Droits de scolarité, statut étudiant",
+        valeur: "8 800 € par an (dont 1 500 € de frais d'inscription)",
+        source: "https://www.eigsi.fr/admission-ecole-ingenieur/cout-de-la-scolarite/",
+        date: "2026-2027",
+      },
+      {
+        label: "Élèves-ingénieurs",
+        valeur: "1 600",
+        source: "https://www.eigsi.fr/ecole-ingenieur-eigsi/chiffres-cles-ingenieurs-generalistes-statistiques/",
+        date: "2023",
+      },
+      {
+        label: "Alternants en formation",
+        valeur: "350, dans plus de 290 entreprises",
+        source: "https://www.eigsi.fr/formation-ingenieur/formation-par-apprentissage-2/",
+      },
+    ],
+    sources: [
+      "https://eigsi.fr/formation/cycle-preparatoire",
+      "https://www.eigsi.fr/admission-ecole-ingenieur/cout-de-la-scolarite/",
+      "https://www.eigsi.fr/ecole-ingenieur-eigsi/chiffres-cles-ingenieurs-generalistes-statistiques/",
+      "https://www.eigsi.fr/formation-ingenieur/formation-par-apprentissage-2/",
+      "https://www.eigsi.fr/formation/cycle-ingenieur-ecole/",
     ],
   },
   "arts-et-metiers": {
@@ -2291,6 +2507,92 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.ensta.fr/formations/formation-dingenieur-defense-securite",
       "https://www.ensta.fr/formations/ingenieurs/ingenieur-generaliste/un-large-choix-dexpertise-en-3e-annee",
       "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054569048",
+    ],
+  },
+  ensea: {
+    pourquoi:
+      "L'ENSEA forme des ingénieurs de l'électronique, de l'informatique et des télécoms. Plus d'un tiers des diplômés 2024 travaillent dans les services informatiques, les autres dans les transports, la banque, les télécoms ou l'énergie ; 7 élèves sur 10 signent leur premier contrat avant le diplôme. Métiers visés : systèmes embarqués, robotique, cybersécurité, aéronautique, biomédical.",
+    apprendre:
+      "Tronc commun en 1re année, avec majeures et mineures. En 2e année, 2 majeures sur 4 et 1 option sur 14 (drones, IA et big data, microélectronique, véhicules électriques…). En 3e année, une spécialité sur 8 : automatique, systèmes de communication, systèmes embarqués, électronique pour le vivant, informatique, mécatronique, réseaux et sécurité, signal et IA. 36 semaines de stages au minimum et 4 mois à l'étranger.",
+    specificite:
+      "Jusqu'à 50 % de l'emploi du temps de 2e année se personnalise, et deux spécialités de 3e année se suivent en anglais. Plus de 30 doubles diplômes à l'étranger, et en France avec Audencia, GEM, Paris Dauphine ou l'INSTN en génie atomique.",
+    chiffres: [
+      {
+        label: "Places au concours CentraleSupélec (MP, PC, PSI, MPI)",
+        valeur: "175 (70 PSI, 60 MP, 30 PC, 15 MPI)",
+        source:
+          "https://www.onisep.fr/ressources/structures-enseignement/ile-de-france/val-d-oise/ecole-nationale-superieure-de-l-electronique-et-de-ses-applications/diplome-d-ingenieur-de-l-ecole-nationale-superieure-de-l-electronique-et-de-ses-applications",
+        date: "2026",
+      },
+      {
+        label: "Places en apprentissage",
+        valeur: "56 en 1re année, 28 en 2e année",
+        source: "https://alternance.imt.fr/wp-content/uploads/2026/01/Notice-2026_ENSEA.pdf",
+        date: "2026",
+      },
+      {
+        label: "Élèves qui signent leur premier contrat avant le diplôme",
+        valeur: "7 sur 10",
+        source: "https://www.ensea.fr/formations/insertion-professionnelle",
+        date: "enquête CGE 2025",
+      },
+      {
+        label: "Part d'alternants dans le cycle ingénieur",
+        valeur: "17,15 %",
+        source:
+          "https://www.letudiant.fr/fiches/etudes/fiche/ensea-ecole-dingenieur-publique-en-electronique-informatique-et-telecommunications.html",
+        date: "2024-2025",
+      },
+    ],
+    sources: [
+      "https://www.onisep.fr/ressources/structures-enseignement/ile-de-france/val-d-oise/ecole-nationale-superieure-de-l-electronique-et-de-ses-applications/diplome-d-ingenieur-de-l-ecole-nationale-superieure-de-l-electronique-et-de-ses-applications",
+      "https://alternance.imt.fr/wp-content/uploads/2026/01/Notice-2026_ENSEA.pdf",
+      "https://www.letudiant.fr/fiches/etudes/fiche/ensea-ecole-dingenieur-publique-en-electronique-informatique-et-telecommunications.html",
+      "https://www.ensea.fr/formations/ingenieur-ensea",
+      "https://www.ensea.fr/formations/insertion-professionnelle",
+      "https://www.ensea.fr/formations/ingenieur-par-lalternance",
+    ],
+  },
+  ensiie: {
+    pourquoi:
+      "L'ENSIIE forme des ingénieurs en informatique et en mathématiques appliquées, avec une base de gestion d'entreprise. Ses parcours mènent au logiciel sûr, à la cybersécurité, au calcul intensif et aux données massives, aux jeux vidéo et à la réalité virtuelle. L'école affiche 44 000 € de salaire d'embauche et 80 % de diplômés embauchés au bout de trois mois.",
+    apprendre:
+      "Tronc commun en 1re année : informatique, mathématiques appliquées, gestion, entrepreneuriat. Dès la 2e année, un parcours : mathématiques appliquées, ingénierie logicielle (programmation sûre, sécurité), interactions numériques (jeux vidéo, réalité virtuelle), calcul intensif et données massives. Stages de 8 et 10 semaines, projet de 6 mois en 3e année, puis un semestre d'études ou 16 semaines de stage à l'étranger.",
+    specificite:
+      "Associée depuis 2017 à l'Université Paris-Saclay et à l'Institut Mines-Télécom, l'école ouvre 12 masters en bi-cursus en 3e année et un double cursus ingénieur-manager de 4 ans avec IMT Business School.",
+    chiffres: [
+      {
+        label: "Places au concours Mines-Télécom",
+        valeur: "109 (55 MP, 20 MPI, 18 PSI, 14 PC, 2 TSI)",
+        source: "https://www.ensiie.fr/formation/concours-et-admission/concours-mines-telecom",
+      },
+      {
+        label: "Salaire à l'embauche",
+        valeur: "44 000 €",
+        source: "https://www.ensiie.fr/",
+        date: "2026",
+      },
+      {
+        label: "Diplômés embauchés au bout de 3 mois",
+        valeur: "80 %",
+        source: "https://www.ensiie.fr/",
+        date: "2026",
+      },
+      {
+        label: "Étudiants inscrits",
+        valeur: "523",
+        source:
+          "https://backend.deqar.eu/reports/HCERES/2026/140404/20260618_1419_e2026-ev-0912266u-dee-etab260025402-rd.pdf",
+        date: "2024-2025",
+      },
+    ],
+    sources: [
+      "https://www.ensiie.fr/",
+      "https://www.ensiie.fr/formation/concours-et-admission",
+      "https://www.ensiie.fr/formation/concours-et-admission/concours-mines-telecom",
+      "https://www.ensiie.fr/formation/trouver-votre-formation/la-formation-initiale-sous-statut-etudiant-fise",
+      "https://www.ensiie.fr/formation",
+      "https://backend.deqar.eu/reports/HCERES/2026/140404/20260618_1419_e2026-ev-0912266u-dee-etab260025402-rd.pdf",
     ],
   },
   navale: {

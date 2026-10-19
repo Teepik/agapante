@@ -61,7 +61,7 @@ export const CRITERES: Critere[] = etTypo([
       postbac:
         "Tes notes des deux premières années, au contrôle continu : elles t'ouvrent le cycle ingénieur et, souvent, le choix de ta spécialité.",
       but: "Le diplôme à bac+2 ou bac+3 : tu travailles, ou tu continues en licence professionnelle, en école d'ingénieurs ou en master.",
-      univ: "L'entrée en master, sur dossier, par la plateforme Mon Master, au printemps de la 3e année de licence.",
+      univ: "L'entrée en master, sur dossier, par la plateforme Mon Master : candidatures en février et mars de ta 3e année de licence, réponses à partir de juin.",
     },
   },
   {
@@ -90,7 +90,7 @@ export const CRITERES: Critere[] = etTypo([
     id: "cout",
     label: "Ce que ça coûte",
     valeurs: {
-      prepa: `Prépa gratuite au lycée public, avec une inscription à l'université (${eur(DROITS.licence)}). Puis ${eur(DROITS.ingenieur)} par an dans une école publique.`,
+      prepa: `Prépa gratuite au lycée public, avec une inscription à l'université (${eur(DROITS.licence)}). Puis ${eur(DROITS.ingenieur)} par an dans la plupart des écoles publiques ; certaines grandes écoles demandent plusieurs milliers d'euros, avec des exonérations pour les boursiers.`,
       postbac: `Dans le public, de ${eur(DROITS.licence)} à ${eur(DROITS.ingenieur)} par an, selon l'école. Dans le privé, de 9 880 € (EPF) à 11 499 € (IPSA).`,
       but: `BTS gratuit au lycée public. BUT : ${eur(DROITS.licence)} de droits par an. En alternance, ta formation est prise en charge et tu touches un salaire.`,
       univ: `${eur(DROITS.licence)} par an en licence, ${eur(DROITS.master)} en master.`,

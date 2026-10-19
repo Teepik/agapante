@@ -29,8 +29,9 @@
   --l-lettres: #8f59d9;
   --l-monde: #038c9b;
   --l-arts: #ca3890;
-  /* L'alternance : une couleur à part, hors des voies. */
+  /* L'alternance : une couleur à part, hors des voies ; une teinte plus sombre pour le texte. */
   --alt: #b86e00;
+  --alt-ink: #965800;
 
   --shadow-pop: 0 1px 2px rgba(15, 18, 24, 0.06), 0 12px 32px -12px rgba(15, 18, 24, 0.22);
   --shadow-sheet: -24px 0 64px -32px rgba(15, 18, 24, 0.35);
@@ -79,6 +80,7 @@
     --l-monde: #07c7dc;
     --l-arts: #fe7ec4;
     --alt: #f2b13d;
+    --alt-ink: #f2b13d;
 
     --shadow-pop: 0 1px 2px rgba(0, 0, 0, 0.5), 0 16px 40px -12px rgba(0, 0, 0, 0.8);
     --shadow-sheet: -24px 0 64px -24px rgba(0, 0, 0, 0.9);
@@ -1808,7 +1810,7 @@ html.e-lock body {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: var(--alt);
+  color: var(--alt-ink);
 }
 .e-note--alt strong svg {
   width: 16px;
@@ -4601,9 +4603,14 @@ html.e-lock body {
   gap: 8px;
 }
 .e-mlayer[data-layer="alt"][aria-pressed="true"] {
-  background: var(--alt);
+  background: var(--alt-ink);
   color: #fff;
   box-shadow: none;
+}
+@media (prefers-color-scheme: dark) {
+  .e-mlayer[data-layer="alt"][aria-pressed="true"] {
+    color: #000;
+  }
 }
 .e-mroute {
   display: flex;
@@ -4774,7 +4781,7 @@ html.e-lock body {
   font-weight: 520;
 }
 .e-mstop.is-alt .e-mlabel__sub {
-  fill: var(--alt);
+  fill: var(--alt-ink);
   font-weight: 650;
 }
 .e-mici__dot {
@@ -5096,7 +5103,7 @@ html.e-lock body {
   align-items: center;
   gap: 4px;
   font-weight: 620;
-  color: var(--alt);
+  color: var(--alt-ink);
 }
 .e-mschool__alt svg {
   width: 14px;
@@ -5230,7 +5237,7 @@ html.e-lock body {
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--alt) 30%, transparent);
 }
 .e-maltinfo strong {
-  color: var(--alt);
+  color: var(--alt-ink);
 }
 .e-maltinfo__links {
   display: flex;
@@ -5400,7 +5407,7 @@ html.e-lock body {
 .e-mune__why {
   font-size: 0.8rem;
   font-weight: 650;
-  color: var(--lc, var(--slate));
+  color: color-mix(in srgb, var(--lc, var(--slate)) 72%, var(--ink));
 }
 .e-mune__meta {
   font-size: 0.82rem;
@@ -5520,7 +5527,7 @@ button.e-annu__item:hover {
   background: var(--fog);
 }
 .e-annu__tags .is-alt {
-  color: var(--alt);
+  color: var(--alt-ink);
   background: color-mix(in srgb, var(--alt) 12%, var(--paper));
 }
 .e-annu__go {
@@ -5690,7 +5697,7 @@ button.e-annu__item:hover {
   align-items: center;
   gap: 4px;
   font-weight: 650;
-  color: var(--alt);
+  color: var(--alt-ink);
 }
 .e-mrow__alt svg {
   width: 14px;

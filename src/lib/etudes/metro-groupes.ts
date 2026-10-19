@@ -73,7 +73,7 @@ const PREPAS: Groupe = {
         {
           label: "En 2e année",
           value:
-            "MP ou PSI, selon ton option ; les classes étoilées (MP*, PSI*) accueillent les élèves retenus sur leurs résultats, pour un entraînement plus poussé aux concours. Taux de passage en 2e année affiché sur Parcoursup en 2026 : 91,4 %.",
+            "MP avec l'option informatique ; MP ou PSI avec l'option sciences de l'ingénieur. Les classes étoilées (MP*, PSI*) accueillent les élèves retenus sur leurs résultats, pour un entraînement plus poussé aux concours. Taux de passage en 2e année affiché sur Parcoursup en 2026 : 91,4 %.",
         },
         { label: "Concours", value: "X-ENS-ESPCI, Mines-Ponts, Centrale-Supélec, CCINP, e3a-Polytech, Mines-Télécom." },
         {
@@ -178,7 +178,7 @@ const PREPAS: Groupe = {
         {
           label: "Pour qui",
           value:
-            "Bac général ou technologique, avec maths et physique-chimie ; les sciences de l'ingénieur ou l'informatique comptent aussi.",
+            "Surtout des bacheliers généraux, avec maths et physique-chimie ; les sciences de l'ingénieur ou l'informatique comptent aussi. Les bacheliers STI2D visent plutôt la TSI.",
         },
         {
           label: "Au programme",
@@ -221,7 +221,7 @@ const PREPAS: Groupe = {
         {
           label: "Au programme",
           value:
-            "8 h de maths, 8 h de sciences de la vie et de la Terre, 4 h de physique et 3 h de chimie, soit 30 h 30 par semaine selon la grille nationale, avec des travaux pratiques chaque semaine.",
+            "8 h de maths, 8 h de sciences de la vie et de la Terre, 4 h de physique et 3 h de chimie, sur 30 h 30 de cours par semaine selon la grille nationale, avec des travaux pratiques chaque semaine.",
         },
         {
           label: "En 2e année",
