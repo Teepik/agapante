@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { LineId } from "@/lib/etudes/lines";
+import type { LaneId, LineId } from "@/lib/etudes/lines";
+import { passerelleById } from "@/lib/etudes/passerelles";
 import { ecoles } from "@/lib/etudes/ecoles";
 import { lycees } from "@/lib/etudes/lycees";
 import { CareerMap } from "./CareerMap";
@@ -21,7 +22,7 @@ import { SelectionProvider, useSelection } from "./store";
 import { TopNav } from "./TopNav";
 
 type Open =
-  | { kind: "station"; id: string; line: LineId | null }
+  | { kind: "station"; id: string; line: LaneId | null }
   | { kind: "passerelle"; id: string }
   | { kind: "ecole"; id: string }
   | { kind: "lycee"; id: string }
@@ -44,11 +45,10 @@ function App() {
   const { saved } = useSelection();
   const [open, setOpen] = useState<Open>(null);
   const [cmd, setCmd] = useState(false);
-  const [focusLine, setFocusLine] = useState<LineId | null>(null);
-  const [route, setRoute] = useState<LineId | null>(null);
-  const [laneLine, setLaneLine] = useState<LineId>("sciences");
-  const [showPass, setShowPass] = useState(false);
-  const [spotPass, setSpotPass] = useState<string | null>(null);
+  const [focusLine, setFocusLine] = useState<LaneId | null>(null);
+  const [route, setRoute] = useState<LaneId | null>(null);
+  const [laneLine, setLaneLine] = useState<LaneId>("sciences");
+  const [activePass, setActivePass] = useState<string | null>(null);
   const [trip, setTrip] = useState<LineId>("sciences");
   const [lexQuery, setLexQuery] = useState("");
 
@@ -68,32 +68,39 @@ function App() {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const openStation = useCallback((id: string, line: LineId | null = null) => {
+  const openStation = useCallback((id: string, line: LaneId | null = null) => {
     setOpen({ kind: "station", id, line });
   }, []);
-  const openPasserelle = useCallback((id: string) => {
-    setOpen({ kind: "passerelle", id });
-    setSpotPass(id);
-  }, []);
+  const openPasserelle = useCallback((id: string) => setOpen({ kind: "passerelle", id }), []);
   const openEcole = useCallback((id: string) => setOpen({ kind: "ecole", id }), []);
   const openLycee = useCallback((id: string) => setOpen({ kind: "lycee", id }), []);
   const close = useCallback(() => setOpen(null), []);
 
-  const showLine = useCallback((line: LineId, asRoute = false) => {
+  const showLine = useCallback((line: LaneId, asRoute = false) => {
     setFocusLine(line);
     setRoute(asRoute ? line : null);
     setLaneLine(line);
-    scrollToId("carte");
+    setActivePass(null);
+    scrollToId("carte-plan");
   }, []);
 
-  const showPassOnMap = useCallback((id: string) => {
-    setOpen(null);
-    setShowPass(true);
-    setSpotPass(id);
+  const showPass = useCallback((id: string | null) => {
+    setActivePass(id);
+    if (!id) return;
     setFocusLine(null);
     setRoute(null);
-    scrollToId("carte");
+    const to = passerelleById[id]?.draw?.to;
+    if (to) setLaneLine(to);
   }, []);
+
+  const showPassOnMap = useCallback(
+    (id: string) => {
+      setOpen(null);
+      showPass(id);
+      scrollToId("carte-plan");
+    },
+    [showPass],
+  );
 
   const showMot = useCallback((term: string) => {
     setLexQuery(term);
@@ -107,7 +114,7 @@ function App() {
       </a>
       <TopNav savedCount={saved.length} onSearch={() => setCmd(true)} onOpenList={() => setOpen({ kind: "liste" })} />
 
-      <main>
+      <div className="e-page">
         <Hero />
 
         <section id="carte" className="e-section e-section--fog e-map-section" aria-labelledby="t-carte">
@@ -117,8 +124,8 @@ function App() {
                 La carte des études
               </h2>
               <p className="e-lede">
-                Le tronc commun monte jusqu&apos;au bac, puis se ramifie en huit voies jusqu&apos;aux métiers. Touche
-                une étape pour ouvrir sa fiche.
+                Du bas vers le haut : le tronc commun jusqu&apos;au bac, puis neuf voies, chacune à sa vraie durée,
+                jusqu&apos;au premier métier. Touche une étape pour ouvrir sa fiche.
               </p>
             </div>
           </div>
@@ -129,16 +136,13 @@ function App() {
             onFocusLine={(l) => {
               setFocusLine(l);
               setRoute(null);
+              setActivePass(null);
               if (l) setLaneLine(l);
             }}
             laneLine={laneLine}
             onLaneLine={setLaneLine}
-            showPass={showPass}
-            onTogglePass={() => {
-              setShowPass((v) => !v);
-              setSpotPass(null);
-            }}
-            spotPass={spotPass}
+            activePass={activePass}
+            onActivePass={showPass}
             onOpenPasserelle={openPasserelle}
           />
         </section>
@@ -150,7 +154,7 @@ function App() {
                 Quelle voie te ressemble ?
               </h2>
               <p className="e-lede">
-                Six questions, deux minutes. Le résultat classe les huit voies selon tes goûts d&apos;aujourd&apos;hui.
+                Six questions, deux minutes. Le résultat classe les voies selon tes goûts d&apos;aujourd&apos;hui.
               </p>
             </div>
             <Quiz
@@ -167,7 +171,7 @@ function App() {
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-parcours" className="e-title">
-                Huit parcours, de la 3e au métier
+                Les parcours, de la 3e au métier
               </h2>
               <p className="e-lede">
                 Pour chaque voie, le chemin le plus solide, étape par étape, avec les choix qui comptent vraiment.
@@ -216,11 +220,11 @@ function App() {
           <div className="e-wrap">
             <div className="e-head">
               <h2 id="t-ecoles" className="e-title">
-                Après le bac, {ecoles.length} établissements
+                Les établissements après le bac
               </h2>
               <p className="e-lede">
-                Prépas, universités, grandes écoles, conservatoires : comment on y entre, combien de temps on y reste,
-                ce qu&apos;on y apprend et où cela mène.
+                {ecoles.length} prépas, universités, grandes écoles et conservatoires : comment on y entre, combien de
+                temps on y reste, ce qu&apos;on y apprend et où cela mène.
               </p>
             </div>
             <Ecoles onOpenEcole={openEcole} />
@@ -267,7 +271,7 @@ function App() {
             <Lexique query={lexQuery} onQuery={setLexQuery} onOpenStation={(id) => openStation(id)} />
           </div>
         </section>
-      </main>
+      </div>
 
       <Footer />
 

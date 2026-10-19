@@ -1,14 +1,14 @@
 import type { ReactNode, SVGProps } from "react";
-import type { LineId } from "@/lib/etudes/lines";
+import type { LaneId } from "@/lib/etudes/lines";
 
 /** Pastille de couleur d'une voie. */
-export function Dot({ line, className = "" }: { line: LineId | "u"; className?: string }) {
+export function Dot({ line, className = "" }: { line: LaneId; className?: string }) {
   if (line === "u") return <span className={`e-dot e-dot--u ${className}`} aria-hidden="true" />;
   return <span className={`e-dot ${className}`} data-line={line} aria-hidden="true" />;
 }
 
 /** Jauge en cinq crans (sélectivité, exigence). */
-export function Meter({ value, label, line }: { value: number; label: string; line?: LineId }) {
+export function Meter({ value, label, line }: { value: number; label: string; line?: LaneId }) {
   return (
     <span className="e-meter" role="img" aria-label={label} data-line={line}>
       {[1, 2, 3, 4, 5].map((i) => (

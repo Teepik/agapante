@@ -1,7 +1,7 @@
 "use client";
 
 import { doublesCursus, passerelles } from "@/lib/etudes/passerelles";
-import { placedById } from "@/lib/etudes/plan";
+import { laneOf } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
 import { Dot, Icon } from "./ui";
 
@@ -11,7 +11,7 @@ export function Passerelles({ onOpenPasserelle }: { onOpenPasserelle: (id: strin
       <div>
         <div className="e-block__head">
           <div>
-            <h3 className="e-h3">Douze passerelles</h3>
+            <h3 className="e-h3">Les passerelles</h3>
             <p className="e-sub">
               Un choix fait à 17 ans s&apos;ajuste : on change de voie, souvent sans perdre une année.
             </p>
@@ -19,7 +19,7 @@ export function Passerelles({ onOpenPasserelle }: { onOpenPasserelle: (id: strin
         </div>
         <ol className="e-plist">
           {passerelles.map((x) => {
-            const toLine = placedById[x.to]?.line;
+            const toLine = laneOf(x.to);
             return (
               <li key={x.id}>
                 <button type="button" className="e-pitem" onClick={() => onOpenPasserelle(x.id)}>
@@ -52,7 +52,7 @@ export function Passerelles({ onOpenPasserelle }: { onOpenPasserelle: (id: strin
       <div>
         <div className="e-block__head">
           <div>
-            <h3 className="e-h3">Huit doubles cursus</h3>
+            <h3 className="e-h3">Les doubles cursus</h3>
             <p className="e-sub">
               Deux formations en même temps, deux diplômes à la sortie. C&apos;est exigeant, et c&apos;est souvent ce
               qui distingue un dossier.

@@ -2,8 +2,8 @@
 
 import { ecoleById } from "@/lib/etudes/ecoles";
 import { lyceeById, statutLabel } from "@/lib/etudes/lycees";
-import type { LineId } from "@/lib/etudes/lines";
-import { placedById } from "@/lib/etudes/plan";
+import type { LaneId } from "@/lib/etudes/lines";
+import { laneOf } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
 import { Sheet } from "./Sheet";
 import { useSelection, type SavedKind } from "./store";
@@ -18,7 +18,7 @@ export function MyList({
   onClose: () => void;
   onLycee: (id: string) => void;
   onEcole: (id: string) => void;
-  onStation: (id: string, line: LineId | null) => void;
+  onStation: (id: string, line: LaneId | null) => void;
 }) {
   const { saved, toggle } = useSelection();
   const parsed = saved.map((k) => {
@@ -50,7 +50,7 @@ export function MyList({
 
       {ly.length ? (
         <section className="e-mylist__group">
-          <h4>Lycées</h4>
+          <h3>Lycées</h3>
           <ul className="e-rows">
             {ly.map(({ id }) => {
               const l = lyceeById[id];
@@ -71,7 +71,7 @@ export function MyList({
 
       {ec.length ? (
         <section className="e-mylist__group">
-          <h4>Établissements</h4>
+          <h3>Établissements</h3>
           <ul className="e-rows">
             {ec.map(({ id }) => {
               const e = ecoleById[id];
@@ -92,11 +92,11 @@ export function MyList({
 
       {st.length ? (
         <section className="e-mylist__group">
-          <h4>Étapes</h4>
+          <h3>Étapes</h3>
           <ul className="e-rows">
             {st.map(({ id }) => {
               const s = stationById[id];
-              const line = placedById[id]?.line ?? null;
+              const line = laneOf(id);
               return (
                 <ListRow
                   key={id}

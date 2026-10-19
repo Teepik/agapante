@@ -1,34 +1,37 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { lineById, linesByNum, type LineId } from "@/lib/etudes/lines";
+import { laneDirection, laneName, lanePitch, laneShort, type LaneId } from "@/lib/etudes/lines";
 import {
-  ORDER,
+  BX,
+  LANES,
+  LANE_DEFS,
+  LEVELS,
   PLAN,
+  PLAN_H,
   TIME_MARKS,
-  U_PATH,
+  exitsPlaced,
   laneX,
   linePath,
-  passPath,
+  passGeometry,
   placed,
   placedById,
   routeOf,
   type PlacedStation,
 } from "@/lib/etudes/plan";
-import { passerelles } from "@/lib/etudes/passerelles";
+import { passerelleById, passerelles } from "@/lib/etudes/passerelles";
 import { stationById } from "@/lib/etudes/stations";
 import { Dot, Icon } from "./ui";
 
 type Props = {
-  focusLine: LineId | null;
-  route: LineId | null;
-  onOpen: (id: string, line: LineId | null) => void;
-  onFocusLine: (line: LineId | null) => void;
-  laneLine: LineId;
-  onLaneLine: (line: LineId) => void;
-  showPass: boolean;
-  onTogglePass: () => void;
-  spotPass: string | null;
+  focusLine: LaneId | null;
+  route: LaneId | null;
+  onOpen: (id: string, line: LaneId | null) => void;
+  onFocusLine: (line: LaneId | null) => void;
+  laneLine: LaneId;
+  onLaneLine: (line: LaneId) => void;
+  activePass: string | null;
+  onActivePass: (id: string | null) => void;
   onOpenPasserelle: (id: string) => void;
 };
 
@@ -39,7 +42,10 @@ const OPTION_LABEL: Record<string, string> = {
 };
 
 /** En dessous de cette échelle, la carte entière devient trop petite pour être lue : on passe voie par voie. */
-const MIN_SCALE = 0.8;
+const MIN_SCALE = 0.78;
+
+/** Largeur d'une colonne de libellés, à droite de la barre. */
+const COL = PLAN.COL_STEP - 2;
 
 export function CareerMap(props: Props) {
   const frameRef = useRef<HTMLDivElement>(null);
@@ -60,45 +66,33 @@ export function CareerMap(props: Props) {
   const lit = props.route ?? props.focusLine;
 
   return (
-    <div className={`e-map${lit ? " is-focus" : ""}${props.showPass ? " is-pass" : ""}`}>
+    <div className={`e-map${lit ? " is-focus" : ""}${props.activePass ? " is-pass" : ""}`}>
       <div className="e-wrap">
         <div className="e-map__bar">
           {mode === "carte" ? (
             <div className="e-map__filters" role="group" aria-label="Mettre une voie en avant">
               <button type="button" className="e-chip" aria-pressed={!lit} onClick={() => props.onFocusLine(null)}>
-                Toutes les voies
+                Toutes
               </button>
-              {linesByNum.map((l) => (
+              {LANES.map((id) => (
                 <button
-                  key={l.id}
+                  key={id}
                   type="button"
                   className="e-chip"
-                  data-line={l.id}
-                  aria-pressed={lit === l.id}
+                  data-line={id}
+                  aria-pressed={lit === id}
                   onClick={() => {
-                    props.onFocusLine(lit === l.id ? null : l.id);
-                    props.onLaneLine(l.id);
+                    props.onFocusLine(lit === id ? null : id);
+                    props.onLaneLine(id);
                   }}
                 >
-                  <Dot line={l.id} />
-                  {l.short}
+                  <Dot line={id} />
+                  {laneShort(id)}
                 </button>
               ))}
             </div>
           ) : null}
           <div className="e-map__tools">
-            {mode === "carte" ? (
-              <button
-                type="button"
-                role="switch"
-                aria-checked={props.showPass}
-                className="e-switch"
-                onClick={props.onTogglePass}
-              >
-                <span className="e-switch__track" aria-hidden="true" />
-                Passerelles
-              </button>
-            ) : null}
             <div className="e-seg" role="group" aria-label="Affichage">
               <button type="button" aria-pressed={mode === "carte"} onClick={() => setChoice("carte")}>
                 Carte
@@ -111,11 +105,18 @@ export function CareerMap(props: Props) {
         </div>
       </div>
 
-      <div className="e-map__frame" ref={frameRef}>
+      <div className="e-map__frame" ref={frameRef} id="carte-plan">
         {mode === "carte" ? (
           <div style={fits ? undefined : { overflowX: "auto", paddingBottom: 12 }}>
-            <div className="e-map__sizer" style={{ width: PLAN.W * scale, height: PLAN.H * scale }}>
-              <div className="e-map__canvas" style={{ width: PLAN.W, height: PLAN.H, transform: `scale(${scale})` }}>
+            <div className="e-map__sizer" style={{ width: PLAN.W * scale, height: PLAN_H * scale }}>
+              <div
+                className="e-map__canvas"
+                style={{
+                  width: PLAN.W,
+                  height: PLAN_H,
+                  transform: `scale(${scale})`,
+                }}
+              >
                 <Drawing {...props} lit={lit} />
               </div>
             </div>
@@ -137,60 +138,143 @@ function Drawing({
   lit,
   onOpen,
   onFocusLine,
-  showPass,
-  spotPass,
+  activePass,
+  onActivePass,
   onOpenPasserelle,
-}: Props & { lit: LineId | null }) {
-  const drawn = showPass
-    ? passerelles.flatMap((x) => {
-        if (!x.draw) return [];
-        const g = passPath(x.draw.from, x.to, x.draw.kind, x.draw.via);
-        return g ? [{ x, g }] : [];
-      })
-    : [];
-  const dimLine = (line: LineId | undefined) => Boolean(lit && line && line !== lit);
+}: Props & { lit: LaneId | null }) {
+  const [peek, setPeek] = useState<LaneId | null>(null);
+  const pass = activePass ? passerelleById[activePass] : null;
+  const geo = pass?.draw ? passGeometry(pass.draw) : null;
+  const hot = new Set(geo?.hot ?? []);
+  // Un trait qui arrive par la droite traverse la colonne de libellés de sa cible : le libellé d'un concours passe à gauche.
+  const target = geo ? geo.hot[geo.hot.length - 1] : null;
+  const lift = geo?.runs.some((r) => r.dir === -1) && target && placedById[target]?.kind === "event" ? target : null;
+  const call = geo && pass ? placeCallout(geo, pass.title, lift) : null;
+  const shown = geo ? null : (lit ?? peek);
+  const dimLane = (line?: LaneId) => Boolean(shown && line && line !== shown);
+  const dimSt = (p: PlacedStation) => (geo ? !hot.has(p.id) : dimLane(p.line));
+  const cls = (base: string, dim: boolean) => (dim ? `${base} is-dim` : base);
+
+  const segs = placed.filter((p) => p.kind === "seg");
+  /** Un repère (concours, sortie) au bord d'une étape : son libellé s'en écarte. */
+  const marksAt = (line: LaneId, t: number) =>
+    LANE_DEFS[line].events.some((e) => e.at === t) || LANE_DEFS[line].exits.some((e) => e.at === t);
+  const segEdge = (p: PlacedStation) => {
+    const seg = LANE_DEFS[p.line!].segs.find((s) => s.id === p.id)!;
+    return `${marksAt(p.line!, seg.to) ? " is-top" : ""}${marksAt(p.line!, seg.from) ? " is-bottom" : ""}`;
+  };
+  const events = placed.filter((p) => p.kind === "event");
+  const ends = placed.filter((p) => p.kind === "end");
+  const trunk = placed.filter((p) => p.kind === "trunk");
 
   return (
     <>
-      <svg className="e-map__svg" viewBox={`0 0 ${PLAN.W} ${PLAN.H}`} width={PLAN.W} height={PLAN.H} aria-hidden="true">
-        {route ? <path d={linePath(route)} data-line={route} className="e-route-halo" /> : null}
-
-        {ORDER.map((id) => (
-          <path key={id} d={linePath(id)} data-line={id} className={dimLine(id) ? "e-lane is-dim" : "e-lane"} />
+      <svg className="e-map__svg" viewBox={`0 0 ${PLAN.W} ${PLAN_H}`} width={PLAN.W} height={PLAN_H} aria-hidden="true">
+        {LEVELS.map((lv) => (
+          <line
+            key={lv.y}
+            className={lv.strong ? "e-level e-level--strong" : "e-level"}
+            x1={96}
+            x2={lv.x2}
+            y1={lv.y}
+            y2={lv.y}
+          />
         ))}
 
-        <g className="e-uline">
-          <path d={U_PATH} className="e-uline__case" />
-          <path d={U_PATH} className="e-uline__core" />
-        </g>
+        {route ? (
+          <path key={route} d={linePath(route)} data-line={route} className="e-route-halo" pathLength={1} />
+        ) : null}
 
-        {drawn.length ? (
-          <g className="e-pass">
+        {LANES.map((id) => (
+          <path key={id} d={linePath(id)} data-line={id} className={cls("e-lane", geo ? true : dimLane(id))} />
+        ))}
+
+        {segs.map((p) => (
+          <g key={p.id} data-line={p.line} className={cls("e-mk", dimSt(p))}>
+            <rect className="e-bar" x={p.x - 5} y={p.y2! + 1.5} width={10} height={p.y1! - p.y2! - 3} rx={5} />
+            {p.y3 ? (
+              <rect
+                className="e-bar e-bar--more"
+                x={p.x - 5}
+                y={p.y3 + 1.5}
+                width={10}
+                height={p.y2! - p.y3 - 3}
+                rx={5}
+              />
+            ) : null}
+          </g>
+        ))}
+
+        {exitsPlaced.map((e) => (
+          <circle
+            key={`${e.line}-${e.at}`}
+            data-line={e.line}
+            className={cls("e-mk e-exit", geo ? true : dimLane(e.line))}
+            cx={e.x}
+            cy={e.y}
+            r={5}
+          />
+        ))}
+
+        {events.map((p) => (
+          <rect
+            key={p.id}
+            data-line={p.line}
+            className={cls("e-mk e-ev", dimSt(p))}
+            x={p.x - 6.5}
+            y={p.y - 6.5}
+            width={13}
+            height={13}
+            rx={2.5}
+            transform={`rotate(45 ${p.x} ${p.y})`}
+          />
+        ))}
+
+        {ends.map((p) => (
+          <circle key={p.id} data-line={p.line} className={cls("e-mk e-end", dimSt(p))} cx={p.x} cy={p.y} r={8} />
+        ))}
+
+        {trunk.map((p) => (
+          <rect
+            key={p.id}
+            className={p.id === "college" ? "e-cap e-cap--here" : "e-cap"}
+            x={BX - 49}
+            y={p.y - 13}
+            width={98}
+            height={26}
+            rx={13}
+          />
+        ))}
+
+        {geo ? (
+          <g className="e-parrow">
             <defs>
               <marker
-                id="e-pass-arrow"
+                id="e-parrow-head"
                 viewBox="0 0 10 10"
-                refX="8"
+                refX="7"
                 refY="5"
-                markerWidth="5"
-                markerHeight="5"
+                markerWidth="4"
+                markerHeight="4"
                 orient="auto"
               >
-                <path d="M 0 0 L 10 5 L 0 10 z" className="e-pass__head" />
+                <path d="M 0 0 L 10 5 L 0 10 z" className="e-parrow__head" />
               </marker>
             </defs>
-            {drawn.map(({ x, g }) => (
-              <g key={x.id} className={`e-pass__item${spotPass === x.id ? " is-spot" : spotPass ? " is-off" : ""}`}>
-                <path d={g.d} className="e-pass__case" />
-                <path d={g.d} className="e-pass__path" markerEnd="url(#e-pass-arrow)" />
-              </g>
+            {geo.runs.map((r) => {
+              const d = `M ${r.x1} ${geo.y} H ${r.x2 - r.dir * 13}`;
+              return (
+                <g key={r.dir}>
+                  <path d={d} className="e-parrow__case" />
+                  <path d={d} className="e-parrow__line" markerEnd="url(#e-parrow-head)" />
+                </g>
+              );
+            })}
+            {geo.sources.map((s) => (
+              <circle key={s.lane} className="e-parrow__dot" cx={s.x} cy={geo.y} r={5.5} />
             ))}
           </g>
         ) : null}
-
-        {placed.map((p) => (
-          <Marker key={p.id} p={p} dim={dimLine(p.line)} />
-        ))}
       </svg>
 
       <ol className="e-time" aria-hidden="true">
@@ -202,35 +286,34 @@ function Drawing({
         ))}
       </ol>
 
-      {ORDER.map((id) => (
-        <button
-          key={id}
-          type="button"
-          className={dimLine(id) ? "e-colhead is-dim" : "e-colhead"}
-          style={{ left: laneX(id) - 13, top: 10 }}
-          data-line={id}
-          aria-pressed={lit === id}
-          onClick={() => onFocusLine(lit === id ? null : id)}
-        >
-          <Dot line={id} />
-          <span>{lineById[id].name}</span>
-        </button>
-      ))}
+      {trunk.map((p) => {
+        const st = stationById[p.id];
+        if (!st) return null;
+        return (
+          <button
+            key={p.id}
+            type="button"
+            className={`e-ms e-ms--trunk${p.id === "college" ? " is-here" : ""}`}
+            style={{ left: BX - 330, top: p.y - 24, width: 330 + 49 }}
+            aria-label={`${st.name}, tronc commun`}
+            onClick={() => onOpen(p.id, null)}
+          >
+            <span className="e-ms__name">{st.label}</span>
+            {st.sub ? <span className="e-ms__sub">{st.sub}</span> : null}
+          </button>
+        );
+      })}
 
-      {placed.map((p) =>
-        p.kind === "option" ? null : <StationButton key={p.id} p={p} dim={dimLine(p.line)} onOpen={onOpen} />,
-      )}
-
-      <div className="e-opts" style={{ right: PLAN.W - (PLAN.BX - 236), top: PLAN.Y.seconde - 14 }}>
+      <div className="e-opts" style={{ left: BX + 62, top: placedById.seconde.y - 14 }}>
         {placed
           .filter((p) => p.kind === "option")
           .map((p) => (
             <button
               key={p.id}
               type="button"
-              className={dimLine(p.line) ? "e-opt is-dim" : "e-opt"}
+              className={cls("e-opt", geo ? true : dimLane(p.line))}
               data-line={p.line}
-              aria-label={stationById[p.id]?.name}
+              aria-label={`${stationById[p.id]?.name}, en option au lycée`}
               onClick={() => onOpen(p.id, p.line ?? null)}
             >
               <Dot line={p.line!} />
@@ -239,157 +322,269 @@ function Drawing({
           ))}
       </div>
 
-      {drawn.map(({ x, g }) => (
+      {segs.map((p) => (
         <button
-          key={x.id}
+          key={p.id}
           type="button"
-          className={spotPass === x.id ? "e-pbadge is-spot" : "e-pbadge"}
-          style={{ left: g.mid.x, top: g.mid.y }}
-          onClick={() => onOpenPasserelle(x.id)}
-          aria-label={`Passerelle ${x.num} : ${x.title}`}
+          className={cls(`e-ms e-ms--seg${segEdge(p)}`, dimSt(p))}
+          style={{
+            left: p.x - 9,
+            top: p.y2! + 2,
+            width: COL,
+            height: p.y1! - p.y2! - 4,
+          }}
+          data-line={p.line}
+          aria-label={`${stationById[p.id]?.name ?? p.name}, ${laneName(p.line!)}, ${p.dur}`}
+          onClick={() => onOpen(p.id, p.line ?? null)}
         >
-          {x.num}
+          <span className="e-ms__name">{p.name}</span>
+          <span className="e-ms__sub">{p.dur}</span>
         </button>
       ))}
 
+      {events.map((p) => (
+        <button
+          key={p.id}
+          type="button"
+          className={cls(`e-ms e-ms--ev${lift === p.id ? " is-flip" : ""}`, dimSt(p))}
+          style={{
+            left: lift === p.id ? p.x - COL + 9 : p.x - 9,
+            top: p.y - 24,
+            width: COL,
+            height: 40,
+          }}
+          data-line={p.line}
+          aria-label={`${stationById[p.id]?.name ?? p.name}, ${laneName(p.line!)}`}
+          onClick={() => onOpen(p.id, p.line ?? null)}
+        >
+          <span className="e-ms__name">{p.name}</span>
+          <span className="e-ms__sub">{p.sub}</span>
+        </button>
+      ))}
+
+      {exitsPlaced.map((e) => (
+        <button
+          key={`${e.line}-${e.at}`}
+          type="button"
+          className={cls("e-ms e-ms--exit", geo ? true : dimLane(e.line))}
+          style={{ left: e.x - 9, top: e.y - 17, width: COL, height: 34 }}
+          data-line={e.line}
+          aria-label={`${e.name}, ${e.age}`}
+          onClick={() => onOpen(e.station, e.line)}
+        >
+          <span className="e-ms__name">{e.name}</span>
+          <span className="e-ms__sub">{e.age}</span>
+        </button>
+      ))}
+
+      {ends.map((p) => {
+        const line = p.line!;
+        return (
+          <div
+            key={p.id}
+            className={cls("e-dest", dimSt(p))}
+            style={{ left: p.x - 9, top: p.y - 14, width: COL }}
+            data-line={line}
+          >
+            <button
+              type="button"
+              className="e-dest__lane"
+              aria-pressed={lit === line}
+              onMouseEnter={() => setPeek(line)}
+              onMouseLeave={() => setPeek(null)}
+              onFocus={() => setPeek(line)}
+              onBlur={() => setPeek(null)}
+              onClick={() => onFocusLine(lit === line ? null : line)}
+            >
+              <Dot line={line} />
+              {laneShort(line)}
+            </button>
+            <button
+              type="button"
+              className="e-dest__job"
+              aria-label={`${stationById[p.id]?.name ?? p.name}, ${p.age}`}
+              onClick={() => onOpen(p.id, line)}
+            >
+              <span className="e-ms__name">{p.name}</span>
+              <span className="e-ms__sub">{p.age}</span>
+            </button>
+          </div>
+        );
+      })}
+
+      <PassPanel activePass={activePass} onActivePass={onActivePass} />
       <Legend />
+
+      {call && pass ? (
+        <button
+          type="button"
+          className="e-pcall"
+          style={{ left: call.left, top: call.top, width: call.w }}
+          onClick={() => onOpenPasserelle(pass.id)}
+          aria-label={`Passerelle ${pass.num} : ${pass.title}. Ouvrir la fiche`}
+        >
+          <span className="e-numbadge">{pass.num}</span>
+          <span>
+            <span className="e-pcall__title">{pass.title}</span>
+            <span className="e-pcall__when">{pass.when}</span>
+          </span>
+          <Icon name="chevron-right" width={16} height={16} />
+        </button>
+      ) : null}
     </>
   );
 }
 
-function Marker({ p, dim }: { p: PlacedStation; dim: boolean }) {
-  const cls = dim ? "e-mk is-dim" : "e-mk";
-  switch (p.kind) {
-    case "trunk":
-      return (
-        <rect
-          className={p.id === "college" ? "e-mk__trunk e-mk__trunk--here" : "e-mk__trunk"}
-          x={PLAN.BX - 49}
-          y={p.y - 13}
-          width={98}
-          height={26}
-          rx={13}
-        />
-      );
-    case "option":
-      return null;
-    case "u":
-      if (!p.line) {
-        return (
-          <g className={cls}>
-            <rect className="e-mk__hub" x={p.x - 16} y={p.y - 16} width={32} height={32} rx={9} />
-            <text className="e-mk__hub-text" x={p.x} y={p.y + 1}>
-              U
-            </text>
-          </g>
-        );
-      }
-      return (
-        <g className={cls} data-line={p.line}>
-          <circle className="e-mk__inter" cx={p.x} cy={p.y} r={9} />
-          <circle className="e-mk__inter-core" cx={p.x} cy={p.y} r={3.5} />
-        </g>
-      );
-    case "terminus":
-      return (
-        <g className={cls} data-line={p.line}>
-          <circle className="e-mk__term" cx={p.x} cy={p.y} r={10} />
-        </g>
-      );
-    default:
-      return (
-        <g className={cls} data-line={p.line}>
-          <circle className="e-mk__stop" cx={p.x} cy={p.y} r={6.5} />
-        </g>
-      );
-  }
+/* --------------------------------------------------------------------------
+   L'étiquette d'une passerelle : près de son trait, sans masquer ses étapes.
+   -------------------------------------------------------------------------- */
+
+const CALL_W = 300;
+type Box = { x1: number; x2: number; y1: number; y2: number };
+const overlaps = (a: Box, b: Box) => a.x1 < b.x2 && b.x1 < a.x2 && a.y1 < b.y2 && b.y1 < a.y2;
+
+/** Les zones à garder visibles : les barres et les libellés des étapes reliées. */
+function hotBoxes(hot: string[], flipped: string | null): Box[] {
+  return hot.flatMap((id) => {
+    const p = placedById[id];
+    if (!p) return [];
+    if (p.kind === "seg") {
+      const cy = (p.y1! + p.y2!) / 2;
+      return [
+        { x1: p.x - 8, x2: p.x + 8, y1: p.y2!, y2: p.y1! },
+        { x1: p.x + 10, x2: p.x + 113, y1: cy - 30, y2: cy + 30 },
+      ];
+    }
+    if (p.kind === "event") {
+      const flip = flipped === id;
+      return [
+        { x1: p.x - 9, x2: p.x + 9, y1: p.y - 9, y2: p.y + 9 },
+        { x1: flip ? p.x - 113 : p.x + 10, x2: flip ? p.x - 10 : p.x + 113, y1: p.y - 28, y2: p.y + 20 },
+      ];
+    }
+    return [{ x1: p.x - 10, x2: p.x + 113, y1: p.y - 30, y2: p.y + 30 }];
+  });
 }
 
-function StationButton({
-  p,
-  dim,
-  onOpen,
-}: {
-  p: PlacedStation;
-  dim: boolean;
-  onOpen: (id: string, line: LineId | null) => void;
-}) {
-  const st = stationById[p.id];
-  if (!st) return null;
-  const served = p.line ? `, ${lineById[p.line].name}` : p.kind === "trunk" ? ", tronc commun" : ", université";
-
-  let style: CSSProperties;
-  let kind: string;
-  if (p.kind === "trunk") {
-    kind = "trunk";
-    style = { left: PLAN.BX - 380, top: p.y - 24, width: 380 + 49, paddingRight: 112 };
-  } else if (p.kind === "u" && !p.line) {
-    kind = "hub";
-    style = { left: 0, top: p.y - 46, width: 96, textAlign: "center", paddingBottom: 40 };
-  } else if (p.kind === "u") {
-    kind = "u";
-    style = { left: p.x - 12, top: p.y - 6, width: 146 };
-  } else if (p.kind === "terminus") {
-    kind = "terminus";
-    style = { left: p.x - 12, top: p.y - 15, width: 150 };
-  } else {
-    kind = "stop";
-    style = { left: p.x - 12, top: p.y - 14, width: 148 };
+/** Essaie plusieurs places, au-dessus puis au-dessous du trait, et garde la première qui ne cache rien. */
+function placeCallout(geo: ReturnType<typeof passGeometry>, title: string, flipped: string | null) {
+  const w = Math.min(CALL_W, 78 + title.length * 7.4);
+  const h = title.length * 7.4 > CALL_W - 78 ? 76 : 58;
+  const run = geo.runs.reduce((a, b) => (Math.abs(b.x2 - b.x1) > Math.abs(a.x2 - a.x1) ? b : a), geo.runs[0]);
+  const { x1, x2, dir } = run;
+  const boxes = hotBoxes(geo.hot, flipped);
+  const xs = [
+    (x1 + x2) / 2,
+    x2 - dir * (w / 2 + 14),
+    x1 + dir * (w / 2 + 14),
+    x2 + dir * (w / 2 + 22),
+    x1 - dir * (w / 2 + 22),
+  ];
+  const clamp = (cx: number) => Math.min(PLAN.W - w / 2 - 8, Math.max(104 + w / 2, cx));
+  const tries = [...xs.map((cx) => ({ cx, above: true })), ...xs.map((cx) => ({ cx, above: false }))];
+  for (const t of tries) {
+    const cx = clamp(t.cx);
+    const top = t.above ? geo.y - 14 - h : geo.y + 14;
+    const box = { x1: cx - w / 2, x2: cx + w / 2, y1: top, y2: top + h };
+    if (!boxes.some((b) => overlaps(b, box))) return { left: cx - w / 2, top, w };
   }
+  const cx = clamp((x1 + x2) / 2);
+  return { left: cx - w / 2, top: geo.y - 14 - h, w };
+}
 
+/** Les passerelles, à afficher une par une. */
+function PassPanel({
+  activePass,
+  onActivePass,
+}: {
+  activePass: string | null;
+  onActivePass: (id: string | null) => void;
+}) {
   return (
-    <button
-      type="button"
-      className={`e-st e-st--${kind}${dim ? " is-dim" : ""}`}
-      style={style}
-      data-line={p.line}
-      aria-label={`${st.name}${served}`}
-      onClick={() => onOpen(p.id, p.line ?? null)}
-    >
-      <span className="e-st__name">{st.label}</span>
-      {st.sub && kind !== "hub" ? <span className="e-st__sub">{st.sub}</span> : null}
-    </button>
+    <div className="e-ppanel" style={{ left: 252, top: 14, width: 336 }}>
+      <p className="e-ppanel__title">Les passerelles</p>
+      <p className="e-ppanel__sub">Pour changer de voie en chemin. Choisis-en une pour la voir sur la carte.</p>
+      <ul>
+        {passerelles
+          .filter((x) => x.draw)
+          .map((x) => (
+            <li key={x.id}>
+              <button
+                type="button"
+                aria-pressed={activePass === x.id}
+                onClick={() => onActivePass(activePass === x.id ? null : x.id)}
+              >
+                <span className="e-numbadge">{x.num}</span>
+                <span>{x.title}</span>
+              </button>
+            </li>
+          ))}
+      </ul>
+    </div>
   );
 }
 
 function Legend() {
   return (
-    <ul className="e-legend" style={{ left: 790, top: 724 }}>
-      <li>
-        <svg viewBox="0 0 34 20" aria-hidden="true">
-          <rect x="1" y="3" width="32" height="14" rx="7" fill="var(--ink)" />
-        </svg>
-        <span>
-          <strong>Tu es ici :</strong> la 3e, en 2026-2027. Le parcours monte, de ta classe jusqu&apos;au premier
-          métier.
-        </span>
-      </li>
-      <li>
-        <svg viewBox="0 0 34 20" aria-hidden="true">
-          <path d="M2 10h30" stroke="var(--ink)" strokeWidth="3" strokeLinecap="round" />
-          <circle cx="17" cy="10" r="6" fill="var(--paper)" stroke="var(--ink)" strokeWidth="2.5" />
-        </svg>
-        <span>
-          <strong>La ligne U</strong>, l&apos;université, croise toutes les voies : à chaque croisement, on peut changer
-          de direction.
-        </span>
-      </li>
-      <li>
-        <svg viewBox="0 0 34 20" aria-hidden="true">
-          <path d="M2 10h30" stroke="var(--ink)" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="0.5 6" />
-        </svg>
-        <span>
-          <strong>Les passerelles</strong> relient les voies entre elles. Affiche-les avec le bouton au-dessus de la
-          carte.
-        </span>
-      </li>
-      <li>
-        <svg viewBox="0 0 34 20" aria-hidden="true">
-          <circle cx="17" cy="10" r="6" fill="var(--paper)" stroke="var(--slate)" strokeWidth="3" />
-        </svg>
-        <span>Touche une étape pour ouvrir sa fiche.</span>
-      </li>
-    </ul>
+    <div className="e-mkey" style={{ left: 876, top: 14, width: 340 }}>
+      <p className="e-ppanel__title">Lire la carte</p>
+      <ul>
+        <li>
+          <svg viewBox="0 0 34 40" aria-hidden="true">
+            <rect x="12" y="2" width="10" height="16" rx="5" fill="var(--slate)" />
+            <rect x="12" y="21" width="10" height="17" rx="5" fill="var(--slate)" />
+          </svg>
+          <span>
+            <strong>Une barre, une formation.</strong> Sa hauteur est sa durée réelle.
+          </span>
+        </li>
+        <li>
+          <svg viewBox="0 0 34 40" aria-hidden="true">
+            <rect x="12" y="2" width="10" height="36" rx="5" fill="var(--slate)" />
+            <rect
+              x="10.5"
+              y="13.5"
+              width="13"
+              height="13"
+              rx="2.5"
+              transform="rotate(45 17 20)"
+              fill="var(--paper)"
+              stroke="var(--slate)"
+              strokeWidth="2.5"
+            />
+          </svg>
+          <span>
+            <strong>Un concours</strong> pour entrer à l&apos;étape suivante.
+          </span>
+        </li>
+        <li>
+          <svg viewBox="0 0 34 40" aria-hidden="true">
+            <rect x="12" y="2" width="10" height="16" rx="5" fill="var(--hair-2)" />
+            <rect x="12" y="21" width="10" height="17" rx="5" fill="var(--slate)" />
+          </svg>
+          <span>
+            <strong>Une barre claire</strong> : une durée qui varie selon la spécialité.
+          </span>
+        </li>
+        <li>
+          <svg viewBox="0 0 34 40" aria-hidden="true">
+            <rect x="12" y="14" width="10" height="24" rx="5" fill="var(--slate)" />
+            <circle cx="17" cy="9" r="7" fill="var(--slate)" stroke="var(--paper)" strokeWidth="3" />
+          </svg>
+          <span>
+            <strong>Le premier métier</strong>, en haut de la voie, et l&apos;âge où l&apos;on y arrive.
+          </span>
+        </li>
+        <li>
+          <svg viewBox="0 0 34 40" aria-hidden="true">
+            <path d="M0 20h34" stroke="var(--hair-2)" strokeWidth="1.5" />
+          </svg>
+          <span>
+            <strong>Les lignes grises</strong> marquent la licence, le master et le doctorat : bac+3, bac+5, bac+8.
+          </span>
+        </li>
+      </ul>
+    </div>
   );
 }
 
@@ -397,10 +592,68 @@ function Legend() {
    Voie par voie (petits écrans, ou au choix)
    -------------------------------------------------------------------------- */
 
-function Lanes({ laneLine, onLaneLine, onOpen }: Props) {
-  const line = lineById[laneLine];
-  const stops = routeOf(laneLine);
-  const trunkCount = stops.filter((id) => placedById[id]?.kind === "trunk" || placedById[id]?.kind === "option").length;
+type Row =
+  | { kind: "station"; key: number; id: string }
+  | { kind: "exit"; key: number; name: string; age: string; station: string }
+  | { kind: "pass"; key: number; id: string; out: boolean };
+
+function laneRows(lane: LaneId): Row[] {
+  const def = LANE_DEFS[lane];
+  const rows: Row[] = routeOf(lane).map((id) => {
+    const p = placedById[id];
+    const key = p.kind === "seg" ? p.t! : p.kind === "event" ? p.t! - 0.01 : p.kind === "end" ? p.t! + 1 : p.t! - 10;
+    return { kind: "station", key, id };
+  });
+  def.exits.forEach((e) =>
+    rows.push({
+      kind: "exit",
+      key: e.at - 0.001,
+      name: e.name,
+      age: e.age,
+      station: def.end.id,
+    }),
+  );
+  passerelles.forEach((x) => {
+    if (!x.draw) return;
+    if (x.draw.to === lane) rows.push({ kind: "pass", key: x.draw.t - 0.005, id: x.id, out: false });
+    else if (x.draw.from.includes(lane)) rows.push({ kind: "pass", key: x.draw.t - 0.005, id: x.id, out: true });
+  });
+  return rows.sort((a, b) => a.key - b.key);
+}
+
+function stepMeta(id: string): string {
+  const p = placedById[id];
+  const st = stationById[id];
+  if (p?.kind === "seg") {
+    const seg = Object.values(LANE_DEFS)
+      .flatMap((d) => d.segs)
+      .find((s) => s.id === id)!;
+    const a = 18 + seg.from;
+    return seg.more ? `${seg.dur}, à partir de ${a} ans` : `${seg.dur}, de ${a} à ${18 + seg.to} ans`;
+  }
+  if (p?.kind === "end") return p.age ?? st?.when ?? "";
+  return st?.when ?? "";
+}
+
+/** « A », « A et B », « A, B et C ». */
+function joinFr(items: string[]): string {
+  return items.length < 2 ? (items[0] ?? "") : `${items.slice(0, -1).join(", ")} et ${items[items.length - 1]}`;
+}
+
+function Lanes({ laneLine, onLaneLine, onOpen, activePass, onOpenPasserelle }: Props) {
+  const rows = laneRows(laneLine);
+  const listRef = useRef<HTMLOListElement>(null);
+
+  // Une passerelle choisie ailleurs dans la page : sa ligne vient au centre de l'écran.
+  useEffect(() => {
+    if (!activePass) return;
+    const el = listRef.current?.querySelector<HTMLElement>(".is-spot");
+    el?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [activePass]);
+  const trunkCount = rows.filter((r) => {
+    const k = r.kind === "station" ? placedById[r.id]?.kind : null;
+    return k === "trunk" || k === "option";
+  }).length;
   const tabsRef = useRef<HTMLDivElement>(null);
 
   // Centre l'onglet actif dans sa rangée, sans faire défiler la page.
@@ -408,24 +661,27 @@ function Lanes({ laneLine, onLaneLine, onOpen }: Props) {
     const row = tabsRef.current;
     const el = row?.querySelector<HTMLElement>('[aria-selected="true"]');
     if (!row || !el) return;
-    row.scrollTo({ left: el.offsetLeft - (row.clientWidth - el.clientWidth) / 2, behavior: "smooth" });
+    row.scrollTo({
+      left: el.offsetLeft - (row.clientWidth - el.clientWidth) / 2,
+      behavior: "smooth",
+    });
   }, [laneLine]);
 
   return (
     <div className="e-lanes" data-line={laneLine}>
       <div className="e-lanes__tabs" role="tablist" aria-label="Choisir une voie" ref={tabsRef}>
-        {linesByNum.map((l) => (
+        {LANES.map((id) => (
           <button
-            key={l.id}
+            key={id}
             type="button"
             role="tab"
-            aria-selected={l.id === laneLine}
-            data-line={l.id}
+            aria-selected={id === laneLine}
+            data-line={id}
             className="e-chip"
-            onClick={() => onLaneLine(l.id)}
+            onClick={() => onLaneLine(id)}
           >
-            <Dot line={l.id} />
-            {l.short}
+            <Dot line={id} />
+            {laneShort(id)}
           </button>
         ))}
       </div>
@@ -433,36 +689,74 @@ function Lanes({ laneLine, onLaneLine, onOpen }: Props) {
       <div className="e-lanes__head">
         <Dot line={laneLine} />
         <div>
-          <p className="e-lanes__name">{line.name}</p>
-          <p className="e-lanes__pitch">{line.pitch}</p>
+          <p className="e-lanes__name">{laneName(laneLine)}</p>
+          <p className="e-lanes__pitch">{lanePitch(laneLine)}</p>
         </div>
       </div>
 
       <ol
+        ref={listRef}
         className="e-lanes__list"
         role="tabpanel"
-        aria-label={`${line.name}, de la 3e au premier métier`}
-        style={{ ["--trunk" as string]: `${Math.round(((trunkCount - 0.5) / stops.length) * 100)}%` }}
+        aria-label={`${laneName(laneLine)}, de la 3e au premier métier`}
+        style={
+          {
+            ["--trunk" as string]: `${Math.round(((trunkCount - 0.5) / rows.length) * 100)}%`,
+          } as CSSProperties
+        }
       >
-        {stops.map((id) => {
-          const st = stationById[id];
-          const p = placedById[id];
+        {rows.map((r) => {
+          if (r.kind === "pass") {
+            const x = passerelleById[r.id];
+            return (
+              <li key={`p-${r.id}`} className={`e-lanes__stop is-pass${activePass === r.id ? " is-spot" : ""}`}>
+                <button type="button" onClick={() => onOpenPasserelle(r.id)}>
+                  <span className="e-numbadge">{x.num}</span>
+                  <span>
+                    <span className="e-lanes__kicker">
+                      {r.out
+                        ? `Passerelle vers ${laneShort(x.draw!.to)}`
+                        : `Passerelle depuis ${joinFr(x.draw!.from.map(laneShort))}`}
+                    </span>
+                    <span className="e-lanes__title">{x.title}</span>
+                  </span>
+                  <Icon name="chevron-right" width={18} height={18} />
+                </button>
+              </li>
+            );
+          }
+          if (r.kind === "exit") {
+            return (
+              <li key={`x-${r.key}`} className="e-lanes__stop is-exit">
+                <button type="button" onClick={() => onOpen(r.station, laneLine)}>
+                  <span className="e-lanes__mark" aria-hidden="true" />
+                  <span>
+                    <span className="e-lanes__title">{r.name}</span>
+                    <span className="e-lanes__when">{r.age}</span>
+                  </span>
+                  <Icon name="chevron-right" width={18} height={18} />
+                </button>
+              </li>
+            );
+          }
+          const st = stationById[r.id];
+          const p = placedById[r.id];
           if (!st || !p) return null;
-          const cls =
+          const kind =
             p.kind === "trunk" || p.kind === "option"
               ? " is-trunk"
-              : p.kind === "u"
-                ? " is-u"
-                : p.kind === "terminus"
+              : p.kind === "event"
+                ? " is-event"
+                : p.kind === "end"
                   ? " is-terminus"
                   : "";
           return (
-            <li key={id} className={`e-lanes__stop${cls}${id === "college" ? " is-here" : ""}`}>
-              <button type="button" onClick={() => onOpen(id, laneLine)}>
+            <li key={r.id} className={`e-lanes__stop${kind}${r.id === "college" ? " is-here" : ""}`}>
+              <button type="button" onClick={() => onOpen(r.id, laneLine)}>
                 <span className="e-lanes__mark" aria-hidden="true" />
                 <span>
                   <span className="e-lanes__title">{st.name}</span>
-                  <span className="e-lanes__when">{st.when}</span>
+                  <span className="e-lanes__when">{stepMeta(r.id)}</span>
                 </span>
                 <Icon name="chevron-right" width={18} height={18} />
               </button>
@@ -472,7 +766,7 @@ function Lanes({ laneLine, onLaneLine, onOpen }: Props) {
       </ol>
       <p className="e-lanes__dir">
         <Icon name="arrow-up" width={16} height={16} style={{ display: "inline", verticalAlign: -3 }} /> Vers :{" "}
-        {line.direction}.
+        {laneDirection(laneLine)}.
       </p>
     </div>
   );

@@ -78,6 +78,11 @@ export const questionsVisite = frTypo([
     why: "Études surveillées, encadrement, temps laissé à la musique et au sport.",
   },
   {
+    id: "hors-contrat",
+    q: "Accueillez-vous les élèves venant d'un collège hors contrat ?",
+    why: "Certains lycées privés recrutent d'abord dans le public ou le privé sous contrat : pose la question dès le premier contact.",
+  },
+  {
     id: "musique",
     q: "Quelle place pour la musique et l'engagement ?",
     why: "Chœur, orchestre, horaires aménagés, scoutisme : ce qui te fait grandir compte aussi dans un dossier.",
@@ -85,7 +90,15 @@ export const questionsVisite = frTypo([
 ]);
 
 export const calendrier3e = frTypo([
+  {
+    when: "Dès septembre 2026",
+    what: "Plusieurs lycées privés ouvrent déjà leurs inscriptions pour 2027 ; à Paris, certains traitent les dossiers par ordre d'arrivée. Renseigne-toi tôt.",
+  },
   { when: "Novembre à janvier", what: "Repère les lycées qui t'intéressent et leurs journées portes ouvertes." },
+  {
+    when: "Mi-janvier à début avril 2027",
+    what: "Henri-IV et Louis-le-Grand : dossier national sur la plateforme DAFNE pour les élèves venant d'une autre académie, avec des tests pour ceux qui viennent du hors contrat.",
+  },
   {
     when: "Janvier-février 2027",
     what: "Lycées de la Défense : préinscription en ligne (en 2025, elle allait du 7 janvier au 9 février).",

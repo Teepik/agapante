@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
-import type { LineId } from "@/lib/etudes/lines";
+import type { LaneId } from "@/lib/etudes/lines";
 import { Icon } from "./ui";
 
 /**
@@ -21,7 +21,7 @@ export function Sheet({
   children,
 }: {
   labelId: string;
-  line?: LineId | null;
+  line?: LaneId | null;
   meta?: ReactNode;
   title: ReactNode;
   when?: ReactNode;
@@ -32,7 +32,7 @@ export function Sheet({
   footer?: ReactNode;
   children: ReactNode;
 }) {
-  const panelRef = useRef<HTMLElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const returnTo = useRef<HTMLElement | null>(null);
 
@@ -79,7 +79,7 @@ export function Sheet({
   return (
     <div className="e-sheet-layer">
       <button type="button" className="e-sheet-backdrop" aria-label="Fermer" tabIndex={-1} onClick={onClose} />
-      <aside
+      <div
         ref={panelRef}
         className="e-sheet"
         role="dialog"
@@ -102,7 +102,7 @@ export function Sheet({
         </header>
         <div className="e-sheet__body">{children}</div>
         {footer ? <footer className="e-sheet__foot">{footer}</footer> : null}
-      </aside>
+      </div>
     </div>
   );
 }

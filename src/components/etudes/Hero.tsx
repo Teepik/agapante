@@ -1,8 +1,8 @@
-import { lineById } from "@/lib/etudes/lines";
-import { ORDER } from "@/lib/etudes/plan";
+import { laneShort } from "@/lib/etudes/lines";
+import { LANES } from "@/lib/etudes/plan";
 import { Icon } from "./ui";
 
-/* L'arbre de l'ouverture : un tronc qui monte de la 3e et se ramifie en huit voies. */
+/* L'arbre de l'ouverture : un tronc qui monte de la 3e et se ramifie en neuf voies ; l'université, au centre, monte tout droit. */
 const T = {
   W: 640,
   H: 430,
@@ -14,14 +14,15 @@ const T = {
   STEP: 11,
   R: 11,
   TIP: 98,
-  COL: 76,
+  COL: 70,
 };
 
 function treePath(k: number) {
+  const xb = T.BX + (k - 4) * T.BS;
+  if (k === 4) return `M ${xb} ${T.BASE} V ${T.TIP}`;
   const left = k < 4;
-  const xb = T.BX + (k - 3.5) * T.BS;
-  const xl = T.BX + (k - 3.5) * T.COL;
-  const yt = T.TURN0 - (left ? k : 7 - k) * T.STEP;
+  const xl = T.BX + (k - 4) * T.COL;
+  const yt = T.TURN0 - (left ? k : 8 - k) * T.STEP;
   const dx = left ? -T.R : T.R;
   return [
     `M ${xb} ${T.BASE}`,
@@ -42,7 +43,7 @@ export function Hero() {
       <div className="e-wrap e-hero__grid">
         <div className="e-hero__text">
           <p className="e-hero__lede">
-            Du lycée au premier métier : huit grandes voies d&apos;études, les établissements qui les jalonnent et les
+            Du lycée au premier métier : neuf grandes voies d&apos;études, les établissements qui les jalonnent et les
             passerelles qui les relient.
           </p>
           <div className="e-hero__cta">
@@ -59,27 +60,27 @@ export function Hero() {
 
         <figure
           className="e-tree"
-          aria-label="Le tronc commun monte de la 3e au bac, puis se ramifie en huit voies d'études."
+          aria-label="Le tronc commun monte de la 3e au bac, puis se ramifie en neuf voies d'études."
         >
           <svg viewBox={`0 0 ${T.W} ${T.H}`} role="img" aria-hidden="true">
-            {ORDER.map((id, k) => (
+            {LANES.map((id, k) => (
               <path
                 key={id}
                 d={treePath(k)}
                 pathLength={1}
                 className="e-tree__line"
                 data-line={id}
-                style={{ ["--k" as string]: k < 4 ? 3 - k : k - 4 }}
+                style={{ ["--k" as string]: Math.abs(k - 4) }}
               />
             ))}
-            {ORDER.map((id, k) => {
-              const x = T.BX + (k - 3.5) * T.COL;
+            {LANES.map((id, k) => {
+              const x = T.BX + (k - 4) * T.COL;
               const high = k % 2 === 1;
               return (
-                <g key={id} data-line={id} style={{ ["--k" as string]: k < 4 ? 3 - k : k - 4 }}>
+                <g key={id} data-line={id} style={{ ["--k" as string]: Math.abs(k - 4) }}>
                   <circle className="e-tree__tip" cx={x} cy={T.TIP} r={8} />
                   <text className="e-tree__label" x={x} y={high ? T.TIP - 50 : T.TIP - 24} textAnchor="middle">
-                    {lineById[id].short}
+                    {laneShort(id)}
                   </text>
                 </g>
               );

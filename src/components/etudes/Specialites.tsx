@@ -26,7 +26,12 @@ export function Specialites({ onOpenStation }: { onOpenStation: (id: string) => 
   );
 
   const tally = useMemo(() => {
-    const t: Record<Door, number> = { grande: 0, ouverte: 0, entrouverte: 0, fermee: 0 };
+    const t: Record<Door, number> = {
+      grande: 0,
+      ouverte: 0,
+      entrouverte: 0,
+      fermee: 0,
+    };
     verdicts.forEach(({ v }) => (t[v.door] += 1));
     return t;
   }, [verdicts]);
@@ -209,9 +214,9 @@ export function Specialites({ onOpenStation }: { onOpenStation: (id: string) => 
               if (!rows.length) return null;
               return (
                 <section key={l.id} className="e-verdicts__group" data-line={l.id}>
-                  <h4>
+                  <h3>
                     <Dot line={l.id} /> {lineById[l.id].name}
-                  </h4>
+                  </h3>
                   <ul>
                     {rows.map(({ d, v }) => (
                       <li key={d.id} className={`e-verdict e-verdict--${v.door}`}>

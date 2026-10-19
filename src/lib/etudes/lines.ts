@@ -1,6 +1,6 @@
 /**
- * Les huit lignes du plan : chacune est une grande famille de parcours.
- * L'ordre du tableau est l'ordre des colonnes sur le plan, de gauche à droite.
+ * Les huit voies thématiques de la carte : chacune est une grande famille de parcours.
+ * L'université, neuvième voie, est définie plus bas ; l'ordre des colonnes est celui de LANES (plan.ts).
  */
 
 export type LineId = "defense" | "sante" | "sciences" | "commerce" | "scpo" | "lettres" | "monde" | "arts";
@@ -87,3 +87,30 @@ export const lineById = Object.fromEntries(lines.map((l) => [l.id, l])) as Recor
 
 /** Ordre de lecture des lignes (par numéro), pour les légendes et filtres. */
 export const linesByNum = [...lines].sort((a, b) => a.num - b.num);
+
+/** L'université : une voie à part entière, au centre de la carte, d'où partent la plupart des passerelles. */
+export type LaneId = LineId | "u";
+
+export const uLane = {
+  id: "u" as const,
+  name: "Université",
+  short: "Université",
+  pitch: "Licence, master, doctorat : la voie la plus ouverte, d'où partent la plupart des passerelles.",
+  direction: "presque tous les métiers, de l'entreprise à la recherche",
+};
+
+export function laneName(id: LaneId): string {
+  return id === "u" ? uLane.name : lineById[id].name;
+}
+
+export function laneShort(id: LaneId): string {
+  return id === "u" ? uLane.short : lineById[id].short;
+}
+
+export function lanePitch(id: LaneId): string {
+  return id === "u" ? uLane.pitch : lineById[id].pitch;
+}
+
+export function laneDirection(id: LaneId): string {
+  return id === "u" ? uLane.direction : lineById[id].direction;
+}

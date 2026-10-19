@@ -3,10 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ecoles } from "@/lib/etudes/ecoles";
 import { lexique } from "@/lib/etudes/lexique";
-import { lineById, type LineId } from "@/lib/etudes/lines";
+import { laneName, type LaneId } from "@/lib/etudes/lines";
 import { lycees, statutLabel } from "@/lib/etudes/lycees";
 import { passerelles } from "@/lib/etudes/passerelles";
-import { placed } from "@/lib/etudes/plan";
+import { UNIVERSITY_TRACKS, placed } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
 import { norm } from "./Lycees";
 import { SECTIONS } from "./TopNav";
@@ -34,7 +34,7 @@ export function CommandPalette({
   onMot,
 }: {
   onClose: () => void;
-  onStation: (id: string, line: LineId | null) => void;
+  onStation: (id: string, line: LaneId | null) => void;
   onLycee: (id: string) => void;
   onEcole: (id: string) => void;
   onPasserelle: (id: string) => void;
@@ -69,18 +69,29 @@ export function CommandPalette({
         run: () => document.getElementById(s.id)?.scrollIntoView({ behavior: "smooth", block: "start" }),
       });
     }
-    for (const p of placed) {
+    const steps: { id: string; line: LaneId | null; where: string }[] = [
+      ...placed.map((p) => ({
+        id: p.id,
+        line: p.line ?? null,
+        where: p.line ? laneName(p.line) : "Tronc commun",
+      })),
+      ...Object.entries(UNIVERSITY_TRACKS).map(([id, l]) => ({
+        id,
+        line: "u" as const,
+        where: `Université, ${laneName(l)}`,
+      })),
+    ];
+    for (const p of steps) {
       const st = stationById[p.id];
       if (!st) continue;
-      const where = p.line ? lineById[p.line].name : p.kind === "trunk" ? "Tronc commun" : "Université";
       out.push({
         key: `st-${p.id}`,
         group: "Étapes",
         name: st.name,
-        hint: `${where}, ${st.when}`,
+        hint: `${p.where}, ${st.when}`,
         icon: "station",
-        hay: norm(`${st.name} ${st.label} ${st.sub ?? ""} ${where}`),
-        run: () => onStation(p.id, p.line ?? null),
+        hay: norm(`${st.name} ${st.label} ${st.sub ?? ""} ${p.where}`),
+        run: () => onStation(p.id, p.line),
       });
     }
     for (const l of lycees) {

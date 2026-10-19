@@ -29,7 +29,10 @@ export function Quiz({
       for (const [k, v] of Object.entries(o.w) as [LineId, number][]) raw[k] = (raw[k] ?? 0) + v;
     });
     return linesByNum
-      .map((l) => ({ id: l.id, pct: Math.round(((raw[l.id] ?? 0) / (max[l.id] || 1)) * 100) }))
+      .map((l) => ({
+        id: l.id,
+        pct: Math.round(((raw[l.id] ?? 0) / (max[l.id] || 1)) * 100),
+      }))
       .sort((a, b) => b.pct - a.pct);
   }, [answers, max]);
 
@@ -145,7 +148,7 @@ export function Quiz({
         )}
       </div>
 
-      <aside className="e-quiz__aside" aria-label="Tes affinités, en direct">
+      <div className="e-quiz__aside" role="region" aria-label="Tes affinités, en direct">
         <h3>{answered ? "Tes affinités, en direct" : "Tes affinités s'affichent ici"}</h3>
         <ul className="e-bars">
           {scores.map((s) => (
@@ -161,7 +164,7 @@ export function Quiz({
             </li>
           ))}
         </ul>
-      </aside>
+      </div>
     </div>
   );
 }

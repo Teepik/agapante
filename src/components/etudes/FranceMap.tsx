@@ -6,14 +6,50 @@ import type { Lycee } from "@/lib/etudes/lycees";
 
 const WEST = new Set(["52", "53", "28", "24"]);
 
-/** Zoom sur Paris et l'ouest de l'Île-de-France. */
-const PARIS = { lat0: 48.74, lat1: 48.96, lon0: 2.0, lon1: 2.5, w: 300, h: 150 };
-function projectParis(lat: number, lon: number) {
-  const c = Math.cos((48.85 * Math.PI) / 180);
-  const sx = PARIS.w / ((PARIS.lon1 - PARIS.lon0) * c);
-  const sy = PARIS.h / (PARIS.lat1 - PARIS.lat0);
-  const s = Math.min(sx, sy);
-  return { x: (lon - PARIS.lon0) * c * s, y: (PARIS.lat1 - lat) * s };
+/** Zoom sur Paris et l'Île-de-France : cadrage calculé sur les lycées présents. */
+const INSET = { w: 300, h: 170 };
+function insetProjection(items: Lycee[]) {
+  const lats = items.map((l) => l.lat);
+  const lons = items.map((l) => l.lon);
+  const lat0 = Math.min(...lats, 48.8) - 0.02;
+  const lat1 = Math.max(...lats, 48.9) + 0.02;
+  const lon0 = Math.min(...lons, 2.25) - 0.03;
+  const lon1 = Math.max(...lons, 2.42) + 0.03;
+  const c = Math.cos((((lat0 + lat1) / 2) * Math.PI) / 180);
+  const s = Math.min(INSET.w / ((lon1 - lon0) * c), INSET.h / (lat1 - lat0));
+  const ox = (INSET.w - (lon1 - lon0) * c * s) / 2;
+  const oy = (INSET.h - (lat1 - lat0) * s) / 2;
+  return (lat: number, lon: number) => ({
+    x: ox + (lon - lon0) * c * s,
+    y: oy + (lat1 - lat) * s,
+  });
+}
+
+/** Écarte les points qui se chevauchent, en gardant leur position réelle pour un trait de rappel. */
+function relax(points: { id: string; x: number; y: number }[], min = 14) {
+  const p = points.map((q) => ({ ...q, ox: q.x, oy: q.y }));
+  for (let it = 0; it < 80; it++) {
+    for (let i = 0; i < p.length; i++) {
+      for (let j = i + 1; j < p.length; j++) {
+        let dx = p[j].x - p[i].x;
+        let dy = p[j].y - p[i].y;
+        let d = Math.hypot(dx, dy);
+        if (d >= min) continue;
+        if (d < 0.01) {
+          const a = (j * 2.39996) % (Math.PI * 2);
+          dx = Math.cos(a);
+          dy = Math.sin(a);
+          d = 1;
+        }
+        const push = (min - d) / 2;
+        p[i].x -= (dx / d) * push;
+        p[i].y -= (dy / d) * push;
+        p[j].x += (dx / d) * push;
+        p[j].y += (dy / d) * push;
+      }
+    }
+  }
+  return p;
 }
 
 export function FranceMap({
@@ -29,7 +65,12 @@ export function FranceMap({
   onHot: (id: string | null) => void;
   onOpen: (id: string) => void;
 }) {
-  const [tip, setTip] = useState<{ x: number; y: number; name: string; inset: boolean } | null>(null);
+  const [tip, setTip] = useState<{
+    x: number;
+    y: number;
+    name: string;
+    inset: boolean;
+  } | null>(null);
   const idf = items.filter((l) => l.zone === "paris" || l.zone === "idf");
   const outside = items.filter((l) => l.zone !== "paris" && l.zone !== "idf");
   const paris = project(48.8566, 2.3522);
@@ -78,7 +119,7 @@ export function FranceMap({
               <g>
                 <circle cx={paris.x} cy={paris.y} r={9} className="e-france__home" />
                 <text x={paris.x + 13} y={paris.y - 8} className="e-france__label">
-                  Paris : voir le zoom
+                  Paris, en zoom ci-dessous
                 </text>
               </g>
             ) : null}
@@ -105,37 +146,45 @@ export function FranceMap({
         <div className="e-france__map" style={{ marginTop: 10 }}>
           <div style={{ position: "relative" }}>
             <svg
-              viewBox={`-12 -12 ${PARIS.w + 24} ${PARIS.h + 24}`}
-              aria-label="Zoom sur Paris et Versailles"
+              viewBox={`-14 -14 ${INSET.w + 28} ${INSET.h + 28}`}
+              aria-label="Zoom sur Paris et l'Île-de-France"
               role="img"
             >
-              <rect x={-12} y={-12} width={PARIS.w + 24} height={PARIS.h + 24} rx={14} fill="none" />
               {(() => {
-                const p = projectParis(48.8566, 2.3522);
-                const v = projectParis(48.8049, 2.1204);
+                const proj = insetProjection(idf);
+                const c = proj(48.8566, 2.3522);
+                const v = proj(48.8049, 2.1204);
+                const pts = relax(idf.map((l) => ({ id: l.id, ...proj(l.lat, l.lon) })));
                 return (
                   <>
-                    <circle cx={p.x} cy={p.y} r={34} className="e-france__home" />
-                    <text x={p.x - 16} y={p.y - 40} className="e-france__label">
+                    <circle cx={c.x} cy={c.y} r={38} className="e-france__home" />
+                    <text x={c.x} y={c.y - 46} className="e-france__label" textAnchor="middle">
                       Paris
                     </text>
-                    <text x={v.x - 26} y={v.y + 24} className="e-france__label">
-                      Versailles
-                    </text>
+                    {v.x > 0 && v.x < INSET.w ? (
+                      <text x={v.x} y={v.y + 24} className="e-france__label" textAnchor="middle">
+                        Versailles
+                      </text>
+                    ) : null}
+                    {pts.map((q) =>
+                      Math.hypot(q.x - q.ox, q.y - q.oy) > 2 ? (
+                        <line key={`l-${q.id}`} x1={q.ox} y1={q.oy} x2={q.x} y2={q.y} className="e-france__leader" />
+                      ) : null,
+                    )}
+                    {pts.map((q) => {
+                      const l = idf.find((x) => x.id === q.id)!;
+                      return dot(l, q.x, q.y, true);
+                    })}
                   </>
                 );
               })()}
-              {idf.map((l) => {
-                const p = projectParis(l.lat, l.lon);
-                return dot(l, p.x, p.y, true);
-              })}
             </svg>
             {tip && tip.inset ? (
               <span
                 className="e-france__tip"
                 style={{
-                  left: `${((tip.x + 12) / (PARIS.w + 24)) * 100}%`,
-                  top: `calc(${((tip.y + 12) / (PARIS.h + 24)) * 100}% + 16px)`,
+                  left: `${((tip.x + 14) / (INSET.w + 28)) * 100}%`,
+                  top: `calc(${((tip.y + 14) / (INSET.h + 28)) * 100}% + 16px)`,
                 }}
               >
                 {tip.name}

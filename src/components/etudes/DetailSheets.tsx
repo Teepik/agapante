@@ -1,10 +1,10 @@
 "use client";
 
 import { ecoleById, ecoles } from "@/lib/etudes/ecoles";
-import { lineById, type LineId } from "@/lib/etudes/lines";
-import { lyceeById, lycees, statutLabel } from "@/lib/etudes/lycees";
+import { lineById, type LaneId } from "@/lib/etudes/lines";
+import { lyceeById, lyceeInternat, lycees, statutLabel, type Lycee } from "@/lib/etudes/lycees";
 import { passerelleById, passerelles } from "@/lib/etudes/passerelles";
-import { placedById } from "@/lib/etudes/plan";
+import { laneOf } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
 import { Sheet, StepButton } from "./Sheet";
 import { SaveButton } from "./store";
@@ -23,7 +23,7 @@ export function EcoleSheet({
   id: string;
   onClose: () => void;
   onOpenEcole: (id: string) => void;
-  onOpenStation: (id: string, line: LineId | null) => void;
+  onOpenStation: (id: string, line: LaneId | null) => void;
 }) {
   const e = ecoleById[id];
   if (!e) return null;
@@ -104,26 +104,27 @@ export function EcoleSheet({
         ) : null}
       </dl>
       <section className="e-sec">
-        <h4>Ce qu&apos;on y apprend</h4>
+        <h3>Ce qu&apos;on y apprend</h3>
         <p>{e.formations}</p>
       </section>
       <section className="e-sec">
-        <h4>Où cela mène</h4>
+        <h3>Où cela mène</h3>
         <p>{e.debouches}</p>
       </section>
-      <aside className="e-note">
+      <div className="e-note">
         <strong>Le détail qui compte</strong>
         {e.plus}
-      </aside>
+      </div>
+      {e.sources?.length ? <Sources urls={e.sources} /> : null}
       {e.station && stationById[e.station] ? (
         <section className="e-sec">
-          <h4>Sur la carte</h4>
+          <h3>Sur la carte</h3>
           <ul className="e-rows">
             <li>
               <button
                 type="button"
                 className="e-row"
-                onClick={() => onOpenStation(e.station!, placedById[e.station!]?.line ?? e.line)}
+                onClick={() => onOpenStation(e.station!, laneOf(e.station!) ?? e.line)}
               >
                 <Dot line={e.line} />
                 <span>
@@ -235,18 +236,13 @@ export function LyceeSheet({
             <dt>Valeur ajoutée</dt>
             <dd>
               {r.va > 0 ? "+" : ""}
-              {r.va} points
+              {r.va} {Math.abs(r.va) > 1 ? "points" : "point"}
             </dd>
           </div>
         ) : null}
         <div>
           <dt>Internat</dt>
-          <dd>
-            {l.internat?.existe
-              ? [l.internat.pour, l.internat.des ? `dès la ${l.internat.des}` : null].filter(Boolean).join(", ") ||
-                "Oui"
-              : "Externat"}
-          </dd>
+          <dd>{internatText(l)}</dd>
         </div>
         {l.mixite ? (
           <div>
@@ -265,23 +261,23 @@ export function LyceeSheet({
         ) : null}
       </dl>
 
-      {l.internat?.note ? (
+      {l.internat?.existe && l.internat.note ? (
         <section className="e-sec">
-          <h4>L&apos;internat</h4>
+          <h3>L&apos;internat</h3>
           <p>{l.internat.note}</p>
         </section>
       ) : null}
 
       {l.admission ? (
         <section className="e-sec">
-          <h4>Pour y entrer en 2nde</h4>
+          <h3>Pour y entrer en 2nde</h3>
           <p>{l.admission}</p>
         </section>
       ) : null}
 
       {l.options?.length ? (
         <section className="e-sec">
-          <h4>Options et sections</h4>
+          <h3>Options et sections</h3>
           <ul className="e-taglist">
             {l.options.map((o) => (
               <li key={o}>{o}</li>
@@ -291,15 +287,15 @@ export function LyceeSheet({
       ) : null}
 
       {l.musique ? (
-        <aside className="e-note">
+        <div className="e-note">
           <strong>La musique</strong>
           {l.musique}
-        </aside>
+        </div>
       ) : null}
 
       {l.prepas?.length ? (
         <section className="e-sec">
-          <h4>Les prépas dans les murs</h4>
+          <h3>Les prépas dans les murs</h3>
           <ul className="e-taglist">
             {l.prepas.map((o) => (
               <li key={o}>{o}</li>
@@ -307,6 +303,8 @@ export function LyceeSheet({
           </ul>
         </section>
       ) : null}
+
+      {l.sources?.length ? <Sources urls={l.sources} /> : null}
 
       {r?.source ? (
         <p className="e-small e-muted">
@@ -334,7 +332,7 @@ export function PasserelleSheet({
 }: {
   id: string;
   onClose: () => void;
-  onOpenStation: (id: string, line: LineId | null) => void;
+  onOpenStation: (id: string, line: LaneId | null) => void;
   onOpenPasserelle: (id: string) => void;
   onShowOnMap: (id: string) => void;
 }) {
@@ -344,7 +342,7 @@ export function PasserelleSheet({
   const prev = i > 0 ? passerelles[i - 1] : null;
   const next = i < passerelles.length - 1 ? passerelles[i + 1] : null;
   const to = stationById[x.to];
-  const toLine = placedById[x.to]?.line ?? null;
+  const toLine = laneOf(x.to);
 
   return (
     <Sheet
@@ -408,27 +406,27 @@ export function PasserelleSheet({
       <p className="e-sheet__lead">{x.how}</p>
       {x.who ? (
         <section className="e-sec">
-          <h4>Pour qui</h4>
+          <h3>Pour qui</h3>
           <p>{x.who}</p>
         </section>
       ) : null}
       {x.note ? (
-        <aside className="e-note">
+        <div className="e-note">
           <strong>À savoir</strong>
           {x.note}
-        </aside>
+        </div>
       ) : null}
       <section className="e-sec">
-        <h4>Les étapes concernées</h4>
+        <h3>Les étapes concernées</h3>
         <ul className="e-rows">
           {[...x.from, x.to].map((sid) => {
             const st = stationById[sid];
-            const pl = placedById[sid];
+            const ln = laneOf(sid);
             if (!st) return null;
             return (
               <li key={sid}>
-                <button type="button" className="e-row" onClick={() => onOpenStation(sid, pl?.line ?? null)}>
-                  {pl?.line ? <Dot line={pl.line} /> : <Dot line="u" />}
+                <button type="button" className="e-row" onClick={() => onOpenStation(sid, ln)}>
+                  {ln ? <Dot line={ln} /> : <Dot line="u" />}
                   <span>
                     <span className="e-row__k">{sid === x.to ? "Arrivée" : "Départ"}</span>
                     <span className="e-row__v">{st.name}</span>
@@ -442,4 +440,41 @@ export function PasserelleSheet({
       </section>
     </Sheet>
   );
+}
+
+/** Les sources d'une fiche, en liens discrets. */
+function Sources({ urls }: { urls: string[] }) {
+  return (
+    <section className="e-sec">
+      <h3>Sources</h3>
+      <ul className="e-srcs">
+        {urls.map((u) => {
+          let host = u;
+          try {
+            host = new URL(u).hostname.replace(/^www\./, "");
+          } catch {
+            /* adresse brute */
+          }
+          return (
+            <li key={u}>
+              <a href={u} target="_blank" rel="noopener noreferrer">
+                {host}
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
+}
+
+function internatText(l: Lycee): string {
+  const k = lyceeInternat(l);
+  if (!k) return "Externat";
+  if (k === "prepas") return "Réservé aux élèves de prépa";
+  const pour = l.internat?.pour;
+  const des = l.internat?.des;
+  const from = des ? (/^(6e|5e|4e|3e|2nde)$/.test(des) ? `dès la ${des}` : des) : null;
+  const txt = [pour, from].filter(Boolean).join(", ");
+  return txt ? txt.charAt(0).toUpperCase() + txt.slice(1) : "Oui";
 }

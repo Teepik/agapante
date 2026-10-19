@@ -1,4 +1,5 @@
 import type { LineId } from "./lines";
+import { ecolesPlus } from "./ecoles-plus";
 import { etTypo as frTypo } from "./typo";
 
 export type Ecole = {
@@ -17,9 +18,10 @@ export type Ecole = {
   plus: string;
   station?: string;
   url?: string;
+  sources?: string[];
 };
 
-export const ecoles: Ecole[] = frTypo([
+const base: Ecole[] = frTypo([
   /* ---------- Sciences et ingénieur ---------- */
   {
     id: "polytechnique",
@@ -32,7 +34,8 @@ export const ecoles: Ecole[] = frTypo([
     duree: "4 ans",
     places: "Environ 430 élèves français par promotion",
     cout: "Scolarité gratuite, élèves rémunérés",
-    formations: "Maths, physique, informatique, biologie, économie : un tronc commun très large, puis une spécialisation.",
+    formations:
+      "Maths, physique, informatique, biologie, économie : un tronc commun très large, puis une spécialisation.",
     debouches: "Recherche, industrie, grands corps de l'État, création d'entreprise.",
     plus: "Les élèves français sont officiers en formation ; ils doivent dix ans au service de l'État, ou rembourser leurs études.",
     station: "ecole-ingenieurs",
@@ -621,5 +624,8 @@ export const ecoles: Ecole[] = frTypo([
     station: "bachelor-etranger",
   },
 ]);
+
+/** Les 40 établissements de départ, puis ceux ajoutés en octobre 2026. */
+export const ecoles: Ecole[] = [...base, ...ecolesPlus];
 
 export const ecoleById = Object.fromEntries(ecoles.map((e) => [e.id, e])) as Record<string, Ecole>;

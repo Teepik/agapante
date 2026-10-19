@@ -98,7 +98,10 @@ export function Footer() {
             spécialisée. Les règles évoluent d&apos;ici 2030 : vérifie chaque année les sites des formations et de
             Parcoursup.
           </p>
-          <p className="e-foot__note">Fond de carte : IGN, Admin Express (licence ouverte).</p>
+          <p className="e-foot__note">
+            Les sources propres à chaque lycée et à chaque établissement figurent dans sa fiche. Fond de carte : IGN,
+            Admin Express (licence ouverte).
+          </p>
         </div>
         <details>
           <summary>

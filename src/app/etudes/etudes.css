@@ -11,7 +11,7 @@
   --hair: #e2e5ea;
   --hair-2: #cfd4dc;
   --slate: #586071;
-  --slate-2: #767d8c;
+  --slate-2: #687080;
   --ink: #0f1218;
   --ink-hover: #2a303b;
   --focus: #2f5bff;
@@ -371,6 +371,13 @@ html.e-lock body {
 }
 .e-chip[aria-pressed="true"] .e-dot {
   box-shadow: 0 0 0 2px var(--paper);
+}
+/* Sur fond d'encre, le carré de l'université passe en blanc. */
+.e-chip[aria-pressed="true"] .e-dot--u,
+.e-chip[aria-selected="true"] .e-dot--u,
+.e-dest__lane[aria-pressed="true"] .e-dot--u {
+  background: var(--paper);
+  box-shadow: none;
 }
 
 .e-tag {
@@ -858,7 +865,7 @@ html.e-lock body {
 }
 @media (max-width: 640px) {
   .e-tree__label {
-    font-size: 21px;
+    font-size: 19px;
   }
   .e-tree__here {
     font-size: 20px;
@@ -888,12 +895,17 @@ html.e-lock body {
   flex-wrap: wrap;
   align-items: center;
   gap: 10px 16px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 .e-map__filters {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+}
+.e-map__filters .e-chip {
+  min-height: 34px;
+  padding: 0 11px;
+  font-size: 0.86rem;
 }
 .e-map__tools {
   display: flex;
@@ -903,6 +915,7 @@ html.e-lock body {
 }
 .e-map__frame {
   position: relative;
+  scroll-margin-top: 140px;
   margin-inline: auto;
   max-width: 1360px;
   padding-inline: 24px;
@@ -923,160 +936,246 @@ html.e-lock body {
   overflow: visible;
 }
 
+/* L'échelle de temps : âges dans la marge, paliers en lignes fines. */
+.e-level {
+  stroke: var(--hair-2);
+  stroke-width: 1;
+  stroke-dasharray: 2 4;
+}
+.e-level--strong {
+  stroke-dasharray: none;
+}
+.e-time {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 92px;
+}
+.e-time li {
+  position: absolute;
+  left: 0;
+  width: 92px;
+  line-height: 1.2;
+}
+.e-time__age {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 680;
+}
+.e-time__when {
+  display: block;
+  font-size: 11.5px;
+  color: var(--slate);
+}
+
+/* Les voies, leurs étapes et leurs repères. */
 .e-lane {
   fill: none;
   stroke: var(--lc);
-  stroke-width: 5;
+  stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: opacity 0.25s var(--ease), stroke-width 0.25s var(--ease);
 }
-.e-lane.is-dim,
-.e-mk.is-dim,
-.e-st.is-dim,
-.e-opt.is-dim,
-.e-colhead.is-dim {
-  opacity: 0.16;
+.e-bar {
+  fill: var(--lc);
 }
-.e-map.is-pass .e-lane:not(.is-dim) {
-  opacity: 0.4;
+.e-bar--more {
+  fill: color-mix(in srgb, var(--lc) 32%, var(--fog));
+}
+.e-ev,
+.e-exit {
+  fill: var(--paper);
+  stroke: var(--lc);
+  stroke-width: 2.5;
+}
+.e-end {
+  fill: var(--lc);
+  stroke: var(--fog);
+  stroke-width: 3;
+}
+.e-cap {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 2.5;
+}
+.e-cap--here {
+  fill: var(--ink);
 }
 .e-route-halo {
   fill: none;
   stroke: var(--lc);
-  stroke-width: 16;
+  stroke-width: 20;
   stroke-linecap: round;
   stroke-linejoin: round;
-  opacity: 0.18;
+  opacity: 0.2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: e-grow 1.4s var(--ease) 0.2s forwards;
 }
-.e-uline__case {
-  fill: none;
-  stroke: var(--paper);
-  stroke-width: 10;
+.e-lane,
+.e-mk,
+.e-ms,
+.e-dest,
+.e-opt {
+  transition:
+    opacity 0.25s var(--ease),
+    transform 0.25s var(--ease);
 }
-.e-uline__core {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 3;
-  stroke-linecap: round;
+.e-map .is-dim {
+  opacity: 0.14;
 }
-.e-map.is-focus .e-uline {
-  opacity: 0.35;
-}
-
-.e-mk__stop {
-  fill: var(--paper);
-  stroke: var(--lc);
-  stroke-width: 3;
-}
-.e-mk__inter {
-  fill: var(--paper);
-  stroke: var(--ink);
-  stroke-width: 2.5;
-}
-.e-mk__inter-core {
-  fill: var(--lc);
-}
-.e-mk__term {
-  fill: var(--lc);
-  stroke: var(--paper);
-  stroke-width: 3;
-}
-.e-mk__trunk {
-  fill: var(--paper);
-  stroke: var(--ink);
-  stroke-width: 2.5;
-}
-.e-mk__trunk--here {
-  fill: var(--ink);
-}
-.e-mk__hub {
-  fill: var(--ink);
-}
-.e-mk__hub-text {
-  fill: var(--paper);
-  font-family: var(--font);
-  font-size: 15px;
-  font-weight: 760;
-  text-anchor: middle;
-  dominant-baseline: central;
+.e-map.is-pass .e-lane.is-dim {
+  opacity: 0.3;
 }
 
-.e-st {
+/* Les libellés, posés à droite des barres. */
+.e-ms {
   position: absolute;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
+  padding: 4px 6px 4px 22px;
   border-radius: 10px;
   color: var(--ink);
-  transition: opacity 0.25s var(--ease);
+  text-align: left;
 }
-.e-st::before {
+.e-ms::before {
   content: "";
   position: absolute;
-  inset: 0;
+  inset: 0 0 0 15px;
   border-radius: inherit;
   transition: background-color 0.15s var(--ease);
 }
-.e-st:hover::before {
-  background: color-mix(in srgb, var(--fog-2) 70%, transparent);
+.e-ms:hover::before {
+  background: color-mix(in srgb, var(--fog-2) 85%, transparent);
 }
-.e-st__name,
-.e-st__sub {
+.e-ms__name,
+.e-ms__sub {
   position: relative;
   display: block;
 }
-.e-st__name {
-  font-size: 13.5px;
-  font-weight: 640;
-  line-height: 1.22;
+.e-ms__name {
+  font-size: 13px;
+  font-weight: 650;
+  font-stretch: 92%;
+  line-height: 1.2;
   letter-spacing: -0.005em;
 }
-.e-st__sub {
+.e-ms__sub {
   margin-top: 2px;
   font-size: 12px;
-  line-height: 1.3;
+  font-stretch: 90%;
+  line-height: 1.25;
   color: var(--slate);
 }
-.e-st--stop,
-.e-st--terminus,
-.e-st--u {
-  padding: 6px 8px 6px 26px;
+/* Un halo de la couleur du fond détache le texte des lignes de niveau. */
+.e-ms .e-ms__name,
+.e-ms .e-ms__sub,
+.e-dest__job .e-ms__name,
+.e-dest__job .e-ms__sub {
+  text-shadow:
+    0 0 2px var(--fog),
+    0 0 2px var(--fog),
+    0 0 3px var(--fog);
 }
-.e-st--u {
-  padding-top: 18px;
+.e-ms--seg.is-top {
+  padding-top: 24px;
 }
-.e-st--terminus .e-st__name {
-  font-size: 14px;
-  font-weight: 700;
+.e-ms--seg.is-bottom {
+  padding-bottom: 24px;
 }
-.e-st--trunk {
-  padding: 8px 14px;
+.e-ms:hover .e-ms__name,
+.e-dest__job:hover .e-ms__name {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.e-ms--ev .e-ms__name {
+  font-size: 12px;
+  font-weight: 720;
+}
+.e-ms--ev.is-flip {
+  align-items: flex-end;
+  padding: 4px 22px 4px 6px;
   text-align: right;
 }
-.e-st--trunk .e-st__name {
+.e-ms--ev.is-flip::before {
+  inset: 0 15px 0 0;
+}
+.e-ms--exit .e-ms__name {
+  font-size: 12.5px;
+  font-weight: 620;
+}
+.e-ms--trunk {
+  align-items: flex-end;
+  padding: 6px 112px 6px 8px;
+  text-align: right;
+}
+.e-ms--trunk::before {
+  inset: 0;
+}
+.e-ms--trunk .e-ms__name {
   font-size: 18px;
   font-weight: 740;
   font-stretch: 112%;
   letter-spacing: -0.02em;
 }
-.e-st--trunk .e-st__sub {
+.e-ms--trunk .e-ms__sub {
   font-size: 12.5px;
-}
-.e-st--hub {
-  padding: 6px 8px;
-  text-align: left;
-}
-.e-st--hub .e-st__name {
-  font-size: 14px;
-  font-weight: 700;
-}
-.e-st:hover .e-st__name {
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
+  font-stretch: 100%;
 }
 
+/* En haut de chaque voie : son nom, puis le premier métier. */
+.e-dest {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  transform: translateY(-100%);
+}
+.e-dest__lane {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  padding: 0 9px 0 7px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1px var(--hair-2);
+  transition: background-color 0.15s var(--ease);
+}
+.e-dest__lane:hover {
+  background: var(--fog-2);
+}
+.e-dest__lane[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: none;
+}
+.e-dest__lane .e-dot {
+  width: 8px;
+  height: 8px;
+}
+.e-dest__job {
+  display: flex;
+  flex-direction: column;
+  padding: 0 4px 0 1px;
+  border-radius: 8px;
+  text-align: left;
+}
+.e-dest__job .e-ms__name {
+  font-size: 14px;
+  font-weight: 720;
+  font-stretch: 96%;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+/* Les options du lycée, à côté de la 2nde. */
 .e-opts {
   position: absolute;
   display: flex;
@@ -1093,137 +1192,171 @@ html.e-lock body {
   font-weight: 600;
   background: var(--paper);
   box-shadow: inset 0 0 0 1px var(--hair-2);
-  transition: background-color 0.15s var(--ease);
 }
 .e-opt:hover {
-  background: var(--fog);
+  background: var(--fog-2);
 }
 .e-opt .e-dot {
   width: 8px;
   height: 8px;
 }
 
-.e-colhead {
+/* Les deux encarts du haut : les passerelles, la lecture de la carte. */
+.e-ppanel,
+.e-mkey {
   position: absolute;
-  top: 0;
-  display: flex;
-  align-items: flex-start;
-  gap: 7px;
-  width: 138px;
-  padding: 6px 8px;
-  border-radius: 10px;
-  font-size: 12.5px;
-  font-weight: 700;
-  line-height: 1.2;
-  text-align: left;
-  transition:
-    opacity 0.25s var(--ease),
-    background-color 0.15s var(--ease);
+  padding: 2px 0 8px;
+  background: var(--fog);
 }
-.e-colhead .e-dot {
+.e-ppanel__title {
+  font-size: 15px;
+  font-weight: 720;
+  font-stretch: 108%;
+  letter-spacing: -0.012em;
+}
+.e-ppanel__sub {
   margin-top: 3px;
-}
-.e-colhead:hover {
-  background: var(--fog-2);
-}
-.e-colhead[aria-pressed="true"] {
-  background: var(--ink);
-  color: var(--paper);
-}
-
-.e-time {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 84px;
-}
-.e-time li {
-  position: absolute;
-  left: 0;
-  width: 84px;
-  line-height: 1.2;
-}
-.e-time__age {
-  display: block;
-  font-size: 12.5px;
-  font-weight: 680;
-}
-.e-time__when {
-  display: block;
-  font-size: 11.5px;
-  color: var(--slate);
-}
-
-.e-pass__path {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 0.5 6;
-}
-.e-pass__case {
-  fill: none;
-  stroke: var(--paper);
-  stroke-width: 7;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.e-pass__head {
-  fill: var(--ink);
-}
-.e-pass__item.is-spot .e-pass__path {
-  stroke-width: 3.5;
-}
-.e-pass__item.is-off {
-  opacity: 0.25;
-}
-.e-pbadge {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  margin: -12px 0 0 -12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 760;
-  font-variant-numeric: normal;
-  background: var(--ink);
-  color: var(--paper);
-  box-shadow: 0 0 0 3px var(--paper);
-  transition: transform 0.15s var(--ease);
-}
-.e-pbadge:hover,
-.e-pbadge.is-spot {
-  transform: scale(1.15);
-}
-
-.e-legend {
-  position: absolute;
-  display: grid;
-  gap: 12px;
-  width: 300px;
   font-size: 12.5px;
   line-height: 1.35;
   color: var(--slate);
 }
-.e-legend li {
+.e-ppanel ul {
   display: grid;
-  grid-template-columns: 34px 1fr;
+  gap: 1px;
+  margin-top: 10px;
+}
+.e-ppanel button {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  min-height: 22px;
+  padding: 1px 10px 1px 1px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 560;
+  line-height: 1.2;
+  text-align: left;
+  transition: background-color 0.15s var(--ease);
+}
+.e-ppanel button:hover {
+  background: var(--fog-2);
+}
+.e-ppanel button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+.e-ppanel .e-numbadge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0;
+  font-size: 11px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--hair-2);
+}
+.e-ppanel button[aria-pressed="true"] .e-numbadge {
+  box-shadow: none;
+}
+.e-mkey ul {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+.e-mkey li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
   gap: 10px;
   align-items: center;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--slate);
 }
-.e-legend svg {
+.e-mkey svg {
   width: 34px;
-  height: 20px;
+  height: 40px;
 }
-.e-legend strong {
+.e-mkey strong {
   color: var(--ink);
   font-weight: 640;
 }
 
-/* Ligne par ligne : petits écrans */
+/* Une passerelle à la fois : son trait, ses départs, son nom. */
+.e-parrow__case {
+  fill: none;
+  stroke: var(--fog);
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.e-parrow__line {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.e-parrow__head {
+  fill: var(--ink);
+}
+.e-parrow__dot {
+  fill: var(--ink);
+  stroke: var(--fog);
+  stroke-width: 3;
+}
+.e-parrow {
+  animation: e-fade 0.3s var(--ease) both;
+  opacity: 0;
+}
+.e-pcall {
+  position: absolute;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  width: max-content;
+  max-width: 300px;
+  padding: 9px 14px 10px 9px;
+  border-radius: 14px;
+  text-align: left;
+  background: var(--paper);
+  box-shadow: var(--shadow-pop);
+  animation: e-pop 0.28s var(--ease) both;
+}
+.e-pcall__title {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.e-pcall__when {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--slate);
+}
+.e-pcall > svg {
+  flex: none;
+  align-self: center;
+  margin-left: 2px;
+  color: var(--slate);
+}
+.e-pcall:hover .e-pcall__title {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+@keyframes e-pop {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Voie par voie : petits écrans */
 .e-lanes__tabs {
   display: flex;
   gap: 6px;
@@ -1303,14 +1436,55 @@ html.e-lock body {
 .e-lanes__stop.is-here .e-lanes__mark {
   background: var(--ink);
 }
-.e-lanes__stop.is-u .e-lanes__mark {
-  box-shadow: inset 0 0 0 2.5px var(--ink);
+.e-lanes__stop.is-event .e-lanes__mark {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  transform: rotate(45deg);
+}
+.e-lanes__stop.is-exit .e-lanes__mark {
+  width: 12px;
+  height: 12px;
+  box-shadow: inset 0 0 0 2.5px var(--lc);
 }
 .e-lanes__stop.is-terminus .e-lanes__mark {
   width: 20px;
   height: 20px;
   background: var(--lc);
   box-shadow: 0 0 0 3px var(--paper);
+}
+.e-lanes__stop.is-pass button {
+  padding-block: 6px;
+}
+.e-lanes__stop.is-pass .e-numbadge {
+  justify-self: center;
+  position: relative;
+  min-width: 22px;
+  height: 22px;
+  padding: 0;
+  font-size: 11px;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 0 0 1px var(--hair-2);
+}
+.e-lanes__stop.is-pass.is-spot button {
+  background: var(--paper);
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+.e-lanes__stop.is-pass.is-spot .e-numbadge {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: none;
+}
+.e-lanes__kicker {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--slate);
+}
+.e-lanes__stop.is-pass .e-lanes__title {
+  font-size: 0.92rem;
+  font-weight: 600;
 }
 .e-lanes__title {
   display: block;
@@ -1406,6 +1580,7 @@ html.e-lock body {
   padding: 22px 24px 36px;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: max-content;
   align-content: start;
   gap: 26px;
 }
@@ -1478,6 +1653,7 @@ html.e-lock body {
   line-height: 1.3;
   font-size: 0.95rem;
 }
+.e-sec h3,
 .e-sec h4 {
   font-size: 0.92rem;
   font-weight: 700;
@@ -1562,6 +1738,21 @@ html.e-lock body {
   width: 18px;
   height: 18px;
   color: var(--slate);
+}
+.e-srcs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 0.86rem;
+}
+.e-srcs a {
+  color: var(--slate);
+  text-decoration: underline;
+  text-decoration-color: var(--hair-2);
+  text-underline-offset: 3px;
+}
+.e-srcs a:hover {
+  color: var(--ink);
 }
 .e-numbadge {
   display: inline-grid;
@@ -2180,6 +2371,22 @@ html.e-lock body {
   gap: 6px;
   margin-bottom: 14px;
 }
+.e-dir__countrow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 8px;
+}
+.e-dir__countrow .e-dir__count {
+  margin-bottom: 0;
+}
+.e-seg--sm button {
+  min-height: 30px;
+  padding: 0 12px;
+  font-size: 0.82rem;
+}
 .e-dir__count {
   font-size: 0.88rem;
   color: var(--slate);
@@ -2344,6 +2551,10 @@ html.e-lock body {
   stroke: var(--slate);
   stroke-width: 1.5;
   stroke-dasharray: 2 3;
+}
+.e-france__leader {
+  stroke: var(--slate-2);
+  stroke-width: 1;
 }
 .e-france__label {
   font-family: var(--font);
@@ -2637,6 +2848,7 @@ html.e-lock body {
 .e-verdicts__group + .e-verdicts__group {
   margin-top: 26px;
 }
+.e-verdicts__group h3,
 .e-verdicts__group h4 {
   display: flex;
   align-items: center;
@@ -2904,6 +3116,7 @@ html.e-lock body {
 .e-mylist__group + .e-mylist__group {
   margin-top: 22px;
 }
+.e-mylist__group h3,
 .e-mylist__group h4 {
   font-size: 0.86rem;
   font-weight: 700;

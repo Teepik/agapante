@@ -1,4 +1,5 @@
 import type { LineId } from "./lines";
+import type { PassDraw } from "./plan";
 import { etTypo as frTypo } from "./typo";
 
 export type Passerelle = {
@@ -14,8 +15,8 @@ export type Passerelle = {
   how: string;
   who?: string;
   note?: string;
-  /** Tracé sur le plan, quand la passerelle relie deux points éloignés. */
-  draw?: { from: string; kind: "bypass" | "route"; via?: "low" | "high" | "top" };
+  /** Tracé sur la carte : les voies de départ, la voie d'arrivée, le moment (années après le bac). */
+  draw?: PassDraw;
 };
 
 export type DoubleCursus = {
@@ -42,6 +43,7 @@ export const passerelles: Passerelle[] = frTypo([
     when: "Après une ou deux années de prépa",
     how: "En prépa publique, tu es inscrit en parallèle dans une université partenaire du lycée. Une année validée vaut 60 crédits européens et ouvre la 2e année de licence ; deux années valent 120 crédits et ouvrent la 3e. Les conditions exactes dépendent de la convention signée par ton lycée, parfois plus exigeante pour la 3e année.",
     who: "Tous les élèves de prépa, qu'ils réussissent les concours ou qu'ils changent d'avis en route.",
+    draw: { from: ["sciences", "commerce", "lettres"], to: "u", t: 2 },
   },
   {
     id: "licence-ingenieur",
@@ -53,7 +55,7 @@ export const passerelles: Passerelle[] = frTypo([
     title: "De l'université à l'école d'ingénieurs",
     when: "Après bac+2, bac+3 ou bac+4",
     how: "À la rentrée 2025, un nouvel élève ingénieur sur trois venait d'une prépa classique ; les autres arrivaient de prépas intégrées, de BUT, de BTS ou de l'université. Quinze grandes écoles, dont Polytechnique, Mines Paris, les Ponts et ISAE-SUPAERO, recrutent en 3e année de licence ou en 1re année de master par la procédure GEI-UNIV. Pour Polytechnique, il faut au moins 13/20 de moyenne en 2e année de licence et moins de 23 ans.",
-    draw: { from: "u-sciences", kind: "bypass" },
+    draw: { from: ["u"], to: "sciences", t: 3 },
   },
   {
     id: "licence-commerce",
@@ -65,7 +67,7 @@ export const passerelles: Passerelle[] = frTypo([
     title: "De l'université à l'école de commerce",
     when: "Après bac+2, bac+3 ou bac+4",
     how: "HEC, l'ESSEC et l'ESCP ouvrent leur master 1 aux titulaires d'un bac+3 : dossier, tests de management et d'anglais, puis entretiens. D'autres concours accueillent dès bac+2 : Passerelle (BSB, EM Normandie, IMT BS) et Tremplin, d'Ecricome (NEOMA, KEDGE, EM Strasbourg).",
-    draw: { from: "u-eco", kind: "bypass" },
+    draw: { from: ["u"], to: "commerce", t: 3 },
   },
   {
     id: "khagne-commerce",
@@ -78,7 +80,7 @@ export const passerelles: Passerelle[] = frTypo([
     when: "En fin de khâgne",
     how: "Les écrits de la banque d'épreuves littéraires (BEL) ouvrent les écoles de commerce de la BCE et d'Ecricome aux khâgneux, sans changer de prépa : les mêmes copies servent à plusieurs concours.",
     note: "La BEL ouvre aussi Saint-Cyr, le CELSA, l'École du Louvre et des écoles d'interprètes. Les IEP de Lille, Lyon et Aix l'ont quittée en 2026.",
-    draw: { from: "concours-lettres", kind: "route", via: "top" },
+    draw: { from: ["lettres"], to: "commerce", t: 2 },
   },
   {
     id: "prepas-officiers",
@@ -91,7 +93,7 @@ export const passerelles: Passerelle[] = frTypo([
     when: "En fin de prépa",
     how: "Saint-Cyr recrute dans les trois familles de prépas : en 2026, 83 places en sciences, 40 par la prépa ECG et 37 en lettres. L'École navale et l'École de l'air et de l'espace recrutent dans les prépas scientifiques.",
     note: "Tu peux passer un concours d'officier en plus de tes concours habituels.",
-    draw: { from: "prepa-scientifique", kind: "route", via: "low" },
+    draw: { from: ["sciences", "commerce", "lettres"], to: "defense", t: 2 },
   },
   {
     id: "titres-officiers",
@@ -103,6 +105,7 @@ export const passerelles: Passerelle[] = frTypo([
     title: "De l'université aux écoles d'officiers",
     when: "Après bac+3 ou bac+5",
     how: "Les écoles d'officiers gardent des places sur titres universitaires : 25 à Saint-Cyr en 2026, pour les titulaires d'un master de 25 ans au plus ; à l'École de l'air et de l'espace, des places après bac+3 (dont en sciences politiques) et après bac+5.",
+    draw: { from: ["u"], to: "defense", t: 3 },
   },
   {
     id: "sante-rebond",
@@ -115,6 +118,7 @@ export const passerelles: Passerelle[] = frTypo([
     when: "Après la 1re ou la 2e année",
     how: "Si la santé attend encore, ta licence continue dans la discipline que tu as choisie, avec tous tes crédits acquis.",
     note: "Réforme de 2027 : les règles exactes sont à vérifier en 2029.",
+    draw: { from: ["sante"], to: "u", t: 1 },
   },
   {
     id: "master-sante",
@@ -127,7 +131,7 @@ export const passerelles: Passerelle[] = frTypo([
     when: "Après bac+5",
     how: "Avec un master, un diplôme d'ingénieur, un diplôme d'école de commerce au grade de master ou un doctorat, tu peux entrer directement en 2e ou 3e année de médecine, de pharmacie, d'odontologie ou de maïeutique. Le dossier se dépose avant la mi-mars, puis vient un entretien avec un jury ; chaque université fixe ses places (en 2026 à Paris Cité : 38 en médecine, 24 en pharmacie). Deux tentatives sont permises.",
     note: "La réforme des études de santé prévoit aussi une passerelle dès bac+3, pour environ 5 % des places de 2e année : un projet encore en discussion.",
-    draw: { from: "u-sciences", kind: "route", via: "high" },
+    draw: { from: ["u"], to: "sante", t: 5 },
   },
   {
     id: "licence-ens",
@@ -139,7 +143,7 @@ export const passerelles: Passerelle[] = frTypo([
     title: "De la licence à l'ENS",
     when: "Après une licence",
     how: "L'ENS de la rue d'Ulm recrute aussi des « normaliens étudiants » sur dossier, en 3e année de licence en lettres, en 2e ou 3e année en sciences. Ils suivent les cours et préparent le diplôme de l'École ; le salaire et l'engagement de dix ans restent propres aux élèves admis par le concours. Les ENS de Lyon, de Rennes et Paris-Saclay ont aussi des concours à bac+2 ou bac+3.",
-    draw: { from: "u-lettres", kind: "bypass" },
+    draw: { from: ["u"], to: "lettres", t: 3 },
   },
   {
     id: "licence-sciencespo",
@@ -151,7 +155,7 @@ export const passerelles: Passerelle[] = frTypo([
     title: "De la licence au master de Sciences Po",
     when: "Après bac+3",
     how: "Les masters de Sciences Po s'ouvrent dès bac+3, sur dossier puis entretien. Les IEP du réseau ScPo recrutent aussi en master : à Sciences Po Lille en 2026, dossier, essai et oral, avec jusqu'à dix places par majeure.",
-    draw: { from: "u-lettres", kind: "route", via: "high" },
+    draw: { from: ["u"], to: "scpo", t: 3 },
   },
   {
     id: "reorientation",
@@ -163,6 +167,7 @@ export const passerelles: Passerelle[] = frTypo([
     title: "Changer de voie après une première année",
     when: "Pendant ou après la 1re année d'études",
     how: "Pour changer de première année, tu déposes un nouveau dossier sur Parcoursup, au même calendrier que les lycéens ; pour redoubler dans la même formation, une réinscription suffit. Une année de prépa validée vaut 60 crédits et ouvre la 2e année de licence (passerelle 1), et la licence santé garde tes crédits dans ta discipline (passerelle 7).",
+    draw: { from: ["sciences", "sante"], to: "u", t: 1 },
   },
   {
     id: "ecole-doctorat",
@@ -174,6 +179,7 @@ export const passerelles: Passerelle[] = frTypo([
     title: "De la grande école au doctorat",
     when: "Après bac+5",
     how: "Un diplôme de grande école vaut un master : il ouvre le doctorat, en France comme à l'étranger. Beaucoup de normaliens et de polytechniciens font une thèse.",
+    draw: { from: ["sciences", "lettres"], to: "u", t: 5 },
   },
 ]);
 
@@ -202,7 +208,8 @@ export const doublesCursus: DoubleCursus[] = frTypo([
     lines: ["sciences", "lettres"],
     what: "Une licence de PSL en trois ans. La 1re année se passe au lycée Henri-IV, dans l'un des trois parcours ; la 2e associe deux majeures sur les campus de PSL ; la 3e se spécialise.",
     examples: ["Parcours Humanités & société", "Parcours Sciences", "Parcours Économie, société & droit"],
-    acces: "Parcoursup, en 1re année seulement : 237 places à la rentrée 2026 ; 178 € par an, gratuit pour les boursiers.",
+    acces:
+      "Parcoursup, en 1re année seulement : 237 places à la rentrée 2026 ; 178 € par an, gratuit pour les boursiers.",
     rythme: "Des petites classes et un suivi proches de la prépa, l'ouverture d'une université de recherche en plus.",
     apres: "Masters de PSL, grandes écoles, ENS.",
     url: "https://psl.eu/formation/cpes-psl-henri-IV",
@@ -218,7 +225,8 @@ export const doublesCursus: DoubleCursus[] = frTypo([
       "Avec l'ESCP, un double bachelor en quatre ans à partir de 2027",
     ],
     acces: "La procédure de Sciences Po, avec un dossier propre à chaque double diplôme.",
-    rythme: "Trois à quatre ans selon le partenaire ; à l'étranger, souvent deux ans sur un campus de Sciences Po puis deux ans chez le partenaire.",
+    rythme:
+      "Trois à quatre ans selon le partenaire ; à l'étranger, souvent deux ans sur un campus de Sciences Po puis deux ans chez le partenaire.",
     apres: "Les masters de Sciences Po ou de l'université partenaire.",
   },
   {
@@ -260,7 +268,8 @@ export const doublesCursus: DoubleCursus[] = frTypo([
       "Mines Paris et Université Paris Cité : un parcours ingénieur-médecin en construction",
     ],
     acces: "Sur dossier, pendant la 2e année de médecine ou de pharmacie.",
-    rythme: "Un parcours long, d'environ quatorze ans pour l'École de l'Inserm, avec la thèse au cœur des études de santé.",
+    rythme:
+      "Un parcours long, d'environ quatorze ans pour l'École de l'Inserm, avec la thèse au cœur des études de santé.",
     apres: "Médecin-chercheur, recherche biomédicale, hôpital universitaire.",
   },
   {
@@ -268,20 +277,32 @@ export const doublesCursus: DoubleCursus[] = frTypo([
     title: "Musique et études",
     lines: ["arts", "u"],
     what: "Mener de front un conservatoire supérieur et une licence universitaire : au CNSMD de Paris, le diplôme de musicien se double d'une licence avec Sorbonne Université ; à Lyon, avec l'université Lyon 2.",
-    examples: ["CNSMD de Paris et Sorbonne Université", "CNSMD de Lyon et Lyon 2", "Au lycée : bac S2TMD ou horaires aménagés", "Pôle supérieur de Paris Boulogne-Billancourt et Sorbonne Université", "Double licence sciences et musicologie à Sorbonne Université : 24 places"],
+    examples: [
+      "CNSMD de Paris et Sorbonne Université",
+      "CNSMD de Lyon et Lyon 2",
+      "Au lycée : bac S2TMD ou horaires aménagés",
+      "Pôle supérieur de Paris Boulogne-Billancourt et Sorbonne Université",
+      "Double licence sciences et musicologie à Sorbonne Université : 24 places",
+    ],
     acces: "Le concours du conservatoire ; l'inscription à l'université partenaire suit.",
-    rythme: "Une pratique quotidienne et des cours universitaires aménagés ; à Sorbonne Université, le statut d'artiste de haut niveau adapte l'emploi du temps.",
-    apres: "Musicien avec un double bagage : interprète, enseignant, musicologue, direction de chœur, métiers de la culture.",
+    rythme:
+      "Une pratique quotidienne et des cours universitaires aménagés ; à Sorbonne Université, le statut d'artiste de haut niveau adapte l'emploi du temps.",
+    apres:
+      "Musicien avec un double bagage : interprète, enseignant, musicologue, direction de chœur, métiers de la culture.",
   },
   {
     id: "droit-international",
     title: "Droit français et droit étranger",
     lines: ["scpo", "monde"],
     what: "Un double diplôme en droit français et en droit d'un autre pays, souvent avec deux années à l'étranger.",
-    examples: ["Droit et Common Law à Assas : 10 places en 2026", "Assas et King's College London : quatre ans, deux à Londres et deux à Paris, 20 places",
+    examples: [
+      "Droit et Common Law à Assas : 10 places en 2026",
+      "Assas et King's College London : quatre ans, deux à Londres et deux à Paris, 20 places",
       "Paris 1 avec Queen Mary à Londres ou l'université de Cologne, en quatre ans",
-      "Paris 1, aussi en droit italien, espagnol ou américain"],
-    acces: "Sur dossier après le bac, avec un excellent niveau de langue ; pour King's College, le test LNAT en plus et une mention très bien exigée.",
+      "Paris 1, aussi en droit italien, espagnol ou américain",
+    ],
+    acces:
+      "Sur dossier après le bac, avec un excellent niveau de langue ; pour King's College, le test LNAT en plus et une mention très bien exigée.",
     rythme: "Des cours dans deux systèmes juridiques, souvent une année à l'étranger.",
     apres: "Avocat d'affaires international, juriste européen, diplomatie.",
   },

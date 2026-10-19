@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { calendrier3e, lyceeTypes, questionsVisite } from "@/lib/etudes/lycee";
-import { lycees, statutLabel, type Lycee } from "@/lib/etudes/lycees";
+import { internatTag, lyceeInternat, lycees, statutLabel, type Lycee } from "@/lib/etudes/lycees";
 import { FranceMap } from "./FranceMap";
 import { useSelection } from "./store";
 import { Icon } from "./ui";
@@ -19,12 +19,20 @@ export function norm(s: string) {
 
 type Zone = "tous" | "ouest" | "paris";
 
+/** Nom de tri : le nom usuel, sans « Lycée » ni « Collège-lycée ». */
+function sortName(l: Lycee) {
+  return norm(l.short ?? l.name).replace(
+    /^(college-)?lycee (prive |general et technologique |catholique )?(de |du |des |d'|le |la )?/,
+    "",
+  );
+}
+
 export function Lycees({ onOpenLycee }: { onOpenLycee: (id: string) => void }) {
   return (
     <>
       <div className="e-block">
         <div className="e-block__head">
-          <h3 className="e-h3">Quatre types de lycées</h3>
+          <h3 className="e-h3">Les types de lycées</h3>
         </div>
         <div className="e-table-wrap">
           <table className="e-table">
@@ -106,6 +114,7 @@ function Directory({ onOpen }: { onOpen: (id: string) => void }) {
   const [catho, setCatho] = useState(false);
   const [prepas, setPrepas] = useState(false);
   const [hot, setHot] = useState<string | null>(null);
+  const [sort, setSort] = useState<"nom" | "mentions">("nom");
   const { has } = useSelection();
 
   const list = useMemo(() => {
@@ -114,14 +123,19 @@ function Directory({ onOpen }: { onOpen: (id: string) => void }) {
       .filter(
         (l) => zone === "tous" || (zone === "ouest" ? l.zone === "ouest" : l.zone === "paris" || l.zone === "idf"),
       )
-      .filter((l) => !internat || l.internat?.existe)
+      .filter((l) => !internat || lyceeInternat(l) === "lycee")
       .filter((l) => !catho || l.confession === "catholique")
       .filter((l) => !prepas || (l.prepas?.length ?? 0) > 0)
       .filter(
         (l) => !nq || norm(`${l.name} ${l.short ?? ""} ${l.ville} ${l.departement} ${l.tutelle ?? ""}`).includes(nq),
       )
-      .sort((a, b) => (a.zone === b.zone ? a.name.localeCompare(b.name, "fr") : a.zone === "ouest" ? -1 : 1));
-  }, [q, zone, internat, catho, prepas]);
+      .sort((a, b) => {
+        if (sort === "mentions") return (b.resultats?.mentions ?? -1) - (a.resultats?.mentions ?? -1);
+        const za = a.zone === "ouest" ? 0 : 1;
+        const zb = b.zone === "ouest" ? 0 : 1;
+        return za - zb || sortName(a).localeCompare(sortName(b), "fr");
+      });
+  }, [q, zone, internat, catho, prepas, sort]);
 
   const visible = useMemo(() => new Set(list.map((l) => l.id)), [list]);
 
@@ -165,9 +179,19 @@ function Directory({ onOpen }: { onOpen: (id: string) => void }) {
             Prépas sur place
           </button>
         </div>
-        <p className="e-dir__count" aria-live="polite">
-          {list.length} {list.length > 1 ? "lycées" : "lycée"} sur {lycees.length}
-        </p>
+        <div className="e-dir__countrow">
+          <p className="e-dir__count" aria-live="polite">
+            {list.length} {list.length > 1 ? "lycées" : "lycée"} sur {lycees.length}
+          </p>
+          <div className="e-seg e-seg--sm" role="group" aria-label="Trier">
+            <button type="button" aria-pressed={sort === "nom"} onClick={() => setSort("nom")}>
+              Par nom
+            </button>
+            <button type="button" aria-pressed={sort === "mentions"} onClick={() => setSort("mentions")}>
+              Par mentions au bac
+            </button>
+          </div>
+        </div>
         {list.length ? (
           <ul className="e-dir__list">
             {list.map((l) => (
@@ -193,12 +217,6 @@ function Directory({ onOpen }: { onOpen: (id: string) => void }) {
   );
 }
 
-function internatLabel(l: Lycee) {
-  if (!l.internat?.existe) return null;
-  if (l.internat.pour && !/garçons/.test(l.internat.pour)) return `Internat ${l.internat.pour}`;
-  return "Internat";
-}
-
 function LyceeEntry({
   l,
   hot,
@@ -213,7 +231,7 @@ function LyceeEntry({
   onOpen: () => void;
 }) {
   const r = l.resultats;
-  const intern = internatLabel(l);
+  const intern = internatTag(l);
   return (
     <button
       type="button"
@@ -280,7 +298,7 @@ function Visit() {
 
   return (
     <div>
-      <h3 className="e-h3">Six questions pour une visite</h3>
+      <h3 className="e-h3">Les questions à poser en visite</h3>
       <p className="e-sub">Coche-les au fil des portes ouvertes : ta liste reste sur cet appareil.</p>
       <ul className="e-checks">
         {questionsVisite.map((x) => (

@@ -1,9 +1,9 @@
 "use client";
 
-import { lineById, linesByNum, type LineId } from "@/lib/etudes/lines";
-import { LINE_STOPS, placedById, routeOf } from "@/lib/etudes/plan";
+import { laneName, type LaneId } from "@/lib/etudes/lines";
+import { LANES, LANE_DEFS, UNIVERSITY_TRACKS, laneOf, placedById, routeOf } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
-import { ecoleById } from "@/lib/etudes/ecoles";
+import { ecoleById, ecoles } from "@/lib/etudes/ecoles";
 import { passerelles } from "@/lib/etudes/passerelles";
 import { Sheet, StepButton } from "./Sheet";
 import { SaveButton } from "./store";
@@ -11,39 +11,43 @@ import { Dot, Icon, Meter } from "./ui";
 
 type Props = {
   id: string;
-  line: LineId | null;
+  line: LaneId | null;
   onClose: () => void;
-  onNavigate: (id: string, line: LineId | null) => void;
+  onNavigate: (id: string, line: LaneId | null) => void;
   onOpenEcole: (id: string) => void;
   onOpenPasserelle: (id: string) => void;
 };
 
 export function StationSheet({ id, line, onClose, onNavigate, onOpenEcole, onOpenPasserelle }: Props) {
   const st = stationById[id];
+  if (!st) return null;
   const p = placedById[id];
-  if (!st || !p) return null;
+  const track = UNIVERSITY_TRACKS[id];
 
-  const ctx: LineId | null = line ?? p.line ?? null;
+  // Une licence de l'université est rattachée à son thème ; sur la carte, elle se lit sur la voie Université.
+  const ctx: LaneId | null = track ? "u" : (line ?? laneOf(id));
   const route = ctx ? routeOf(ctx) : ["college", "seconde", "premiere-terminale", "bac"];
-  const idx = route.indexOf(id);
+  const idx = route.indexOf(track ? "universite" : id);
   const prev = idx > 0 ? route[idx - 1] : null;
   const next = idx >= 0 && idx < route.length - 1 ? route[idx + 1] : null;
   const atFork = id === "bac" && !line;
+  const schoolIds = [...new Set([...(st.ecoles ?? []), ...ecoles.filter((e) => e.station === id).map((e) => e.id)])];
   const outgoing = passerelles.filter((x) => x.from.includes(id));
   const incoming = passerelles.filter((x) => x.to === id);
 
   const meta =
-    p.kind === "trunk" ? (
+    p?.kind === "trunk" ? (
       <span>Tronc commun, toutes les voies</span>
-    ) : p.kind === "u" ? (
+    ) : track ? (
       <span>
-        <Dot line="u" /> Université{p.line ? `, ${lineById[p.line].name}` : ""}
+        <Dot line="u" /> Université, {laneName(track)}
       </span>
     ) : ctx ? (
       <span>
-        <Dot line={ctx} /> {lineById[ctx].name}
+        <Dot line={ctx} /> {laneName(ctx)}
       </span>
     ) : null;
+  const licences = id === "universite" ? Object.keys(UNIVERSITY_TRACKS).filter((k) => stationById[k]) : [];
 
   return (
     <Sheet
@@ -106,7 +110,7 @@ export function StationSheet({ id, line, onClose, onNavigate, onOpenEcole, onOpe
 
       {st.acces?.length ? (
         <section className="e-sec">
-          <h4>Pour y entrer</h4>
+          <h3>Pour y entrer</h3>
           <ul className="e-list">
             {st.acces.map((a) => (
               <li key={a}>{a}</li>
@@ -117,7 +121,7 @@ export function StationSheet({ id, line, onClose, onNavigate, onOpenEcole, onOpe
 
       {st.contenu?.length ? (
         <section className="e-sec">
-          <h4>Ce que tu y fais</h4>
+          <h3>Ce que tu y fais</h3>
           <ul className="e-list">
             {st.contenu.map((a) => (
               <li key={a}>{a}</li>
@@ -128,7 +132,7 @@ export function StationSheet({ id, line, onClose, onNavigate, onOpenEcole, onOpe
 
       {st.apres?.length ? (
         <section className="e-sec">
-          <h4>Et ensuite</h4>
+          <h3>Et ensuite</h3>
           <ul className="e-taglist">
             {st.apres.map((a) => (
               <li key={a}>{a}</li>
@@ -138,26 +142,43 @@ export function StationSheet({ id, line, onClose, onNavigate, onOpenEcole, onOpe
       ) : null}
 
       {st.astuce ? (
-        <aside className="e-note">
+        <div className="e-note">
           <strong>Le conseil</strong>
           {st.astuce}
-        </aside>
+        </div>
+      ) : null}
+
+      {id === "college" || id === "seconde" ? (
+        <section className="e-sec">
+          <h3>Les lycées</h3>
+          <ul className="e-rows">
+            <li>
+              <a className="e-row" href="#annuaire-lycees" onClick={onClose}>
+                <Icon name="school" />
+                <span>
+                  <span className="e-row__v">L&apos;annuaire des lycées</span>
+                  <span className="e-row__k">Pensionnats de l&apos;Ouest, grands lycées de Paris et de Versailles</span>
+                </span>
+                <Icon name="chevron-right" />
+              </a>
+            </li>
+          </ul>
+        </section>
       ) : null}
 
       {atFork ? (
         <section className="e-sec">
-          <h4>Choisis ta voie</h4>
+          <h3>Choisis ta voie</h3>
           <ul className="e-rows">
-            {linesByNum.map((l) => {
-              const first = LINE_STOPS[l.id].r1;
-              if (!first) return null;
+            {LANES.map((l) => {
+              const first = LANE_DEFS[l].segs[0].id;
               return (
-                <li key={l.id}>
-                  <button type="button" className="e-row" onClick={() => onNavigate(first, l.id)}>
-                    <Dot line={l.id} />
+                <li key={l}>
+                  <button type="button" className="e-row" onClick={() => onNavigate(first, l)}>
+                    <Dot line={l} />
                     <span>
                       <span className="e-row__v">{stationById[first]?.name}</span>
-                      <span className="e-row__k">{l.name}</span>
+                      <span className="e-row__k">{laneName(l)}</span>
                     </span>
                     <Icon name="chevron-right" />
                   </button>
@@ -168,11 +189,31 @@ export function StationSheet({ id, line, onClose, onNavigate, onOpenEcole, onOpe
         </section>
       ) : null}
 
-      {st.ecoles?.length ? (
+      {licences.length ? (
         <section className="e-sec">
-          <h4>Les établissements de cette étape</h4>
+          <h3>Les licences, voie par voie</h3>
           <ul className="e-rows">
-            {st.ecoles.map((eid) => {
+            {licences.map((k) => (
+              <li key={k}>
+                <button type="button" className="e-row" onClick={() => onNavigate(k, "u")}>
+                  <Dot line={UNIVERSITY_TRACKS[k]} />
+                  <span>
+                    <span className="e-row__v">{stationById[k].name}</span>
+                    <span className="e-row__k">{laneName(UNIVERSITY_TRACKS[k])}</span>
+                  </span>
+                  <Icon name="chevron-right" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {schoolIds.length ? (
+        <section className="e-sec">
+          <h3>Les établissements de cette étape</h3>
+          <ul className="e-rows">
+            {schoolIds.map((eid) => {
               const e = ecoleById[eid];
               if (!e) return null;
               return (
@@ -194,7 +235,7 @@ export function StationSheet({ id, line, onClose, onNavigate, onOpenEcole, onOpe
 
       {outgoing.length || incoming.length ? (
         <section className="e-sec">
-          <h4>Passerelles</h4>
+          <h3>Passerelles</h3>
           <ul className="e-rows">
             {outgoing.map((x) => (
               <li key={x.id}>
