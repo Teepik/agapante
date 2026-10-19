@@ -2,7 +2,8 @@
 
 import { ecoleById, ecoles } from "@/lib/etudes/ecoles";
 import { lineById, type LaneId } from "@/lib/etudes/lines";
-import { lyceeById, lyceeInternat, lycees, statutLabel, type Lycee } from "@/lib/etudes/lycees";
+import { lyceeById, lyceeInternat, lycees, statutLabel, type Lycee, type Resultats } from "@/lib/etudes/lycees";
+import { voiesTexte } from "@/lib/etudes/lycees-fr";
 import { passerelleById, passerelles } from "@/lib/etudes/passerelles";
 import { laneOf } from "@/lib/etudes/plan";
 import { stationById } from "@/lib/etudes/stations";
@@ -156,12 +157,13 @@ export function LyceeSheet({
 }) {
   const l = lyceeById[id];
   if (!l) return null;
+  if (l.national) return <LyceeFranceSheet l={l} onClose={onClose} />;
   const same = lycees.filter(
     (x) => (x.zone === "paris" || x.zone === "idf") === (l.zone === "paris" || l.zone === "idf"),
   );
   const i = same.findIndex((x) => x.id === id);
   const prev = i > 0 ? same[i - 1] : null;
-  const next = i < same.length - 1 ? same[i + 1] : null;
+  const next = i >= 0 && i < same.length - 1 ? same[i + 1] : null;
   const r = l.resultats;
 
   return (
@@ -234,10 +236,7 @@ export function LyceeSheet({
         {r && typeof r.va === "number" ? (
           <div>
             <dt>Valeur ajoutée</dt>
-            <dd>
-              {r.va > 0 ? "+" : ""}
-              {r.va} {Math.abs(r.va) > 1 ? "points" : "point"}
-            </dd>
+            <dd>{points(r.va)}</dd>
           </div>
         ) : null}
         <div>
@@ -316,6 +315,147 @@ export function LyceeSheet({
         </p>
       ) : null}
     </Sheet>
+  );
+}
+
+/** « +3 points », « −1 point » */
+export function points(v: number): string {
+  return `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v)} ${Math.abs(v) > 1 ? "points" : "point"}`;
+}
+
+/** La fiche d'un lycée de l'annuaire national : statut, voies, internat et résultats officiels. */
+function LyceeFranceSheet({ l, onClose }: { l: Lycee; onClose: () => void }) {
+  const n = l.national!;
+  const voies = voiesTexte(l);
+  const lead = [
+    statutLabel[l.statut],
+    voies ? voies.charAt(0).toLowerCase() + voies.slice(1) : "",
+    l.internat?.existe ? "avec internat" : "",
+  ]
+    .filter(Boolean)
+    .join(", ");
+  const both = Boolean(l.resultats && n.pro);
+
+  return (
+    <Sheet
+      labelId="e-lycee-title"
+      resetKey={l.id}
+      onClose={onClose}
+      meta={
+        <>
+          <span>{statutLabel[l.statut]}</span>
+          {n.agricole ? <span>Lycée agricole</span> : null}
+        </>
+      }
+      title={l.name}
+      when={`${l.ville}, ${l.departement}`}
+      actions={
+        <>
+          <SaveButton kind="lycee" id={l.id} name={l.name} />
+          {l.url ? (
+            <a className="e-btn e-btn--sm" href={l.url} target="_blank" rel="noopener noreferrer">
+              <Icon name="external" /> Site du lycée
+            </a>
+          ) : null}
+          {n.onisep ? (
+            <a className="e-btn e-btn--sm" href={n.onisep} target="_blank" rel="noopener noreferrer">
+              <Icon name="external" /> Fiche Onisep
+            </a>
+          ) : null}
+        </>
+      }
+    >
+      <p className="e-sheet__lead">{lead}.</p>
+
+      <dl className="e-facts">
+        <div>
+          <dt>Internat</dt>
+          <dd>{l.internat?.existe ? "Oui" : "Externat"}</dd>
+        </div>
+        {l.effectif ? (
+          <div>
+            <dt>Élèves</dt>
+            <dd>{l.effectif}</dd>
+          </div>
+        ) : null}
+      </dl>
+
+      {l.resultats ? (
+        <BacFacts r={l.resultats} title={both ? "Le bac général et technologique" : "Les résultats au bac"} />
+      ) : null}
+      {n.pro ? <BacFacts r={n.pro} title={both ? "Le bac professionnel" : "Les résultats au bac pro"} /> : null}
+
+      {n.sections.length || n.postBac ? (
+        <section className="e-sec">
+          <h3>Sections et formations</h3>
+          <ul className="e-taglist">
+            {n.sections.map((o) => (
+              <li key={o}>{o}</li>
+            ))}
+            {n.postBac ? <li>BTS ou prépas après le bac</li> : null}
+          </ul>
+        </section>
+      ) : null}
+
+      {l.resultats || n.pro ? (
+        <p className="e-small e-muted">
+          Valeur ajoutée : écart entre le résultat du lycée et celui attendu pour des élèves comparables (âge, niveau à
+          l&apos;entrée, origine sociale) ; au-dessus de zéro, le lycée fait mieux que prévu. Accès de la 2nde au bac :
+          part des élèves entrés en 2nde qui obtiennent le bac dans ce lycée. Source :{" "}
+          <a className="e-link" href={(l.resultats ?? n.pro)!.source} target="_blank" rel="noopener noreferrer">
+            ministère de l&apos;Éducation nationale
+          </a>
+          , session {(l.resultats ?? n.pro)!.session}.
+        </p>
+      ) : (
+        <p className="e-small e-muted">
+          Les résultats officiels se publient pour les lycées publics et privés sous contrat qui présentent assez de
+          candidats. Pour ce lycée, interroge l&apos;établissement aux portes ouvertes.
+        </p>
+      )}
+    </Sheet>
+  );
+}
+
+function BacFacts({ r, title }: { r: Resultats; title: string }) {
+  return (
+    <section className="e-sec">
+      <h3>{title}</h3>
+      <dl className="e-facts">
+        {typeof r.reussite === "number" ? (
+          <div>
+            <dt>Réussite en {r.session}</dt>
+            <dd>
+              {r.reussite} %{typeof r.va === "number" ? <span className="e-facts__va"> {points(r.va)}</span> : null}
+            </dd>
+          </div>
+        ) : null}
+        {typeof r.mentions === "number" ? (
+          <div>
+            <dt>Mentions</dt>
+            <dd>
+              {r.mentions} %
+              {typeof r.vaMentions === "number" ? <span className="e-facts__va"> {points(r.vaMentions)}</span> : null}
+            </dd>
+          </div>
+        ) : null}
+        {typeof r.acces === "number" ? (
+          <div>
+            <dt>Accès de la 2nde au bac</dt>
+            <dd>
+              {r.acces} %
+              {typeof r.vaAcces === "number" ? <span className="e-facts__va"> {points(r.vaAcces)}</span> : null}
+            </dd>
+          </div>
+        ) : null}
+        {typeof r.candidats === "number" ? (
+          <div>
+            <dt>Candidats</dt>
+            <dd>{r.candidats}</dd>
+          </div>
+        ) : null}
+      </dl>
+    </section>
   );
 }
 

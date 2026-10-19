@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { calendrier3e, lyceeTypes, questionsVisite } from "@/lib/etudes/lycee";
 import { internatTag, lyceeInternat, lycees, statutLabel, type Lycee } from "@/lib/etudes/lycees";
 import { FranceMap } from "./FranceMap";
+import { LyceesFrance } from "./LyceesFrance";
 import { useCohort } from "./cohorte";
 import { useSelection } from "./store";
 import { Icon } from "./ui";
@@ -79,11 +80,26 @@ export function Lycees({ onOpenLycee }: { onOpenLycee: (id: string) => void }) {
         </div>
       </div>
 
+      <div className="e-block" id="lycees-france">
+        <div className="e-block__head">
+          <div>
+            <h3 className="e-h3">Les lycées près de chez toi</h3>
+            <p className="e-sub">
+              Tous les lycées de France, publics et privés, avec leurs voies, leur internat et leurs résultats au bac.
+            </p>
+          </div>
+        </div>
+        <LyceesFrance onOpenLycee={onOpenLycee} />
+      </div>
+
       <div className="e-block" id="annuaire-lycees">
         <div className="e-block__head">
           <div>
-            <h3 className="e-h3">L&apos;annuaire des lycées</h3>
-            <p className="e-sub">Pensionnats catholiques de l&apos;Ouest, grands lycées de Paris et de Versailles.</p>
+            <h3 className="e-h3">Une sélection en détail</h3>
+            <p className="e-sub">
+              Pensionnats catholiques de l&apos;Ouest, grands lycées de Paris et de Versailles : internat, admission,
+              frais et prépas, fiche par fiche.
+            </p>
           </div>
         </div>
         <Directory onOpen={onOpenLycee} />

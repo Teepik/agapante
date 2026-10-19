@@ -119,7 +119,7 @@ export const ecolesPlus: Ecole[] = etTypo([
     acces: "Parcoursup, sur dossier, avec un dossier d'internat ; en MPSI, 2 729 candidats pour 140 places en 2025",
     duree: "2 ans",
     places: "140 places en MPSI, 126 en PCSI, 40 en BCPST et 78 en ECG (2025)",
-    cout: "Pension, internat compris : de 6 120 à 20 850 € par an selon le quotient familial (2026-2027) ; les boursiers de l'Internat de la Réussite paient au plus 20 % de ce tarif",
+    cout: "Pension, internat compris : de 6 120 à 20 850 € par an selon le quotient familial (2026-2027). Pour les boursiers accueillis dans l'Internat de la Réussite (environ 60 élèves par an), le reste à payer, bourse du Crous déduite, est d'au plus 20 % du tarif.",
     formations: "Prépas scientifiques (MPSI, PCSI, PTSI, BCPST) et prépa économique et commerciale (ECG).",
     debouches: "Polytechnique, CentraleSupélec, Mines, ENS, écoles vétérinaires et d'agronomie, HEC, ESSEC, ESCP.",
     plus: "Tous les élèves sont internes ; en 2026, plus de 80 élèves ont intégré Polytechnique et 40 ont intégré HEC, selon le lycée.",
@@ -286,7 +286,7 @@ export const ecolesPlus: Ecole[] = etTypo([
     kind: "Université catholique privée d'intérêt général (EESPIG)",
     acces: "Parcoursup, sur dossier ; en licence de droit, près de 3 500 candidats pour environ 230 places en 2025",
     duree: "3 ans (licence), puis 2 ans (master)",
-    places: "Environ 230 places en 1re année de droit (2025)",
+    places: "230 places en 1re année de licence de droit, et 30 en double licence droit-philosophie (2025)",
     cout: "Selon les revenus : de 4 720 à 11 710 € par an en licence de droit (2026-2027) ; jusqu'à 50 % de réduction pour les boursiers du Crous",
     formations:
       "Une vingtaine de licences : droit, lettres, langues, histoire-géographie, philosophie, théologie, science politique, communication, gestion.",
@@ -431,7 +431,7 @@ export const ecolesPlus: Ecole[] = etTypo([
   },
   {
     id: "pole-alienor",
-    name: "RésoNAnces, pôle supérieur musique et danse Nouvelle-Aquitaine (ex-Pôle Aliénor)",
+    name: "RésoNAnces, pôle supérieur musique et danse Nouvelle-Aquitaine (ex-Pôle Aliénor et ex-PESMD de Bordeaux)",
     short: "RésoNAnces",
     line: "arts",
     ville: "Poitiers et Bordeaux",
@@ -906,7 +906,8 @@ export const ecolesPlus: Ecole[] = etTypo([
     acces:
       "Parcoursup : pour la santé, PASS ou LAS en 2026, puis la licence santé unique prévue pour 2027 ; licences dans les autres disciplines",
     duree: "Licence 3 ans, master 2 ans ; études de santé de 5 à 12 ans selon le métier",
-    places: "708 places en PASS en 2026, réparties en douze options (psychologie, sciences de la vie, chimie, STAPS…)",
+    places:
+      "758 places en PASS en 2026 : 708 à Nantes, réparties en douze options, et 50 à La Roche-sur-Yon (option sciences infirmières)",
     cout: "178 € par an en licence, 255 € en master (2026-2027), plus 105 € de CVEC ; gratuit pour les boursiers",
     formations:
       "Médecine, pharmacie, odontologie, maïeutique et kinésithérapie, avec le CHU de Nantes ; aussi sciences, droit, économie, lettres, langues, sport.",

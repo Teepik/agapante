@@ -7,6 +7,22 @@ import { etTypo } from "./typo";
 export type LyceeStatut = "public" | "prive-contrat" | "hors-contrat" | "defense";
 export type LyceeZone = "ouest" | "paris" | "idf" | "autre";
 
+/** Résultats au bac d'une session (indicateurs de valeur ajoutée des lycées, IVAL). */
+export type Resultats = {
+  session: number;
+  reussite?: number;
+  mentions?: number;
+  tb?: number;
+  /** Valeur ajoutée du taux de réussite, en points. */
+  va?: number;
+  vaMentions?: number;
+  /** Part des élèves de 2nde qui obtiennent le bac dans le lycée. */
+  acces?: number;
+  vaAcces?: number;
+  candidats?: number;
+  source?: string;
+};
+
 export type Lycee = {
   id: string;
   name: string;
@@ -23,14 +39,7 @@ export type Lycee = {
   mixite?: string;
   internat?: { existe: boolean; pour?: string; des?: string; note?: string };
   effectif?: string;
-  resultats?: {
-    session: number;
-    reussite?: number;
-    mentions?: number;
-    tb?: number;
-    va?: number;
-    source?: string;
-  };
+  resultats?: Resultats;
   options?: string[];
   musique?: string;
   prepas?: string[];
@@ -39,6 +48,17 @@ export type Lycee = {
   points?: string;
   url?: string;
   sources?: string[];
+  /** Lycées de l'annuaire national, chargés à la demande. */
+  national?: {
+    uai: string;
+    cp: string;
+    voies: { g: boolean; t: boolean; p: boolean };
+    agricole: boolean;
+    postBac: boolean;
+    sections: string[];
+    onisep?: string;
+    pro?: Resultats;
+  };
 };
 
 export const statutLabel: Record<LyceeStatut, string> = {
@@ -578,9 +598,8 @@ export const lycees: Lycee[] = etTypo([
     mixite: "mixte",
     internat: {
       existe: true,
-      pour: "garçons et filles",
-      des: "4e",
-      note: "Internat de garçons Notre-Dame des Blanches de la 4e à la terminale, ouvert en 2005 par la Communauté Saint-Martin, et internat de filles distinct ; formule 4 nuits (arrivée le lundi matin) ou 5 nuits (arrivée le dimanche soir) ; rugby chaque semaine dans le projet d'internat ; téléphone portable interdit.",
+      pour: "garçons dès la 4e, filles dès la 2nde",
+      note: "Internat de garçons Notre-Dame des Blanches de la 4e à la terminale, ouvert en 2005 par la Communauté Saint-Martin, et internat de filles, de la 2nde à la terminale, depuis la rentrée 2018 ; formule 4 nuits (arrivée le lundi matin) ou 5 nuits (arrivée le dimanche soir) ; rugby chaque semaine dans le projet d'internat ; téléphone portable interdit.",
     },
     effectif: "≈ 325 lycéens (rentrée 2025, IVAL)",
     resultats: {
@@ -614,6 +633,7 @@ export const lycees: Lycee[] = etTypo([
       "https://tabular-api.data.gouv.fr/api/resources/4204242b-1812-4609-a2f0-f8d720f5b060/data/?UAI__exact=0411071S&Ann%C3%A9e__exact=2025",
       "https://www.service-public.gouv.fr/particuliers/vosdroits/F1410",
       "https://www.data.gouv.fr/fr/datasets/annuaire-de-leducation/",
+      "https://www.lplcp.fr/l-internat-de-filles",
     ],
   },
   {

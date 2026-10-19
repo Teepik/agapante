@@ -65,7 +65,8 @@ export type IconName =
   | "compass"
   | "list"
   | "arrow-down"
-  | "ticket";
+  | "ticket"
+  | "locate";
 
 const paths: Record<IconName, ReactNode> = {
   close: <path d="M6 6l12 12M18 6L6 18" />,
@@ -193,6 +194,13 @@ const paths: Record<IconName, ReactNode> = {
     <>
       <path d="M4 7h16v3a2 2 0 000 4v3H4v-3a2 2 0 000-4z" />
       <path d="M14 7v10" />
+    </>
+  ),
+  locate: (
+    <>
+      <circle cx="12" cy="12" r="6.5" />
+      <circle cx="12" cy="12" r="1.8" />
+      <path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3" />
     </>
   ),
 };

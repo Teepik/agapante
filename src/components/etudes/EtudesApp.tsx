@@ -5,7 +5,6 @@ import { enLettres, type LaneId, type LineId } from "@/lib/etudes/lines";
 import { LANES } from "@/lib/etudes/plan";
 import { passerelleById } from "@/lib/etudes/passerelles";
 import { ecoles } from "@/lib/etudes/ecoles";
-import { lycees } from "@/lib/etudes/lycees";
 import { CareerMap } from "./CareerMap";
 import { CohortProvider, useCohort } from "./cohorte";
 import { CommandPalette } from "./CommandPalette";
@@ -227,7 +226,7 @@ function App() {
               </h2>
               <p className="e-lede">
                 Le lycée prépare le bac et ton dossier : les formations sélectives lisent tes bulletins de 1re et de
-                terminale. {lycees.length} lycées à comparer, de l&apos;Ouest à Paris.
+                terminale. Cherche les lycées autour de chez toi, partout en France, et compare-les.
               </p>
             </div>
             <Lycees onOpenLycee={openLycee} />

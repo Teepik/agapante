@@ -4,7 +4,8 @@ import type { ReactNode } from "react";
 import { ecoleById, type Ecole } from "@/lib/etudes/ecoles";
 import { laneName } from "@/lib/etudes/lines";
 import { lyceeById, statutLabel, type Lycee } from "@/lib/etudes/lycees";
-import { internatText } from "./DetailSheets";
+import { voiesTexte } from "@/lib/etudes/lycees-fr";
+import { internatText, points } from "./DetailSheets";
 import { Sheet } from "./Sheet";
 import { Dot } from "./ui";
 
@@ -15,6 +16,7 @@ const pct = (v?: number) => (typeof v === "number" ? `${v} %` : null);
 const LYCEE_ROWS: Row<Lycee>[] = [
   { label: "Ville", get: (l) => `${l.ville}, ${l.departement}` },
   { label: "Statut", get: (l) => statutLabel[l.statut] },
+  { label: "Voies", get: (l) => voiesTexte(l) },
   { label: "Internat", get: (l) => internatText(l) },
   {
     label: "Élèves",
@@ -31,10 +33,15 @@ const LYCEE_ROWS: Row<Lycee>[] = [
   { label: "Mentions très bien", get: (l) => pct(l.resultats?.tb) },
   {
     label: "Valeur ajoutée",
+    get: (l) => (typeof l.resultats?.va === "number" ? points(l.resultats.va) : null),
+  },
+  { label: "Accès de la 2nde au bac", get: (l) => pct(l.resultats?.acces) },
+  {
+    label: "Bac pro",
     get: (l) => {
-      const va = l.resultats?.va;
-      if (typeof va !== "number") return null;
-      return `${va > 0 ? "+" : ""}${va} ${Math.abs(va) > 1 ? "points" : "point"}`;
+      const p = l.national?.pro;
+      if (typeof p?.reussite !== "number") return null;
+      return `${p.reussite} % de réussite${typeof p.va === "number" ? `, ${points(p.va)}` : ""}`;
     },
   },
   { label: "Prépas sur place", get: (l) => l.prepas?.join(", ") || null },

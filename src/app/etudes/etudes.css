@@ -2501,6 +2501,7 @@ html.e-lock body {
 }
 .e-entry__meta > span:not(.e-tag) + span:not(.e-tag)::before {
   content: "/";
+  content: "/" / "";
   margin-right: 6px;
   color: var(--hair-2);
 }
@@ -2664,6 +2665,144 @@ html.e-lock body {
   color: var(--paper);
   pointer-events: none;
   transform: translate(-50%, calc(-100% - 12px));
+  white-space: nowrap;
+}
+
+/* ---------- Lycées de toute la France ---------- */
+
+.e-fr {
+  grid-template-areas:
+    "head map"
+    "body map";
+  grid-template-rows: auto 1fr;
+  row-gap: 0;
+}
+.e-fr__head {
+  grid-area: head;
+}
+.e-fr__map {
+  grid-area: map;
+  align-self: start;
+  position: sticky;
+  top: 88px;
+}
+.e-fr__map .e-france {
+  position: static;
+}
+.e-fr__body {
+  grid-area: body;
+}
+.e-fr .e-dir__count:empty {
+  display: none;
+}
+.e-fr__combo {
+  position: relative;
+  flex: 1 1 260px;
+}
+.e-suggest {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  display: grid;
+  gap: 2px;
+  padding: 6px;
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow:
+    inset 0 0 0 1px var(--hair),
+    var(--shadow-pop);
+}
+.e-suggest[hidden] {
+  display: none;
+}
+.e-suggest li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.e-suggest li[aria-selected="true"] {
+  background: var(--fog);
+}
+.e-suggest__name {
+  font-weight: 650;
+}
+.e-suggest__detail {
+  font-size: 0.84rem;
+  color: var(--slate);
+  text-align: right;
+}
+.e-fr__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 20px;
+  margin-bottom: 16px;
+}
+.e-fgroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.e-fgroup__k {
+  font-size: 0.82rem;
+  font-weight: 620;
+  color: var(--slate);
+}
+.e-fr__start {
+  display: grid;
+  gap: 14px;
+  padding: 8px 0 24px;
+  max-width: 560px;
+  color: var(--slate);
+}
+.e-fr__try {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.e-fr__note {
+  margin-top: 18px;
+  max-width: 640px;
+}
+.e-radar__disc {
+  fill: var(--paper);
+  stroke: var(--hair-2);
+}
+.e-section--fog .e-radar__disc {
+  fill: var(--fog);
+}
+.e-radar__ring {
+  fill: none;
+  stroke: var(--hair-2);
+  stroke-dasharray: 3 4;
+}
+.e-radar__home {
+  fill: var(--focus);
+  stroke: var(--paper);
+  stroke-width: 3;
+}
+.e-radar__all {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+.e-france__legend i.is-home {
+  background: var(--focus);
+}
+.e-facts__va {
+  margin-left: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--slate);
   white-space: nowrap;
 }
 
@@ -3272,7 +3411,9 @@ html.e-lock body {
   max-height: 72vh;
   border-radius: 22px;
   background: var(--paper);
-  box-shadow: var(--shadow-pop), 0 0 0 1px var(--hair);
+  box-shadow:
+    var(--shadow-pop),
+    0 0 0 1px var(--hair);
   overflow: hidden;
   animation: e-pop 0.22s var(--ease);
 }
@@ -3503,6 +3644,20 @@ html.e-lock body {
     order: -1;
     max-width: 520px;
   }
+  .e-fr {
+    grid-template-areas:
+      "head"
+      "map"
+      "body";
+    grid-template-rows: auto;
+    row-gap: 8px;
+  }
+  .e-fr__map {
+    position: static;
+    width: 100%;
+    max-width: 420px;
+    margin-bottom: 16px;
+  }
   .e-trip__list {
     display: flex;
     gap: 6px;
@@ -3584,6 +3739,12 @@ html.e-lock body {
   }
   .e-entry {
     grid-template-columns: minmax(0, 1fr);
+  }
+  .e-fr__filters {
+    gap: 10px 14px;
+  }
+  .e-fr__filters .e-seg--sm button {
+    padding: 0 10px;
   }
   .e-entry__stats {
     grid-column: 1;
