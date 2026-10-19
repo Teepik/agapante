@@ -2,285 +2,310 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { LineId } from "@/lib/etudes/lines";
-import { placed } from "@/lib/etudes/plan";
-import { sourceCount, sourceGroups } from "@/lib/etudes/sources";
-import { Boussole } from "./Boussole";
-import { Frise } from "./Frise";
+import { ecoles } from "@/lib/etudes/ecoles";
+import { lycees } from "@/lib/etudes/lycees";
+import { CareerMap } from "./CareerMap";
+import { CommandPalette } from "./CommandPalette";
+import { EcoleSheet, LyceeSheet, PasserelleSheet } from "./DetailSheets";
+import { Ecoles } from "./Ecoles";
 import { Hero } from "./Hero";
-import { Itineraires } from "./Itineraires";
-import { Lexique } from "./Lexique";
-import { Lycee } from "./Lycee";
-import { NetworkMap } from "./NetworkMap";
-import { PasserelleSheet } from "./PasserelleSheet";
+import { Lycees } from "./Lycees";
+import { MyList } from "./MyList";
+import { Parcours } from "./Parcours";
 import { Passerelles } from "./Passerelles";
+import { Quiz } from "./Quiz";
+import { Calendrier, Footer, Lexique } from "./Reperes";
 import { Specialites } from "./Specialites";
 import { StationSheet } from "./StationSheet";
-import { Tickets } from "./Tickets";
+import { SelectionProvider, useSelection } from "./store";
 import { TopNav } from "./TopNav";
-import { Icon, Plaque } from "./ui";
 
-const VISITED_KEY = "etudes:carnet";
-const TOTAL = placed.length;
-
-function useCarnet() {
-  const [visited, setVisited] = useState<Set<string>>(new Set());
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(VISITED_KEY);
-      if (raw) setVisited(new Set(JSON.parse(raw) as string[]));
-    } catch {
-      /* stockage indisponible : le carnet vit le temps de la visite */
-    }
-  }, []);
-  const add = useCallback((id: string) => {
-    setVisited((v) => {
-      if (v.has(id)) return v;
-      const next = new Set(v).add(id);
-      try {
-        window.localStorage.setItem(VISITED_KEY, JSON.stringify([...next]));
-      } catch {
-        /* idem */
-      }
-      return next;
-    });
-  }, []);
-  return { visited, add };
-}
+type Open =
+  | { kind: "station"; id: string; line: LineId | null }
+  | { kind: "passerelle"; id: string }
+  | { kind: "ecole"; id: string }
+  | { kind: "lycee"; id: string }
+  | { kind: "liste" }
+  | null;
 
 function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 export function EtudesApp() {
-  const { visited, add } = useCarnet();
+  return (
+    <SelectionProvider>
+      <App />
+    </SelectionProvider>
+  );
+}
+
+function App() {
+  const { saved } = useSelection();
+  const [open, setOpen] = useState<Open>(null);
+  const [cmd, setCmd] = useState(false);
   const [focusLine, setFocusLine] = useState<LineId | null>(null);
   const [route, setRoute] = useState<LineId | null>(null);
-  const [stripLine, setStripLine] = useState<LineId>("sciences");
-  const [trip, setTrip] = useState<LineId>("sciences");
-  const [open, setOpen] = useState<
-    { kind: "station"; id: string; line: LineId | null } | { kind: "passerelle"; id: string } | null
-  >(null);
-  const [ticketFocus, setTicketFocus] = useState<{ id: string; n: number } | null>(null);
+  const [laneLine, setLaneLine] = useState<LineId>("sciences");
   const [showPass, setShowPass] = useState(false);
   const [spotPass, setSpotPass] = useState<string | null>(null);
+  const [trip, setTrip] = useState<LineId>("sciences");
+  const [lexQuery, setLexQuery] = useState("");
 
-  const openStation = useCallback(
-    (id: string, line: LineId | null = null) => {
-      setOpen({ kind: "station", id, line });
-      add(id);
-    },
-    [add],
-  );
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      const t = e.target as HTMLElement;
+      const typing = t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable;
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setCmd((v) => !v);
+      } else if (e.key === "/" && !typing && !open) {
+        e.preventDefault();
+        setCmd(true);
+      }
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
+  const openStation = useCallback((id: string, line: LineId | null = null) => {
+    setOpen({ kind: "station", id, line });
+  }, []);
   const openPasserelle = useCallback((id: string) => {
     setOpen({ kind: "passerelle", id });
     setSpotPass(id);
   }, []);
+  const openEcole = useCallback((id: string) => setOpen({ kind: "ecole", id }), []);
+  const openLycee = useCallback((id: string) => setOpen({ kind: "lycee", id }), []);
+  const close = useCallback(() => setOpen(null), []);
 
-  const showLine = useCallback((line: LineId, gold = false) => {
+  const showLine = useCallback((line: LineId, asRoute = false) => {
     setFocusLine(line);
-    setRoute(gold ? line : null);
-    setStripLine(line);
-    scrollToId("plan");
+    setRoute(asRoute ? line : null);
+    setLaneLine(line);
+    scrollToId("carte");
   }, []);
 
-  const focusOnPlan = useCallback((line: LineId | null) => {
-    setFocusLine(line);
+  const showPassOnMap = useCallback((id: string) => {
+    setOpen(null);
+    setShowPass(true);
+    setSpotPass(id);
+    setFocusLine(null);
     setRoute(null);
-    if (line) setStripLine(line);
+    scrollToId("carte");
+  }, []);
+
+  const showMot = useCallback((term: string) => {
+    setLexQuery(term);
+    scrollToId("lexique");
   }, []);
 
   return (
     <>
-      <TopNav visited={visited.size} total={TOTAL} />
+      <a className="e-skip" href="#carte">
+        Aller à la carte
+      </a>
+      <TopNav savedCount={saved.length} onSearch={() => setCmd(true)} onOpenList={() => setOpen({ kind: "liste" })} />
 
-      <Hero onPickLine={(l) => showLine(l)} />
+      <main>
+        <Hero />
 
-      <section id="plan" className="et-section et-section--plan" aria-labelledby="t-plan">
-        <div className="et-section__head">
-          <Plaque id="t-plan">Le plan</Plaque>
-          <p className="et-section__lede">
-            Le haut du plan, c&apos;est le lycée, commun à tous. Au bac, les lignes s&apos;écartent : chacune file
-            vers ses prépas, ses écoles et ses métiers. La ligne U, l&apos;université, les croise toutes : on peut y
-            changer de direction.
-          </p>
-        </div>
-        <NetworkMap
-          focusLine={focusLine}
-          route={route}
-          visited={visited}
-          onOpen={openStation}
-          onFocusLine={focusOnPlan}
-          stripLine={stripLine}
-          onStripLine={(l) => {
-            setStripLine(l);
-            setFocusLine(l);
-          }}
-          showPass={showPass}
-          onTogglePass={() => {
-            setShowPass((v) => !v);
-            setSpotPass(null);
-          }}
-          spotPass={spotPass}
-          onOpenPasserelle={openPasserelle}
-        />
-      </section>
-
-      <section id="boussole" className="et-section" aria-labelledby="t-boussole">
-        <div className="et-section__head">
-          <Plaque id="t-boussole">La boussole</Plaque>
-          <p className="et-section__lede">
-            Six questions, une minute. Ta boussole s&apos;oriente vers les lignes qui te ressemblent le plus
-            aujourd&apos;hui.
-          </p>
-        </div>
-        <Boussole
-          onShowLine={(l) => showLine(l)}
-          onShowItineraire={(l) => {
-            setTrip(l);
-            scrollToId("itineraires");
-          }}
-        />
-      </section>
-
-      <section id="itineraires" className="et-section" aria-labelledby="t-itin">
-        <div className="et-section__head">
-          <Plaque id="t-itin">Les itinéraires d&apos;excellence</Plaque>
-          <p className="et-section__lede">
-            Choisis une arrivée : voici le trajet le plus solide pour y parvenir, étape par étape, avec les choix
-            qui comptent vraiment.
-          </p>
-        </div>
-        <Itineraires
-          current={trip}
-          onSelect={setTrip}
-          onShowRoute={(l) => showLine(l, true)}
-          onOpenStation={(id, l) => openStation(id, l)}
-        />
-      </section>
-
-      <section id="passerelles" className="et-section" aria-labelledby="t-pass">
-        <div className="et-section__head">
-          <Plaque id="t-pass">Changer de ligne, rouler sur deux lignes</Plaque>
-          <p className="et-section__lede">
-            Les lignes se croisent. Les passerelles permettent de changer de voie en cours de route ; les doubles
-            cursus permettent d&apos;en suivre deux à la fois.
-          </p>
-        </div>
-        <Passerelles
-          onOpenPasserelle={openPasserelle}
-          onShowOnPlan={(id) => {
-            setShowPass(true);
-            setSpotPass(id);
-            setFocusLine(null);
-            setRoute(null);
-            scrollToId("plan");
-          }}
-        />
-      </section>
-
-      <section id="lycee" className="et-section" aria-labelledby="t-lycee">
-        <div className="et-section__head">
-          <Plaque id="t-lycee">Ton lycée</Plaque>
-          <p className="et-section__lede">
-            Le lycée prépare le bac, et surtout ton dossier : les formations sélectives lisent tes bulletins de 1re
-            et de Terminale. Choisis un lycée qui te pousse, dans un cadre où tu travailles bien.
-          </p>
-        </div>
-        <Lycee />
-      </section>
-
-      <section id="specialites" className="et-section" aria-labelledby="t-spe">
-        <div className="et-section__head">
-          <Plaque id="t-spe">Tes spécialités</Plaque>
-          <p className="et-section__lede">
-            En 1re, tu suis trois spécialités ; en Terminale, tu en gardes deux. Compose ton trio et regarde
-            quelles portes s&apos;ouvrent.
-          </p>
-        </div>
-        <Specialites onOpenStation={(id) => openStation(id)} />
-      </section>
-
-      <section id="ecoles" className="et-section" aria-labelledby="t-ecoles">
-        <div className="et-section__head">
-          <Plaque id="t-ecoles">Les écoles</Plaque>
-          <p className="et-section__lede">
-            Un billet par établissement : comment on y entre, combien de temps on y reste, ce que l&apos;on y apprend
-            et où l&apos;on va ensuite. Composte un billet pour le retourner.
-          </p>
-        </div>
-        <Tickets focusId={ticketFocus} onOpenStation={(id) => openStation(id)} />
-      </section>
-
-      <section id="frise" className="et-section" aria-labelledby="t-frise">
-        <div className="et-section__head">
-          <Plaque id="t-frise">Ta frise, de 2026 à 2035</Plaque>
-          <p className="et-section__lede">
-            Les dates à connaître, année par année. Les plus importantes sont signalées en or.
-          </p>
-        </div>
-        <Frise />
-      </section>
-
-      <section id="lexique" className="et-section" aria-labelledby="t-lex">
-        <div className="et-section__head">
-          <Plaque id="t-lex">Le lexique</Plaque>
-          <p className="et-section__lede">Les mots du voyage, expliqués simplement.</p>
-        </div>
-        <Lexique onOpenStation={(id) => openStation(id)} />
-      </section>
-
-      <footer className="et-foot">
-        <div className="et-foot__inner">
-          <p className="et-foot__title">Sources</p>
-          <p className="et-muted">
-            Informations vérifiées en octobre 2026 auprès des sources officielles ci-dessous. Les règles peuvent
-            évoluer d&apos;ici 2030 : vérifie chaque année les sites des formations et de Parcoursup.
-          </p>
-          <details className="et-foot__details">
-            <summary className="et-foot__summary">
-              Les {sourceCount} sources, par thème
-              <Icon name="chevron-down" />
-            </summary>
-            <div className="et-foot__list">
-              {sourceGroups.map((g) => (
-                <div key={g.title} className="et-foot__group">
-                  <p className="et-foot__gtitle">{g.title}</p>
-                  <ul>
-                    {g.items.map((s) => (
-                      <li key={s.url}>
-                        <a href={s.url} target="_blank" rel="noopener noreferrer">
-                          {s.title}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+        <section id="carte" className="e-section e-section--fog e-map-section" aria-labelledby="t-carte">
+          <div className="e-wrap">
+            <div className="e-head">
+              <h2 id="t-carte" className="e-title">
+                La carte des études
+              </h2>
+              <p className="e-lede">
+                Le tronc commun monte jusqu&apos;au bac, puis se ramifie en huit voies jusqu&apos;aux métiers. Touche
+                une étape pour ouvrir sa fiche.
+              </p>
             </div>
-          </details>
-        </div>
-      </footer>
+          </div>
+          <CareerMap
+            focusLine={focusLine}
+            route={route}
+            onOpen={openStation}
+            onFocusLine={(l) => {
+              setFocusLine(l);
+              setRoute(null);
+              if (l) setLaneLine(l);
+            }}
+            laneLine={laneLine}
+            onLaneLine={setLaneLine}
+            showPass={showPass}
+            onTogglePass={() => {
+              setShowPass((v) => !v);
+              setSpotPass(null);
+            }}
+            spotPass={spotPass}
+            onOpenPasserelle={openPasserelle}
+          />
+        </section>
+
+        <section id="test" className="e-section" aria-labelledby="t-test">
+          <div className="e-wrap">
+            <div className="e-head">
+              <h2 id="t-test" className="e-title">
+                Quelle voie te ressemble ?
+              </h2>
+              <p className="e-lede">
+                Six questions, deux minutes. Le résultat classe les huit voies selon tes goûts d&apos;aujourd&apos;hui.
+              </p>
+            </div>
+            <Quiz
+              onShowLine={(l) => showLine(l)}
+              onShowParcours={(l) => {
+                setTrip(l);
+                scrollToId("parcours");
+              }}
+            />
+          </div>
+        </section>
+
+        <section id="parcours" className="e-section e-section--fog" aria-labelledby="t-parcours">
+          <div className="e-wrap">
+            <div className="e-head">
+              <h2 id="t-parcours" className="e-title">
+                Huit parcours, de la 3e au métier
+              </h2>
+              <p className="e-lede">
+                Pour chaque voie, le chemin le plus solide, étape par étape, avec les choix qui comptent vraiment.
+              </p>
+            </div>
+            <Parcours
+              current={trip}
+              onSelect={setTrip}
+              onShowRoute={(l) => showLine(l, true)}
+              onOpenStation={(id, l) => openStation(id, l)}
+            />
+          </div>
+        </section>
+
+        <section id="lycees" className="e-section" aria-labelledby="t-lycees">
+          <div className="e-wrap">
+            <div className="e-head">
+              <h2 id="t-lycees" className="e-title">
+                Choisir son lycée
+              </h2>
+              <p className="e-lede">
+                Le lycée prépare le bac et ton dossier : les formations sélectives lisent tes bulletins de 1re et de
+                terminale. {lycees.length} lycées à comparer, de l&apos;Ouest à Paris.
+              </p>
+            </div>
+            <Lycees onOpenLycee={openLycee} />
+          </div>
+        </section>
+
+        <section id="specialites" className="e-section e-section--fog" aria-labelledby="t-spe">
+          <div className="e-wrap">
+            <div className="e-head">
+              <h2 id="t-spe" className="e-title">
+                Tes spécialités ouvrent des portes
+              </h2>
+              <p className="e-lede">
+                En 1re, tu suis trois spécialités ; en terminale, tu en gardes deux. Compose ton trio : la liste montre
+                ce qu&apos;il ouvre.
+              </p>
+            </div>
+            <Specialites onOpenStation={(id) => openStation(id)} />
+          </div>
+        </section>
+
+        <section id="ecoles" className="e-section" aria-labelledby="t-ecoles">
+          <div className="e-wrap">
+            <div className="e-head">
+              <h2 id="t-ecoles" className="e-title">
+                Après le bac, {ecoles.length} établissements
+              </h2>
+              <p className="e-lede">
+                Prépas, universités, grandes écoles, conservatoires : comment on y entre, combien de temps on y reste,
+                ce qu&apos;on y apprend et où cela mène.
+              </p>
+            </div>
+            <Ecoles onOpenEcole={openEcole} />
+          </div>
+        </section>
+
+        <section id="passerelles" className="e-section e-section--fog" aria-labelledby="t-pass">
+          <div className="e-wrap">
+            <div className="e-head">
+              <h2 id="t-pass" className="e-title">
+                Changer de voie en chemin
+              </h2>
+              <p className="e-lede">
+                Les voies se croisent. Les passerelles permettent d&apos;en changer en cours de route ; les doubles
+                cursus permettent d&apos;en suivre deux à la fois.
+              </p>
+            </div>
+            <Passerelles onOpenPasserelle={openPasserelle} />
+          </div>
+        </section>
+
+        <section id="calendrier" className="e-section" aria-labelledby="t-cal">
+          <div className="e-wrap">
+            <div className="e-head">
+              <h2 id="t-cal" className="e-title">
+                Ton calendrier, de 2026 à 2035
+              </h2>
+              <p className="e-lede">
+                Les dates à retenir, année après année. Les plus importantes sont marquées d&apos;un point.
+              </p>
+            </div>
+            <Calendrier />
+          </div>
+        </section>
+
+        <section id="lexique" className="e-section" aria-labelledby="t-lex">
+          <div className="e-wrap">
+            <div className="e-head">
+              <h2 id="t-lex" className="e-title">
+                Les mots de l&apos;orientation
+              </h2>
+              <p className="e-lede">Colle, khâgne, Parcoursup : les termes du voyage, expliqués simplement.</p>
+            </div>
+            <Lexique query={lexQuery} onQuery={setLexQuery} onOpenStation={(id) => openStation(id)} />
+          </div>
+        </section>
+      </main>
+
+      <Footer />
 
       {open?.kind === "station" ? (
         <StationSheet
           id={open.id}
           line={open.line}
-          onClose={() => setOpen(null)}
-          onNavigate={(id, l) => openStation(id, l)}
-          onShowEcole={(eid) => {
-            setOpen(null);
-            setTicketFocus({ id: eid, n: Date.now() });
-          }}
+          onClose={close}
+          onNavigate={openStation}
+          onOpenEcole={openEcole}
           onOpenPasserelle={openPasserelle}
         />
       ) : null}
       {open?.kind === "passerelle" ? (
         <PasserelleSheet
           id={open.id}
-          onClose={() => setOpen(null)}
-          onOpenStation={(id, l) => openStation(id, l)}
+          onClose={close}
+          onOpenStation={openStation}
           onOpenPasserelle={openPasserelle}
+          onShowOnMap={showPassOnMap}
+        />
+      ) : null}
+      {open?.kind === "ecole" ? (
+        <EcoleSheet id={open.id} onClose={close} onOpenEcole={openEcole} onOpenStation={openStation} />
+      ) : null}
+      {open?.kind === "lycee" ? <LyceeSheet id={open.id} onClose={close} onOpenLycee={openLycee} /> : null}
+      {open?.kind === "liste" ? (
+        <MyList onClose={close} onLycee={openLycee} onEcole={openEcole} onStation={openStation} />
+      ) : null}
+
+      {cmd ? (
+        <CommandPalette
+          onClose={() => setCmd(false)}
+          onStation={openStation}
+          onLycee={openLycee}
+          onEcole={openEcole}
+          onPasserelle={openPasserelle}
+          onMot={showMot}
         />
       ) : null}
     </>

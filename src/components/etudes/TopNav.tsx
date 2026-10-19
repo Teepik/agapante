@@ -1,42 +1,52 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Icon } from "./ui";
+import { BrandMark, Icon } from "./ui";
 
 export const SECTIONS = [
-  { id: "plan", label: "Le plan" },
-  { id: "boussole", label: "Boussole" },
-  { id: "itineraires", label: "Itinéraires" },
-  { id: "passerelles", label: "Passerelles" },
-  { id: "lycee", label: "Lycée" },
+  { id: "carte", label: "Carte" },
+  { id: "test", label: "Test" },
+  { id: "parcours", label: "Parcours" },
+  { id: "lycees", label: "Lycées" },
   { id: "specialites", label: "Spécialités" },
   { id: "ecoles", label: "Écoles" },
-  { id: "frise", label: "Frise" },
+  { id: "passerelles", label: "Passerelles" },
+  { id: "calendrier", label: "Calendrier" },
   { id: "lexique", label: "Lexique" },
 ] as const;
 
-export function TopNav({ visited, total }: { visited: number; total: number }) {
-  const [active, setActive] = useState(-1);
-  const [open, setOpen] = useState(false);
+export function TopNav({
+  savedCount,
+  onSearch,
+  onOpenList,
+}: {
+  savedCount: number;
+  onSearch: () => void;
+  onOpenList: () => void;
+}) {
+  const [active, setActive] = useState<string | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [menu, setMenu] = useState(false);
+  const [mac, setMac] = useState(true);
+
+  useEffect(() => {
+    setMac(/Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent));
+  }, []);
 
   useEffect(() => {
     const els = SECTIONS.map((s) => document.getElementById(s.id)).filter((el): el is HTMLElement => Boolean(el));
-    if (!els.length) return;
     const io = new IntersectionObserver(
       (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            const i = SECTIONS.findIndex((s) => s.id === entry.target.id);
-            if (i >= 0) setActive(i);
-          }
-        }
+        for (const entry of entries) if (entry.isIntersecting) setActive(entry.target.id);
       },
-      { rootMargin: "-40% 0px -55% 0px" },
+      { rootMargin: "-35% 0px -60% 0px" },
     );
     els.forEach((el) => io.observe(el));
     const onScroll = () => {
-      if (window.scrollY < window.innerHeight * 0.35) setActive(-1);
+      setScrolled(window.scrollY > 8);
+      if (window.scrollY < window.innerHeight * 0.4) setActive(null);
     };
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => {
       io.disconnect();
@@ -45,54 +55,65 @@ export function TopNav({ visited, total }: { visited: number; total: number }) {
   }, []);
 
   useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    if (!menu) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenu(false);
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open]);
-
-  const progress = active < 0 ? 0 : active / (SECTIONS.length - 1);
-  const current = active >= 0 ? SECTIONS[active].label : "Départ";
+  }, [menu]);
 
   return (
-    <nav className={open ? "et-nav is-open" : "et-nav"} aria-label="Sections de la page">
-      <div className="et-nav__inner">
-        <a href="#top" className="et-nav__home" onClick={() => setOpen(false)}>
-          <span className="et-nav__home-plaque">Plan des études</span>
+    <nav className={scrolled ? "e-nav is-scrolled" : "e-nav"} aria-label="Sections de la page">
+      <div className="e-nav__in">
+        <a href="#top" className="e-brand" onClick={() => setMenu(false)}>
+          <BrandMark />
+          études
         </a>
 
-        <button
-          type="button"
-          className="et-nav__toggle"
-          aria-expanded={open}
-          aria-controls="et-nav-stations"
-          onClick={() => setOpen((v) => !v)}
-        >
-          <span className="et-nav__toggle-k">Station</span>
-          <span className="et-nav__toggle-v">{current}</span>
-          <Icon name="chevron-down" />
-        </button>
-
-        <ol id="et-nav-stations" className="et-nav__line" style={{ ["--p" as string]: progress }}>
-          {SECTIONS.map((s, i) => (
-            <li key={s.id} className={i < active ? "is-past" : i === active ? "is-here" : ""}>
-              <a href={`#${s.id}`} aria-current={i === active ? "location" : undefined} onClick={() => setOpen(false)}>
-                <span className="et-nav__dot" aria-hidden="true" />
-                <span className="et-nav__label">{s.label}</span>
-              </a>
-            </li>
+        <div className="e-nav__links">
+          {SECTIONS.map((s) => (
+            <a key={s.id} href={`#${s.id}`} aria-current={active === s.id ? "true" : undefined}>
+              {s.label}
+            </a>
           ))}
-        </ol>
+        </div>
 
-        <p className="et-nav__carnet" title="Stations du plan déjà ouvertes">
-          <span className="et-nav__carnet-k">Carnet</span>
-          <span className="et-nav__carnet-v">
-            {visited}/{total}
-          </span>
-        </p>
+        <div className="e-nav__tools">
+          <button type="button" className="e-nav__search" onClick={onSearch} aria-label="Rechercher dans la page">
+            <Icon name="search" />
+            <span className="e-nav__search-text">Rechercher</span>
+            <span className="e-kbd">{mac ? "⌘K" : "Ctrl K"}</span>
+          </button>
+          <button type="button" className="e-nav__list" onClick={onOpenList}>
+            <Icon name="bookmark" />
+            <span className="e-nav__list-text">Ma liste</span>
+            <span className="e-num" aria-label={`${savedCount} éléments`}>
+              {savedCount}
+            </span>
+          </button>
+          <button
+            type="button"
+            className="e-iconbtn e-nav__menu"
+            aria-expanded={menu}
+            aria-controls="e-menu"
+            aria-label={menu ? "Fermer le menu" : "Ouvrir le menu"}
+            onClick={() => setMenu((v) => !v)}
+          >
+            <Icon name={menu ? "close" : "menu"} />
+          </button>
+        </div>
       </div>
-      <div className="et-nav__progress" aria-hidden="true">
-        <span style={{ transform: `scaleX(${active < 0 ? 0 : (active + 1) / SECTIONS.length})` }} />
+      <div id="e-menu" className="e-menu" hidden={!menu}>
+        {SECTIONS.map((s) => (
+          <a
+            key={s.id}
+            href={`#${s.id}`}
+            aria-current={active === s.id ? "true" : undefined}
+            onClick={() => setMenu(false)}
+          >
+            {s.label}
+            <Icon name="chevron-right" width={18} height={18} />
+          </a>
+        ))}
       </div>
     </nav>
   );

@@ -15,7 +15,7 @@ export type Passerelle = {
   who?: string;
   note?: string;
   /** Tracé sur le plan, quand la passerelle relie deux points éloignés. */
-  draw?: { from: string; kind: "bypass" | "route"; via?: "A" | "B" | "B2" | "C"; dxTo?: number };
+  draw?: { from: string; kind: "bypass" | "route"; via?: "low" | "high" | "top" };
 };
 
 export type DoubleCursus = {
@@ -78,7 +78,7 @@ export const passerelles: Passerelle[] = frTypo([
     when: "En fin de khâgne",
     how: "Les écrits de la banque d'épreuves littéraires (BEL) ouvrent les écoles de commerce de la BCE et d'Ecricome aux khâgneux, sans changer de prépa : les mêmes copies servent à plusieurs concours.",
     note: "La BEL ouvre aussi Saint-Cyr, le CELSA, l'École du Louvre et des écoles d'interprètes. Les IEP de Lille, Lyon et Aix l'ont quittée en 2026.",
-    draw: { from: "khagne", kind: "route", via: "A" },
+    draw: { from: "concours-lettres", kind: "route", via: "top" },
   },
   {
     id: "prepas-officiers",
@@ -91,7 +91,7 @@ export const passerelles: Passerelle[] = frTypo([
     when: "En fin de prépa",
     how: "Saint-Cyr recrute dans les trois familles de prépas : en 2026, 83 places en sciences, 40 par la prépa ECG et 37 en lettres. L'École navale et l'École de l'air et de l'espace recrutent dans les prépas scientifiques.",
     note: "Tu peux passer un concours d'officier en plus de tes concours habituels.",
-    draw: { from: "prepa-scientifique", kind: "route", via: "A", dxTo: 0 },
+    draw: { from: "prepa-scientifique", kind: "route", via: "low" },
   },
   {
     id: "titres-officiers",
@@ -127,7 +127,7 @@ export const passerelles: Passerelle[] = frTypo([
     when: "Après bac+5",
     how: "Avec un master, un diplôme d'ingénieur, un diplôme d'école de commerce au grade de master ou un doctorat, tu peux entrer directement en 2e ou 3e année de médecine, de pharmacie, d'odontologie ou de maïeutique. Le dossier se dépose avant la mi-mars, puis vient un entretien avec un jury ; chaque université fixe ses places (en 2026 à Paris Cité : 38 en médecine, 24 en pharmacie). Deux tentatives sont permises.",
     note: "La réforme des études de santé prévoit aussi une passerelle dès bac+3, pour environ 5 % des places de 2e année : un projet encore en discussion.",
-    draw: { from: "u-sciences", kind: "route", via: "B" },
+    draw: { from: "u-sciences", kind: "route", via: "high" },
   },
   {
     id: "licence-ens",
@@ -151,7 +151,7 @@ export const passerelles: Passerelle[] = frTypo([
     title: "De la licence au master de Sciences Po",
     when: "Après bac+3",
     how: "Les masters de Sciences Po s'ouvrent dès bac+3, sur dossier puis entretien. Les IEP du réseau ScPo recrutent aussi en master : à Sciences Po Lille en 2026, dossier, essai et oral, avec jusqu'à dix places par majeure.",
-    draw: { from: "u-lettres", kind: "route", via: "B2" },
+    draw: { from: "u-lettres", kind: "route", via: "high" },
   },
   {
     id: "reorientation",
