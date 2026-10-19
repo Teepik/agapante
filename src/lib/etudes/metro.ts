@@ -50,7 +50,7 @@ export const METRO_LINES: MetroLine[] = etTypo([
     lane: "u",
     name: "Université",
     short: "Université",
-    pitch: "Licence, master, doctorat : la voie la plus ouverte.",
+    pitch: "Licence, master, doctorat : une voie ouverte à tous les bacheliers, jusqu'à bac+8.",
     horizon: "De bac+3 à bac+8",
   },
 ]);
@@ -155,7 +155,7 @@ export const STOPS: Stop[] = etTypo([
     duree: "2 ans",
     lieu: "dans l'école",
     entree: "Sur Parcoursup, souvent par un concours commun",
-    cout: "De 178 € par an dans le public à 11 499 € dans le privé",
+    cout: "178 € par an dans le public, 9 000 à 11 500 € dans le privé",
   },
   {
     id: "cycle-postbac",
@@ -294,6 +294,7 @@ export const METRO_FICHES: Record<string, StationContent> = etTypo({
       "https://www.enseignementsup-recherche.gouv.fr/fr/mon-master-la-phase-principale-d-admission-debute-mercredi-3-juin-103007",
       "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2026-05/nf-sies-2026-10-40383.pdf",
       "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2025-12/nf-sies-2025-32-38737.pdf",
+      "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2026-05/bilans-acad-miques-mon-master-2025-40254.pdf",
       "https://www.onisep.fr/formation/apres-le-bac-les-etudes-superieures/conseils-et-strategies-d-etudes/reussir-en-master/franchir-la-selection-a-l-entree-en-m1",
     ],
   },

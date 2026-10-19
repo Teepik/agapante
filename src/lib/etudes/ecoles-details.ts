@@ -1544,7 +1544,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
   },
   epita: {
     pourquoi:
-      "L'EPITA forme des ingénieurs en informatique. Les cinq métiers les plus fréquents à la sortie : ingénieur développement, consultant, ingénieur cybersécurité et réseaux, ingénieur data et IA, chef de projet. Promotion 2024 : salaire médian de 47 200 € brut par an avec primes en France, 77 % des élèves embauchés avant le diplôme, 98 % des diplômés en poste moins de 2 mois après leur recherche.",
+      "L'EPITA forme des ingénieurs en informatique. Les cinq métiers les plus fréquents à la sortie : ingénieur développement, consultant, ingénieur cybersécurité et réseaux, ingénieur data et IA, chef de projet. Promotion 2024 : salaire médian de 47 200 € brut par an avec primes en France, 77 % des élèves embauchés avant le diplôme, 98 % des diplômés en recherche d'emploi trouvent un poste en moins de 2 mois.",
     apprendre:
       "Deux ans de cycle préparatoire, puis 3 ans de cycle ingénieur : tronc commun en 1re année avec projets et « piscines » (semaines intensives de programmation), stage d'un semestre en 2e année, puis une majeure de 600 heures parmi 19, de l'IA et la data science à la cybersécurité, l'informatique quantique, l'image ou l'IA appliquée à la santé. Stage de fin d'études d'environ 6 mois, en France ou à l'étranger.",
     specificite:
@@ -1650,7 +1650,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         date: "rentrée 2026",
       },
       {
-        label: "Frais annuels du premier cycle (non boursier)",
+        label: "Frais annuels du premier cycle (tarif plein)",
         valeur: "8 280 €",
         source: "https://www.esiee.fr/formations/ingenieur/frais-de-scolarite-et-aides-financieres",
         date: "2026-2027",
@@ -2473,13 +2473,13 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
     apprendre:
       "1re année : tronc commun (maths, physique, mécanique, numérique, langues) et un mois de stage. 2e année : un champ (maths appliquées, mécanique ou numérique) et un stage de recherche d'au moins 12 semaines. 3e année : une spécialisation, dont 7 à Brest (génie maritime, énergies en mer, hydrographie et océanographie, matériaux et structures, robotique, pyrotechnie, systèmes d'observation), puis le stage de fin d'études. 16 semaines à l'étranger.",
     specificite:
-      "Depuis la fusion de 2025, ENSTA Paris et ENSTA Bretagne forment une seule école de l'Institut Polytechnique de Paris, avec deux campus, Brest et Palaiseau. Toute la promotion Défense & Sécurité commence à Brest, et ses élèves IETA sont payés par la DGA pendant leurs études.",
+      "Depuis le 1er janvier 2025, ENSTA Paris et ENSTA Bretagne forment une seule école de l'Institut Polytechnique de Paris, avec deux campus, Brest et Palaiseau. Toute la promotion Défense & Sécurité commence à Brest, et ses élèves IETA sont payés par la DGA.",
     chiffres: [
       {
-        label: "Places du cycle généraliste au concours Mines-Ponts (statut étudiant, deux campus)",
-        valeur: "232 (78 MP, 71 PSI, 52 PC, 14 MPI, 14 PT, 3 TSI)",
-        source:
-          "https://www.ensta.fr/formations/catalogue-de-formations/trouver-ma-formation/formation-dingenieur-generaliste-ensta",
+        label: "Places au concours Mines-Ponts, campus de Brest",
+        valeur: "91 (34 PSI, 26 MP, 25 PC, 6 PT)",
+        source: "https://concoursminesponts.fr/wp-content/uploads/2025/12/notice-des-ecoles-2026-22.12.25.pdf",
+        date: "concours 2026",
       },
       {
         label: "Places Défense & Sécurité au concours Mines-Télécom",
@@ -2506,7 +2506,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.ensta.fr/formations/catalogue-de-formations/admissions",
       "https://www.ensta.fr/formations/formation-dingenieur-defense-securite",
       "https://www.ensta.fr/formations/ingenieurs/ingenieur-generaliste/un-large-choix-dexpertise-en-3e-annee",
-      "https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054569048",
+      "https://concoursminesponts.fr/wp-content/uploads/2025/12/notice-des-ecoles-2026-22.12.25.pdf",
     ],
   },
   ensea: {
@@ -2557,7 +2557,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
     pourquoi:
       "L'ENSIIE forme des ingénieurs en informatique et en mathématiques appliquées, avec une base de gestion d'entreprise. Ses parcours mènent au logiciel sûr, à la cybersécurité, au calcul intensif et aux données massives, aux jeux vidéo et à la réalité virtuelle. L'école affiche 44 000 € de salaire d'embauche et 80 % de diplômés embauchés au bout de trois mois.",
     apprendre:
-      "Tronc commun en 1re année : informatique, mathématiques appliquées, gestion, entrepreneuriat. Dès la 2e année, un parcours : mathématiques appliquées, ingénierie logicielle (programmation sûre, sécurité), interactions numériques (jeux vidéo, réalité virtuelle), calcul intensif et données massives. Stages de 8 et 10 semaines, projet de 6 mois en 3e année, puis un semestre d'études ou 16 semaines de stage à l'étranger.",
+      "Tronc commun en 1re année : informatique, mathématiques appliquées, gestion, entrepreneuriat. Dès la 2e année, un parcours : mathématiques appliquées, ingénierie logicielle (programmation sûre, sécurité), interactions numériques (jeux vidéo, réalité virtuelle), calcul intensif et données massives. Stages de 8 et 10 semaines, projet de 6 mois en 3e année ; à l'étranger, un semestre d'études ou 16 semaines de stage.",
     specificite:
       "Associée depuis 2017 à l'Université Paris-Saclay et à l'Institut Mines-Télécom, l'école ouvre 12 masters en bi-cursus en 3e année et un double cursus ingénieur-manager de 4 ans avec IMT Business School.",
     chiffres: [
@@ -2595,11 +2595,53 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://backend.deqar.eu/reports/HCERES/2026/140404/20260618_1419_e2026-ev-0912266u-dee-etab260025402-rd.pdf",
     ],
   },
+  "isae-ensma": {
+    pourquoi:
+      "Les diplômés travaillent surtout dans l'aéronautique et le spatial, puis dans l'automobile, le ferroviaire, l'énergie et les bureaux d'études, comme ingénieur calcul, R&D, conception ou développement. Premiers employeurs : Safran, Airbus, MBDA, Dassault Aviation, ArianeGroup, Thales, CNES, Renault, Stellantis, Alstom, EDF. La moitié des élèves sont embauchés avant le diplôme.",
+    apprendre:
+      "1re année de tronc commun scientifique, technique et humain. En 2e année, les disciplines de l'ingénieur, un stage ouvrier de 1 à 2 mois et un stage ingénieur de 3 à 4 mois. En 3e année, une option parmi 7, dont aérodynamique, structures, énergétique, thermique, matériaux et informatique, puis un projet de fin d'études de 3 à 6 mois. 6 mois à l'étranger en moyenne.",
+    specificite:
+      "Au Futuroscope depuis 1993, l'école consacre 17 000 de ses 32 000 m² à la recherche, avec l'Institut Pprime, laboratoire du CNRS d'environ 600 personnes. Elle fait partie du Groupe ISAE, avec ISAE-SUPAERO, l'ENAC et l'École de l'air et de l'espace.",
+    chiffres: [
+      {
+        label: "Places au concours Mines-Télécom",
+        valeur: "151 (58 PSI, 55 MP, 28 PC, 5 PT, 3 MPI, 2 TSI)",
+        source: "https://www.ensma.fr/formation-ingenieur-statut-etudiant/admission-3/",
+        date: "rentrée 2026",
+      },
+      {
+        label: "Élèves-ingénieurs",
+        valeur: "700, dont 38 % de boursiers",
+        source: "https://www.ensma.fr/wp-content/uploads/2025/06/depliant-ISAE-ENSMA-2025.pdf",
+        date: "2025",
+      },
+      {
+        label: "Élèves embauchés avant le diplôme",
+        valeur: "50 %",
+        source: "https://www.ensma.fr/wp-content/uploads/2025/06/depliant-ISAE-ENSMA-2025.pdf",
+        date: "2025",
+      },
+      {
+        label: "Salaire brut moyen à la sortie",
+        valeur: "37 500 € par an",
+        source: "https://www.ensma.fr/wp-content/uploads/2025/06/depliant-ISAE-ENSMA-2025.pdf",
+        date: "2025",
+      },
+    ],
+    sources: [
+      "https://www.ensma.fr/en/engineering-program/admission-3/",
+      "https://www.ensma.fr/wp-content/uploads/2025/06/depliant-ISAE-ENSMA-2025.pdf",
+      "https://www.ensma.fr/formation-ingenieur-statut-etudiant/admission-3/",
+      "https://www.ensma.fr/formation-ingenieur-specialite-statut-apprenti/",
+      "https://www.ensma.fr/formation-ingenieur-statut-etudiant/insertion-fise/",
+      "https://www.ensma.fr/formation-ingenieur-statut-etudiant/enseignement/",
+    ],
+  },
   navale: {
     pourquoi:
       "Tu y deviens officier de la Marine nationale. À la sortie, chaque élève apte prend un premier poste de chef de quart, puis la carrière mène vers les navires de surface, les sous-marins, l'aéronautique navale ou les commandos marine. Le salaire annuel brut moyen à l'embauche atteint 32 148 € en 2025, primes en plus.",
     apprendre:
-      "La formation mêle sciences, navigation et formation militaire. En 1re année, tu choisis la filière navigation (OPS/N : systèmes de combat, détection, lutte sous la mer) ou énergie (OPS/E : propulsion, nucléaire, aéronautique). En 2e année, tu approfondis un domaine, par exemple ondes et signaux ou sciences de la donnée maritime et IA. Périodes de mer chaque année, mission Jeanne d'Arc de cinq mois, semestre d'échange possible à l'étranger.",
+      "La formation mêle sciences, navigation et formation militaire. Dès l'entrée, tu suis la filière navigation (OPS/N : systèmes de combat, détection, lutte sous la mer) ou énergie (OPS/E : propulsion, nucléaire, aéronautique). En 2e année, tu approfondis un domaine, par exemple ondes et signaux ou sciences de la donnée maritime et IA. Périodes de mer chaque année, mission Jeanne d'Arc de cinq mois, semestre d'échange possible à l'étranger.",
     specificite:
       "Tu es militaire dès le premier jour : élève-officier, puis aspirant, puis enseigne de vaisseau, avec une scolarité payée. En entrant, tu choisis un métier d'officier de carrière : l'école parle d'une carrière de 27 ans dans les forces.",
     chiffres: [
@@ -2678,6 +2720,185 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.agroparistech.fr/formation/observatoire-lemploi",
       "https://www.agroparistech.fr/vie-etudiante/financer-ses-etudes",
       "https://www.concours-agro-veto.fr/concours/concours-cpge-bcpst",
+    ],
+  },
+  "institut-agro-rennes-angers": {
+    pourquoi:
+      "Tu peux devenir conseiller agricole, consultant en filières et stratégies territoriales, responsable R&D, ingénieur bio-informatique ou environnement, chargé de mission agroécologie et biodiversité, ou ingénieur en horticulture pour une collectivité, un centre de recherche ou une entreprise de production. Le premier emploi arrive en 1,8 mois en moyenne.",
+    apprendre:
+      "À Rennes, la spécialité agronomie ouvre sur 17 spécialisations, de l'agroécologie à la statistique, à l'animal ou à la mer (halieutique). À Angers, à côté du paysage, la spécialité horticulture propose par exemple innovations végétales urbaines ou Seeds and Plant Propagation. Les stages totalisent 11 à 18 mois, en France ou à l'étranger, et chaque étudiant part à l'international.",
+    specificite:
+      "Quatre cursus d'ingénieur sur deux campus : agronomie et alimentation à Rennes, horticulture et paysage à Angers, où l'école forme des ingénieurs en paysage. Les étudiantes représentent 70 % des effectifs et les boursiers 30 %.",
+    chiffres: [
+      {
+        label: "Places au concours Agro-Véto BCPST",
+        valeur: "190 (130 en agronomie, 60 en horticulture et paysage)",
+        source: "https://www.concours-agro-veto.fr/concours/concours-cpge-bcpst",
+      },
+      {
+        label: "Places au concours Agro-Véto apprentissage",
+        valeur: "60 (agronomie 20, agroalimentaire 20, horticulture 10, paysage 10)",
+        source: "https://www.concours-agro-veto.fr/concours/concours-apprentissage",
+      },
+      {
+        label: "Durée moyenne d'accès au premier emploi",
+        valeur: "1,8 mois",
+        source:
+          "https://www.institut-agro-rennes-angers.fr/sites/www.institut-agro-rennes-angers.fr/files/fichiers/bibliotheque-de-documents/relation-entreprises/Institut-Agro-Rennes-Angers-plaquette-taxe-apprentissage.pdf",
+        date: "novembre 2025",
+      },
+      {
+        label: "Étudiants boursiers",
+        valeur: "30 %",
+        source:
+          "https://www.institut-agro-rennes-angers.fr/sites/www.institut-agro-rennes-angers.fr/files/fichiers/bibliotheque-de-documents/relation-entreprises/Institut-Agro-Rennes-Angers-plaquette-taxe-apprentissage.pdf",
+        date: "novembre 2025",
+      },
+    ],
+    sources: [
+      "https://www.concours-agro-veto.fr/concours/concours-cpge-bcpst",
+      "https://www.concours-agro-veto.fr/concours/concours-apprentissage",
+      "https://www.institut-agro-rennes-angers.fr/sites/www.institut-agro-rennes-angers.fr/files/fichiers/bibliotheque-de-documents/relation-entreprises/Institut-Agro-Rennes-Angers-plaquette-taxe-apprentissage.pdf",
+      "https://www.institut-agro-rennes-angers.fr/sites/www.institut-agro-rennes-angers.fr/files/fichiers/bibliotheque-de-documents/formation/plaquettes/Institut-Agro-Rennes-Angers-feuillet-apprentissage-ingenieur-agronome.pdf",
+      "https://www.institut-agro-rennes-angers.fr/files/fichiers/bibliotheque-de-documents/formation/plaquettes/Institut-Agro-Rennes-Angers-feuillet-apprentissage-ingenieur-horticulture.pdf",
+      "https://www.institut-agro-rennes-angers.fr/files/fichiers/bibliotheque-de-documents/formation/scolarite/Rentree-Calendrier-Rennes.pdf",
+      "https://www.institut-agro-montpellier.fr/formations/catalogue-des-formations/recherche-d-une-formation/ingenieur-agronome",
+    ],
+  },
+  "institut-agro-montpellier": {
+    pourquoi:
+      "Les diplômés rejoignent l'agroalimentaire, les services aux entreprises, les collectivités, la recherche, la production agricole ou des organisations internationales, comme chargé d'études eau-environnement, responsable R&D, conseiller agricole, chef de projet SIG ou œnologue. 40 % des ingénieurs agronomes reçoivent une offre d'embauche avant le diplôme, et le salaire brut moyen atteint 35 000 € par an un an après.",
+    apprendre:
+      "En 1re année, un tronc commun avec un stage dans une entreprise agricole. En 2e année, une option parmi 4 puis un parcours parmi 7, avec un semestre possible dans une université partenaire. En 3e année, une option parmi une quinzaine, de la vigne et du vin à l'agriculture numérique (AgroTIC). Stages d'assistant ingénieur (2 à 3 mois) et de fin d'études (5 à 6 mois), et au moins 16 semaines à l'étranger.",
+    specificite:
+      "Le bouquet vigne et vin ouvre sur le diplôme national d'œnologue, et le cursus SAADS forme aux systèmes agricoles et agroalimentaires durables des pays du Sud. 25 % des étudiants viennent de l'étranger.",
+    chiffres: [
+      {
+        label: "Places au concours Agro-Véto BCPST",
+        valeur: "125 (113 en agronomie, 12 en SAADS)",
+        source: "https://www.concours-agro-veto.fr/concours/concours-cpge-bcpst",
+      },
+      {
+        label: "Salaire brut annuel moyen un an après le diplôme",
+        valeur: "35 000 €",
+        source:
+          "https://www.institut-agro-montpellier.fr/sites/supagro/files/documents/2026/01/06/Plaquette-Ingenieurs-Institut-Agro-Montpellier-2026.pdf",
+        date: "enquête d'avril 2025",
+      },
+      {
+        label: "Ingénieurs agronomes avec une offre d'embauche avant le diplôme",
+        valeur: "40 %",
+        source:
+          "https://www.institut-agro-montpellier.fr/sites/supagro/files/documents/2026/01/06/Plaquette-Ingenieurs-Institut-Agro-Montpellier-2026.pdf",
+        date: "enquête d'avril 2025",
+      },
+      {
+        label: "Droits de scolarité",
+        valeur: "1 990 € par an, plus 105 € de CVEC",
+        source:
+          "https://www.institut-agro-montpellier.fr/formations/catalogue-des-formations/recherche-d-une-formation/ingenieur-agronome",
+        date: "2025-2026",
+      },
+    ],
+    sources: [
+      "https://www.institut-agro-montpellier.fr/formations/catalogue-des-formations/recherche-d-une-formation/ingenieur-agronome",
+      "https://www.institut-agro-montpellier.fr/sites/supagro/files/documents/2026/01/06/Plaquette-Ingenieurs-Institut-Agro-Montpellier-2026.pdf",
+      "https://www.institut-agro-montpellier.fr/formations/catalogue-des-formations/ingenieurs",
+      "https://www.institut-agro-montpellier.fr/formations/frais-de-scolarite-soutien-financier/droits-scolarite",
+      "https://www.institut-agro-montpellier.fr/sites/supagro/files/documents/2026/06/04/D%C3%A9cision%20n%C2%B02026-252-IAM%20relative%20aux%20tarifs%20de%20formations%20et%20aux%20services%20rendus%20pour%20l%27ann%C3%A9e%202026-2027.pdf",
+      "https://www.concours-agro-veto.fr/concours/concours-cpge-bcpst",
+      "https://www.concours-agro-veto.fr/concours/concours-apprentissage",
+    ],
+  },
+  ensic: {
+    pourquoi:
+      "Tu deviens ingénieur en génie chimique et génie des procédés : tu conçois, pilotes et améliores des procédés de production. Les diplômés travaillent dans la chimie, l'énergie, la pharmacie, l'environnement ou l'agroalimentaire, chez BASF, Air Liquide, TotalEnergies, Sanofi, L'Oréal ou Veolia. L'école annonce 100 % de diplômés en emploi en moins de 6 mois et un salaire moyen de 44 300 € à la sortie.",
+    apprendre:
+      "Un tronc commun en sciences fondamentales et génie des procédés, avec des projets tout au long du cursus (innovation, conception, R&D). Tu choisis ensuite un domaine : procédés pour l'énergie et l'environnement, produits innovants (de la chimie aux procédés) ou procédés pour les biotechnologies. Plus de 7 mois de stages en industrie, et un séjour à l'étranger pour chaque élève, de 6 mois en moyenne, dans plus de 50 universités partenaires.",
+    specificite:
+      "Une école de chimie en plein centre de Nancy, adossée à un laboratoire commun avec le CNRS. Elle accueille aussi des étudiants en pharmacie : 20 places en 2e année et une voie d'ingénieur-pharmacien par apprentissage.",
+    chiffres: [
+      {
+        label: "Places au CCINP, rentrée 2026",
+        valeur: "64 (PC chimie 50, MP 6, PSI 6, TPC 2)",
+        source: "https://www.concours-commun-inp.fr/_resource/R%C3%A8glement_VF_13-05_26.pdf?download=true",
+        date: "2026",
+      },
+      {
+        label: "Salaire moyen à la sortie",
+        valeur: "44 300 € par an",
+        source: "https://ensic.univ-lorraine.fr/sites/default/files/users/pdf/formations/brochure_I2C_2026_2027.pdf",
+        date: "brochure 2026-2027",
+      },
+      {
+        label: "Diplômés en emploi en moins de 6 mois",
+        valeur: "100 %",
+        source: "https://ensic.univ-lorraine.fr/sites/default/files/users/pdf/formations/brochure_I2C_2026_2027.pdf",
+        date: "brochure 2026-2027",
+      },
+      {
+        label: "Élèves qui partent à l'étranger",
+        valeur: "100 %, pour 6 mois en moyenne",
+        source: "https://ensic.univ-lorraine.fr/sites/default/files/users/pdf/formations/brochure_I2C_2026_2027.pdf",
+        date: "brochure 2026-2027",
+      },
+    ],
+    sources: [
+      "https://ensic.univ-lorraine.fr/",
+      "https://ensic.univ-lorraine.fr/sites/default/files/users/pdf/formations/brochure_I2C_2026_2027.pdf",
+      "https://ensic.univ-lorraine.fr/fr/formations/ingenieur-des-industries-chimiques-i2c/admissions-en-cycle-ingenieur",
+      "https://ensic.univ-lorraine.fr/fr/formations/ingenieur-specialite-genie-chimique-par-apprentissage",
+      "https://www.concours-commun-inp.fr/_resource/R%C3%A8glement_VF_13-05_26.pdf?download=true",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-pc.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-mp.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-psi.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-tpc.html",
+      "https://www.service-public.gouv.fr/particuliers/vosdroits/F2865",
+    ],
+  },
+  ecpm: {
+    pourquoi:
+      "Tu deviens ingénieur chimiste, surtout en R&D et innovation : ingénieur de recherche ou d'études, chef de projet, ou docteur après une thèse. Les diplômés travaillent dans la santé, les matériaux, la cosmétique, l'énergie, l'automobile ou l'agroalimentaire ; 70 % sont dans l'industrie. Selon la brochure 2026, 78 % ont un emploi moins de 2 mois après le diplôme, payé 38 000 à 40 000 € bruts par an hors primes.",
+    apprendre:
+      "Trois semestres de tronc commun : sciences analytiques, chimie moléculaire, ingénierie des polymères, matériaux fonctionnels et nanosciences. En 2e année, tu choisis une majeure dans l'un de ces domaines, ou chimie et intelligence artificielle. Environ 12 mois de stages, dont un à l'étranger. En 3e année : année à Strasbourg, échange ou double diplôme à l'étranger, autre école de la Fédération Gay-Lussac, ou contrat de professionnalisation.",
+    specificite:
+      "Une école trilingue : anglais en 1re langue, allemand ou espagnol en 2e, et environ 40 % des cours scientifiques donnés en anglais et en allemand. Huit doubles diplômes, dont trois avec l'Allemagne. L'école compte parmi ses diplômés Jean-Pierre Sauvage, prix Nobel de chimie 2016.",
+    chiffres: [
+      {
+        label: "Places au CCINP en PC chimie, rentrée 2026",
+        valeur: "58 (50 pour l'ingénieur chimiste, 8 pour ChemBiotech), plus 3 en TPC",
+        source: "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-pc.html",
+        date: "2026",
+      },
+      {
+        label: "Salaire d'embauche, brut annuel hors primes",
+        valeur: "38 000 à 40 000 €",
+        source: "https://ecpm.unistra.fr/websites/ecpm/Plaquettes/INGE_2026_web.pdf",
+        date: "brochure 2026",
+      },
+      {
+        label: "Diplômés en emploi moins de 2 mois après le diplôme",
+        valeur: "78 %",
+        source: "https://ecpm.unistra.fr/websites/ecpm/Plaquettes/INGE_2026_web.pdf",
+        date: "brochure 2026",
+      },
+      {
+        label: "Doubles diplômes à l'étranger",
+        valeur: "8 (3 en Allemagne, 4 en Espagne, 1 au Canada)",
+        source: "https://ecpm.unistra.fr/websites/ecpm/Plaquettes/INGE_2026_web.pdf",
+        date: "brochure 2026",
+      },
+    ],
+    sources: [
+      "https://ecpm.unistra.fr/",
+      "https://ecpm.unistra.fr/formations/ingenieur-chimiste-ecpm/",
+      "https://ecpm.unistra.fr/formations/ingenieur-chimiste-ecpm/admissions/",
+      "https://ecpm.unistra.fr/formations/ingenieur-chemplast/",
+      "https://ecpm.unistra.fr/websites/ecpm/Plaquettes/INGE_2026_web.pdf",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-pc.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-tpc.html",
+      "https://www.concours-commun-inp.fr/_resource/R%C3%A8glement_VF_13-05_26.pdf?download=true",
+      "https://www.service-public.gouv.fr/particuliers/vosdroits/F2865",
     ],
   },
 });

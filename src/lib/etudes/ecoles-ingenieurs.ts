@@ -166,8 +166,8 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     recrutement: ["postbac", "prepa", "titre"],
     alternance:
       "Possible après la 1re année : biotechnologies, génie industriel, génie mécanique, informatique, télécoms, génie électrique (ITII)",
-    une: "Taux d'accès Parcoursup 2025 : 13 %",
-    uneRang: 13,
+    une: "Taux d'accès Parcoursup 2025 : 12 %",
+    uneRang: 12,
     uneVoie: "postbac",
   },
   utc: {
@@ -220,7 +220,6 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
   "esiee-paris": {
     accroche:
       "ESIEE Paris forme des ingénieurs du numérique, de l'électronique et de l'industrie : informatique, cybersécurité, data et IA, systèmes embarqués, santé numérique, énergie, génie civil.",
-    statut: "prive",
     recrutement: ["titre", "postbac", "prepa"],
     alternance:
       "Cycle ingénieur en apprentissage dès la 1re année, après un bac + 2 ou le premier cycle : 418 places dans 10 filières, de l'IA au génie civil",
@@ -268,7 +267,7 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     statut: "public",
     recrutement: ["prepa", "titre"],
     alternance:
-      "Apprentissage sur les trois ans, avec une 1re année spécifique, par un concours dédié après un BTSA, un BTS, un BUT ou une licence pro ; ou sur les deux dernières années, après la 1re année. Mobilité internationale de 9 semaines au moins pour les apprentis. 50 places au concours apprentissage 2026.",
+      "Sur les trois ans (concours dédié après un BTSA, un BTS, un BUT ou une licence pro) ou sur les deux dernières années ; 50 places au concours 2026",
   },
 });
 
@@ -550,8 +549,8 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     recrutement: ["postbac", "prepa", "titre"],
     alternance:
       "De la 3e à la 5e année : électronique, systèmes embarqués et télécoms (E-SET), génie mécanique et automatique",
-    une: "Taux d'accès Parcoursup 2025 : 21 %",
-    uneRang: 21,
+    une: "Taux d'accès Parcoursup 2025 : 20 %",
+    uneRang: 20,
     uneVoie: "postbac",
   },
   {
@@ -1006,12 +1005,10 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     line: "sciences",
     ville: "Albi (campus Jarlard, 24 ha)",
     kind: "École d'ingénieurs publique",
-    acces:
-      "Concours Mines-Télécom pour la filière étudiant : MP, PC, PSI, MPI, PT, TSI, BCPST. Filière alternant sur dossier et épreuves (plateforme commune de l'IMT) après une CPGE (TPC comprise), un BTS, un BUT 2e année, une L2 ou une prépa ATS. Admission sur titres commune avec IMT Mines Alès et IMT Nord Europe : après une L3 ou un BUT en 1re année, après un M1 en 2e année. Entrée possible après 2 ou 3 ans de CUPGE à l'INU Champollion d'Albi.",
+    acces: "Prépa MP, PC, PSI, MPI, PT, TSI, BCPST, puis concours Mines-Télécom ; aussi sur titre et en alternance",
     duree: "3 ans après bac + 2",
-    places:
-      "Rentrée 2026, filière étudiant (Concours Mines-Télécom) : 156 places, dont 45 en MP, 45 en PC, 45 en PSI, 8 en PT, 7 en BCPST, 4 en MPI et 2 en TSI. Places en alternance et sur titres : à demander à l'école.",
-    cout: "Filière étudiant : 3 200 € par an pour les ressortissants de l'UE et de l'EEE, 5 700 € pour les autres (tarifs affichés en 2026). Boursiers exonérés ; réduction de 50 % si les revenus dépassent d'au plus 3 000 € le plafond des bourses. Filière alternant : formation payée par l'entreprise, l'apprenti touche un salaire.",
+    places: "Rentrée 2026 : 156 places au concours Mines-Télécom, dont 45 en MP, 45 en PC et 45 en PSI",
+    cout: "3 200 € par an pour l'UE (tarif affiché en 2026) ; boursiers exonérés ; en alternance, formation payée et salaire versé",
     formations:
       "Tronc commun scientifique et technique en 1re année ; cours au choix et projet de recherche, d'innovation ou de création d'entreprise en 2e année ; puis une option sur 5 en 3e année : énergies renouvelables, procédés pharmaceutiques et agroalimentaires, matériaux pour les transports, génie industriel, ingénierie de la donnée.",
     debouches:
@@ -1024,7 +1021,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "public",
     recrutement: ["prepa", "titre"],
     alternance:
-      "Filière alternant dès la 1re année, sur 3 ans, avec 4 options : énergies renouvelables, production et construction durables ; procédés pharmaceutiques, agroalimentaires et cosmétiques ; matériaux et procédés avancés pour les transports ; génie industriel pour la performance des organisations. Chaque année : 450 h à l'école et 1 150 h en entreprise. Mobilité internationale de 9 semaines. Contrat signé avant 30 ans.",
+      "Dès la 1re année, en 3 ans, 4 options : énergies renouvelables, procédés pharmaceutiques et agroalimentaires, matériaux pour les transports, génie industriel",
   },
   {
     id: "imt-mines-ales",
@@ -1033,12 +1030,10 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     line: "sciences",
     ville: "Alès (Gard)",
     kind: "École d'ingénieurs publique",
-    acces:
-      "Concours Mines-Télécom : MP, PC, PSI et MPI (épreuves de la banque Mines-Ponts), PT (Banque PT), TSI (banque CentraleSupélec) ; BCPST par le concours G2E. Admission sur titre après un bac + 2 (BTS, BUT 2e année, L2, CUPGE, prépa ATS), après une L3 ou un BUT en 1re année, après un M1 en 2e année. Apprentissage sur dossier et entretien après un BUT, une CPGE (ATS, PT, TSI…), une L2 ou une L3.",
+    acces: "Prépa MP, PC, PSI, MPI, PT, TSI, puis concours Mines-Télécom ; BCPST par G2E ; aussi sur titre",
     duree: "3 ans après bac + 2",
-    places:
-      "Rentrée 2026 : 224 places sur concours, dont 193 au concours Mines-Télécom en MP, PC, PSI et MPI (68 MP, 62 PSI, 58 PC, 5 MPI), 23 en PT, 6 en BCPST (G2E) et 2 en TSI. Admissions sur titres : 15 places en 1re année et 25 en 2e année, recrutement international compris (brochure 2026).",
-    cout: "3 500 € par an en 2026-2027 pour les ressortissants de l'UE et pour tous les élèves recrutés sur concours après une prépa ; 6 000 € pour les autres élèves hors UE. Boursiers du gouvernement français exonérés ; exonération de 50 % si les ressources dépassent d'au plus 3 500 € le plafond de bourse. En apprentissage, les trois années sont rémunérées.",
+    places: "Rentrée 2026 : 224 places sur concours, dont 68 en MP, 62 en PSI, 58 en PC et 23 en PT",
+    cout: "3 500 € par an en 2026-2027 (UE et recrutés sur concours) ; boursiers exonérés ; apprentis rémunérés",
     formations:
       "Un tronc commun, puis un domaine choisi en 2e année parmi 6 (environnement-énergie-risques, écoconception et matériaux, informatique et IA, industrie du futur, génie civil et bâtiment durable, ressources minérales et sous-sol), soit 26 options.",
     debouches:
@@ -1051,25 +1046,24 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "public",
     recrutement: ["prepa", "titre"],
     alternance:
-      "Trois diplômes d'ingénieur de spécialité par apprentissage, en 3 ans : Bâtiment (bâtiment durable ou énergétique du bâtiment), Informatique et réseaux (systèmes et réseaux ou développement logiciel), Mécatronique (performance industrielle ou ingénierie système). Environ 1 800 h à l'école et 2 835 h en entreprise. Entrée avant 30 ans ; 357 apprentis en 2025-2026.",
+      "3 diplômes en apprentissage sur 3 ans : Bâtiment, Informatique et réseaux, Mécatronique ; 357 apprentis en 2025-2026",
   },
   {
     id: "ensta-bretagne",
-    name: "ENSTA, campus de Brest (ex-ENSTA Bretagne) – École nationale supérieure de techniques avancées",
-    short: "ENSTA (campus de Brest)",
+    name: "ENSTA, campus de Brest (ex-ENSTA Bretagne)",
+    short: "ENSTA Brest",
     line: "sciences",
-    ville: "Brest (ancienne ENSTA Bretagne) ; second campus à Palaiseau (Paris-Saclay)",
+    ville: "Brest ; second campus à Palaiseau (Paris-Saclay)",
     kind: "École d'ingénieurs publique",
-    acces:
-      "Cycle généraliste : concours Mines-Ponts (MP, PC, PSI, MPI, PT, TSI), campus de 1re année choisi au concours ; MPI et TSI commencent à Paris-Saclay. Formation Défense & Sécurité (avec l'ISAE-SUPAERO) : concours Mines-Télécom (MP, PC, PSI, MPI, PT, TSI), statut civil ou militaire IETA choisi dans les vœux. Concours BUT et ATS organisés par l'ENSEA (apprentissage), GEI-Univ après une L3 ou un M1, dossier pour les cycles en apprentissage.",
+    acces: "Prépa MP, PC, PSI, PT, puis concours Mines-Ponts ; Mines-Télécom pour Défense & Sécurité ; aussi sur titre",
     duree: "3 ans après bac + 2",
     places:
-      "Cycle généraliste, concours Mines-Ponts : 232 places sous statut étudiant (78 MP, 71 PSI, 52 PC, 14 MPI, 14 PT, 3 TSI) et 15 places étudiant puis apprenti, pour les deux campus. Défense & Sécurité, concours Mines-Télécom 2026 : 45 places civiles et 45 places IETA, à titre indicatif.",
-    cout: "2 936 € par an en 2026-2027 pour les ressortissants de l'UE, 5 034 € hors UE (montants fixés par arrêté). Boursiers du CROUS exonérés, comme les apprentis en 2e et 3e années. Les élèves IETA, militaires, sont exonérés et rémunérés par la DGA dès le début de la formation.",
+      "Concours Mines-Ponts 2026 : 91 places à Brest ; Défense & Sécurité 2026 : 45 places civiles et 45 IETA (indicatives)",
+    cout: "2 936 € par an en 2026-2027 (UE) ; boursiers du CROUS exonérés ; élèves IETA rémunérés par la DGA",
     formations: "1re année : tronc commun (maths, physique, mécanique, numérique, langues) et un mois de stage.",
     debouches:
       "À Brest, l'ENSTA forme aux métiers de la mer et de la défense : génie maritime, énergies en mer, hydrographie et océanographie, robotique, propulsion et pyrotechnie.",
-    plus: "Depuis la fusion de 2025, ENSTA Paris et ENSTA Bretagne forment une seule école de l'Institut Polytechnique de Paris, avec deux campus, Brest et Palaiseau.",
+    plus: "Depuis le 1er janvier 2025, ENSTA Paris et ENSTA Bretagne forment une seule école de l'Institut Polytechnique de Paris, avec deux campus, Brest et Palaiseau.",
     station: "ecole-ingenieurs",
     url: "https://www.ensta.fr/",
     accroche:
@@ -1077,7 +1071,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "public",
     recrutement: ["prepa", "titre"],
     alternance:
-      "Trois cycles d'ingénieur par apprentissage, sur dossier après une CPGE, un BUT, une prépa ATS ou une L3 : systèmes embarqués ; mécanique, option architecture navale ; conception mécanique, option systèmes pyrotechniques. Le cycle généraliste ouvre aussi 15 places « étudiant puis apprenti » (apprentissage en 2e et 3e années) ; en Défense & Sécurité, la 3e année peut se faire en apprentissage.",
+      "Systèmes embarqués, architecture navale ou systèmes pyrotechniques, en 3 ans ; 16 places en apprentissage (2e et 3e années) à Paris-Saclay",
   },
   {
     id: "ensea",
@@ -1086,12 +1080,10 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     line: "sciences",
     ville: "Cergy (Val-d'Oise)",
     kind: "École d'ingénieurs publique",
-    acces:
-      "Concours CentraleSupélec (MP, PC, PSI, MPI) ; concours commun Arts et Métiers via la Banque PT (PT) et la banque CentraleSupélec (TSI) ; concours ATS organisé par l'ENSEA ; concours BUT (BUT 2e et 3e années en génie électrique) ; Pass'Ingénieur après une L2 ; admission sur dossier et oral après une licence, un M1 ou un bachelor. Apprentissage sur dossier et entretien (plateforme de l'IMT).",
+    acces: "Prépa MP, PC, PSI, MPI, puis concours CentraleSupélec ; aussi PT, TSI, ATS, BUT ou licence",
     duree: "3 ans après bac + 2",
-    places:
-      "En 2026 : 175 places au concours CentraleSupélec (70 PSI, 60 MP, 30 PC, 15 MPI), 20 en PT, 10 en TSI, 15 en ATS, 30 au concours BUT (20 en BUT 2e année, 10 en BUT 3e année), 6 par Pass'Ingénieur, 6 après une licence, 6 en 2e année après un M1. Apprentissage : 56 places en 1re année et 28 en 2e année.",
-    cout: "628 € de droits de scolarité par an (rentrée 2025, dernier tarif affiché par l'école), plus 295 € de frais payés par tous. Boursiers exonérés des droits. En apprentissage, l'entreprise finance la scolarité et l'apprenti touche un salaire.",
+    places: "En 2026 : 175 places au concours CentraleSupélec, 20 en PT, 10 en TSI, 15 en ATS ; 56 en apprentissage",
+    cout: "630 € à la rentrée 2026 (tarif national), plus 295 € de frais ; boursiers exonérés des droits ; apprentis salariés",
     formations: "Tronc commun en 1re année, avec majeures et mineures.",
     debouches: "L'ENSEA forme des ingénieurs de l'électronique, de l'informatique et des télécoms.",
     plus: "Jusqu'à 50 % de l'emploi du temps de 2e année se personnalise, et deux spécialités de 3e année se suivent en anglais.",
@@ -1101,7 +1093,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "public",
     recrutement: ["prepa", "titre"],
     alternance:
-      "Diplôme d'ingénieur ENSEA spécialité électronique et informatique industrielle, en 3 ans dès la 1re année, avec deux parcours en 3e année : systèmes numériques intégrés, réseaux et télécommunications. Entrée avant 30 ans après un BUT, un BTS, une L2, une L3 ou une CPGE. 50 à 70 % du temps en entreprise, au moins 9 semaines à l'étranger. CFA Union Orsay.",
+      "Électronique et informatique industrielle, en 3 ans dès la 1re année : systèmes numériques intégrés ou réseaux et télécoms ; 56 places en 2026",
   },
   {
     id: "ensiie",
@@ -1110,12 +1102,10 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     line: "sciences",
     ville: "Évry-Courcouronnes (Essonne)",
     kind: "École d'ingénieurs publique",
-    acces:
-      "Concours Mines-Télécom pour les prépas MP, MPI, PC, PSI et TSI. Admission sur titres en 1re année après un bac + 2 à dominante informatique ou mathématiques (licence, BUT, BTS suivi d'une prépa ATS), en 2e année après un bac + 3, de préférence un bac + 4.",
+    acces: "Prépa MP, MPI, PC, PSI, TSI, puis concours Mines-Télécom ; aussi sur titre (licence, BUT, ATS)",
     duree: "3 ans après bac + 2",
-    places:
-      "Concours Mines-Télécom : 109 places affichées pour la session 2027 (55 MP, 20 MPI, 18 PSI, 14 PC, 2 TSI). Rentrée 2023 : 119 nouveaux élèves sous statut étudiant et 21 apprentis.",
-    cout: "Droits de scolarité nationaux des écoles d'ingénieurs publiques : 601 € par an en 2023 (rapport Hcéres), 628 € à la rentrée 2025 ; 300 € de frais complémentaires facultatifs. Boursiers exonérés des droits (34 % de boursiers). Apprentis rémunérés et exonérés.",
+    places: "Concours Mines-Télécom : 109 places affichées pour la session 2027, dont 55 en MP et 20 en MPI",
+    cout: "630 € à la rentrée 2026 (tarif national des écoles publiques) ; boursiers exonérés ; apprentis rémunérés et exonérés",
     formations: "Tronc commun en 1re année : informatique, mathématiques appliquées, gestion, entrepreneuriat.",
     debouches:
       "L'ENSIIE forme des ingénieurs en informatique et en mathématiques appliquées, avec une base de gestion d'entreprise.",
@@ -1126,7 +1116,132 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
       "L'ENSIIE forme des ingénieurs en informatique et en mathématiques appliquées, avec une base de gestion d'entreprise.",
     statut: "public",
     recrutement: ["prepa", "titre"],
+    alternance: "Ingénieur en informatique sous statut d'apprenti (FISA) : 21 apprentis entrés en 2023-2024",
+  },
+  {
+    id: "isae-ensma",
+    name: "ISAE-ENSMA",
+    short: "ISAE-ENSMA",
+    line: "sciences",
+    ville: "Futuroscope, Chasseneuil-du-Poitou (près de Poitiers)",
+    kind: "École d'ingénieurs publique",
+    acces: "Prépa MP, PC, PSI, MPI, PT, TSI, puis concours Mines-Télécom ; aussi ATS et sur titre",
+    duree: "3 ans après bac + 2",
+    places: "Rentrée 2026 : 151 places au concours Mines-Télécom (58 PSI, 55 MP, 28 PC), 2 en ATS, 13 sur titres",
+    cout: "630 € de droits à la rentrée 2026 ; boursiers dispensés ; apprentis salariés",
+    formations: "1re année de tronc commun scientifique, technique et humain.",
+    debouches:
+      "Les diplômés travaillent surtout dans l'aéronautique et le spatial, puis dans l'automobile, le ferroviaire, l'énergie et les bureaux d'études, comme ingénieur calcul, R&D, conception ou développement.",
+    plus: "Au Futuroscope depuis 1993, l'école consacre 17 000 de ses 32 000 m² à la recherche, avec l'Institut Pprime, laboratoire du CNRS d'environ 600 personnes.",
+    station: "ecole-ingenieurs",
+    url: "https://www.ensma.fr/",
+    accroche:
+      "Les diplômés travaillent surtout dans l'aéronautique et le spatial, puis dans l'automobile, le ferroviaire, l'énergie et les bureaux d'études, comme ingénieur calcul, R&D, conception ou développement.",
+    statut: "public",
+    recrutement: ["prepa", "titre"],
     alternance:
-      "Formation d'ingénieur en informatique sous statut d'apprenti (FISA) : 21 apprentis entrés en 2023-2024. Apprentis rémunérés et exonérés de droits ; 2 mois en entreprise à l'étranger, ou un semestre en 3e année.",
+      "Génie industriel pour l'aéronautique et l'espace, en 3 ans, avec le CFA Sup Nouvelle-Aquitaine et le Cnam Nouvelle-Aquitaine",
+  },
+  {
+    id: "institut-agro-rennes-angers",
+    name: "L'Institut Agro Rennes-Angers",
+    short: "Institut Agro Rennes-Angers",
+    line: "sciences",
+    ville: "Rennes (agronomie) et Angers (horticulture, paysage)",
+    kind: "École d'ingénieurs publique",
+    acces:
+      "Prépa BCPST, puis concours Agro-Véto ; aussi en apprentissage après un BTSA, un BTS, un BUT ou une licence pro",
+    duree: "3 ans après une prépa",
+    places:
+      "Session 2026 : 130 places en BCPST en agronomie, 60 en horticulture et paysage ; 60 places en apprentissage",
+    cout: "1 990 € par an en 2025-2026 (tarif du ministère chargé de l'agriculture), plus 105 € de CVEC ; apprentis exonérés",
+    formations:
+      "À Rennes, la spécialité agronomie ouvre sur 17 spécialisations, de l'agroécologie à la statistique, à l'animal ou à la mer (halieutique).",
+    debouches:
+      "Tu peux devenir conseiller agricole, consultant en filières et stratégies territoriales, responsable R&D, ingénieur bio-informatique ou environnement, chargé de mission agroécologie et biodiversité, ou ingénieur en horticulture pour une collectivité, un centre de recherche ou une entreprise de production.",
+    plus: "Quatre cursus d'ingénieur sur deux campus : agronomie et alimentation à Rennes, horticulture et paysage à Angers, où l'école forme des ingénieurs en paysage.",
+    station: "ecole-ingenieurs",
+    url: "https://www.institut-agro-rennes-angers.fr",
+    accroche:
+      "Tu peux devenir conseiller agricole, consultant en filières et stratégies territoriales, responsable R&D, ingénieur bio-informatique ou environnement, chargé de mission agroécologie et biodiversité, ou ingénieur en horticulture pour une collectivité, un centre de recherche ou une entreprise de production.",
+    statut: "public",
+    recrutement: ["prepa", "titre"],
+    alternance:
+      "Agronomie, agroalimentaire, horticulture et paysage (60 places) ; en agronomie, horticulture et paysage : 60 % du temps en entreprise, 12 semaines à l'étranger",
+  },
+  {
+    id: "institut-agro-montpellier",
+    name: "L'Institut Agro Montpellier",
+    short: "Institut Agro Montpellier",
+    line: "sciences",
+    ville: "Montpellier (deux campus, dont La Gaillarde)",
+    kind: "École d'ingénieurs publique",
+    acces: "Prépa BCPST, puis concours Agro-Véto ; aussi en apprentissage ou par concours spécifique (SAADS)",
+    duree: "3 ans après une prépa",
+    places: "Session 2026 : 113 places en BCPST en agronomie, 12 en SAADS ; 25 places en apprentissage",
+    cout: "1 990 € par an en 2025-2026, plus 105 € de CVEC ; tarif 2026-2027 fixé par arrêté du ministère chargé de l'agriculture",
+    formations: "En 1re année, un tronc commun avec un stage dans une entreprise agricole.",
+    debouches:
+      "Les diplômés rejoignent l'agroalimentaire, les services aux entreprises, les collectivités, la recherche, la production agricole ou des organisations internationales, comme chargé d'études eau-environnement, responsable R&D, conseiller agricole, chef de projet SIG ou œnologue.",
+    plus: "Le bouquet vigne et vin ouvre sur le diplôme national d'œnologue, et le cursus SAADS forme aux systèmes agricoles et agroalimentaires durables des pays du Sud.",
+    station: "ecole-ingenieurs",
+    url: "https://www.institut-agro-montpellier.fr",
+    accroche:
+      "Les diplômés rejoignent l'agroalimentaire, les services aux entreprises, les collectivités, la recherche, la production agricole ou des organisations internationales, comme chargé d'études eau-environnement, responsable R&D, conseiller agricole, chef de projet SIG ou œnologue.",
+    statut: "public",
+    recrutement: ["prepa", "titre"],
+    alternance:
+      "Dès la 1re année par concours après un BTSA, un BTSM, certains BTS, un BUT ou une licence pro (25 places) ; 3e année possible en contrat de professionnalisation",
+  },
+  {
+    id: "ensic",
+    name: "École nationale supérieure des industries chimiques",
+    short: "ENSIC",
+    line: "sciences",
+    ville: "Nancy, en centre-ville",
+    kind: "École d'ingénieurs publique",
+    acces: "Prépa PC surtout (aussi MP, PSI, TPC), puis CCINP ; BCPST par A PC BIO ; prépas intégrées ; sur titre",
+    duree: "3 ans après une prépa ou un cycle préparatoire",
+    places:
+      "Rentrée 2026 : 64 places au CCINP (PC 50, MP 6, PSI 6, TPC 2), plus des places en BCPST, prépas intégrées et sur titre",
+    cout: "630 €/an en 2026-2027, plus 105 € de CVEC ; boursiers exonérés des droits d'inscription",
+    formations:
+      "Un tronc commun en sciences fondamentales et génie des procédés, avec des projets tout au long du cursus (innovation, conception, R&D).",
+    debouches:
+      "Tu deviens ingénieur en génie chimique et génie des procédés : tu conçois, pilotes et améliores des procédés de production.",
+    plus: "Une école de chimie en plein centre de Nancy, adossée à un laboratoire commun avec le CNRS.",
+    station: "ecole-ingenieurs",
+    url: "https://ensic.univ-lorraine.fr/",
+    accroche:
+      "Tu deviens ingénieur en génie chimique et génie des procédés : tu conçois, pilotes et améliores des procédés de production.",
+    statut: "public",
+    recrutement: ["prepa", "titre", "postbac"],
+    alternance:
+      "Génie chimique par apprentissage depuis 2023 : 1re année sous statut étudiant, puis 2 ans en alternance (CFA de l'Université de Lorraine)",
+  },
+  {
+    id: "ecpm",
+    name: "École européenne de chimie, polymères et matériaux de Strasbourg",
+    short: "ECPM",
+    line: "sciences",
+    ville: "Strasbourg",
+    kind: "École d'ingénieurs publique",
+    acces: "Prépa PC ou TPC, puis CCINP ; après le bac, CPI de la Fédération Gay-Lussac ; aussi sur titre",
+    duree: "3 ans après une prépa ou le CPI",
+    places: "Rentrée 2026 : 61 places au CCINP (PC chimie 50, ChemBiotech 8, TPC 3), plus CPI, ATS et sur titre",
+    cout: "630 €/an en 2026-2027, plus 105 € de CVEC ; boursiers exonérés des droits d'inscription ; Chemplast gratuit et salarié",
+    formations:
+      "Trois semestres de tronc commun : sciences analytiques, chimie moléculaire, ingénierie des polymères, matériaux fonctionnels et nanosciences.",
+    debouches:
+      "Tu deviens ingénieur chimiste, surtout en R&D et innovation : ingénieur de recherche ou d'études, chef de projet, ou docteur après une thèse.",
+    plus: "Une école trilingue : anglais en 1re langue, allemand ou espagnol en 2e, et environ 40 % des cours scientifiques donnés en anglais et en allemand.",
+    station: "ecole-ingenieurs",
+    url: "https://ecpm.unistra.fr/",
+    accroche:
+      "Tu deviens ingénieur chimiste, surtout en R&D et innovation : ingénieur de recherche ou d'études, chef de projet, ou docteur après une thèse.",
+    statut: "public",
+    recrutement: ["prepa", "postbac", "titre"],
+    alternance:
+      "Chemplast (matériaux polymères, avec l'ISPA) : 3 ans en apprentissage ; en ingénieur chimiste, 3e année possible en contrat de professionnalisation",
   },
 ]);

@@ -412,6 +412,7 @@ const MOTS_PREPA: Groupe = {
     "https://www.onisep.fr/ressources/univers-formation/formations/post-bac/classe-preparatoire-physique-chimie-et-sciences-de-l-ingenieur-pcsi-1re-annee",
     "https://dossier.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=4920",
     "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=10491&typeBac=0&originePc=0",
+    "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=6419",
   ],
 };
 
@@ -495,7 +496,7 @@ const CONCOURS: Groupe = {
       chip: "CCINP",
       titre: "Concours commun INP",
       phrase:
-        "Le concours qui offre le plus de places : les écoles des INP de Toulouse, Grenoble, Bordeaux, Lorraine et Clermont, et de nombreuses écoles de chimie et d'informatique.",
+        "Environ 5 000 places avec les écoles qui recrutent sur ses notes : les écoles des INP de Toulouse, Grenoble, Bordeaux, Lorraine et Clermont, et de nombreuses écoles de chimie et d'informatique.",
       details: [
         {
           label: "Écoles",
@@ -521,7 +522,7 @@ const CONCOURS: Groupe = {
       chip: "e3a-Polytech",
       titre: "Concours e3a-Polytech",
       phrase:
-        "Une seule inscription pour 67 écoles, dont tout le réseau Polytech, avec des écrits passés en même temps que ceux du CCINP.",
+        "Une seule inscription pour 67 écoles, dont tout le réseau Polytech, avec des écrits la même semaine que le CCINP et plusieurs épreuves en commun.",
       details: [
         {
           label: "Écoles",
@@ -532,7 +533,11 @@ const CONCOURS: Groupe = {
         { label: "Places", value: "Plus de 2 300 en 2026." },
         { label: "Calendrier 2026", value: "Écrits du 21 au 24 avril, oraux de mi-juin à mi-juillet." },
       ],
-      sources: ["https://www.e3a-polytech.fr/le-concours/"],
+      sources: [
+        "https://www.e3a-polytech.fr/le-concours/",
+        "https://www.e3a-polytech.fr/calendrier/",
+        "https://www.e3a-polytech.fr/carte-des-ecoles/",
+      ],
     },
     {
       id: "concours-mines-telecom",
@@ -551,7 +556,7 @@ const CONCOURS: Groupe = {
         {
           label: "Calendrier 2026",
           value:
-            "Écrits partagés avec Mines-Ponts, Centrale-Supélec ou la Banque PT, de fin avril à mi-mai ; oraux de fin juin à mi-juillet, classement le 22 juillet.",
+            "Écrits partagés avec Mines-Ponts, la Banque PT, Centrale-Supélec (TSI) ou G2E (BCPST), du 27 avril au 13 mai ; oraux du 22 juin au 13 juillet, listes de classement le 22 juillet.",
         },
       ],
       sources: [MINES_TELECOM],
@@ -615,7 +620,10 @@ const CONCOURS: Groupe = {
           value:
             "ENSG Nancy, ENTPE, ENGEES, EOST, ENSEGID, IMT Mines Albi, IMT Mines Alès, IMT Nord Europe, l'École nationale de la météorologie, Geodata Paris…",
         },
-        { label: "Places", value: "257 en 2026 ; tous les candidats passent les oraux." },
+        {
+          label: "Places",
+          value: "257 en 2026 ; chaque candidat qui s'inscrit aux oraux les passe, quelle que soit sa note d'écrit.",
+        },
         { label: "Calendrier 2026", value: "Écrits les 11, 12 et 13 mai, oraux du 22 juin au 10 juillet." },
       ],
       sources: [
@@ -651,17 +659,18 @@ const ATS: Groupe = {
         {
           label: "Concours",
           value:
-            "Le concours ATS ouvre une cinquantaine d'écoles, dont Arts et Métiers, Centrale Lille, CentraleSupélec et l'ENSEA. En 2026 : écrits les 4, 5 et 6 mai, oraux à partir du 22 juin, et une deuxième voie d'intégration sur dossier.",
+            "Le concours ATS ouvre une cinquantaine d'écoles, dont Arts et Métiers, Centrale Lille, CentraleSupélec et l'ENSEA. En 2026 : écrits les 4, 5 et 6 mai, oraux à partir du 22 juin, et une deuxième voie d'intégration, sur un avis de poursuite d'études, avec une note minimale aux écrits.",
         },
         {
           label: "Vers l'agronomie",
           value:
-            "Une prépa d'un an après un BTSA, un BTS ou un BUT mène aussi aux écoles d'agronomie et aux écoles vétérinaires : en 2026, celles-ci réservaient 52 places aux BTS et BTSA et 46 aux BUT.",
+            "Une prépa d'un an après un BTSA ou un BTS mène aussi aux écoles d'agronomie et aux écoles vétérinaires. En 2026, les quatre écoles vétérinaires réservaient 52 places aux BTS et BTSA, et 46 aux étudiants de BUT, par leur propre voie de concours.",
         },
       ],
       sources: [
         ONISEP_PREPAS,
         ATS_AM,
+        "https://thotismedia.com/prepa-ats",
         "https://www.letudiant.fr/etudes/classes-prepa/ecoles-dingenieurs-le-concours-ats-propose-une-deuxieme-voie-dintegration-en-2026.html",
         "https://www.letudiant.fr/etudes/ecole-ingenieur/admissions-ecoles-voies-dacces-tout-savoir-sur-les-concours-communs-agro-veto.html",
       ],
@@ -725,7 +734,7 @@ const BUT: Groupe = {
       id: "but-gccd",
       cle: "Génie civil",
       chip: "GCCD",
-      titre: "Génie civil - construction durable",
+      titre: "Génie civil – construction durable",
       phrase:
         "Tu apprends à concevoir et à construire bâtiments et ouvrages de travaux publics (matériaux, structures, confort, maquette numérique BIM), pour devenir conducteur de travaux, chef de chantier, projeteur ou coordinateur BIM.",
       details: [],

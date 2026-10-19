@@ -58,9 +58,9 @@ export function ecolesDe(id: string, st: StationContent | null): Ecole[] {
 export const CRITERE_UNE: Record<string, string> = etTypo({
   "ecole-ingenieurs": "Les écoles des concours X-ENS et Mines-Ponts, et les écoles Centrale.",
   "cycle-integre":
-    "Les écoles post-bac où 25 % des candidats ou moins ont reçu une proposition sur Parcoursup en 2025.",
+    "Les écoles post-bac où 25 % des candidats ou moins ont reçu une proposition sur Parcoursup en 2025, pour leur formation principale.",
   "cycle-postbac":
-    "Les écoles post-bac où 25 % des candidats ou moins ont reçu une proposition sur Parcoursup en 2025.",
+    "Les écoles post-bac où 25 % des candidats ou moins ont reçu une proposition sur Parcoursup en 2025, pour leur formation principale.",
 });
 
 /** La fiche courte qui s'ouvre au toucher d'une station. */

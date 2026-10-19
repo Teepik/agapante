@@ -38,7 +38,7 @@ export const CRITERES: Critere[] = etTypo([
       postbac:
         "En terminale, sur Parcoursup : par un concours commun à plusieurs écoles (Geipi Polytech, Puissance Alpha, Advance…), ou par la sélection propre à l'école.",
       but: "Sur Parcoursup, sur dossier, avec tout bac. Des places sont réservées aux bacs technologiques en BUT et aux bacs professionnels en BTS.",
-      univ: "Sur Parcoursup, sur dossier. Les doubles licences comptent parmi les formations les plus sélectives.",
+      univ: "Sur Parcoursup : la licence accueille les bacheliers dans la limite de ses places, avec des réponses « oui » ou « oui-si » ; elle classe les dossiers quand les vœux dépassent les places. Les doubles licences, elles, sont très sélectives.",
     },
   },
   {
@@ -48,7 +48,7 @@ export const CRITERES: Critere[] = etTypo([
       prepa:
         "Une trentaine d'heures de cours, de TD et de TP par semaine, deux ou trois colles, ces interrogations orales en petit groupe, et un devoir surveillé, souvent le samedi matin.",
       postbac:
-        "Environ 30 heures de cours par semaine, en petits groupes, avec des projets d'ingénieur dès la 1re année.",
+        "Environ 30 heures de cours par semaine, avec beaucoup de travaux dirigés et pratiques, et des projets pendant les deux ans de prépa intégrée.",
       but: "Cours, travaux pratiques et projets en petits groupes, avec des stages : 22 à 26 semaines sur les trois ans de BUT.",
       univ: "Des cours magistraux en amphithéâtre, des travaux dirigés en petits groupes, et beaucoup de travail personnel.",
     },
@@ -91,7 +91,7 @@ export const CRITERES: Critere[] = etTypo([
     label: "Ce que ça coûte",
     valeurs: {
       prepa: `Prépa gratuite au lycée public, avec une inscription à l'université (${eur(DROITS.licence)}). Puis ${eur(DROITS.ingenieur)} par an dans la plupart des écoles publiques ; certaines grandes écoles demandent plusieurs milliers d'euros, avec des exonérations pour les boursiers.`,
-      postbac: `Dans le public, de ${eur(DROITS.licence)} à ${eur(DROITS.ingenieur)} par an, selon l'école. Dans le privé, de 9 880 € (EPF) à 11 499 € (IPSA).`,
+      postbac: `Dans le public, de ${eur(DROITS.licence)} à ${eur(DROITS.ingenieur)} par an, selon l'école. Dans le privé, de 9 000 à 13 000 € par an environ : 9 880 € à l'EPF (2025-2026), 11 499 € à l'IPSA, 12 790 € en cycle ingénieur à l'EPITA.`,
       but: `BTS gratuit au lycée public. BUT : ${eur(DROITS.licence)} de droits par an. En alternance, ta formation est prise en charge et tu touches un salaire.`,
       univ: `${eur(DROITS.licence)} par an en licence, ${eur(DROITS.master)} en master.`,
     },
