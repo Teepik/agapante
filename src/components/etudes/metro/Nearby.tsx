@@ -98,7 +98,9 @@ export function Nearby({ id, onOpenFormation }: { id: string; onOpenFormation: (
       {failed ? (
         <p className="e-small e-muted">Le chargement des formations a échoué&#8239;: vérifie ta connexion.</p>
       ) : !place ? (
-        <p className="e-small e-muted">Indique ta ville&#8239;: les formations les plus proches s&apos;affichent ici.</p>
+        <p className="e-small e-muted">
+          Indique ta ville&#8239;: les formations les plus proches s&apos;affichent ici.
+        </p>
       ) : !data ? (
         <p className="e-small e-muted">Chargement des formations de Parcoursup…</p>
       ) : list.length ? (

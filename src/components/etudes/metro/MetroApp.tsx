@@ -26,6 +26,10 @@ type Overlay =
   | { kind: "annuaire" }
   | { kind: "comparer"; lines?: MetroLine["id"][] };
 
+/** La note du ministère sur l'apprentissage dans le supérieur, situation au 31 décembre 2025. */
+const SOURCE_ALTERNANCE =
+  "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2026-10/2026_10_NF_SIES_24_%20Apprentissage%202025.pdf";
+
 /** Les métiers que la carte sait tracer : au moins un trajet entièrement sur ses lignes. */
 const METIERS_CARTE = metiers
   .map((m) => ({ m, routes: m.routes.filter((r) => etapesDuTrajet(r.via).length === r.via.length) }))
@@ -163,6 +167,24 @@ function Metro() {
           </div>
         </div>
       </section>
+
+      {alternance ? (
+        <div className="e-maltinfo" role="status">
+          <p>
+            <strong>L&apos;alternance, fin 2025&#8239;:</strong> 44&nbsp;% des étudiants de BTS, 24&nbsp;% des étudiants
+            d&apos;IUT, 59&nbsp;% des étudiants de licence professionnelle et 8&nbsp;% des étudiants de master étaient
+            apprentis. Sur la carte, les étapes où elle est possible portent un halo orange.
+          </p>
+          <p className="e-maltinfo__links">
+            <button type="button" className="e-link" onClick={() => push({ kind: "fiche", id: "alternance" })}>
+              Salaire, contrat, comment trouver une entreprise
+            </button>
+            <a href={SOURCE_ALTERNANCE} target="_blank" rel="noopener noreferrer" className="e-maltinfo__src">
+              Source&#8239;: ministère de l&apos;Enseignement supérieur, octobre 2026
+            </a>
+          </p>
+        </div>
+      ) : null}
 
       {metier && metierById[metier] ? (
         <p className="e-mroute" role="status">

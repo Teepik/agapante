@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { cle } from "@/lib/etudes/communes";
-import { type Ecole, type Statut } from "@/lib/etudes/ecoles";
+import { nomCourt, type Ecole, type Recrutement, type Statut } from "@/lib/etudes/ecoles";
 import { Icon } from "../ui";
 import { essentiel } from "./texte";
 
@@ -33,12 +33,15 @@ function texte(e: Ecole): string {
  */
 export function EcolesStation({
   list,
+  voie,
   critere,
   onOpenEcole,
   onOpenAnnuaire,
   annuaireCount,
 }: {
   list: Ecole[];
+  /** La voie de l'étape : seules les écoles à la une pour cette voie le sont ici. */
+  voie?: Recrutement;
   /** Ce qui met une école à la une à cette étape. */
   critere?: string;
   onOpenEcole: (id: string) => void;
@@ -48,7 +51,9 @@ export function EcolesStation({
   const [q, setQ] = useState("");
   const [filtres, setFiltres] = useState<Filtre[]>([]);
 
-  const une = list.filter((e) => e.une).sort((a, b) => (a.uneRang ?? 99) - (b.uneRang ?? 99));
+  const une = list
+    .filter((e) => e.une && voie && e.uneVoie === voie)
+    .sort((a, b) => (a.uneRang ?? 99) - (b.uneRang ?? 99));
   // Plusieurs écoles pour une même raison (un concours) : elles se regroupent sous ce titre.
   const groupes = [...new Set(une.map((e) => e.une!))].map((raison) => ({
     raison,
@@ -167,7 +172,7 @@ export function EcolesStation({
 function Carte({ e, onOpen, raison = false }: { e: Ecole; onOpen: (id: string) => void; raison?: boolean }) {
   return (
     <button type="button" className="e-mune__card" onClick={() => onOpen(e.id)}>
-      <span className="e-mune__name">{e.short && e.short.length < e.name.length ? e.short : e.name}</span>
+      <span className="e-mune__name">{nomCourt(e, 32)}</span>
       {raison ? <span className="e-mune__why">{e.une}</span> : null}
       <span className="e-mune__meta">{e.ville}</span>
       <span className="e-mune__text">{texte(e)}</span>

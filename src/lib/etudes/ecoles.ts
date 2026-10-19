@@ -1,4 +1,5 @@
 import type { LineId } from "./lines";
+import { ecolesIngenieurs, enrichissements } from "./ecoles-ingenieurs";
 import { ecolesPlus } from "./ecoles-plus";
 import { ecolesVoies } from "./ecoles-voies";
 import { etTypo as frTypo } from "./typo";
@@ -43,7 +44,14 @@ export type Ecole = {
   une?: string;
   /** L'ordre parmi les écoles à la une : le plus petit d'abord. */
   uneRang?: number;
+  /** La voie où elle est à la une : après une prépa, ou après le bac. */
+  uneVoie?: Recrutement;
 };
+
+/** Le nom à afficher quand la place manque : le nom complet s'il est court, sinon le sigle. */
+export function nomCourt(e: Ecole, max = 24): string {
+  return e.name.length <= max || !e.short ? e.name : e.short;
+}
 
 const base: Ecole[] = frTypo([
   /* ---------- Sciences et ingénieur ---------- */
@@ -649,7 +657,11 @@ const base: Ecole[] = frTypo([
   },
 ]);
 
-/** Les 40 établissements de départ, puis ceux ajoutés en octobre 2026. */
-export const ecoles: Ecole[] = [...base, ...ecolesPlus, ...frTypo(ecolesVoies)];
+/** Les 40 établissements de départ, puis ceux ajoutés en octobre 2026, enrichis des fiches d'écoles d'ingénieurs. */
+export const ecoles: Ecole[] = [...base, ...ecolesPlus, ...frTypo(ecolesVoies), ...ecolesIngenieurs].map((e) => {
+  const plus = enrichissements[e.id];
+  if (!plus) return e;
+  return { ...e, ...plus, sources: [...new Set([...(e.sources ?? []), ...(plus.sources ?? [])])] };
+});
 
 export const ecoleById = Object.fromEntries(ecoles.map((e) => [e.id, e])) as Record<string, Ecole>;

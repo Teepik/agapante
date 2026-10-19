@@ -4611,7 +4611,7 @@ html.e-lock body {
   align-items: center;
   gap: 8px 16px;
   max-width: 1392px;
-  margin: 12px auto 0;
+  margin: 12px max(24px, calc((100% - 1392px) / 2)) 0;
   padding: 10px 16px;
   border-radius: 14px;
   background: color-mix(in srgb, var(--focus) 10%, var(--paper));
@@ -5204,6 +5204,40 @@ html.e-lock body {
   }
 }
 
+/* Le calque Alternance : les chiffres, en bandeau */
+.e-maltinfo {
+  display: grid;
+  gap: 6px;
+  max-width: 1392px;
+  margin: 12px max(24px, calc((100% - 1392px) / 2)) 0;
+  padding: 14px 18px;
+  border-radius: 16px;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  background: color-mix(in srgb, var(--alt) 10%, var(--paper));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--alt) 30%, transparent);
+}
+.e-maltinfo strong {
+  color: var(--alt);
+}
+.e-maltinfo__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 18px;
+  font-size: 0.9rem;
+}
+.e-maltinfo__src {
+  font-size: 0.82rem;
+  color: var(--slate);
+}
+@media (max-width: 760px) {
+  .e-maltinfo,
+  .e-mroute {
+    margin: 12px 16px 0;
+  }
+}
+
 /* Les quatre lignes, côte à côte */
 .e-cmp__pick {
   display: flex;
@@ -5361,9 +5395,33 @@ html.e-lock body {
   color: var(--slate);
 }
 .e-mune__text {
+  display: -webkit-box;
   margin-top: 4px;
+  overflow: hidden;
   font-size: 0.86rem;
   line-height: 1.42;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+}
+/* Sur téléphone, chaque groupe à la une défile de côté, pour garder la liste complète à portée. */
+@media (max-width: 760px) {
+  .e-mune__list {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin: 4px -16px 0;
+    padding: 0 16px 6px;
+    scrollbar-width: none;
+  }
+  .e-mune__list::-webkit-scrollbar {
+    display: none;
+  }
+  .e-mune__list > li {
+    flex: 0 0 min(78%, 280px);
+    scroll-snap-align: start;
+    scroll-margin-left: 16px;
+  }
 }
 .e-mecoles__tools {
   display: grid;

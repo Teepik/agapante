@@ -29,7 +29,9 @@ function keepTogether(input: string): string {
 
 function thousands(input: string): string {
   // 1 249 → 1 249 avec une espace fine insécable, pour ne jamais couper un nombre.
-  return input.replace(/(\d) (\d{3})(?!\d)/g, `$1${NARROW_NBSP}$2`).replace(/(\d) (\d{3})(?!\d)/g, `$1${NARROW_NBSP}$2`);
+  return input
+    .replace(/(\d) (\d{3})(?!\d)/g, `$1${NARROW_NBSP}$2`)
+    .replace(/(\d) (\d{3})(?!\d)/g, `$1${NARROW_NBSP}$2`);
 }
 
 function yearRanges(input: string): string {

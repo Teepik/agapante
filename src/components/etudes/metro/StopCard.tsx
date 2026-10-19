@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { mapTexts } from "@/lib/etudes/cohorte";
-import { ecoleById, ecoles, type Ecole, type Recrutement } from "@/lib/etudes/ecoles";
+import { ecoleById, ecoles, nomCourt, type Ecole, type Recrutement } from "@/lib/etudes/ecoles";
 import {
   METRO_FICHES,
   METRO_LINES,
@@ -12,6 +12,7 @@ import {
   type MetroLineId,
 } from "@/lib/etudes/metro";
 import { GROUPES } from "@/lib/etudes/metro-groupes";
+import { etTypo } from "@/lib/etudes/typo";
 import { stationById, type StationContent } from "@/lib/etudes/stations";
 import { useCohort } from "../cohorte";
 import { Dot, Icon } from "../ui";
@@ -35,7 +36,7 @@ const COMPARE_DUO: Record<string, MetroLine["id"][]> = {
 };
 
 /** Aux étapes d'école d'ingénieurs, toutes les écoles qui recrutent de cette façon. */
-const RECRUTE: Record<string, Recrutement> = {
+export const RECRUTE: Record<string, Recrutement> = {
   "ecole-ingenieurs": "prepa",
   "cycle-integre": "postbac",
   "cycle-postbac": "postbac",
@@ -52,14 +53,13 @@ export function ecolesDe(id: string, st: StationContent | null): Ecole[] {
 }
 
 /** Ce qui met une école à la une, étape par étape : un critère public, dit en clair. */
-export const CRITERE_UNE: Record<string, string> = {
-  "ecole-ingenieurs":
-    "Les écoles des concours X-ENS, Mines-Ponts et Centrale-Supélec, les plus sélectifs après la prépa.",
+export const CRITERE_UNE: Record<string, string> = etTypo({
+  "ecole-ingenieurs": "Les écoles des concours X-ENS et Mines-Ponts, et les écoles Centrale.",
   "cycle-integre":
-    "Les écoles post-bac les plus sélectives sur Parcoursup en 2025 : la plus petite part de candidats ayant reçu une proposition.",
+    "Les écoles post-bac où 25 % des candidats ou moins ont reçu une proposition sur Parcoursup en 2025.",
   "cycle-postbac":
-    "Les écoles post-bac les plus sélectives sur Parcoursup en 2025 : la plus petite part de candidats ayant reçu une proposition.",
-};
+    "Les écoles post-bac où 25 % des candidats ou moins ont reçu une proposition sur Parcoursup en 2025.",
+});
 
 /** La fiche courte qui s'ouvre au toucher d'une station. */
 export function StopCard({
@@ -87,10 +87,12 @@ export function StopCard({
   const liste = ecolesDe(id, st);
   const nbEcoles = liste.length;
   const une = liste
-    .filter((e) => e.une)
+    .filter((e) => e.une && e.uneVoie === RECRUTE[id])
     .sort((a, b) => (a.uneRang ?? 99) - (b.uneRang ?? 99))
     .slice(0, 6);
   const chips = [s.duree, s.entree, s.cout, s.plus].filter(Boolean) as string[];
+  // Quand la fiche courte porte déjà des pastilles ou les quatre lignes, le texte se fait plus court.
+  const court = id === "bac" || Boolean(GROUPES[id]?.some((g) => g.popup !== false));
 
   return (
     <div className="e-mcard" data-line={line?.lane}>
@@ -112,7 +114,7 @@ export function StopCard({
           ))}
         </ul>
       ) : null}
-      <p className="e-mcard__lead">{s.resume ?? essentiel(st.what, id === "bac" || GROUPES[id]?.length ? 140 : 220)}</p>
+      <p className="e-mcard__lead">{s.resume ?? essentiel(st.what, court ? 140 : 220)}</p>
       {s.alternance ? (
         <p className="e-mcard__alt">
           <Icon name="briefcase" />
@@ -162,7 +164,7 @@ export function StopCard({
             {une.map((e) => (
               <li key={e.id}>
                 <button type="button" onClick={() => onOpenEcole(e.id)}>
-                  {e.short && e.short.length < e.name.length ? e.short : e.name}
+                  {nomCourt(e)}
                 </button>
               </li>
             ))}

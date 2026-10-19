@@ -1,6 +1,7 @@
 /**
  * Les quatre lignes de la carte, côte à côte, sur les mêmes questions. Les faits reprennent les fiches
- * vérifiées des étapes (stations.ts, stations-voies.ts) et les montants de couts.ts, pour 2026-2027.
+ * vérifiées des étapes (stations.ts, stations-voies.ts), les passerelles (passerelles.ts,
+ * passerelles-voies.ts), les montants de couts.ts pour 2026-2027 et les fiches Parcoursup 2026.
  */
 import { CVEC, DROITS } from "./couts";
 import type { MetroLine } from "./metro";
@@ -35,7 +36,7 @@ export const CRITERES: Critere[] = etTypo([
     valeurs: {
       prepa: "Sur Parcoursup, sur dossier : notes de 1re et de terminale, appréciations, fiche Avenir.",
       postbac:
-        "En terminale, sur Parcoursup : par un concours commun à plusieurs écoles, ou par la sélection propre à l'école.",
+        "En terminale, sur Parcoursup : par un concours commun à plusieurs écoles (Geipi Polytech, Puissance Alpha, Advance…), ou par la sélection propre à l'école.",
       but: "Sur Parcoursup, sur dossier, avec tout bac. Des places sont réservées aux bacs technologiques en BUT et aux bacs professionnels en BTS.",
       univ: "Sur Parcoursup, sur dossier. Les doubles licences comptent parmi les formations les plus sélectives.",
     },
@@ -45,7 +46,7 @@ export const CRITERES: Critere[] = etTypo([
     label: "Le rythme",
     valeurs: {
       prepa:
-        "30 à 40 heures de cours par semaine, un devoir surveillé chaque semaine et des colles, ces interrogations orales en petit groupe.",
+        "Une trentaine d'heures de cours, de TD et de TP par semaine, deux ou trois colles, ces interrogations orales en petit groupe, et un devoir surveillé, souvent le samedi matin.",
       postbac:
         "Environ 30 heures de cours par semaine, en petits groupes, avec des projets d'ingénieur dès la 1re année.",
       but: "Cours, travaux pratiques et projets en petits groupes, avec des stages : 22 à 26 semaines sur les trois ans de BUT.",
@@ -61,6 +62,18 @@ export const CRITERES: Critere[] = etTypo([
         "Tes notes des deux premières années, au contrôle continu : elles t'ouvrent le cycle ingénieur et, souvent, le choix de ta spécialité.",
       but: "Le diplôme à bac+2 ou bac+3 : tu travailles, ou tu continues en licence professionnelle, en école d'ingénieurs ou en master.",
       univ: "L'entrée en master, sur dossier, par la plateforme Mon Master, au printemps de la 3e année de licence.",
+    },
+  },
+  {
+    id: "changer",
+    label: "Si tu changes d'avis",
+    valeurs: {
+      prepa:
+        "Chaque année validée vaut 60 crédits européens : tu peux rejoindre une 2e ou une 3e année de licence à l'université.",
+      postbac:
+        "Tu peux repartir en licence en candidatant sur Parcoursup ; d'autres écoles post-bac gardent des places pour les étudiants qui changent de voie.",
+      but: "Des passerelles mènent vers la licence, la licence professionnelle ou le BTS ; après le BUT, vers une école d'ingénieurs ou un master.",
+      univ: "Avec une 2e ou une 3e année de licence, tu peux entrer en école d'ingénieurs par les admissions parallèles, sur titre ou sur concours.",
     },
   },
   {

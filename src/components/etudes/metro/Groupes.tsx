@@ -12,7 +12,7 @@ const PASTILLES_MAX = 10;
 /** Dans la fiche courte : une pastille par élément, qui ouvre la fiche complète à sa place. */
 export function GroupeChips({ groupe, onOpen }: { groupe: Groupe; onOpen: (section: string) => void }) {
   const n = groupe.elements.length;
-  if (!n) return null;
+  if (!n || groupe.popup === false) return null;
   return (
     <div className="e-mcard__group">
       <p className="e-mcard__k">{groupe.accroche}</p>

@@ -27,6 +27,8 @@ export type Groupe = {
   elements: Element[];
   /** Les sources communes à tout le groupe. */
   sources?: string[];
+  /** Faux : le groupe reste dans la fiche complète, sans pastilles sur la fiche courte. */
+  popup?: boolean;
 };
 
 const ONISEP_PREPAS =
@@ -345,6 +347,70 @@ const PREPAS: Groupe = {
     },
   ],
   sources: [ONISEP_PREPAS],
+};
+
+const MOTS_PREPA: Groupe = {
+  id: "mots-prepa",
+  titre: "Les mots de la prépa",
+  accroche: "Les mots de la prépa",
+  popup: false,
+  elements: [
+    {
+      id: "mot-colle",
+      chip: "Colle",
+      titre: "Colle, ou khôlle",
+      phrase:
+        "Une interrogation orale : un professeur interroge un petit groupe d'élèves, souvent trois. Tu en passes deux ou trois par semaine, souvent en fin de journée.",
+      details: [],
+    },
+    {
+      id: "mot-ds",
+      chip: "DS",
+      titre: "Devoir surveillé",
+      phrase:
+        "Plusieurs heures d'épreuve sur table, dans les conditions des concours, presque chaque semaine, souvent le samedi matin.",
+      details: [],
+    },
+    {
+      id: "mot-tipe",
+      chip: "TIPE",
+      titre: "Travaux d'initiative personnelle encadrés",
+      phrase:
+        "Un projet scientifique mené sur une année, seul ou en groupe, autour d'un thème annuel. Aux concours, tu le présentes en 15 minutes, puis tu échanges avec le jury.",
+      details: [],
+    },
+    {
+      id: "mot-etoile",
+      chip: "MP*",
+      titre: "Classe étoilée",
+      phrase:
+        "En 2e année, les classes étoilées (MP*, PC*, PSI*…) regroupent des élèves retenus sur leurs résultats, pour un entraînement plus poussé aux concours.",
+      details: [],
+    },
+    {
+      id: "mot-cinq-demis",
+      chip: "5/2",
+      titre: "Trois demis, cinq demis",
+      phrase:
+        "Un « 3/2 » est en 2e année ; un « 5/2 » refait sa 2e année pour repasser les concours un an plus tard. Un élève de prépa scientifique est un « taupin ».",
+      details: [],
+    },
+    {
+      id: "mot-ects",
+      chip: "ECTS",
+      titre: "Crédits européens",
+      phrase:
+        "Chaque année de prépa validée vaut 60 crédits, avec l'accord du conseil de classe : de quoi rejoindre une 2e ou une 3e année de licence. Tu es d'ailleurs inscrit en parallèle dans une université partenaire.",
+      details: [],
+    },
+  ],
+  sources: [
+    "https://www.letudiant.fr/etudes/classes-prepa/le-lexique-de-la-prepa-scientifique.html",
+    "https://www.scei-concours.fr/pdf/TIPE_2027_Attendus_Pedagogiques_final.pdf",
+    "https://www.onisep.fr/ressources/univers-formation/formations/post-bac/classe-preparatoire-physique-chimie-et-sciences-de-l-ingenieur-pcsi-1re-annee",
+    "https://dossier.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=4920",
+    "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=10491&typeBac=0&originePc=0",
+  ],
 };
 
 const CONCOURS: Groupe = {
@@ -817,7 +883,7 @@ const BUT: Groupe = {
 
 /** Les groupes de chaque étape, par identifiant d'étape. */
 export const GROUPES: Record<string, Groupe[]> = etTypo({
-  "prepa-scientifique": [PREPAS],
+  "prepa-scientifique": [PREPAS, MOTS_PREPA],
   "concours-ingenieurs": [CONCOURS],
   "bts-but": [BUT],
   "but-lp": [ATS],

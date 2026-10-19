@@ -12,9 +12,7 @@ import { neighbours } from "./geometry";
 import { NEARBY, Nearby } from "./Nearby";
 import { EcolesStation } from "./EcolesStation";
 import { GroupeSection } from "./Groupes";
-import { CRITERE_UNE, ecolesDe, useFiche } from "./StopCard";
-
-const RECRUTE_INGE = new Set(["ecole-ingenieurs", "cycle-integre", "cycle-postbac"]);
+import { CRITERE_UNE, RECRUTE, ecolesDe, useFiche } from "./StopCard";
 
 /** La fiche complète d'une étape : tout ce qu'il faut savoir, dans le même ordre pour chaque étape. */
 export function MetroFiche({
@@ -47,8 +45,9 @@ export function MetroFiche({
     return () => window.clearTimeout(t);
   }, [id, section]);
 
-  if (!s || !st) return null;
-  const line = s.line === "tronc" ? null : metroLineById[s.line];
+  if (!st) return null;
+  // Une fiche hors du tracé (l'alternance) s'ouvre aussi : elle concerne toute la carte.
+  const line = !s || s.line === "tronc" ? null : metroLineById[s.line];
   const { prev, next } = neighbours(id);
   const schools = ecolesDe(id, st);
 
@@ -64,7 +63,7 @@ export function MetroFiche({
             {<Dot line={line.lane} />} {line.name}
           </span>
         ) : (
-          <span>Tronc commun, toutes les voies</span>
+          <span>{s ? "Tronc commun, toutes les voies" : "Sur toute la carte"}</span>
         )
       }
       title={st.name}
@@ -109,12 +108,12 @@ export function MetroFiche({
         </dl>
       ) : null}
 
-      {s.alternance ? (
+      {s?.alternance ? (
         <div className="e-note e-note--alt">
           <strong>
             <Icon name="briefcase" /> En alternance
           </strong>
-          {s.alternance}
+          {s?.alternance}
         </div>
       ) : null}
 
@@ -167,9 +166,10 @@ export function MetroFiche({
           <h3>{schools.length > 1 ? `${schools.length} établissements à découvrir` : "L'établissement"}</h3>
           <EcolesStation
             list={schools}
+            voie={RECRUTE[id]}
             critere={CRITERE_UNE[id]}
             onOpenEcole={onOpenEcole}
-            onOpenAnnuaire={RECRUTE_INGE.has(id) ? onOpenAnnuaire : undefined}
+            onOpenAnnuaire={RECRUTE[id] ? onOpenAnnuaire : undefined}
             annuaireCount={annuaire.length}
           />
         </section>
