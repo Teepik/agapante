@@ -171,7 +171,7 @@ const base: Ecole[] = frTypo([
     kind: "École d'ingénieurs après le bac",
     acces: "Parcoursup, sur dossier et entretien",
     duree: "5 ans",
-    cout: "628 € par an",
+    cout: "630 € par an en 2026-2027, gratuit pour les boursiers",
     formations: "Tronc commun de deux ans, puis génie informatique, mécanique, biologique, urbain…",
     debouches: "Ingénieur, innovation, conseil, entrepreneuriat.",
     plus: "Un modèle à la carte : chaque étudiant compose une partie de son cursus.",

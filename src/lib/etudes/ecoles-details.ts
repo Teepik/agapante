@@ -10,9 +10,9 @@ export type EcoleDetails = Pick<Ecole, "pourquoi" | "apprendre" | "specificite" 
 export const details: Record<string, EcoleDetails> = etTypo<Record<string, EcoleDetails>>({
   polytechnique: {
     pourquoi:
-      "Tu vises la recherche, l'industrie de pointe ou le service de l'État : à la sortie, environ 53 % des diplômés partent en entreprise, 34 % préparent un doctorat et 15 % rejoignent un corps de l'État. Le réseau compte environ 50 000 anciens élèves. Si tu es français, tu es payé pendant toute ta scolarité.",
+      "Tu vises la recherche, l'industrie de pointe ou le service de l'État : à la sortie, environ 53 % des diplômés partent en entreprise et 34 % préparent un doctorat ; 15 % rejoignent un corps de l'État, certains après leur thèse. Le réseau compte environ 50 000 anciens élèves. Si tu es français, tu es payé pendant toute ta scolarité.",
     apprendre:
-      "La 1re année s'ouvre sur six mois de formation humaine et militaire, dans les armées ou un organisme civil. Jusqu'en 2e année, tu étudies six disciplines parmi huit (des mathématiques à l'économie), puis tu choisis en 3e année un des 15 programmes d'approfondissement. En 4e année : master, école partenaire ou corps de l'État ; stages en entreprise et en recherche obligatoires, 6 mois à l'étranger en moyenne.",
+      "La 1re année s'ouvre sur six mois de formation humaine et militaire, dans les armées ou un organisme civil. Jusqu'en 2e année, tu étudies six disciplines parmi huit (des mathématiques à l'économie), puis tu choisis en 3e année un des 15 programmes d'approfondissement. En 4e année : master, école partenaire ou corps de l'État. Au fil du cursus, des stages en entreprise et en laboratoire, et 6 mois à l'étranger en moyenne.",
     specificite:
       "École militaire sous la tutelle du ministère des Armées, dirigée par un officier général : les élèves français ont le statut d'élève officier, portent le grand uniforme et reçoivent une solde. En contrepartie, ils s'engagent à servir 10 ans l'État, ou remboursent leurs études (la « pantoufle »).",
     chiffres: [
@@ -32,7 +32,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       },
       {
         label: "Devenir des diplômés",
-        valeur: "environ 53 % en entreprise, 34 % en doctorat, 15 % dans un corps de l'État",
+        valeur: "environ 53 % en entreprise, 34 % en doctorat ; 15 % dans un corps de l'État, dont certains docteurs",
         source: "https://programmes.polytechnique.edu/cycle-ingenieur-polytechnicien/cycle-ingenieur-polytechnicien",
       },
       {
@@ -158,6 +158,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places aux concours, toutes filières",
         valeur: "226",
         source: "https://lexpress-education.com/articles/les-ens-voies-dadmissions-places/",
+        date: "2026",
       },
       {
         label: "Structure du diplôme",
@@ -177,11 +178,11 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
   },
   "ens-rennes": {
     pourquoi:
-      "Tu vises l'enseignement supérieur ou la recherche : 70 % des élèves poursuivent en thèse, et l'école affiche 83 % de réussite à l'agrégation. Fonctionnaire stagiaire, tu touches environ 1 800 € bruts par mois. Environ 65 élèves entrent chaque année par concours, dans une école de 596 normaliens.",
+      "Tu vises l'enseignement supérieur ou la recherche : 70 % des élèves poursuivent en thèse, et l'école affiche 83 % de réussite à l'agrégation (chiffres de 2023). Fonctionnaire stagiaire, tu touches environ 1 800 € bruts par mois. Environ 65 élèves entrent chaque année par concours, dans une école de 596 normaliens en 2023.",
     apprendre:
       "Le diplôme de l'ENS Rennes (grade de master) repose sur quatre compétences : recherche, avec des stages en laboratoire et un master recherche ; pluridisciplinarité ; pédagogie, qui prépare à l'agrégation ; international, avec des stages longs à l'étranger. Six départements : mathématiques, informatique, mécatronique, sciences du sport et éducation physique, droit-économie-management, sciences pour l'environnement.",
     specificite:
-      "Ses concours s'ouvrent aux filières PSI, PT, TSI et ATS en plus de MP et MPI, avec un département de mécatronique et un département de sciences du sport (concours 2SEP). En 5 ans, ses élèves sont partis 300 fois dans 35 pays.",
+      "Ses concours s'ouvrent aux filières PSI, PT, TSI et ATS en plus de MP et MPI, avec un département de mécatronique et un département de sciences du sport (concours 2SEP). De 2018 à 2023, ses élèves sont partis 300 fois dans 35 pays.",
     chiffres: [
       {
         label: "Élèves fonctionnaires stagiaires recrutés par concours",
@@ -197,11 +198,13 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Élèves poursuivant en thèse",
         valeur: "70 %",
         source: "https://www.ens-rennes.fr/formation",
+        date: "septembre 2023",
       },
       {
         label: "Réussite à l'agrégation",
         valeur: "83 %",
         source: "https://www.ens-rennes.fr/formation",
+        date: "septembre 2023",
       },
     ],
     sources: [
@@ -266,7 +269,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places au concours commun Mines-Ponts",
         valeur: "130 (MP 52, PSI 36, PC 30, MPI 5, PT 5, TSI 2)",
         source: "https://concoursminesponts.fr/wp-content/uploads/2025/12/notice-des-ecoles-2026-22.12.25.pdf",
-        date: "2026",
+        date: "concours 2026",
       },
       {
         label: "Frais de scolarité annuels",
@@ -278,14 +281,14 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Entrants en 1re année",
         valeur: "150",
         source: "https://www.minesparis.psl.eu/wp-content/uploads/2025/09/Plaquette-cycle-IC.pdf",
-        date: "2025",
+        date: "plaquette de septembre 2025",
       },
       {
         label: "Insertion des diplômés",
         valeur: "70 % en poste avant la fin des études, 85 % en CDI, 13 % en doctorat",
         source:
           "https://www.minesparis.psl.eu/en/education/civil-engineering-cycle/graduates-career-opportunities-and-integration/",
-        date: "2025",
+        date: "enquête 2025, promotion 2024",
       },
     ],
     sources: [
@@ -309,7 +312,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places au concours commun Mines-Ponts",
         valeur: "215 (MP 82, PSI 70, PC 39, PT 18, MPI 5, TSI 1)",
         source: "https://concoursminesponts.fr/wp-content/uploads/2025/12/notice-des-ecoles-2026-22.12.25.pdf",
-        date: "2026",
+        date: "concours 2026",
       },
       {
         label: "Frais de scolarité annuels",
@@ -321,13 +324,13 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Taux d'insertion à 6 mois",
         valeur: "95 %",
         source: "https://ecoledesponts.fr/formation-initiale/formation-dingenieur/insertion-professionnelle",
-        date: "2026",
+        date: "enquête 2026, promotion 2025",
       },
       {
         label: "Salaire brut annuel moyen à l'embauche en France",
         valeur: "51 628 € hors primes, 57 545 € avec primes",
         source: "https://ecoledesponts.fr/formation-initiale/formation-dingenieur/insertion-professionnelle",
-        date: "2026",
+        date: "enquête 2026, promotion 2025",
       },
     ],
     sources: [
@@ -359,14 +362,14 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         valeur: "77 %",
         source:
           "https://www.isae-supaero.fr/wp-content/uploads/2025/03/Plaquette_ingenieur_generaliste_ISAE-SUPAERO_2024.pdf",
-        date: "2024",
+        date: "enquête 2024",
       },
       {
         label: "Salaire moyen de sortie en France, primes incluses",
         valeur: "46,5 k€ par an",
         source:
           "https://www.isae-supaero.fr/wp-content/uploads/2025/03/Plaquette_ingenieur_generaliste_ISAE-SUPAERO_2024.pdf",
-        date: "2024",
+        date: "enquête 2024",
       },
       {
         label: "Diplômés en un an",
@@ -447,13 +450,13 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Diplômés en emploi avant le diplôme",
         valeur: "70 %",
         source: "https://www.telecom-paris.fr/fr/ingenieur/enquete-1er-emploi",
-        date: "2026",
+        date: "enquête 2026",
       },
       {
         label: "Salaire médian de sortie, brut hors primes",
         valeur: "49,1 k€ par an",
         source: "https://www.telecom-paris.fr/fr/ingenieur/enquete-1er-emploi",
-        date: "2026",
+        date: "enquête 2026",
       },
       {
         label: "Places en apprentissage, toutes voies",
@@ -490,19 +493,19 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Taux net d'emploi",
         valeur: "94 %",
         source: "https://www.ensae.fr/en/school/careers-and-alumni/job-placement-and-careers",
-        date: "2024",
+        date: "enquête 2024",
       },
       {
         label: "Salaire moyen au premier emploi en France, primes comprises",
         valeur: "56 500 € bruts par an",
         source: "https://www.ensae.fr/en/school/careers-and-alumni/job-placement-and-careers",
-        date: "2024",
+        date: "enquête 2024",
       },
       {
         label: "Diplômés en emploi ayant signé avant le diplôme",
         valeur: "73 %",
         source: "https://www.ensae.fr/en/school/careers-and-alumni/job-placement-and-careers",
-        date: "2024",
+        date: "enquête 2024",
       },
     ],
     sources: [
@@ -535,14 +538,14 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         valeur: "80 %",
         source:
           "https://www.onisep.fr/ressources/structures-enseignement/bretagne/ille-et-vilaine/centralesupelec-campus-de-rennes/diplome-d-ingenieur-de-l-ecole-centralesupelec",
-        date: "2023",
+        date: "promotion 2023",
       },
       {
         label: "Salaire brut moyen à l'embauche, primes comprises",
         valeur: "53 800 € par an",
         source:
           "https://www.onisep.fr/ressources/structures-enseignement/bretagne/ille-et-vilaine/centralesupelec-campus-de-rennes/diplome-d-ingenieur-de-l-ecole-centralesupelec",
-        date: "2023",
+        date: "promotion 2023",
       },
       {
         label: "Admissibles attendus aux oraux du concours Centrale-Supélec",
@@ -631,7 +634,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Salaire brut moyen à l'embauche",
         valeur: "47 000 € par an",
         source: "https://ecole.centralelille.fr/wp-content/uploads/sites/33/2025-10-Ecole-Centrale_Plaquette.pdf",
-        date: "2024",
+        date: "promotion 2024, enquête à 4 mois",
       },
       {
         label: "Droits d'inscription selon le revenu",
@@ -668,19 +671,19 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Premier emploi en moins de 2 mois",
         valeur: "74 %",
         source: "https://www.ec-nantes.fr/centrale-nantes/les-centraliens/que-font-nos-jeunes-diplomes-ingenieurs",
-        date: "2025",
+        date: "enquête CGE, promotion 2025",
       },
       {
         label: "Salaire moyen de sortie en France, hors primes",
         valeur: "40 728 €",
         source: "https://www.ec-nantes.fr/centrale-nantes/les-centraliens/que-font-nos-jeunes-diplomes-ingenieurs",
-        date: "2025",
+        date: "enquête CGE, promotion 2025",
       },
       {
         label: "Diplômés qui poursuivent en thèse",
         valeur: "19 %",
         source: "https://www.ec-nantes.fr/centrale-nantes/les-centraliens/que-font-nos-jeunes-diplomes-ingenieurs",
-        date: "2025",
+        date: "enquête CGE, promotion 2025",
       },
     ],
     sources: [
@@ -693,17 +696,18 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
   },
   "centrale-mediterranee": {
     pourquoi:
-      "Centrale Méditerranée forme des ingénieurs généralistes pour l'industrie, le conseil et la recherche. En 3e année, tu choisis une filière métier : analyse de données et aide à la décision, transformation environnementale des organisations, bureau d'études, production et logistique, R&D ou entrepreneuriat. Salaire médian de sortie : 40 000 € bruts par an, primes en plus ; 8 % de la promotion 2021 a poursuivi en thèse.",
+      "Centrale Méditerranée forme des ingénieurs généralistes pour l'industrie, le conseil et la recherche. En 3e année, tu choisis une filière métier : analyse de données et aide à la décision, transformation environnementale des organisations, bureau d'études, production et logistique, R&D ou entrepreneuriat. Salaire médian de sortie : 40 000 € bruts par an, primes comprises (brochure de 2023) ; 8 % de la promotion 2021 a poursuivi en thèse.",
     apprendre:
       "Trois semestres de socle scientifique commun, rythmés par 4 semaines de cours puis 1 semaine d'activités en entreprise. En 2e année, tu suis un parcours : bio-ingénierie, énergie durable, environnement, numérique, ou crises et mutations. En 3e année, une option d'approfondissement (informatique, mécanique…) et une filière métier. Au moins un semestre à l'étranger, puis un stage final de 4 à 6 mois.",
     specificite:
-      "Chaque élève vit une alternance dès la 1re année : en entreprise comme apprenti, en laboratoire de recherche ou en création d'entreprise (« 100 % des élèves sont alternants »). Plusieurs parcours de 2e et 3e années se suivent sur le campus de Nice.",
+      "Toute la promotion suit le rythme de l'alternance dès la 1re année : semaines de cours et semaines en entreprise, comme apprenti, en laboratoire, en création d'entreprise ou sous statut étudiant (parcours Train'ing). Plusieurs parcours de 2e et 3e années se suivent sur le campus de Nice.",
     chiffres: [
       {
         label: "Places au concours Centrale-Supélec (90 MP, 10 MPI, 90 PC, 70 PSI, 5 TSI)",
         valeur: "265",
         source:
           "https://www.letudiant.fr/etudes/ecole-ingenieur/ecoles-d-ingenieurs-post-prepa-le-concours-centrale-supelec-mode-d-emploi.html",
+        date: "concours 2026",
       },
       {
         label: "Places en PT (Banque PT)",
@@ -712,17 +716,17 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         date: "concours 2026",
       },
       {
-        label: "Salaire médian brut annuel de sortie, primes en plus",
+        label: "Salaire médian brut annuel de sortie, primes comprises",
         valeur: "40 000 €",
         source: "https://francealumni.fr/docs/2024113902_plaquette-formation-ingenieur-net.pdf",
-        date: "2023",
+        date: "brochure de l'école, juin 2023",
       },
       {
         label: "Droits de scolarité annuels",
         valeur: "2 600 €",
         source:
           "https://www.letudiant.fr/educpros/actualite/centrale-mediterranee-accelere-sa-transition-vers-lingenierie-durable.html",
-        date: "2025",
+        date: "rentrée 2025",
       },
     ],
     sources: [
@@ -747,7 +751,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places au concours Mines-Ponts (dont 25 pour FUSION)",
         valeur: "154",
         source: "https://concoursminesponts.fr/wp-content/uploads/2025/12/notice-des-ecoles-2026-22.12.25.pdf",
-        date: "2026",
+        date: "concours 2026",
       },
       {
         label: "Diplômés ICM en emploi dans les six mois",
@@ -766,7 +770,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         valeur: "3 600 €",
         source:
           "https://www.mines-stetienne.fr/en/programmes/icm-masters-degree-in-science-and-executive-civil-engineering/cost-and-funding",
-        date: "2025-2026",
+        date: "nouveaux élèves, rentrée 2026",
       },
     ],
     sources: [
@@ -793,7 +797,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places au concours Mines-Ponts",
         valeur: "141",
         source: "https://concoursminesponts.fr/wp-content/uploads/2025/12/notice-des-ecoles-2026-22.12.25.pdf",
-        date: "2026",
+        date: "concours 2026",
       },
       {
         label: "Insertion moyenne, toutes formations",
@@ -844,13 +848,13 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Diplômés en poste moins de deux mois après le diplôme",
         valeur: "82,5 %",
         source: "https://www.imt-atlantique.fr/fr/entreprises/alumnis/insertion-emploi",
-        date: "2024",
+        date: "promotion 2024",
       },
       {
         label: "Salaire brut annuel de sortie, hors primes",
         valeur: "41 888 €",
         source: "https://www.imt-atlantique.fr/fr/entreprises/alumnis/insertion-emploi",
-        date: "2024",
+        date: "promotion 2024",
       },
       {
         label: "Droits de scolarité annuels (étudiants européens)",
@@ -928,7 +932,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places au concours Mines-Ponts (68 PC, 3 PSI)",
         valeur: "71",
         source: "https://concoursminesponts.fr/wp-content/uploads/2025/12/notice-des-ecoles-2026-22.12.25.pdf",
-        date: "2026",
+        date: "concours 2026",
       },
       {
         label: "Droits de scolarité des nouveaux entrants en 1re année (étudiants européens)",
@@ -956,6 +960,95 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.chimieparistech.psl.eu/formation/cycle-ingenieur/cvec-frais-scolarite/",
       "https://www.chimieparistech.psl.eu/wp-content/uploads/2025/06/chimie-paris-formation-2025-depliant.pdf",
       "https://www.chimieparistech.psl.eu/wp-content/uploads/2023/12/2023-11plaquette-alternance-3a.pdf",
+    ],
+  },
+  ensimag: {
+    pourquoi:
+      "L'Ensimag forme des ingénieurs en informatique, mathématiques appliquées et télécommunications. Sa filière Ingénierie des systèmes d'information mène par exemple aux métiers d'architecte de systèmes d'information, de chef de projets logiciels, d'administrateur réseaux ou de responsable de la sécurité informatique. 150 de ses 160 places au Concours Commun INP 2026 vont aux prépas MP et MPI.",
+    apprendre:
+      "Le cursus dure 3 ans après la prépa. En 2e année, tu choisis une filière : en Ingénierie des systèmes d'information, par exemple, tu te spécialises en architecture de systèmes complexes, en sécurité ou en systèmes d'information. En 3e année, un master peut s'ajouter au diplôme, comme le MSc in Informatics at Grenoble ou le master Cybersecurity.",
+    specificite:
+      "Une école de Grenoble INP - UGA, créée en 1960, consacrée à l'informatique et aux mathématiques appliquées, avec une voie en apprentissage pour le même diplôme d'ingénieur.",
+    chiffres: [
+      {
+        label: "Places au Concours Commun INP (110 MP, 40 MPI, 5 PC, 5 PSI)",
+        valeur: "160",
+        source: "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-mp.html",
+        date: "session 2026",
+      },
+      {
+        label: "Places en PT (Banque PT)",
+        valeur: "10",
+        source: "https://www.banquept.fr/documents/livret/2026/Livret_PT_2026.pdf",
+        date: "concours 2026",
+      },
+      {
+        label: "Droits annuels d'un étudiant français ou européen dans une école de Grenoble INP - UGA",
+        valeur: "630 €",
+        source: "https://ense3.grenoble-inp.fr/fr/formation/frais-dinscription-et-financement-des-etudes",
+        date: "2026-2027",
+      },
+    ],
+    sources: [
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-mp.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-mpi.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-pc.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-psi.html",
+      "https://www.concours-commun-inp.fr/_resource/R%C3%A8glement_VF_13-05_26.pdf?download=true",
+      "https://www.banquept.fr/documents/livret/2026/Livret_PT_2026.pdf",
+      "https://www.cti-commission.fr/wp-content/uploads/2026/01/arrete_2025.pdf",
+      "https://www.cge.asso.fr/ecoles/grenoble-inp-ensimag-2/",
+      "https://ense3.grenoble-inp.fr/fr/formation/frais-dinscription-et-financement-des-etudes",
+      "https://formations.univ-grenoble-alpes.fr/plugins/odf-web/odf/_content/program-ingenieur-de-grenoble-inp-ensimag-filiere-ingenierie-des-systemes-d-information/.pdf",
+      "https://diplomeo.com/actualite-comment_j_ai_integre_une_formation_d_ingenieur_a_grenoble_inp_ensimag",
+      "https://mines-nancy.univ-lorraine.fr/admission/apres-prepa-inp/",
+    ],
+  },
+  ensai: {
+    pourquoi:
+      "L'ENSAI forme des ingénieurs de la donnée : statistique, data science, gestion des risques, biostatistique. 92 % de la promotion 2023 avait un emploi moins de 2 mois après le diplôme, pour environ 42 600 € bruts par an hors primes (enquête CGE 2024). La banque, la santé, le marketing et l'industrie recrutent ses ingénieurs ; ses attachés statisticiens rejoignent l'Insee, les services statistiques des ministères ou la Banque de France.",
+    apprendre:
+      "1re année : socle commun en statistique, économie et informatique. 2e année : statistique avancée et deux grands projets. En 3e année, tu choisis une spécialisation parmi six, toutes en data science : gestion des risques, modélisation économique et santé, marketing, génie statistique, ingénierie des données, biostatistique. Trois stages obligatoires, de 8 à 13 mois au total, et 4 mois d'expérience à l'étranger.",
+    specificite:
+      "Sur le même concours, tu peux entrer comme élève ingénieur ou comme élève fonctionnaire : l'attaché statisticien stagiaire de l'Insee touche 1 900 € bruts par mois pendant ses études, puis environ 3 500 € dès sa titularisation.",
+    chiffres: [
+      {
+        label: "Places d'élèves ingénieurs au Concours Commun INP (45 MP, 8 MPI, 5 PC, 5 PSI)",
+        valeur: "63",
+        source: "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-mp.html",
+        date: "session 2026",
+      },
+      {
+        label: "Places d'élèves fonctionnaires, attachés statisticiens de l'Insee (20 MP, 3 MPI, 3 PC, 3 PSI)",
+        valeur: "29",
+        source: "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-mp.html",
+        date: "session 2026",
+      },
+      {
+        label: "Diplômés en emploi moins de 2 mois après le diplôme",
+        valeur: "92 %",
+        source: "https://www.insee.fr/fr/statistiques/fichier/8615308/plaquette_ensai.pdf",
+        date: "promotion 2023",
+      },
+      {
+        label: "Salaire brut annuel des ingénieurs à la sortie, hors primes",
+        valeur: "environ 42 600 €",
+        source: "https://www.insee.fr/fr/statistiques/fichier/8615308/plaquette_ensai.pdf",
+        date: "enquête CGE 2024",
+      },
+    ],
+    sources: [
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-mp.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-mpi.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-pc.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-psi.html",
+      "https://www.concours-commun-inp.fr/_resource/R%C3%A8glement_VF_13-05_26.pdf?download=true",
+      "https://www.insee.fr/fr/statistiques/fichier/8615308/plaquette_ensai.pdf",
+      "https://www.insee.fr/fr/information/8615308",
+      "https://www.cti-commission.fr/wp-content/uploads/2026/01/arrete_2025.pdf",
+      "https://www.cge.asso.fr/ecoles/ensai-2/",
+      "https://www.onisep.fr/ressources/structures-enseignement/bretagne/ille-et-vilaine/ecole-nationale-de-la-statistique-et-de-l-analyse-de-l-information",
+      "https://ressources.campusfrance.org/pratique/etablissements/fr/ing_ensai_fr.pdf",
     ],
   },
   utt: {
@@ -992,7 +1085,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         valeur: "92 %",
         source:
           "https://www.utt.fr/actualites/enquete-dinsertion-2025-sur-la-promotion-2024-linsertion-des-diplomes-reste-bonne-malgre-une-baisse-des-offres-demploi",
-        date: "2025",
+        date: "enquête 2025, promotion 2024",
       },
     ],
     sources: [
@@ -1530,7 +1623,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Frais du cycle ingénieur",
         valeur: "9 950 € par an",
         source: "https://www.estp.fr/en/formations/graduate-school-of-engineering-programme/",
-        date: "2026",
+        date: "rentrée de septembre 2026",
       },
     ],
     sources: [
@@ -1559,6 +1652,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Salaire médian brut annuel avec primes, en France",
         valeur: "47 200 €",
         source: "https://www.epita.fr/debouches/les-chiffres/",
+        date: "promotion 2024, enquête CGE",
       },
       {
         label: "Élèves embauchés avant le diplôme",
@@ -1653,7 +1747,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Frais annuels du premier cycle (tarif plein)",
         valeur: "8 280 €",
         source: "https://www.esiee.fr/formations/ingenieur/frais-de-scolarite-et-aides-financieres",
-        date: "2026-2027",
+        date: "2026-2027 et 2027-2028",
       },
       {
         label: "Salaire annuel brut moyen des diplômés",
@@ -1850,13 +1944,13 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Frais de scolarité, prépa intégrée",
         valeur: "6 500 € par an",
         source: "https://www.cesi.fr/admissions/cursus-ingenieur-5-ans/",
-        date: "2026",
+        date: "tarif affiché le 19 octobre 2026",
       },
       {
         label: "Frais de scolarité, cycle ingénieur (statut étudiant)",
         valeur: "8 500 € par an",
         source: "https://www.cesi.fr/admissions/cursus-ingenieur-5-ans/",
-        date: "2026",
+        date: "tarif affiché le 19 octobre 2026",
       },
       {
         label: "Campus en France",
@@ -1875,6 +1969,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.cesi.fr/programmes/cycle-preparatoire-integre/",
       "https://www.cesi.fr/programmes/cursus-ingenieur-3-ans/",
       "https://www.cesi.fr/ecole/diplomes-certifications/",
+      "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2022-03/liste-des-tablissements-d-enseignement-sup-rieur-priv-s-d-int-r-t-g-n-ral-eespig--17378.pdf",
     ],
   },
   icam: {
@@ -1886,19 +1981,25 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "Après le bac, trois portes d'entrée : prépa scientifique en CPGE associée (place garantie en cycle ingénieur sur contrôle continu), prépa professionnalisante (BTS ou BUT associé, puis apprentissage) ou bachelor international. Étudiant ou apprenti, tu obtiens le même diplôme.",
     chiffres: [
       {
-        label: "Frais de scolarité, cycle ingénieur (statut étudiant)",
-        valeur: "9 900 € par an, plus 620 € de contribution à la vie collective",
-        source: "https://www.icam.fr/formation/formation-ingenieur-icam-sous-statut-etudiant/",
+        label: "Places 2026, prépa scientifique de Lille (CPGE PTSI/PT associée)",
+        valeur: "100, pour 1 651 vœux confirmés (1 922 candidats en 2025)",
+        source:
+          "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=24653&typeBac=0&originePc=0",
+        date: "Parcoursup 2026 et 2025",
       },
       {
-        label: "Apprenants dans le monde",
-        valeur: "9 727",
-        source: "https://www.icam.fr/",
+        label: "Frais de scolarité",
+        valeur: "prépa 4 500 € par an (modulés selon les revenus) ; cycle ingénieur 9 700 € par an",
+        source:
+          "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=24653&typeBac=0&originePc=0",
+        date: "fiche Parcoursup 2026",
       },
       {
-        label: "Campus",
-        valeur: "7 en France, 14 dans le monde",
-        source: "https://www.icam.fr/",
+        label: "Bourse de scolarité Icam pour les boursiers",
+        valeur: "1 200 € à 2 700 € par an, sur les 5 ans",
+        source:
+          "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=24653&typeBac=0&originePc=0",
+        date: "fiche Parcoursup 2026",
       },
       {
         label: "Diplômes complémentaires ou doubles diplômes proposés",
@@ -1914,6 +2015,8 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.icam.fr/formations/financement-etudes/",
       "https://www.icam.fr/formations/enseignement-superieur/admissions-inscriptions/",
       "https://www.icam.fr/temoignage/licam-une-ecole-eespig-gage-de-serieux-dexigence-et-de-qualite/",
+      "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=24653&typeBac=0&originePc=0",
+      "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2022-03/liste-des-tablissements-d-enseignement-sup-rieur-priv-s-d-int-r-t-g-n-ral-eespig--17378.pdf",
     ],
   },
   esigelec: {
@@ -1931,14 +2034,15 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         date: "2025",
       },
       {
-        label: "Frais de scolarité, cycle préparatoire intégré",
-        valeur: "7 800 € par an (5 850 € pour les boursiers de l'État)",
-        source: "https://www.esigelec.fr/fr/frais-de-scolarite",
-        date: "2026-2027",
+        label: "Places 2026, Rouen, profil violet",
+        valeur: "100 (3 917 candidats et 59 entrants en 2025)",
+        source:
+          "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=466&typeBac=0&originePc=0",
+        date: "Parcoursup 2026 et 2025",
       },
       {
-        label: "Frais de scolarité, cycle ingénieur",
-        valeur: "8 280 € par an",
+        label: "Frais de scolarité",
+        valeur: "prépa 7 800 € par an (5 850 € pour les boursiers de l'État) ; cycle ingénieur 8 280 € par an",
         source: "https://www.esigelec.fr/fr/frais-de-scolarite",
         date: "2026-2027",
       },
@@ -1957,6 +2061,8 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.esigelec.fr/fr/lapprentissage",
       "https://www.esigelec.fr/fr/16-majeures",
       "https://eigsi.fr/formation/cycle-preparatoire",
+      "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=466&typeBac=0&originePc=0",
+      "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2022-03/liste-des-tablissements-d-enseignement-sup-rieur-priv-s-d-int-r-t-g-n-ral-eespig--17378.pdf",
     ],
   },
   eseo: {
@@ -1971,7 +2077,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Insertion professionnelle des diplômés",
         valeur: "94 %",
         source: "https://eseo.fr/",
-        date: "2025",
+        date: "données 2025, chiffre de l'école",
       },
       {
         label: "Salaire moyen annuel à la sortie",
@@ -1979,14 +2085,15 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         source: "https://eseo.fr/",
       },
       {
-        label: "Frais de scolarité, prépa ingénieur informatique et électronique",
-        valeur: "6 550 € par an (7 600 € à Paris-Vélizy)",
-        source: "https://www.eseo.fr/faq/quels-sont-frais-scolarite/",
-        date: "2026-2027",
+        label: "Places 2026, prépa intégrée d'Angers",
+        valeur: "43, pour 1 480 vœux confirmés (1 914 candidats en 2025)",
+        source:
+          "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=45494&typeBac=0&originePc=0",
+        date: "Parcoursup 2026 et 2025",
       },
       {
-        label: "Frais de scolarité, cycle ingénieur (statut étudiant)",
-        valeur: "9 390 € par an",
+        label: "Frais de scolarité",
+        valeur: "prépa intégrée 6 550 € par an (7 600 € à Paris-Vélizy) ; cycle ingénieur 9 390 € par an",
         source: "https://www.eseo.fr/faq/quels-sont-frais-scolarite/",
         date: "2026-2027",
       },
@@ -1998,6 +2105,9 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.eseo.fr/formations-ingenieurs/cycle-ingenieur-eseo-parcours-ingenieurs/",
       "https://www.eseo.fr/faq/quels-sont-frais-scolarite/",
       "https://www.eseo.fr/formations-ingenieurs/admissions/",
+      "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=45494&typeBac=0&originePc=0",
+      "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=78&typeBac=0&originePc=0",
+      "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2022-03/liste-des-tablissements-d-enseignement-sup-rieur-priv-s-d-int-r-t-g-n-ral-eespig--17378.pdf",
     ],
   },
   eigsi: {
@@ -2009,22 +2119,23 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "Près de 500 heures de projets sur le cycle ingénieur et 45 parcours bi-diplômants. Un second campus à Casablanca, où tu peux passer un semestre (BTP, logistique, IA et big data). L'école est l'héritière de l'école Violet, fondée en 1901.",
     chiffres: [
       {
+        label: "Places 2026, La Rochelle, profil violet",
+        valeur: "125 (4 207 candidats et 75 entrants en 2025)",
+        source:
+          "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=101&typeBac=0&originePc=0",
+        date: "Parcoursup 2026 et 2025",
+      },
+      {
         label: "Diplômés en poste en moins de 4 mois",
         valeur: "96 %",
         source: "https://www.eigsi.fr/ecole-ingenieur-eigsi/chiffres-cles-ingenieurs-generalistes-statistiques/",
-        date: "2023",
+        date: "chiffre de l'école",
       },
       {
         label: "Droits de scolarité, statut étudiant",
         valeur: "8 800 € par an (dont 1 500 € de frais d'inscription)",
         source: "https://www.eigsi.fr/admission-ecole-ingenieur/cout-de-la-scolarite/",
         date: "2026-2027",
-      },
-      {
-        label: "Élèves-ingénieurs",
-        valeur: "1 600",
-        source: "https://www.eigsi.fr/ecole-ingenieur-eigsi/chiffres-cles-ingenieurs-generalistes-statistiques/",
-        date: "2023",
       },
       {
         label: "Alternants en formation",
@@ -2038,6 +2149,67 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.eigsi.fr/ecole-ingenieur-eigsi/chiffres-cles-ingenieurs-generalistes-statistiques/",
       "https://www.eigsi.fr/formation-ingenieur/formation-par-apprentissage-2/",
       "https://www.eigsi.fr/formation/cycle-ingenieur-ecole/",
+      "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=101&typeBac=0&originePc=0",
+      "https://www.enseignementsup-recherche.gouv.fr/sites/default/files/2022-03/liste-des-tablissements-d-enseignement-sup-rieur-priv-s-d-int-r-t-g-n-ral-eespig--17378.pdf",
+      "https://www.esigelec.fr/fr/terminale-generale",
+    ],
+  },
+  eni: {
+    pourquoi:
+      "Quatre écoles publiques, gratuites pour les boursiers, qui forment des ingénieurs de terrain pour l'industrie : mécanique, production, matériaux, BTP, et électronique-informatique à Brest. Les débouchés vont de l'aéronautique à l'automobile, l'énergie ou les transports. À l'ENIT, 90 % des diplômés ont un emploi en moins de 4 mois (41 790 € brut par an en moyenne) ; à l'ENIM, 70 % en moins de 2 mois (40 000 €).",
+    apprendre:
+      "2 ans de prépa intégrée (maths, physique, informatique, sciences de l'ingénieur, langues), puis 3 ans de cycle ingénieur avec une option : génie mécanique, industriel, BTP ou matériaux à Tarbes ; mécanique-matériaux, conception-industrialisation ou management industriel à Metz ; génie mécanique, civil ou sensoriel à Saint-Étienne ; électronique, informatique ou robotique à Brest. Au moins un semestre à l'étranger à Metz, Saint-Étienne et Tarbes.",
+    specificite:
+      "Des écoles très tournées vers l'entreprise : plus de 50 semaines de stage à l'ENIT, trois semestres en entreprise à l'ENIM. Un même vœu Geipi Polytech ouvre les quatre écoles, dont trois rattachées à un ensemble plus large : Bretagne INP, Centrale Lyon, UTTOP.",
+    chiffres: [
+      {
+        label: "ENIT : places 2026 en 1re année (bac général)",
+        valeur: "170 (6 837 candidats et 183 entrants en 2025)",
+        source:
+          "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=7822&typeBac=0&originePc=0",
+        date: "Parcoursup 2026 et 2025",
+      },
+      {
+        label: "ENIM : places 2026 en 1re année (bac général)",
+        valeur: "148 (7 084 candidats et 144 entrants en 2025)",
+        source:
+          "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=41&typeBac=0&originePc=0",
+        date: "Parcoursup 2026 et 2025",
+      },
+      {
+        label: "ENIT : insertion des diplômés",
+        valeur: "90 % en emploi en moins de 4 mois ; salaire moyen brut avec primes de 41 790 €",
+        source:
+          "https://www.enit.fr/_attachment/diplome-d-ingenieur-article-4/plaquette%20ing%C3%A9nieur%202026%20v31-08-2026%20vl.pdf?download=true",
+        date: "enquête 2026",
+      },
+      {
+        label: "ENIM : insertion des diplômés",
+        valeur: "70 % en emploi en moins de 2 mois ; salaire moyen d'embauche de 40 000 € brut, primes comprises",
+        source:
+          "https://enim.univ-lorraine.fr/sites/dn-drupalkit23.univ-lorraine.fr/files/users/2025_plaquette_enim_tr.pdf",
+        date: "plaquette 2025-2026",
+      },
+    ],
+    sources: [
+      "https://www.letudiant.fr/etudes/ecole-ingenieur/ecoles-d-ingenieurs-post-bac-le-concours-geipi-polytech-mode-d-emploi.html",
+      "https://www.enib.fr/",
+      "https://www.enib.fr/devenir-ingenieur/",
+      "https://www.enib.fr/devenir-ingenieur/ingenieur-cycle-ingenieur/",
+      "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=38&typeBac=0&originePc=0",
+      "https://www.enim.fr/",
+      "https://enim.univ-lorraine.fr/formation/ingenieur-enim",
+      "https://enim.univ-lorraine.fr/sites/dn-drupalkit23.univ-lorraine.fr/files/users/2025_plaquette_enim_tr.pdf",
+      "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=41&typeBac=0&originePc=0",
+      "https://www.ec-lyon.fr/centrale-lyon/letablissement/lecole-interne-centrale-lyon-enise",
+      "https://enise.ec-lyon.fr/formation/cycle-preparatoire-integre-centrale-lyon-enise-191",
+      "https://enise.ec-lyon.fr/formation/ingenieur-genie-mecanique-192",
+      "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=24480&typeBac=0&originePc=0",
+      "https://www.enit.fr/",
+      "https://www.enit.fr/fr/formations/diplome-d-ingenieur.html",
+      "https://www.enit.fr/_attachment/diplome-d-ingenieur-article-4/plaquette%20ing%C3%A9nieur%202026%20v31-08-2026%20vl.pdf?download=true",
+      "https://dossierappel.parcoursup.fr/Candidats/public/fiches/afficherFicheFormation?g_ta_cod=7822&typeBac=0&originePc=0",
+      "https://www.esigelec.fr/fr/frais-de-scolarite",
     ],
   },
   "arts-et-metiers": {
@@ -2096,22 +2268,22 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "Fondée en 1907, l'école diplôme plus de 450 ingénieurs par an et s'appuie sur quatre laboratoires toulousains : IMFT, IRIT, LAAS et Laplace. Tu choisis ton département dès le concours, car les places sont attribuées par département et par filière.",
     chiffres: [
       {
-        label: "Places Concours Commun INP (toutes filières)",
+        label: "Places après une prépa (toutes filières)",
         valeur: "298 (151 SN, 94 3EA, 53 MF2E)",
         source: "https://www.enseeiht.fr/fr/formation/admissions.html",
-        date: "2026",
+        date: "tableau de septembre 2026",
       },
       {
         label: "Places Prépa INP",
         valeur: "47",
         source: "https://www.enseeiht.fr/fr/formation/admissions.html",
-        date: "2026",
+        date: "tableau de septembre 2026",
       },
       {
         label: "Places en admission sur titre (BUT, L2, L3)",
         valeur: "51",
         source: "https://www.enseeiht.fr/fr/formation/admissions.html",
-        date: "2026",
+        date: "tableau de septembre 2026",
       },
       {
         label: "Droits de scolarité du cycle ingénieur",
@@ -2143,7 +2315,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places Concours Commun INP (MP 28, MPI 2, PC 116, PSI 28, TPC 1)",
         valeur: "175",
         source: "https://www.ensiacet.fr/fr/formation/admission-et-droits-d-inscriptions.html",
-        date: "2026-2027",
+        date: "campagne 2026-2027",
       },
       {
         label: "Apprentis au plus par département",
@@ -2154,13 +2326,13 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Droits d'inscription sous statut étudiant (FISE)",
         valeur: "630 €",
         source: "https://www.ensiacet.fr/fr/formation/admission-et-droits-d-inscriptions.html",
-        date: "2026-2027",
+        date: "tableau en ligne pour 2026-2027",
       },
       {
         label: "CVEC",
         valeur: "105 €",
         source: "https://www.ensiacet.fr/fr/formation/admission-et-droits-d-inscriptions.html",
-        date: "2026-2027",
+        date: "tableau en ligne pour 2026-2027",
       },
     ],
     sources: [
@@ -2183,25 +2355,25 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places en admission sur titre, 1re année (BUT, ATS, L2, L3)",
         valeur: "36 au plus",
         source: "https://phelma.grenoble-inp.fr/fr/formation/admission",
-        date: "2026-2027",
+        date: "campagne 2026-2027",
       },
       {
         label: "Places en admission sur titre, 2e année",
         valeur: "20",
         source: "https://phelma.grenoble-inp.fr/fr/formation/admission",
-        date: "2026-2027",
+        date: "campagne 2026-2027",
       },
       {
         label: "Places en apprentissage (MT et MEP)",
         valeur: "24",
         source: "https://phelma.grenoble-inp.fr/fr/formation/admission",
-        date: "2026-2027",
+        date: "campagne 2026-2027",
       },
       {
         label: "Places BCPST (parcours PMP)",
         valeur: "2 au plus",
         source: "https://phelma.grenoble-inp.fr/fr/formation/admission",
-        date: "2026-2027",
+        date: "campagne 2026-2027",
       },
     ],
     sources: [
@@ -2226,16 +2398,19 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Admis via le Concours Commun INP",
         valeur: "231 (65 MP, 60 PC, 80 PSI, 15 PT, 3 TSI, 3 MPI)",
         source: "https://ense3.grenoble-inp.fr/fr/formation/admission",
+        date: "année à confirmer",
       },
       {
         label: "Élèves recrutés par an",
         valeur: "environ 325",
         source: "https://ense3.grenoble-inp.fr/fr/formation/admission",
+        date: "année à confirmer",
       },
       {
         label: "Places en apprentissage (PRODISE)",
         valeur: "25",
         source: "https://ense3.grenoble-inp.fr/fr/formation/admission",
+        date: "année à confirmer",
       },
       {
         label: "Droits d'inscription (étudiant UE)",
@@ -2299,7 +2474,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
   },
   "telecom-sudparis": {
     pourquoi:
-      "Télécom SudParis forme des ingénieurs du numérique : IA et data science, développement logiciel, réseaux et cloud, cybersécurité, finance quantitative. Promotion 2025 : 78,2 % en emploi, 93,6 % en CDI, salaire moyen de 47 594 € brut primes comprises. Les services numériques (46,8 %) et le conseil-ingénierie (25,2 %) recrutent le plus ; plus de 70 % des ingénieurs généralistes signent avant le diplôme.",
+      "Télécom SudParis forme des ingénieurs du numérique : IA et data science, développement logiciel, réseaux et cloud, cybersécurité. Promotion 2025 : 78,2 % en emploi, 93,6 % en CDI, salaire moyen de 47 594 € brut primes comprises. Les services numériques (46,8 %) et le conseil-ingénierie (25,2 %) recrutent le plus ; plus de 70 % des ingénieurs généralistes signent avant le diplôme.",
     apprendre:
       "Le cycle généraliste mêle cours, projets et stages en lien étroit avec les entreprises. En 3e année, tu choisis l'une des 16 voies d'approfondissement : cybersécurité, intelligence artificielle, jeux vidéo, systèmes embarqués, imagerie, data science biomédicale (nouveauté 2026)… Tu peux aussi suivre un M2 de l'Institut Polytechnique de Paris, un semestre dans une autre école de l'IMT ou l'un des 100 parcours à l'international.",
     specificite:
@@ -2309,6 +2484,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places au concours Mines-Télécom",
         valeur: "206",
         source: "https://www.telecom-sudparis.eu/admission/admission-en-cycle-ingenieur-generaliste/",
+        date: "session 2027",
       },
       {
         label: "Places en admission sur titre (1re / 2e année)",
@@ -2350,6 +2526,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Part des 1 500 places annuelles du concours Mines-Télécom",
         valeur: "plus de 15 %",
         source: "https://imt-nord-europe.fr/annuaire-formations/niveaux-admission/prepa-scientifique/",
+        date: "année à confirmer",
       },
       {
         label: "Places d'élève fonctionnaire",
@@ -2396,21 +2573,21 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Diplômés en emploi en moins de 2 mois",
         valeur: "82 %",
         source: "https://www.imt-mines-albi.fr/",
-        date: "2026",
+        date: "affiché sur le site en 2026",
       },
       {
         label: "Salaire annuel brut moyen en France, primes incluses",
         valeur: "42 375 €",
         source:
           "https://www.imt-mines-albi.fr/fr/integrer-une-formation/diplome-ingenieur-generaliste/filiere-etudiant",
-        date: "2024",
+        date: "promotion 2024",
       },
       {
         label: "Diplômés en activité embauchés en CDI",
         valeur: "84 %",
         source:
           "https://www.imt-mines-albi.fr/fr/integrer-une-formation/diplome-ingenieur-generaliste/filiere-etudiant",
-        date: "2024",
+        date: "promotion 2024",
       },
     ],
     sources: [
@@ -2441,13 +2618,13 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Diplômés en emploi en moins de 4 mois (VIE compris)",
         valeur: "86 %",
         source: "https://www.imt-mines-ales.fr/sites/default/files/media/2026-06/Brochure-Recrutement-2026.pdf",
-        date: "2024",
+        date: "promotion 2024",
       },
       {
         label: "Salaire annuel moyen de sortie",
         valeur: "45 100 €",
         source: "https://www.imt-mines-ales.fr/sites/default/files/media/2026-06/Brochure-Recrutement-2026.pdf",
-        date: "2024",
+        date: "promotion 2024",
       },
       {
         label: "Apprentis ingénieurs (3 spécialités)",
@@ -2471,7 +2648,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
     pourquoi:
       "À Brest, l'ENSTA forme aux métiers de la mer et de la défense : génie maritime, énergies en mer, hydrographie et océanographie, robotique, propulsion et pyrotechnie. La formation Défense & Sécurité mène à la DGA, à l'Agence de l'innovation de défense, au SHOM et vers neuf grands groupes partenaires, dont Naval Group, Thales, MBDA, Safran et Dassault ; cybersécurité, énergie et maritime recrutent aussi.",
     apprendre:
-      "1re année : tronc commun (maths, physique, mécanique, numérique, langues) et un mois de stage. 2e année : un champ (maths appliquées, mécanique ou numérique) et un stage de recherche d'au moins 12 semaines. 3e année : une spécialisation, dont 7 à Brest (génie maritime, énergies en mer, hydrographie et océanographie, matériaux et structures, robotique, pyrotechnie, systèmes d'observation), puis le stage de fin d'études. 16 semaines à l'étranger.",
+      "1re année : tronc commun (maths, physique, mécanique, numérique, langues) et un mois de stage. 2e année : un champ (maths appliquées, mécanique ou numérique) et un stage de recherche d'au moins 12 semaines. 3e année : une spécialisation, dont 7 à Brest (génie maritime, énergies en mer, hydrographie et océanographie, matériaux et structures, robotique, pyrotechnie, systèmes d'observation), puis le stage de fin d'études. Au moins 16 semaines à l'étranger.",
     specificite:
       "Depuis le 1er janvier 2025, ENSTA Paris et ENSTA Bretagne forment une seule école de l'Institut Polytechnique de Paris, avec deux campus, Brest et Palaiseau. Toute la promotion Défense & Sécurité commence à Brest, et ses élèves IETA sont payés par la DGA.",
     chiffres: [
@@ -2565,18 +2742,19 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places au concours Mines-Télécom",
         valeur: "109 (55 MP, 20 MPI, 18 PSI, 14 PC, 2 TSI)",
         source: "https://www.ensiie.fr/formation/concours-et-admission/concours-mines-telecom",
+        date: "session 2027 selon la page",
       },
       {
         label: "Salaire à l'embauche",
         valeur: "44 000 €",
         source: "https://www.ensiie.fr/",
-        date: "2026",
+        date: "affiché sur le site en 2026",
       },
       {
         label: "Diplômés embauchés au bout de 3 mois",
         valeur: "80 %",
         source: "https://www.ensiie.fr/",
-        date: "2026",
+        date: "affiché sur le site en 2026",
       },
       {
         label: "Étudiants inscrits",
@@ -2619,13 +2797,11 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Élèves embauchés avant le diplôme",
         valeur: "50 %",
         source: "https://www.ensma.fr/wp-content/uploads/2025/06/depliant-ISAE-ENSMA-2025.pdf",
-        date: "2025",
       },
       {
         label: "Salaire brut moyen à la sortie",
         valeur: "37 500 € par an",
         source: "https://www.ensma.fr/wp-content/uploads/2025/06/depliant-ISAE-ENSMA-2025.pdf",
-        date: "2025",
       },
     ],
     sources: [
@@ -2734,11 +2910,13 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places au concours Agro-Véto BCPST",
         valeur: "190 (130 en agronomie, 60 en horticulture et paysage)",
         source: "https://www.concours-agro-veto.fr/concours/concours-cpge-bcpst",
+        date: "session 2026",
       },
       {
         label: "Places au concours Agro-Véto apprentissage",
         valeur: "60 (agronomie 20, agroalimentaire 20, horticulture 10, paysage 10)",
         source: "https://www.concours-agro-veto.fr/concours/concours-apprentissage",
+        date: "session 2026",
       },
       {
         label: "Durée moyenne d'accès au premier emploi",
@@ -2777,6 +2955,7 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
         label: "Places au concours Agro-Véto BCPST",
         valeur: "125 (113 en agronomie, 12 en SAADS)",
         source: "https://www.concours-agro-veto.fr/concours/concours-cpge-bcpst",
+        date: "session 2026",
       },
       {
         label: "Salaire brut annuel moyen un an après le diplôme",
@@ -2899,6 +3078,100 @@ export const details: Record<string, EcoleDetails> = etTypo<Record<string, Ecole
       "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-tpc.html",
       "https://www.concours-commun-inp.fr/_resource/R%C3%A8glement_VF_13-05_26.pdf?download=true",
       "https://www.service-public.gouv.fr/particuliers/vosdroits/F2865",
+    ],
+  },
+  "sigma-clermont": {
+    pourquoi:
+      "Tu choisis entre la chimie et les procédés d'un côté, la mécanique et l'industrie de l'autre. En mécanique et génie industriel, les diplômés deviennent ingénieurs R&D, de production, de bureau d'études ou chefs de projet, dans les transports (automobile, aéronautique, ferroviaire), l'énergie, la métallurgie ou la robotique. Le génie des procédés et énergétique mène vers l'environnement, l'énergie et la transformation des matières premières.",
+    apprendre:
+      "Trois spécialités sous statut étudiant : chimie, génie des procédés et énergétique, mécanique (département mécanique avancée) ; une quatrième en apprentissage, mécanique et génie industriel. Les cursus de Clermont Auvergne INP comptent 14 mois de stages en entreprise en moyenne. Tu peux aussi rejoindre un projet d'élèves : moto SIGMA Regen Superbike, Formula Student ou PERSEUS, avec le CNES.",
+    specificite:
+      "Née de la fusion de l'IFMA (mécanique) et de l'ENSCCF (chimie), SIGMA Clermont réunit chimie et mécanique sur le campus des Cézeaux. Avec ISIMA et Polytech Clermont, elle forme Clermont Auvergne INP, un institut créé en 2021.",
+    chiffres: [
+      {
+        label: "Places au CCINP, rentrée 2026",
+        valeur: "124 (PSI 62, PC chimie 32, MP 20, TSI 8, TPC 2)",
+        source: "https://www.concours-commun-inp.fr/_resource/R%C3%A8glement_VF_13-05_26.pdf?download=true",
+        date: "2026",
+      },
+      {
+        label: "Places en apprentissage (mécanique et génie industriel), 1re année",
+        valeur: "48",
+        source: "https://alternance.imt.fr/wp-content/uploads/2026/01/Notice-2026_SIGMA-Clermont.pdf",
+        date: "rentrée 2026",
+      },
+      {
+        label: "Élèves en cycle ingénieur",
+        valeur: "1 002, dont 30 % de boursiers",
+        source:
+          "https://www.onisep.fr/ressources/structures-enseignement/auvergne-rhone-alpes/puy-de-dome/ecole-d-ingenieurs-sigma-clermont-clermont-auvergne-inp-universite-clermont-auvergne",
+        date: "2026",
+      },
+      {
+        label: "Stages en entreprise par cursus, moyenne de Clermont Auvergne INP",
+        valeur: "14 mois",
+        source: "https://ressources.campusfrance.org/pratique/etablissements/fr/ing_sigma_fr.pdf",
+        date: "novembre 2024",
+      },
+    ],
+    sources: [
+      "https://www.onisep.fr/ressources/structures-enseignement/auvergne-rhone-alpes/puy-de-dome/ecole-d-ingenieurs-sigma-clermont-clermont-auvergne-inp-universite-clermont-auvergne",
+      "https://www.onisep.fr/http/redirection/formation/slug/FOR.12383",
+      "https://www.sigma-clermont.fr/fr/bienvenue-a-sigma-clermont.html",
+      "https://alternance.imt.fr/wp-content/uploads/2026/01/Notice-2026_SIGMA-Clermont.pdf",
+      "https://www.francecompetences.fr/recherche/rncp/41245",
+      "https://ressources.campusfrance.org/pratique/etablissements/fr/ing_sigma_fr.pdf",
+      "https://www.concours-commun-inp.fr/_resource/R%C3%A8glement_VF_13-05_26.pdf?download=true",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-pc.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-mp.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-psi.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-tpc.html",
+      "https://www.service-public.gouv.fr/particuliers/vosdroits/F2865",
+    ],
+  },
+  enac: {
+    pourquoi:
+      "Tu deviens ingénieur généraliste de l'aéronautique, tourné vers la sécurité et la transition du transport aérien. Les diplômés travaillent chez les constructeurs, dans les compagnies aériennes et les aéroports, ou à la DGAC : les élèves fonctionnaires y deviennent cadres, à environ 3 800 € nets par mois en début de carrière. Selon la notice du concours 2026, 100 % des diplômés ont un emploi 4 mois après le diplôme, pour 39 041 € bruts par an.",
+    apprendre:
+      "1re année commune : opérations aériennes et sécurité, trafic aérien, avionique et télécoms, maths, informatique. En 2e année, une majeure : systèmes avioniques, opérations aériennes, télécommunications aéronautiques et spatiales ou systèmes informatiques pour le transport aérien, plus des mineures (drones, aéroports, data science, cybersécurité). Trois stages, dont 24 semaines au moins en fin d'études ; 60 accords d'échange ou de double diplôme.",
+    specificite:
+      "C'est l'école de la DGAC, qui forme aussi pilotes, contrôleurs aériens et techniciens de l'aviation civile. Trois statuts mènent au même diplôme : élève civil, élève fonctionnaire payé pendant ses études, ou apprenti. Le campus de Toulouse compte 750 logements étudiants.",
+    chiffres: [
+      {
+        label: "Places au concours Mines-Télécom, rentrée 2026",
+        valeur: "108 (90 élèves civils, 18 élèves fonctionnaires)",
+        source: "https://concours.enac.fr/concours/c13614/N_fr_NOTICE_IENACAPP_2026.pdf",
+        date: "2026",
+      },
+      {
+        label: "Salaire brut annuel des diplômés",
+        valeur: "39 041 €",
+        source: "https://cahier-de-prepa.fr/pc-descartes/download?id=260",
+        date: "notice Mines-Télécom 2026",
+      },
+      {
+        label: "Diplômés en emploi 4 mois après le diplôme",
+        valeur: "100 %",
+        source: "https://cahier-de-prepa.fr/pc-descartes/download?id=260",
+        date: "notice Mines-Télécom 2026",
+      },
+      {
+        label: "Rémunération d'un élève fonctionnaire",
+        valeur: "environ 1 500 € nets par mois, en moyenne sur 3 ans",
+        source: "https://concours.enac.fr/concours/c13614/N_fr_NOTICE_IENACAPP_2026.pdf",
+        date: "2026",
+      },
+    ],
+    sources: [
+      "https://concours.enac.fr/concours/c13614/N_fr_NOTICE_IENACAPP_2026.pdf",
+      "https://cahier-de-prepa.fr/pc-descartes/download?id=260",
+      "http://formations.enac.fr/fr/formations/feuilleter-le-catalogue/sciences-technologies-sante-STS/formation-d-ingenieur-classique-FI/ingenieur-enac-program-47517.html",
+      "https://www.enac.fr/en/full-time-graduate-engineer-eu-0",
+      "https://www.enac.fr/sites/default/files/2025-11/Tarifs%20ENAC%20CA%20NOV%202025.pdf",
+      "https://www.concours-commun-inp.fr/_resource/R%C3%A8glement_VF_13-05_26.pdf?download=true",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-mp.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-pc.html",
+      "https://www.concours-commun-inp.fr/fr/les-ecoles/les-places-dans-les-ecoles/places-psi.html",
     ],
   },
 });

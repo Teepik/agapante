@@ -14,7 +14,7 @@ import { etTypo } from "./typo";
 export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<string, Partial<Ecole>>>({
   polytechnique: {
     accroche:
-      "Tu vises la recherche, l'industrie de pointe ou le service de l'État : à la sortie, environ 53 % des diplômés partent en entreprise, 34 % préparent un doctorat et 15 % rejoignent un corps de l'État.",
+      "Tu vises la recherche, l'industrie de pointe ou le service de l'État : à la sortie, environ 53 % des diplômés partent en entreprise et 34 % préparent un doctorat ; 15 % rejoignent un corps de l'État, certains après leur thèse.",
     statut: "public",
     recrutement: ["prepa", "titre"],
     une: "Concours X-ENS",
@@ -134,7 +134,7 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     accroche:
       "Promotion 2025 : 32 % des diplômés travaillent dans le conseil et l'ingénierie, 25 % dans le numérique, 14 % dans l'industrie des transports, 7 % dans l'énergie.",
     statut: "public",
-    recrutement: ["prepa", "titre", "postbac"],
+    recrutement: ["prepa", "titre"],
     alternance:
       "Apprentissage sur 3 ans (choix en 1re année) ou sur 2 ans (choix en 2e), ou 1 an en contrat de professionnalisation ; salaire de 600 à 1 500 € par mois",
     une: "Écoles Centrale, concours Centrale-Supélec",
@@ -146,7 +146,7 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     statut: "public",
     recrutement: ["prepa", "titre"],
     alternance:
-      "Quatre diplômes d'ingénieur en apprentissage sur 3 ans, 50 % du temps en entreprise : Informatique, réseaux et télécommunications ; Ingénierie logicielle ; Transformation digitale des systèmes industriels (génie industriel) ; Écologie industrielle et décarbonation (ouverture en 2026). Entrée après un BUT 2 ou 3, un BTS, une L3 ou une prépa ATS. Cursus généraliste : contrat de professionnalisation possible en 3e année.",
+      "4 diplômes en apprentissage sur 3 ans, 50 % en entreprise : informatique-réseaux-télécoms, ingénierie logicielle, génie industriel, écologie industrielle (2026)",
     une: "Concours Mines-Ponts",
     uneRang: 30,
     uneVoie: "prepa",
@@ -246,7 +246,7 @@ export const enrichissements: Record<string, Partial<Ecole>> = etTypo<Record<str
     statut: "eespig",
     recrutement: ["postbac", "titre", "prepa"],
     alternance:
-      "Cycle ingénieur Icam sous statut apprenti (ingénieur généraliste), de la 3e à la 5e année, à Lille, Grand Paris Sud, Bretagne, Vendée et Toulouse, après la prépa professionnalisante ou un bac+2. Rythme : 1 mois / 1 mois en 3e année, 3 mois / 3 mois en 4e, 6 mois / 6 mois en 5e, dont 11 semaines à l'étranger. À Strasbourg-Europe : ingénieur spécialisé Systèmes numériques industriels, en apprentissage.",
+      "De la 3e à la 5e année (ingénieur généraliste) à Lille, Grand Paris Sud, Bretagne, Vendée et Toulouse, après la prépa professionnalisante ou un bac+2",
   },
   "arts-et-metiers": {
     accroche:
@@ -287,12 +287,12 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     formations:
       "Le diplôme de l'ENS Rennes (grade de master) repose sur quatre compétences : recherche, avec des stages en laboratoire et un master recherche ; pluridisciplinarité ; pédagogie, qui prépare à l'agrégation ; international, avec des stages longs à l'étranger.",
     debouches:
-      "Tu vises l'enseignement supérieur ou la recherche : 70 % des élèves poursuivent en thèse, et l'école affiche 83 % de réussite à l'agrégation.",
+      "Tu vises l'enseignement supérieur ou la recherche : 70 % des élèves poursuivent en thèse, et l'école affiche 83 % de réussite à l'agrégation (chiffres de 2023).",
     plus: "Ses concours s'ouvrent aux filières PSI, PT, TSI et ATS en plus de MP et MPI, avec un département de mécatronique et un département de sciences du sport (concours 2SEP).",
     station: "ecole-ingenieurs",
     url: "https://www.ens-rennes.fr/",
     accroche:
-      "Tu vises l'enseignement supérieur ou la recherche : 70 % des élèves poursuivent en thèse, et l'école affiche 83 % de réussite à l'agrégation.",
+      "Tu vises l'enseignement supérieur ou la recherche : 70 % des élèves poursuivent en thèse, et l'école affiche 83 % de réussite à l'agrégation (chiffres de 2023).",
     statut: "public",
     recrutement: ["prepa", "titre"],
     une: "Concours X-ENS",
@@ -361,25 +361,23 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     name: "Centrale Méditerranée",
     short: "Centrale Méditerranée",
     line: "sciences",
-    ville: "Marseille (technopôle de Château-Gombert) ; campus de Nice (Éco-Vallée de la plaine du Var)",
+    ville: "Marseille (Château-Gombert) et Nice",
     kind: "École d'ingénieurs publique",
-    acces:
-      "Concours Centrale-Supélec (MP, MPI, PC, PSI, TSI) ; Banque PT pour la filière PT ; admission sur titre pour les étudiants de licence (concours universitaire des Écoles Centrale).",
+    acces: "Prépa MP, MPI, PC, PSI, TSI, puis concours Centrale-Supélec ; PT via la Banque PT ; aussi sur titre",
     duree: "3 ans après bac + 2",
-    places:
-      "Concours 2026 : 265 places au concours Centrale-Supélec (90 MP, 10 MPI, 90 PC, 70 PSI, 5 TSI) et 5 places en PT via la Banque PT. Environ 300 élèves par promotion (brochure de 2023).",
-    cout: "2 600 € par an à la rentrée 2025. Dès la rentrée 2026, les écoles du groupe Centrale modulent leurs droits selon le revenu fiscal de référence de la famille : barème à demander à l'école. Apprentis exonérés des droits d'inscription.",
+    places: "Concours 2026 : 265 places Centrale-Supélec (90 MP, 10 MPI, 90 PC, 70 PSI, 5 TSI) et 5 en PT",
+    cout: "2 600 € par an en 2025-2026 ; depuis la rentrée 2026, droits modulés selon le revenu fiscal de la famille ; apprentis exonérés",
     formations:
       "Trois semestres de socle scientifique commun, rythmés par 4 semaines de cours puis 1 semaine d'activités en entreprise.",
     debouches: "Centrale Méditerranée forme des ingénieurs généralistes pour l'industrie, le conseil et la recherche.",
-    plus: "Chaque élève vit une alternance dès la 1re année : en entreprise comme apprenti, en laboratoire de recherche ou en création d'entreprise (« 100 % des élèves sont alternants »).",
+    plus: "Toute la promotion suit le rythme de l'alternance dès la 1re année : semaines de cours et semaines en entreprise, comme apprenti, en laboratoire, en création d'entreprise ou sous statut étudiant (parcours Train'ing).",
     station: "ecole-ingenieurs",
     url: "https://www.centrale-mediterranee.fr",
     accroche: "Centrale Méditerranée forme des ingénieurs généralistes pour l'industrie, le conseil et la recherche.",
     statut: "public",
     recrutement: ["prepa", "titre"],
     alternance:
-      "Apprentissage possible dès la 1re année et sur les 3 ans du cursus, pour le même diplôme d'ingénieur généraliste. Après l'admission, les entreprises choisissent leurs apprentis lors d'un job dating. Temps en entreprise : 40 à 45 % en 1re année, jusqu'à 65 % en 2e et 3e années ; 9 semaines consécutives à l'étranger au semestre 8 ; CFA Formasup Méditerranée.",
+      "Apprentissage dès la 1re année, sur 3 ans, même diplôme : 40 à 45 % du temps en entreprise en 1re année, jusqu'à 65 % ensuite ; 9 semaines à l'étranger",
     une: "Écoles Centrale, concours Centrale-Supélec",
     uneRang: 27,
     uneVoie: "prepa",
@@ -389,14 +387,12 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     name: "École nationale supérieure des mines de Saint-Étienne",
     short: "Mines Saint-Étienne",
     line: "sciences",
-    ville: "Saint-Étienne ; campus Aix-Marseille-Provence (Gardanne) pour l'ISMIN ; Lyon pour le double diplôme FUSION",
+    ville: "Saint-Étienne ; Gardanne (ISMIN) ; Lyon (FUSION)",
     kind: "École d'ingénieurs publique",
-    acces:
-      "Concours commun Mines-Ponts (MP, MPI, PC, PSI, PT, TSI) pour l'ingénieur civil des mines (ICM) et le double diplôme FUSION ; concours Mines-Télécom pour l'ISMIN (microélectronique et informatique, en Provence) ; diplômes d'ingénieur en alternance après un bac + 2 ou un bac + 3 scientifique ou technologique.",
+    acces: "Prépa MP, MPI, PC, PSI, PT, TSI, puis concours Mines-Ponts ; ISMIN via le concours Mines-Télécom",
     duree: "3 ans après bac + 2",
-    places:
-      "Concours Mines-Ponts 2026 : 154 places (40 MP, 20 MPI, 42 PC, 45 PSI, 6 PT, 1 TSI), dont 25 pour le cursus FUSION. ISMIN : 7 places en PT au concours Mines-Télécom (« à confirmer pour 2026 »). Promotion ICM : 185 élèves.",
-    cout: "ICM : 3 600 € par an, plus la CVEC ; boursiers du Crous exonérés. Ce montant vaut pour les nouveaux élèves de l'Institut Mines-Télécom à la rentrée 2026. Cursus FUSION : 15 500 € par an.",
+    places: "Concours Mines-Ponts 2026 : 154 places (40 MP, 20 MPI, 42 PC, 45 PSI, 6 PT, 1 TSI), dont 25 pour FUSION",
+    cout: "3 600 € par an pour les nouveaux élèves de la rentrée 2026, plus la CVEC ; boursiers du Crous exonérés ; FUSION : 15 500 € par an",
     formations: "1re année : socle scientifique, technique et humain, stage opérateur de 4 semaines.",
     debouches:
       "Mines Saint-Étienne forme des ingénieurs généralistes pour l'industrie, l'énergie, la santé, la data et la finance.",
@@ -408,7 +404,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "public",
     recrutement: ["prepa", "titre"],
     alternance:
-      "Quatre diplômes d'ingénieur de spécialité en alternance sur 3 ans, avec l'ISTP à Saint-Étienne : génie industriel (IGI), génie nucléaire (IGN), systèmes électroniques embarqués (ISEE), ingénierie énergétique (ISE). Entrée après un bac + 2 ou un bac + 3 scientifique ou technologique, sous statut d'apprenti ou de salarié. ICM : contrat de professionnalisation possible en dernière année.",
+      "4 diplômes de spécialité en alternance sur 3 ans avec l'ISTP : génie industriel, génie nucléaire, systèmes électroniques embarqués, ingénierie énergétique",
     une: "Concours Mines-Ponts",
     uneRang: 28,
     uneVoie: "prepa",
@@ -418,14 +414,13 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     name: "École nationale supérieure des mines de Nancy",
     short: "Mines Nancy",
     line: "sciences",
-    ville: "Nancy (campus Artem) ; Saint-Dié-des-Vosges pour le diplôme en apprentissage Ingénierie de la conception",
+    ville: "Nancy (campus Artem) ; Saint-Dié-des-Vosges",
     kind: "École d'ingénieurs publique",
-    acces:
-      "Concours commun Mines-Ponts (MP, MPI, PC, PSI, PT, TSI) ; La Prépa des INP ; CUPGE ; admission sur titre pour les étudiants de licence (GEI-UNIV) ; admissions après un BUT ou un BTS pour les diplômes de spécialité.",
+    acces: "Prépa MP, MPI, PC, PSI, PT, TSI, puis concours Mines-Ponts ; aussi Prépa des INP, CUPGE, sur titre",
     duree: "3 ans après bac + 2",
     places:
-      "Concours Mines-Ponts 2026 : 141 places (46 MP, 12 MPI, 36 PC, 40 PSI, 6 PT, 1 TSI). S'y ajoutent 7 places pour La Prépa des INP, 10 pour la CUPGE et 10 sur titre via GEI-UNIV (5 en 1re année, 5 en 2e année).",
-    cout: "2 613 € par an pour les élèves de l'Union européenne (notice du concours 2026), montant fixé chaque année par le ministère ; boursiers exonérés.",
+      "Concours Mines-Ponts 2026 : 141 places (46 MP, 12 MPI, 36 PC, 40 PSI, 6 PT, 1 TSI) ; 7 places pour La Prépa des INP",
+    cout: "2 613 € par an pour les élèves de l'Union européenne (notice du concours 2026) ; boursiers exonérés",
     formations: "1re année : tronc commun scientifique et managérial, stage opérateur d'un mois.",
     debouches:
       "Mines Nancy forme des ingénieurs généralistes pour l'énergie, le numérique, les matériaux, le génie civil et l'industrie.",
@@ -435,9 +430,9 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     accroche:
       "Mines Nancy forme des ingénieurs généralistes pour l'énergie, le numérique, les matériaux, le génie civil et l'industrie.",
     statut: "public",
-    recrutement: ["prepa", "titre", "postbac"],
+    recrutement: ["prepa", "titre"],
     alternance:
-      "Le cursus ICM se suit sous statut étudiant. L'école propose un diplôme d'ingénieur de spécialité Génie mécanique, parcours Ingénierie de la conception, en apprentissage sur 3 ans à Saint-Dié-des-Vosges, avec les CFAI et l'ITII de Lorraine. Contrat de professionnalisation possible en 3e année du diplôme Génie industriel et matériaux.",
+      "Diplôme de spécialité Génie mécanique, parcours Ingénierie de la conception, en apprentissage sur 3 ans à Saint-Dié-des-Vosges",
     une: "Concours Mines-Ponts",
     uneRang: 29,
     uneVoie: "prepa",
@@ -447,15 +442,12 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     name: "Institut d'Optique Graduate School",
     short: "SupOptique (IOGS)",
     line: "sciences",
-    ville:
-      "Palaiseau (1re année, campus de l'École polytechnique) ; Bordeaux-Talence et Saint-Étienne en 2e et 3e années",
-    kind: "École d'ingénieurs privée reconnue par l'État",
-    acces:
-      "Concours Centrale-Supélec (MP, MPI, PC, PSI, TSI) ; Banque PT pour la filière PT ; GEI-UNIV après un bac + 3 ou un bac + 4 ; admission sur dossier et épreuves après une L2 de physique, un BTS ou un BUT.",
+    ville: "Palaiseau, puis Bordeaux-Talence ou Saint-Étienne",
+    kind: "École d'ingénieurs privée",
+    acces: "Prépa MP, MPI, PC, PSI, TSI, puis concours Centrale-Supélec ; PT via la Banque PT ; aussi sur titre",
     duree: "3 ans après bac + 2",
-    places:
-      "Concours 2026 : 124 places en MP, MPI, PC et PSI, soit 32 MP, 8 MPI, 50 PC, 28 PSI et 6 places pour des candidats étrangers, plus 15 places en PT. TSI : 1 place en 2025. GEI-UNIV 2026 : 10 places après un bac + 3, 5 après un bac + 4. Voie sur dossier : 20 places à Palaiseau en 2025.",
-    cout: "3 200 € par an en 2026, soit 9 600 € pour les 3 ans ; frais réduits selon l'échelon de bourse sur critères sociaux.",
+    places: "Concours 2026 : 124 places en MP, MPI, PC et PSI (dont 6 pour candidats étrangers) et 15 en PT",
+    cout: "3 200 € par an en 2026 (9 600 € pour les 3 ans) ; frais réduits selon l'échelon de bourse",
     formations: "La 1re année, commune, se passe à Palaiseau.",
     debouches:
       "SupOptique forme des ingénieurs de l'optique et de la photonique : systèmes optiques, imagerie, vision artificielle, nanosciences.",
@@ -464,10 +456,9 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     url: "https://www.institutoptique.fr",
     accroche:
       "SupOptique forme des ingénieurs de l'optique et de la photonique : systèmes optiques, imagerie, vision artificielle, nanosciences.",
-    statut: "eespig",
+    statut: "prive",
     recrutement: ["prepa", "titre"],
-    alternance:
-      "Oui : une filière d'ingénieur par apprentissage, portée par le CFA SupOptique, à côté du cursus sous statut étudiant.",
+    alternance: "Filière d'ingénieur par apprentissage, portée par le CFA SupOptique",
   },
   {
     id: "chimie-paristech",
@@ -476,12 +467,10 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     line: "sciences",
     ville: "Paris (5e arrondissement)",
     kind: "École d'ingénieurs publique",
-    acces:
-      "Concours commun Mines-Ponts (PC, PSI) ; Concours Commun INP (TPC) ; concours A BCPST de la banque Agro-Véto ; classe préparatoire intégrée (CPI) de la Fédération Gay-Lussac ; prépa ATS ; GEI-UNIV sur dossier et entretien après une L3 ou un BUT (1re année) ou un M1 (2e année).",
+    acces: "Prépa PC ou PSI, puis concours Mines-Ponts ; aussi TPC, BCPST, CPI Gay-Lussac, ATS et sur titre",
     duree: "3 ans après bac + 2",
-    places:
-      "Concours Mines-Ponts 2026 : 71 places (68 PC, 3 PSI). Selon PSL, s'y ajoutent 3 places en BCPST, 5 pour la CPI de la Fédération Gay-Lussac, 2 en ATS et 10 au plus sur dossier et entretien (L3, BTS, DUT). Environ 115 diplômés par an.",
-    cout: "2026-2027 : 1 200 € pour les nouveaux entrants en 1re année, 628 € en 2e et 3e années (étudiants européens) ; 3 941 € hors Union européenne ; CVEC de 105 €. Bourses sur critères sociaux possibles ; en 3e année, l'alternant est salarié.",
+    places: "Concours Mines-Ponts 2026 : 71 places (68 PC, 3 PSI) ; plus des places en BCPST, CPI, ATS et sur dossier",
+    cout: "2026-2027 : 1 200 € en 1re année, 628 € en 2e et 3e années (Europe), plus 105 € de CVEC ; bourses sur critères sociaux possibles",
     formations:
       "1re année : chimie moléculaire, chimie des matériaux, économie et management, stage ouvrier de 1 à 2 mois.",
     debouches:
@@ -492,12 +481,56 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     accroche:
       "Chimie ParisTech forme des ingénieurs chimistes pour l'industrie chimique, les matériaux, l'énergie, la cosmétique, les biotechnologies ou le conseil, et pour la recherche publique.",
     statut: "public",
-    recrutement: ["prepa", "titre", "postbac"],
-    alternance:
-      "3e année possible en alternance, en contrat de professionnalisation d'un an : de septembre à fin janvier, 2 jours à l'école et 2 ou 3 jours en entreprise chaque semaine, puis temps plein en entreprise de février à fin août.",
+    recrutement: ["prepa", "titre"],
+    alternance: "3e année possible en contrat de professionnalisation d'un an : l'élève est salarié d'une entreprise",
     une: "Concours Mines-Ponts",
     uneRang: 32,
     uneVoie: "prepa",
+  },
+  {
+    id: "ensimag",
+    name: "Grenoble INP - Ensimag",
+    short: "Ensimag",
+    line: "sciences",
+    ville: "Saint-Martin-d'Hères (domaine universitaire de Grenoble)",
+    kind: "École d'ingénieurs publique",
+    acces: "Prépa MP, MPI, PC, PSI, puis Concours Commun INP ; aussi Banque PT, Prépa des INP, sur titre",
+    duree: "3 ans après bac + 2",
+    places: "Concours Commun INP 2026 : 160 places (110 MP, 40 MPI, 5 PC, 5 PSI) ; 10 places en PT",
+    cout: "630 € par an en 2026-2027 (tarif fixé par l'État), plus 105 € de CVEC ; boursiers du Crous et apprentis exonérés",
+    formations: "Le cursus dure 3 ans après la prépa.",
+    debouches: "L'Ensimag forme des ingénieurs en informatique, mathématiques appliquées et télécommunications.",
+    plus: "Une école de Grenoble INP - UGA, créée en 1960, consacrée à l'informatique et aux mathématiques appliquées, avec une voie en apprentissage pour le même diplôme d'ingénieur.",
+    station: "ecole-ingenieurs",
+    url: "https://ensimag.grenoble-inp.fr",
+    accroche: "L'Ensimag forme des ingénieurs en informatique, mathématiques appliquées et télécommunications.",
+    statut: "public",
+    recrutement: ["prepa", "titre", "postbac"],
+    alternance: "Même diplôme d'ingénieur sous statut d'apprenti, avec l'ITII Dauphiné-Vivarais",
+  },
+  {
+    id: "ensai",
+    name: "École nationale de la statistique et de l'analyse de l'information",
+    short: "ENSAI",
+    line: "sciences",
+    ville: "Bruz, campus de Ker Lann (métropole de Rennes)",
+    kind: "École d'ingénieurs publique",
+    acces: "Prépa MP, MPI, PC, PSI, puis Concours Commun INP, en élève ingénieur ou en élève fonctionnaire de l'Insee",
+    duree: "3 ans après bac + 2 pour le diplôme d'ingénieur",
+    places:
+      "Concours Commun INP 2026 : 63 places d'élèves ingénieurs et 29 d'élèves fonctionnaires (attachés statisticiens)",
+    cout: "Ingénieurs : 2 650 € par an (données 2024). Fonctionnaires : études payées 1 900 € bruts par mois, contre 8 ans au service de l'État",
+    formations:
+      "1re année : socle commun en statistique, économie et informatique. 2e année : statistique avancée et deux grands projets.",
+    debouches:
+      "L'ENSAI forme des ingénieurs de la donnée : statistique, data science, gestion des risques, biostatistique.",
+    plus: "Sur le même concours, tu peux entrer comme élève ingénieur ou comme élève fonctionnaire : l'attaché statisticien stagiaire de l'Insee touche 1 900 € bruts par mois pendant ses études, puis environ 3 500 € dès sa titularisation.",
+    station: "ecole-ingenieurs",
+    url: "https://www.ensai.fr",
+    accroche:
+      "L'ENSAI forme des ingénieurs de la donnée : statistique, data science, gestion des risques, biostatistique.",
+    statut: "public",
+    recrutement: ["prepa"],
   },
   {
     id: "insa-toulouse",
@@ -728,14 +761,12 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     name: "CESI École d'ingénieurs",
     short: "CESI",
     line: "postbac",
-    ville:
-      "26 campus en France : Aix-en-Provence, Angoulême, Arras, Bordeaux, Brest, Caen, Dijon, Grenoble, La Rochelle, Le Mans, Lille, Lyon, Montpellier, Nancy, Nantes, Nice, Orléans, Paris-Nanterre, Pau, Reims, Rouen, Saint-Nazaire, Strasbourg, Thionville, Toulouse, Tours",
+    ville: "26 campus en France, dont Lyon, Lille, Bordeaux et Nantes",
     kind: "École d'ingénieurs privée, après le bac",
-    acces:
-      "Sélection propre à CESI sur Parcoursup, en deux étapes : étude du dossier (bulletins de 1re et de terminale, projet de formation, fiche Avenir), puis oral de mars à avril 2026 (argumentation devant un jury sur un sujet d'actualité ou de culture générale, puis échange sur ta motivation). Bacs visés : bac général avec spécialités scientifiques ou bac STI2D. Frais de dossier : 50 €, gratuits pour les boursiers. Rentrée décalée possible en février. Admissions parallèles : entrée directe dans le cycle ingénieur en 3 ans (années 3 à 5), sous statut étudiant ou apprenti.",
+    acces: "Parcoursup : dossier, puis oral devant un jury de mars à avril 2026",
     duree: "5 ans après le bac",
-    places: "Capacité fixée campus par campus et publiée sur la fiche Parcoursup de chaque campus.",
-    cout: "Prépa intégrée : 6 500 € par an. Cycle ingénieur sous statut étudiant : 8 500 € par an (tarifs affichés sur cesi.fr en octobre 2026). Frais de dossier : 50 €, gratuits pour les boursiers sur critères sociaux ; la bourse du Crous se demande à part, sur messervices.etudiant.gouv.fr. En apprentissage, la formation est financée par l'entreprise et son opérateur de compétences, et tu touches un salaire.",
+    places: "Capacité fixée campus par campus, publiée sur la fiche Parcoursup de chaque campus",
+    cout: "Prépa 6 500 € et cycle ingénieur 8 500 € par an (tarifs d'octobre 2026) ; frais de dossier gratuits pour les boursiers",
     formations:
       "En prépa intégrée (2 ans) : maths, physique, informatique, mécanique, électronique, énergétique, matériaux, gestion de projet et anglais, avec un stage de 3 mois en fin de 1re année.",
     debouches: "CESI forme ses ingénieurs sur 26 campus : tu peux souvent étudier près de chez toi.",
@@ -745,22 +776,19 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     accroche: "CESI forme ses ingénieurs sur 26 campus : tu peux souvent étudier près de chez toi.",
     statut: "prive",
     recrutement: ["postbac", "titre"],
-    alternance:
-      "À partir de la 3e année (cycle ingénieur en 3 ans), après la prépa intégrée ou après un bac+2 : spécialités Généraliste, Informatique, BTP, Systèmes électriques & électroniques embarqués ; deux parcours avec le CEFIPA sur le campus de Nanterre (Généraliste, Systèmes électriques & électroniques embarqués). Mobilité internationale de 12 semaines.",
+    alternance: "Dès la 3e année : généraliste, informatique, BTP, systèmes électriques & électroniques embarqués",
   },
   {
     id: "esigelec",
     name: "ESIGELEC, école supérieure d'ingénieurs en génie électrique",
     short: "ESIGELEC",
     line: "postbac",
-    ville: "Rouen (Technopôle du Madrillet) et Poitiers (campus ouvert en septembre 2023)",
+    ville: "Rouen et Poitiers",
     kind: "École d'ingénieurs privée reconnue par l'État, après le bac",
-    acces:
-      "Concours Avenir sur Parcoursup, commun à 7 écoles et 21 campus, comptés comme un seul vœu : étude du dossier (notes de spécialité de 1re, deux premiers trimestres de terminale, notes du bac de français, fiche Avenir), puis épreuves. Profil violet (terminale générale) : écrits en QCM le 2 mai 2026 dans 30 villes, dont les « grands classés » sont dispensés ; profil orange (terminale STI2D ou générale) : oral le 11 avril 2026. Spécialités conseillées : maths en terminale et une autre spécialité scientifique. Vœux du 19 janvier au 12 mars 2026. Frais : 120 € (30 € pour les boursiers) pour le profil violet, 75 € pour le profil orange. Admissions parallèles : pages dédiées pour les CPGE (math spé, ATS), les BTS et autres bac+2, les licences 3 et les bac+4.",
+    acces: "Concours Avenir : dossier, puis QCM le 2 mai 2026 (profil violet) ou oral le 11 avril 2026 (profil orange)",
     duree: "5 ans après le bac",
-    places:
-      "Places post-bac 2026 : publiées par le Concours Avenir. En apprentissage (2026-2027) : 120 places en 3e année à Rouen et 40 à Poitiers, puis 40 et 10 places de plus en 4e année, et 40 de plus en 5e année à Rouen.",
-    cout: "2026-2027 : cycle préparatoire intégré à 7 800 € par an, ramenés à 5 850 € pour les boursiers de l'État (dégrèvement de 25 %) ; cycle ingénieur à 8 280 € par an. S'ajoutent 150 € de frais de dossier en 1re année, 60 € de protection médicale, 80 € de carte d'associations et la CVEC (105 €). En apprentissage : scolarité gratuite et salaire versé par l'entreprise.",
+    places: "Rouen, profil violet : 100 places en 2026 (120 en 2025, pour 3 917 candidats)",
+    cout: "2026-2027 : prépa 7 800 € par an (5 850 € pour les boursiers), cycle ingénieur 8 280 € par an",
     formations:
       "Les 3 premières années forment un cycle fondamental : prépa intégrée internationale en 1re et 2e années, puis une mineure au choix parmi 9 pour explorer un domaine.",
     debouches:
@@ -773,20 +801,20 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "eespig",
     recrutement: ["postbac", "titre", "prepa"],
     alternance:
-      "Programme suivi en apprentissage au choix, avec les 16 majeures accessibles : entrée dès la 3e année (contrat de 36 mois), en 4e année (24 mois) ou en 5e année (12 mois), à Rouen et à Poitiers. Scolarité gratuite et salaire versé par l'entreprise.",
+      "Entrée en 3e, 4e ou 5e année, avec les 16 majeures, à Rouen et à Poitiers ; 160 places en 3e année en 2026-2027",
   },
   {
     id: "eseo",
     name: "ESEO, école supérieure d'électronique de l'Ouest",
     short: "ESEO",
     line: "postbac",
-    ville: "Angers (campus principal, 800 étudiants), Dijon et Paris-Vélizy",
+    ville: "Angers, Dijon et Paris-Vélizy",
     kind: "École d'ingénieurs privée reconnue par l'État, après le bac",
-    acces:
-      "Concours Puissance Alpha sur Parcoursup pour le parcours ingénieur en 5 ans (prépa ingénieur informatique et électronique à Angers, Dijon ou Paris-Vélizy ; prépa scientifique à Angers). Bac général ou technologique. Admissions parallèles via la plateforme d'admission ESEO : en 2e année de prépa après un bac+1 scientifique ou technique, et en cycle ingénieur dès un bac+2 ou un bac+3, sous statut étudiant ou apprenti.",
+    acces: "Concours Puissance Alpha : QCU de maths, sciences appliquées et anglais le 25 avril 2026",
     duree: "5 ans après le bac",
-    places: "Places post-bac 2026 : publiées par le concours Puissance Alpha (puissance-alpha.fr).",
-    cout: "2026-2027 : prépa ingénieur informatique et électronique à 6 550 € par an à Angers et à Dijon, 7 600 € à Paris-Vélizy ; prépa scientifique d'Angers à 1 980 € par an ; cycle ingénieur à 9 390 € par an sous statut étudiant. Frais annexes : 89 € de contribution au BDE, plus 40 € de séminaire d'accueil en 1re année. En apprentissage, l'entreprise prend en charge la formation. Pour les boursiers, l'ESEO renvoie à sa rubrique « aides au financement ».",
+    places:
+      "Angers, 2026 : 43 places en prépa intégrée et 24 en prépa associée CPGE MPSI ; Dijon et Paris-Vélizy à part",
+    cout: "2026-2027 : prépa 6 550 € par an (7 600 € à Paris-Vélizy), cycle ingénieur 9 390 € ; mêmes frais pour les boursiers",
     formations:
       "En prépa (2 ans) : maths et informatique, électronique numérique et analogique, physique, sciences de l'ingénieur, langues et enjeux écologiques, avec des projets d'électronique et un stage d'au moins 8 semaines en fin de 2e année.",
     debouches:
@@ -799,20 +827,19 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "eespig",
     recrutement: ["postbac", "titre"],
     alternance:
-      "Cycle ingénieur de 3 ans en apprentissage, après la prépa ou un bac+2/3, à Angers, Dijon et Paris-Vélizy, avec 3 options : informatique et systèmes d'information ; systèmes embarqués, électronique et radiofréquences ; systèmes embarqués, logiciels et cybersécurité. Formation financée par l'entreprise.",
+      "Cycle ingénieur de 3 ans à Angers, Dijon et Paris-Vélizy : informatique et SI, systèmes embarqués (électronique, ou logiciels et cybersécurité)",
   },
   {
     id: "eigsi",
-    name: "EIGSI, école d'ingénieurs généralistes de La Rochelle",
+    name: "EIGSI, école d'ingénieurs généralistes - La Rochelle",
     short: "EIGSI",
     line: "postbac",
-    ville: "La Rochelle (campus principal) et Casablanca (Maroc)",
+    ville: "La Rochelle et Casablanca (Maroc)",
     kind: "École d'ingénieurs privée reconnue par l'État, après le bac",
-    acces:
-      "Concours Avenir (AvenirBac), commun à 7 écoles : ECE, EIGSI, EPF, ESIGELEC, ESILV, Builders, ESTACA. Profil violet (terminale générale) : épreuves écrites le 2 mai 2026. Profil orange (terminale STI2D ou générale) : épreuves orales le 11 avril 2026, dans l'un des 9 centres d'examen. Admissions parallèles : procédure AvenirPlus pour entrer en 2e année de prépa après un bac+1 ou un bac+2 scientifique, ou en cycle ingénieur après un bac+2, une licence ou un master ; rentrée décalée SPRINT pour les bac+1 ; apprentissage après un bac+2 scientifique.",
+    acces: "Concours Avenir : écrits le 2 mai 2026 (profil violet) ou oraux le 11 avril 2026 (profil orange)",
     duree: "5 ans après le bac",
-    places: "Places post-bac 2026 : publiées par le Concours Avenir.",
-    cout: "2026-2027 : 8 800 € par an, dont 1 500 € de frais d'inscription, en prépa intégrée comme en cycle ingénieur (statut étudiant) ; 5 800 € pour la rentrée décalée SPRINT. En apprentissage, l'entreprise paie les droits (10 500 € par an). Pour les boursiers, l'école renvoie à sa page « aide au financement » et à la bourse Pierre Dubois.",
+    places: "La Rochelle, profil violet : 125 places en 2026 (4 207 candidats en 2025)",
+    cout: "8 800 € par an en 2026-2027 ; sur Parcoursup, 8 280 € en 2025-2026, même montant pour les boursiers",
     formations:
       "En prépa (2 ans) : maths, physique, mécanique, électronique, informatique, automatique, avec 40 % de travaux pratiques en petits groupes et un stage ouvrier de 6 semaines en 1re année.",
     debouches:
@@ -825,7 +852,32 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     statut: "eespig",
     recrutement: ["postbac", "titre"],
     alternance:
-      "Ingénieur généraliste par apprentissage, ouvert depuis septembre 2012 : 3 ans à La Rochelle après un bac+2 scientifique, avec les options du cycle ingénieur et 12 semaines de mobilité internationale (dont 5 semaines en juillet de la 1re année, sur le campus de Casablanca). 350 alternants en formation dans plus de 290 entreprises.",
+      "Depuis 2012 : 3 ans à La Rochelle après un bac+2 scientifique, dont 12 semaines à l'étranger ; 350 alternants",
+  },
+  {
+    id: "eni",
+    name: "Écoles nationales d'ingénieurs (ENI) : ENIB Brest, ENIM Metz, Centrale Lyon ENISE, ENIT Tarbes",
+    short: "ENI",
+    line: "postbac",
+    ville: "Brest, Metz, Saint-Étienne et Tarbes",
+    kind: "École d'ingénieurs publique, après le bac",
+    acces: "Geipi Polytech : dossier, puis écrit de 3 h le 28 avril 2026 (bac général) ou entretien (STI2D)",
+    duree: "5 ans après le bac",
+    places: "558 places en 2026 : ENIB 120, ENIM 148, Centrale Lyon ENISE 120, ENIT 170",
+    cout: "628 € par an en 2025-2026, 630 € en 2026-2027 ; ENISE : 1 613 € à 4 113 € en cycle ingénieur ; gratuit pour les boursiers",
+    formations:
+      "2 ans de prépa intégrée (maths, physique, informatique, sciences de l'ingénieur, langues), puis 3 ans de cycle ingénieur avec une option : génie mécanique, industriel, BTP ou matériaux à Tarbes ; mécanique-matériaux, conception-industrialisation ou management industriel à Metz ; génie mécanique, civil ou sensoriel à Saint-Étienne ; électronique, informatique ou robotique à Brest.",
+    debouches:
+      "Quatre écoles publiques, gratuites pour les boursiers, qui forment des ingénieurs de terrain pour l'industrie : mécanique, production, matériaux, BTP, et électronique-informatique à Brest.",
+    plus: "Des écoles très tournées vers l'entreprise : plus de 50 semaines de stage à l'ENIT, trois semestres en entreprise à l'ENIM.",
+    station: "cycle-integre",
+    url: "https://www.geipi-polytech.org/",
+    accroche:
+      "Quatre écoles publiques, gratuites pour les boursiers, qui forment des ingénieurs de terrain pour l'industrie : mécanique, production, matériaux, BTP, et électronique-informatique à Brest.",
+    statut: "public",
+    recrutement: ["postbac", "titre", "prepa"],
+    alternance:
+      "Cycle ingénieur en 3 ans après un bac+2 ou un bac+3 : ENIM (mécanique, nucléaire), ENISE (génie mécanique, civil), ENIT (BTP, génie mécanique ou industriel)",
   },
   {
     id: "enseeiht",
@@ -836,7 +888,8 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     kind: "École d'ingénieurs publique",
     acces: "Prépa MP, MPI, PC, PSI, PT, TSI, puis Concours Commun INP ; aussi Prépa des INP et sur titre",
     duree: "3 ans après bac + 2",
-    places: "298 places au Concours Commun INP, réparties entre trois départements (tableau de septembre 2026)",
+    places:
+      "298 places après une prépa MP, MPI, PC, PSI, PT ou TSI, réparties entre trois départements (tableau de septembre 2026)",
     cout: "630 € par an en 2026-2027, plus 105 € de CVEC ; boursiers exonérés",
     formations:
       "Tu entres directement dans un département : Sciences du numérique (ex-informatique et télécommunications), Électronique, énergie électrique et automatique, ou Mécanique des fluides, énergétique et environnement (hydraulique, énergie, climat).",
@@ -962,12 +1015,12 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     cout: "3 600 € par an pour un entrant de 2026 (UE) ; boursiers d'État exonérés ; apprentis exonérés",
     formations: "Le cycle généraliste mêle cours, projets et stages en lien étroit avec les entreprises.",
     debouches:
-      "Télécom SudParis forme des ingénieurs du numérique : IA et data science, développement logiciel, réseaux et cloud, cybersécurité, finance quantitative.",
+      "Télécom SudParis forme des ingénieurs du numérique : IA et data science, développement logiciel, réseaux et cloud, cybersécurité.",
     plus: "Deux campus : Évry-Courcouronnes (7,5 ha) et Palaiseau, dans un bâtiment partagé avec Télécom Paris au sein de l'Institut Polytechnique de Paris.",
     station: "ecole-ingenieurs",
     url: "https://www.telecom-sudparis.eu/formation/ingenieur-generaliste/",
     accroche:
-      "Télécom SudParis forme des ingénieurs du numérique : IA et data science, développement logiciel, réseaux et cloud, cybersécurité, finance quantitative.",
+      "Télécom SudParis forme des ingénieurs du numérique : IA et data science, développement logiciel, réseaux et cloud, cybersécurité.",
     statut: "public",
     recrutement: ["prepa", "titre"],
     alternance:
@@ -1072,6 +1125,9 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     recrutement: ["prepa", "titre"],
     alternance:
       "Systèmes embarqués, architecture navale ou systèmes pyrotechniques, en 3 ans ; 16 places en apprentissage (2e et 3e années) à Paris-Saclay",
+    une: "Concours Mines-Ponts",
+    uneRang: 71,
+    uneVoie: "prepa",
   },
   {
     id: "ensea",
@@ -1083,7 +1139,7 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     acces: "Prépa MP, PC, PSI, MPI, puis concours CentraleSupélec ; aussi PT, TSI, ATS, BUT ou licence",
     duree: "3 ans après bac + 2",
     places: "En 2026 : 175 places au concours CentraleSupélec, 20 en PT, 10 en TSI, 15 en ATS ; 56 en apprentissage",
-    cout: "630 € à la rentrée 2026 (tarif national), plus 295 € de frais ; boursiers exonérés des droits ; apprentis salariés",
+    cout: "630 € par an en 2026-2027 (tarif national), plus 295 € de frais (montant 2025) ; boursiers exonérés des droits ; apprentis salariés",
     formations: "Tronc commun en 1re année, avec majeures et mineures.",
     debouches: "L'ENSEA forme des ingénieurs de l'électronique, de l'informatique et des télécoms.",
     plus: "Jusqu'à 50 % de l'emploi du temps de 2e année se personnalise, et deux spécialités de 3e année se suivent en anglais.",
@@ -1243,5 +1299,54 @@ export const ecolesIngenieurs: Ecole[] = etTypo<Ecole[]>([
     recrutement: ["prepa", "postbac", "titre"],
     alternance:
       "Chemplast (matériaux polymères, avec l'ISPA) : 3 ans en apprentissage ; en ingénieur chimiste, 3e année possible en contrat de professionnalisation",
+  },
+  {
+    id: "sigma-clermont",
+    name: "École d'ingénieurs SIGMA Clermont",
+    short: "SIGMA Clermont",
+    line: "sciences",
+    ville: "Aubière (campus des Cézeaux), près de Clermont-Ferrand",
+    kind: "École d'ingénieurs publique",
+    acces: "Prépa MP, PC, PSI, TPC ou TSI, puis CCINP ; CPI de chimie après le bac ; apprentissage après un bac + 3",
+    duree: "3 ans après une prépa ou un cycle préparatoire",
+    places: "Rentrée 2026 : 124 places au CCINP (PSI 62, PC 32, MP 20, TSI 8, TPC 2) et 48 en apprentissage",
+    cout: "630 €/an en 2026-2027, plus 105 € de CVEC ; boursiers exonérés des droits d'inscription",
+    formations:
+      "Trois spécialités sous statut étudiant : chimie, génie des procédés et énergétique, mécanique (département mécanique avancée) ; une quatrième en apprentissage, mécanique et génie industriel.",
+    debouches: "Tu choisis entre la chimie et les procédés d'un côté, la mécanique et l'industrie de l'autre.",
+    plus: "Née de la fusion de l'IFMA (mécanique) et de l'ENSCCF (chimie), SIGMA Clermont réunit chimie et mécanique sur le campus des Cézeaux.",
+    station: "ecole-ingenieurs",
+    url: "http://www.sigma-clermont.fr",
+    accroche: "Tu choisis entre la chimie et les procédés d'un côté, la mécanique et l'industrie de l'autre.",
+    statut: "public",
+    recrutement: ["prepa", "titre", "postbac"],
+    alternance:
+      "Mécanique et génie industriel en apprentissage, 3 ans : 48 places en 2026, après un bac + 3, un BTS ou une 2e année de prépa",
+  },
+  {
+    id: "enac",
+    name: "École nationale de l'aviation civile",
+    short: "ENAC",
+    line: "sciences",
+    ville: "Toulouse (apprentis : 3 semestres à Montpellier d'abord)",
+    kind: "École d'ingénieurs publique",
+    acces: "Prépa MP, PSI, PC, MPI ou PT, puis concours Mines-Télécom ; aussi en apprentissage après une L3 ou un BUT",
+    duree: "3 ans après une prépa",
+    places:
+      "Rentrée 2026 : 108 places au concours Mines-Télécom (90 civils, 18 fonctionnaires) et 35 au plus en apprentissage",
+    cout: "1 500 €/an en 2026 pour un élève civil, gratuit pour les boursiers ; élève fonctionnaire payé environ 1 500 € nets par mois",
+    formations:
+      "1re année commune : opérations aériennes et sécurité, trafic aérien, avionique et télécoms, maths, informatique.",
+    debouches:
+      "Tu deviens ingénieur généraliste de l'aéronautique, tourné vers la sécurité et la transition du transport aérien.",
+    plus: "C'est l'école de la DGAC, qui forme aussi pilotes, contrôleurs aériens et techniciens de l'aviation civile.",
+    station: "ecole-ingenieurs",
+    url: "https://www.enac.fr",
+    accroche:
+      "Tu deviens ingénieur généraliste de l'aéronautique, tourné vers la sécurité et la transition du transport aérien.",
+    statut: "public",
+    recrutement: ["prepa", "titre", "postbac"],
+    alternance:
+      "Ingénieur ENAC par apprentissage, 3 ans (Montpellier puis Toulouse) : 35 places au plus en 2026, après une L3, un BUT ou une prépa ATS ou TSI",
   },
 ]);

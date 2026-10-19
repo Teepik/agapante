@@ -38,6 +38,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : e3a-Polytech (Puissance Alpha CPGE)",
+    apprentissage: true,
+    site: "https://www.3il-ingenieurs.fr",
   },
   {
     id: "aflokkat",
@@ -57,6 +59,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : recrutement propre à l'école (Parcoursup) ; après prépa : CCINP",
+    apprentissage: true,
+    site: "https://www.agro-bordeaux.fr/",
   },
   {
     id: "builders",
@@ -67,6 +71,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Avenir ; après prépa : e3a-Polytech (concours Avenir prépas)",
+    site: "http://www.esitc-caen.fr/",
   },
   {
     id: "centrale-mediterranee",
@@ -76,6 +81,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Centrale-Supélec",
+    site: "https://centrale-mediterranee.fr",
     fiche: "centrale-mediterranee",
   },
   {
@@ -86,6 +92,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Centrale-Supélec",
+    apprentissage: true,
+    site: "https://www.centralesupelec.fr/",
     fiche: "centralesupelec",
   },
   {
@@ -97,6 +105,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "prive",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : recrutement CESI ; après prépa : recrutement CESI (inscription SCEI)",
+    site: "https://ecole-ingenieurs.cesi.fr/",
     fiche: "cesi",
   },
   {
@@ -106,6 +115,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Paris",
     region: "Île-de-France",
     statut: "public",
+    site: "http://ecole-ingenieur.cnam.fr/",
   },
   {
     id: "cy-tech",
@@ -116,6 +126,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : GalaxYBac (CY Tech) ; après prépa : CCINP",
+    apprentissage: true,
+    site: "https://cytech.cyu.fr",
   },
   {
     id: "ecam-lasalle",
@@ -126,15 +138,18 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : recrutement commun ECAM ; après prépa : e3a-Polytech (concours Ingeni'Up, 2024)",
     apprentissage: true,
+    site: "https://www.ecam.fr/",
   },
   {
     id: "ecam-louis-de-broglie",
     nom: "Ecam Louis de Broglie",
     ville: "Bruz",
     region: "Bretagne",
+    statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : recrutement commun ECAM ; après prépa : e3a-Polytech (concours Ingeni'Up)",
     apprentissage: true,
+    site: "http://www.ecam-rennes.fr/",
   },
   {
     id: "ece",
@@ -145,6 +160,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "prive",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Avenir ; après prépa : e3a-Polytech (concours Avenir prépas, 2025)",
+    apprentissage: true,
+    site: "https://www.ece.fr/",
     fiche: "ece",
   },
   {
@@ -156,6 +173,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Centrale-Supélec",
+    site: "http://centralelille.fr",
     fiche: "centrale-lille",
   },
   {
@@ -168,6 +186,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["prepa"],
     concours: "après prépa : Centrale-Supélec",
     apprentissage: true,
+    site: "https://www.ec-lyon.fr/",
     fiche: "centrale-lyon",
   },
   {
@@ -179,6 +198,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Centrale-Supélec",
+    apprentissage: true,
+    site: "https://www.ec-nantes.fr/",
     fiche: "centrale-nantes",
   },
   {
@@ -190,6 +211,18 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : recrutement commun ECAM ; après prépa : e3a-Polytech (concours Ingeni'Up)",
+    apprentissage: true,
+    site: "https://www.ecam-epmi.fr/",
+  },
+  {
+    id: "eia",
+    nom: "École d'ingénieurs de l'Artois (Université d'Artois)",
+    court: "EIA",
+    ville: "Béthune",
+    region: "Hauts-de-France",
+    statut: "public",
+    recrutement: ["prepa"],
+    concours: "après prépa : banque e3a-Polytech",
   },
   {
     id: "ei-purpan",
@@ -199,7 +232,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Occitanie",
     statut: "eespig",
     recrutement: ["postbac"],
-    concours: "après le bac : recrutement propre à l'école (Parcoursup)",
+    concours: "après le bac : La Prépa des INP (places réservées)",
+    site: "https://www.purpan.fr/",
   },
   {
     id: "elisa-aerospace",
@@ -210,6 +244,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : e3a-Polytech (Puissance Alpha CPGE)",
+    site: "https://www.elisa-aerospace.fr",
   },
   {
     id: "eilco",
@@ -239,6 +274,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Avenir ; après prépa : e3a-Polytech (concours Avenir prépas)",
+    site: "https://www.eigsi.fr/",
+    fiche: "eigsi",
   },
   {
     id: "paoli-tech",
@@ -259,8 +296,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours:
-      "après le bac : La Prépa des INP, cycle préparatoire intégré de la Fédération Gay-Lussac ; après prépa : CCINP",
+      "après le bac : cycle préparatoire intégré de la Fédération Gay-Lussac, La Prépa des INP (places réservées) ; après prépa : CCINP",
     apprentissage: true,
+    site: "https://www.sigma-clermont.fr/fr",
+    fiche: "sigma-clermont",
   },
   {
     id: "ebi",
@@ -271,6 +310,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac"],
     concours: "après le bac : Puissance Alpha",
+    site: "https://ebi-edu.com",
   },
   {
     id: "eae",
@@ -281,6 +321,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : banque CCINP",
+    site: "https://www.ecole-air-espace.fr/",
   },
   {
     id: "eivp",
@@ -291,6 +332,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Télécom",
+    site: "https://www.eivp-paris.fr/",
   },
   {
     id: "eost",
@@ -301,6 +343,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : banque CCINP",
+    site: "http://eost.unistra.fr/",
   },
   {
     id: "eeigm",
@@ -310,8 +353,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Grand Est",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : Geipi Polytech ; après prépa : banque CCINP",
+    concours: "après le bac : Geipi Polytech, La Prépa des INP (places réservées) ; après prépa : banque CCINP",
     apprentissage: true,
+    site: "http://eeigm.univ-lorraine.fr",
   },
   {
     id: "ecpm",
@@ -322,6 +366,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : cycle préparatoire intégré de la Fédération Gay-Lussac ; après prépa : CCINP",
+    site: "https://ecpm.unistra.fr/",
+    fiche: "ecpm",
   },
   {
     id: "efrei",
@@ -332,6 +378,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : e3a-Polytech (Puissance Alpha CPGE)",
+    apprentissage: true,
+    site: "https://www.efrei.fr/",
     fiche: "efrei",
   },
   {
@@ -341,9 +389,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Saint-Martin-d'Hères",
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
     apprentissage: true,
+    site: "https://pagora.grenoble-inp.fr/",
   },
   {
     id: "enib",
@@ -353,8 +402,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Bretagne",
     statut: "public",
     recrutement: ["postbac"],
-    concours: "après le bac : Geipi Polytech",
+    concours: "après le bac : Geipi Polytech, La Prépa des INP (places réservées)",
     apprentissage: true,
+    site: "https://www.enib.fr/",
+    fiche: "eni",
   },
   {
     id: "enim",
@@ -364,8 +415,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Grand Est",
     statut: "public",
     recrutement: ["postbac"],
-    concours: "après le bac : Geipi Polytech",
+    concours: "après le bac : Geipi Polytech, La Prépa des INP (places réservées)",
     apprentissage: true,
+    site: "https://enim.univ-lorraine.fr/",
+    fiche: "eni",
   },
   {
     id: "centrale-lyon-enise",
@@ -377,6 +430,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : banque CCINP",
     apprentissage: true,
+    site: "https://www.enise.fr/",
+    fiche: "eni",
   },
   {
     id: "enit",
@@ -387,6 +442,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : banque e3a-Polytech",
+    apprentissage: true,
+    site: "http://www.enit.fr/fr/index.html",
+    fiche: "eni",
   },
   {
     id: "enac",
@@ -395,8 +453,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Toulouse",
     region: "Occitanie",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP, Mines-Télécom (filière PC)",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP, Mines-Télécom (filière PC)",
+    site: "http://www.enac.fr/",
+    fiche: "enac",
   },
   {
     id: "enm",
@@ -405,8 +465,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Toulouse",
     region: "Occitanie",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : Mines-Télécom",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : Mines-Télécom",
+    site: "https://meteofrance.fr/enm",
   },
   {
     id: "ensae-paris",
@@ -417,6 +478,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Ponts",
+    site: "https://www.ensae.fr/",
     fiche: "ensae",
   },
   {
@@ -428,6 +490,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : CCINP",
+    site: "http://www.ensai.fr",
+    fiche: "ensai",
   },
   {
     id: "ecole-des-ponts",
@@ -438,6 +502,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Ponts",
+    site: "http://www.enpc.fr/",
     fiche: "ponts",
   },
   {
@@ -449,6 +514,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Télécom",
+    site: "https://geodata-paris.fr",
   },
   {
     id: "entpe",
@@ -459,6 +525,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Télécom",
+    site: "https://www.entpe.fr/entpe-lecole-de-lamenagement-durable-des-territoires",
   },
   {
     id: "engees",
@@ -470,6 +537,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["prepa"],
     concours: "après prépa : CCINP",
     apprentissage: true,
+    site: "https://engees.unistra.fr/",
   },
   {
     id: "ensat",
@@ -478,6 +546,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Auzeville-Tolosane",
     region: "Occitanie",
     statut: "public",
+    recrutement: ["postbac"],
+    concours: "après le bac : La Prépa des INP (places réservées)",
+    apprentissage: true,
+    site: "https://www.ensat.fr/fr/index.html",
   },
   {
     id: "ensaia",
@@ -486,9 +558,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Vandœuvre-lès-Nancy",
     region: "Grand Est",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
     apprentissage: true,
+    site: "https://ensaia.univ-lorraine.fr/",
   },
   {
     id: "arts-et-metiers",
@@ -499,6 +572,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Centrale-Supélec (banque Arts et Métiers - ENSEA)",
+    apprentissage: true,
+    site: "https://artsetmetiers.fr/",
     fiche: "arts-et-metiers",
   },
   {
@@ -508,9 +583,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Vandœuvre-lès-Nancy",
     region: "Grand Est",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
     apprentissage: true,
+    site: "http://ensem.univ-lorraine.fr/",
   },
   {
     id: "enseirb-matmeca",
@@ -520,7 +596,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Nouvelle-Aquitaine",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : recrutement propre à l'école (Parcoursup) ; après prépa : CCINP",
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
+    apprentissage: true,
+    site: "https://enseirb-matmeca.bordeaux-inp.fr/",
     fiche: "enseirb-matmeca",
   },
   {
@@ -530,8 +608,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Toulouse",
     region: "Occitanie",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
+    site: "https://www.enseeiht.fr/fr/index.html",
     fiche: "enseeiht",
   },
   {
@@ -541,9 +620,11 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Saint-Martin-d'Hères",
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
     apprentissage: true,
+    site: "http://ensimag.grenoble-inp.fr/",
+    fiche: "ensimag",
   },
   {
     id: "ensiie",
@@ -554,6 +635,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Télécom",
+    apprentissage: true,
+    site: "https://www.ensiie.fr/",
+    fiche: "ensiie",
   },
   {
     id: "ensibs",
@@ -565,6 +649,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
     apprentissage: true,
+    site: "https://www-ensibs.univ-ubs.fr/fr/index.html",
   },
   {
     id: "ensicaen",
@@ -575,6 +660,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : CCINP",
+    apprentissage: true,
+    site: "http://www.ensicaen.fr",
   },
   {
     id: "ensil-ensci",
@@ -585,6 +672,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Groupe INSA ; après prépa : CCINP",
+    apprentissage: true,
+    site: "https://www.ensil-ensci.unilim.fr/",
   },
   {
     id: "ensi-poitiers",
@@ -593,8 +682,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Poitiers",
     region: "Nouvelle-Aquitaine",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
+    site: "https://ensip.univ-poitiers.fr",
   },
   {
     id: "esireims",
@@ -615,6 +705,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    apprentissage: true,
+    site: "http://ensim.univ-lemans.fr/fr/index.html",
   },
   {
     id: "ensisa",
@@ -626,6 +718,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Groupe INSA ; après prépa : banque CCINP",
     apprentissage: true,
+    site: "http://www.ensisa.uha.fr",
   },
   {
     id: "enscl",
@@ -636,6 +729,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : cycle préparatoire intégré de la Fédération Gay-Lussac ; après prépa : CCINP",
+    site: "https://www.ensc-lille.fr/fr/",
   },
   {
     id: "enscm",
@@ -646,6 +740,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : CCINP",
+    site: "https://www.enscm.fr/",
   },
   {
     id: "enscmu",
@@ -657,6 +752,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Groupe INSA ; après prépa : CCINP",
     apprentissage: true,
+    site: "https://www.enscmu.uha.fr/",
   },
   {
     id: "chimie-paristech",
@@ -667,6 +763,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Ponts",
+    apprentissage: true,
+    site: "https://www.chimieparistech.psl.eu/",
+    fiche: "chimie-paristech",
   },
   {
     id: "enscr",
@@ -677,6 +776,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : cycle préparatoire intégré de la Fédération Gay-Lussac ; après prépa : CCINP",
+    site: "https://www.ensc-rennes.fr",
   },
   {
     id: "ensc",
@@ -686,7 +786,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Nouvelle-Aquitaine",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : recrutement propre à l'école (Parcoursup) ; après prépa : CCINP",
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
+    site: "https://ensc.bordeaux-inp.fr/fr",
   },
   {
     id: "grenoble-inp-genie-industriel",
@@ -695,9 +796,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Grenoble",
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : banque CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : banque CCINP",
     apprentissage: true,
+    site: "http://genie-industriel.grenoble-inp.fr/",
   },
   {
     id: "ensg",
@@ -706,8 +808,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Vandœuvre-lès-Nancy",
     region: "Grand Est",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : Mines-Télécom",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : Mines-Télécom",
+    site: "http://ensg.univ-lorraine.fr",
   },
   {
     id: "ensea",
@@ -718,6 +821,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Centrale-Supélec (banque Arts et Métiers - ENSEA)",
+    apprentissage: true,
+    site: "https://www.ensea.fr",
+    fiche: "ensea",
   },
   {
     id: "ense3",
@@ -726,9 +832,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Grenoble",
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
     apprentissage: true,
+    site: "http://ense3.grenoble-inp.fr/",
     fiche: "ense3",
   },
   {
@@ -739,7 +846,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Nouvelle-Aquitaine",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : recrutement propre à l'école (Parcoursup) ; après prépa : CCINP",
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
+    site: "http://ensmac.bordeaux-inp.fr/",
   },
   {
     id: "supmicrotech-ensmm",
@@ -751,6 +859,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["prepa"],
     concours: "après prépa : CCINP",
     apprentissage: true,
+    site: "https://www.ens2m.fr/",
   },
   {
     id: "phelma",
@@ -759,9 +868,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Grenoble",
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
     apprentissage: true,
+    site: "http://phelma.grenoble-inp.fr/",
     fiche: "phelma",
   },
   {
@@ -775,6 +885,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     concours:
       "après prépa : Mines-Ponts (ENSTA Paris, classique et apprentissage), Mines-Télécom (campus de Brest, ex-ENSTA Bretagne)",
     apprentissage: true,
+    site: "https://www.ensta-paris.fr/",
     fiche: "ensta",
   },
   {
@@ -785,8 +896,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Nouvelle-Aquitaine",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours:
-      "après le bac : recrutement propre à l'école (Parcoursup) ; après prépa : e3a-Polytech (concours Polytech)",
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : e3a-Polytech (concours Polytech)",
+    apprentissage: true,
+    site: "http://enstbb.bordeaux-inp.fr/",
   },
   {
     id: "ensait",
@@ -797,6 +909,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : banque e3a-Polytech",
+    apprentissage: true,
+    site: "https://www.ensait.fr/",
   },
   {
     id: "ensic",
@@ -805,9 +919,11 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Nancy",
     region: "Grand Est",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
     apprentissage: true,
+    site: "https://ensic.univ-lorraine.fr/",
+    fiche: "ensic",
   },
   {
     id: "ensiacet",
@@ -816,8 +932,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Toulouse",
     region: "Occitanie",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
+    apprentissage: true,
+    site: "https://www.ensiacet.fr/fr/index.html",
     fiche: "ensiacet",
   },
   {
@@ -827,9 +945,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Nancy",
     region: "Grand Est",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : Mines-Ponts",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : Mines-Ponts",
     apprentissage: true,
+    site: "http://www.mines-nancy.univ-lorraine.fr/",
     fiche: "mines-nancy",
   },
   {
@@ -841,6 +960,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Ponts",
+    apprentissage: true,
+    site: "https://www.mines-paristech.fr/",
     fiche: "mines",
   },
   {
@@ -853,6 +974,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Ponts, Mines-Télécom (ISMIN, campus de Gardanne)",
     apprentissage: true,
+    site: "https://www.mines-stetienne.fr",
     fiche: "mines-saint-etienne",
   },
   {
@@ -865,6 +987,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Télécom",
     apprentissage: true,
+    site: "https://www.enssat.fr",
   },
   {
     id: "enstib",
@@ -873,9 +996,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Épinal",
     region: "Grand Est",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : banque CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : banque CCINP",
     apprentissage: true,
+    site: "http://www.enstib.univ-lorraine.fr/en/",
   },
   {
     id: "ifp-school",
@@ -884,6 +1008,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Rueil-Malmaison",
     region: "Île-de-France",
     statut: "public",
+    site: "https://www.ifp-school.com",
   },
   {
     id: "ensegid",
@@ -893,7 +1018,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Nouvelle-Aquitaine",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : recrutement propre à l'école (Parcoursup) ; après prépa : CCINP",
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
+    site: "http://ensegid.bordeaux-inp.fr/",
   },
   {
     id: "ensgsi",
@@ -903,8 +1029,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Grand Est",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : Geipi Polytech ; après prépa : banque CCINP",
+    concours: "après le bac : Geipi Polytech, La Prépa des INP (places réservées) ; après prépa : banque CCINP",
     apprentissage: true,
+    site: "https://www.ensgsi.univ-lorraine.fr/",
   },
   {
     id: "ensgti",
@@ -914,7 +1041,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Nouvelle-Aquitaine",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : cycle préparatoire intégré de la Fédération Gay-Lussac ; après prépa : CCINP",
+    concours:
+      "après le bac : cycle préparatoire intégré de la Fédération Gay-Lussac, La Prépa des INP (places réservées) ; après prépa : CCINP",
+    apprentissage: true,
+    site: "https://ensgti.univ-pau.fr/",
   },
   {
     id: "esisar",
@@ -924,8 +1054,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : Geipi Polytech ; après prépa : CCINP",
+    concours: "après le bac : Geipi Polytech, La Prépa des INP (places réservées) ; après prépa : CCINP",
     apprentissage: true,
+    site: "http://esisar.grenoble-inp.fr/",
   },
   {
     id: "ensm",
@@ -936,6 +1067,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac"],
     concours: "après le bac : recrutement propre à l'école (Parcoursup)",
+    site: "https://www.supmaritime.fr/",
   },
   {
     id: "imt-atlantique",
@@ -947,6 +1079,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Ponts",
     apprentissage: true,
+    site: "https://www.imt-atlantique.fr/",
     fiche: "imt-atlantique",
   },
   {
@@ -957,7 +1090,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Nouvelle-Aquitaine",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : recrutement propre à l'école (Parcoursup) ; après prépa : CCINP",
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
   },
   {
     id: "ecole-navale",
@@ -967,6 +1100,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : concours École navale (inscription SCEI, banque Centrale-Supélec)",
+    site: "https://www.ecole-navale.fr/",
     fiche: "navale",
   },
   {
@@ -978,6 +1112,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : concours X-ESPCI",
+    site: "https://www.polytechnique.edu/",
     fiche: "polytechnique",
   },
   {
@@ -988,8 +1123,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Grand Est",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    concours:
+      "après le bac : Geipi Polytech, La Prépa des INP (places réservées) ; après prépa : e3a-Polytech (concours Polytech)",
     apprentissage: true,
+    site: "http://www.polytech-nancy.fr",
     fiche: "reseau-polytech",
   },
   {
@@ -1001,6 +1138,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    apprentissage: true,
+    site: "http://www.istia.univ-angers.fr",
     fiche: "reseau-polytech",
   },
   {
@@ -1013,6 +1152,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
     apprentissage: true,
+    site: "http://esirem.u-bourgogne.fr",
     fiche: "reseau-polytech",
   },
   {
@@ -1023,8 +1163,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    concours:
+      "après le bac : Geipi Polytech, La Prépa des INP (places réservées) ; après prépa : e3a-Polytech (concours Polytech)",
     apprentissage: true,
+    site: "https://polytech-clermont.fr/",
     fiche: "reseau-polytech",
   },
   {
@@ -1035,8 +1177,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    concours:
+      "après le bac : Geipi Polytech, La Prépa des INP (places réservées) ; après prépa : e3a-Polytech (concours Polytech)",
     apprentissage: true,
+    site: "https://polytech.grenoble-inp.fr/",
     fiche: "reseau-polytech",
   },
   {
@@ -1049,6 +1193,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
     apprentissage: true,
+    site: "https://www.univ-orleans.fr/fr/polytech",
     fiche: "reseau-polytech",
   },
   {
@@ -1061,6 +1206,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
     apprentissage: true,
+    site: "https://polytech.univ-tours.fr/",
     fiche: "reseau-polytech",
   },
   {
@@ -1073,6 +1219,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
     apprentissage: true,
+    site: "https://polytech.univ-lyon1.fr/",
     fiche: "reseau-polytech",
   },
   {
@@ -1084,6 +1231,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    apprentissage: true,
+    site: "https://www.polytech.universite-paris-saclay.fr/",
     fiche: "reseau-polytech",
   },
   {
@@ -1095,6 +1244,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    apprentissage: true,
+    site: "http://www.polytech-lille.fr",
     fiche: "reseau-polytech",
   },
   {
@@ -1106,6 +1257,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    apprentissage: true,
+    site: "https://polytech.univ-amu.fr",
     fiche: "reseau-polytech",
   },
   {
@@ -1117,6 +1270,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    apprentissage: true,
+    site: "http://www.polytech-montpellier.fr/",
     fiche: "reseau-polytech",
   },
   {
@@ -1128,6 +1283,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    apprentissage: true,
+    site: "http://www.polytech.univ-nantes.fr",
     fiche: "reseau-polytech",
   },
   {
@@ -1140,6 +1297,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
     apprentissage: true,
+    site: "https://polytech.univ-cotedazur.fr/",
     fiche: "reseau-polytech",
   },
   {
@@ -1152,6 +1310,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
     apprentissage: true,
+    site: "https://www.univ-smb.fr/polytech/",
     fiche: "reseau-polytech",
   },
   {
@@ -1163,6 +1322,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    apprentissage: true,
+    site: "https://www.polytech.sorbonne-universite.fr/",
     fiche: "reseau-polytech",
   },
   {
@@ -1174,6 +1335,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "prive",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Advance ; après prépa : concours commun EPITA / IPSA / ESME (inscription SCEI)",
+    site: "http://www.epita.fr",
     fiche: "epita",
   },
   {
@@ -1185,6 +1347,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["prepa"],
     concours: "après prépa : Centrale-Supélec",
+    apprentissage: true,
+    site: "https://www.estp.fr/",
     fiche: "estp",
   },
   {
@@ -1196,6 +1360,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : banque CCINP",
+    site: "https://www.st-cyr.terre.defense.gouv.fr/",
   },
   {
     id: "esaip",
@@ -1206,6 +1371,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : e3a-Polytech (Puissance Alpha CPGE)",
+    site: "https://www.esaip.org/",
   },
   {
     id: "esiea",
@@ -1216,6 +1382,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : e3a-Polytech (Puissance Alpha CPGE)",
+    apprentissage: true,
+    site: "https://www.esiea.fr/",
   },
   {
     id: "esir",
@@ -1227,6 +1395,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
     apprentissage: true,
+    site: "https://esir.univ-rennes1.fr/",
   },
   {
     id: "esitc-metz",
@@ -1234,9 +1403,11 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     court: "ESITC Metz",
     ville: "Metz",
     region: "Grand Est",
+    statut: "eespig",
     recrutement: ["postbac"],
     concours: "après le bac : Puissance Alpha",
     apprentissage: true,
+    site: "https://www.esitc-metz.com",
   },
   {
     id: "esitc-paris",
@@ -1247,6 +1418,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac"],
     concours: "après le bac : Puissance Alpha",
+    site: "https://www.esitc-paris.fr/fr",
   },
   {
     id: "esiab",
@@ -1255,9 +1427,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Plouzané",
     region: "Bretagne",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : e3a-Polytech (concours Polytech)",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : e3a-Polytech (concours Polytech)",
     apprentissage: true,
+    site: "https://www.univ-brest.fr/esiab/fr",
   },
   {
     id: "esigelec",
@@ -1268,6 +1441,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Avenir ; après prépa : e3a-Polytech (concours Avenir prépas)",
+    site: "http://www.esigelec.fr/",
     fiche: "esigelec",
   },
   {
@@ -1290,6 +1464,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Avenir ; après prépa : e3a-Polytech (concours Avenir prépas)",
     apprentissage: true,
+    site: "https://www.esilv.fr/",
     fiche: "esilv",
   },
   {
@@ -1301,6 +1476,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    site: "https://esiroi.univ-reunion.fr",
   },
   {
     id: "estbb",
@@ -1312,6 +1488,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac"],
     concours: "après le bac : Puissance Alpha",
     apprentissage: true,
+    site: "https://www.estbb.fr",
   },
   {
     id: "esbs",
@@ -1332,6 +1509,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : banque CCINP",
+    apprentissage: true,
+    site: "https://www.escom.fr/",
   },
   {
     id: "cpe-lyon",
@@ -1343,6 +1522,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : CCINP",
     apprentissage: true,
+    site: "https://www.cpe.fr/",
   },
   {
     id: "espci-paris",
@@ -1353,6 +1533,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : concours X-ESPCI",
+    site: "https://www.espci.fr/",
     fiche: "espci",
   },
   {
@@ -1364,6 +1545,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac"],
     concours: "après le bac : recrutement propre à l'école (Parcoursup)",
+    site: "https://www.groupe-esa.com/",
     fiche: "esa-angers",
   },
   {
@@ -1375,6 +1557,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    site: "http://www.esgt.cnam.fr",
   },
   {
     id: "estaca",
@@ -1385,6 +1568,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Avenir ; après prépa : e3a-Polytech (concours Avenir prépas)",
+    site: "https://www.estaca.fr/",
     fiche: "estaca",
   },
   {
@@ -1396,6 +1580,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "prive",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : e3a-Polytech (Puissance Alpha CPGE)",
+    apprentissage: true,
+    site: "https://www.estia.fr/",
   },
   {
     id: "esb",
@@ -1406,15 +1592,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["prepa"],
     concours: "après prépa : banque e3a-Polytech",
-  },
-  {
-    id: "eia",
-    nom: "EIA Béthune",
-    court: "EIA",
-    ville: "Béthune",
-    region: "Hauts-de-France",
-    recrutement: ["prepa"],
-    concours: "après prépa : banque e3a-Polytech",
+    site: "https://www.esb-campus.fr/",
   },
   {
     id: "eidd",
@@ -1444,6 +1622,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Avenir ; après prépa : Centrale-Supélec",
+    apprentissage: true,
+    site: "http://www.epf.fr/",
     fiche: "epf",
   },
   {
@@ -1462,8 +1642,11 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     court: "ESEO",
     ville: "Angers",
     region: "Pays de la Loire",
+    statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : e3a-Polytech (Puissance Alpha CPGE)",
+    apprentissage: true,
+    site: "https://eseo.fr/",
     fiche: "eseo",
   },
   {
@@ -1474,7 +1657,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Île-de-France",
     statut: "public",
     recrutement: ["postbac", "prepa"],
-    concours: "après le bac : Puissance Alpha ; après prépa : banque CCINP, e3a-Polytech (Puissance Alpha CPGE) (2025)",
+    concours:
+      "après le bac : Puissance Alpha ; après prépa : banque CCINP, e3a-Polytech (Puissance Alpha CPGE, grilles 2025)",
+    apprentissage: true,
+    site: "https://www.esiee.fr/",
     fiche: "esiee-paris",
   },
   {
@@ -1487,6 +1673,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours:
       "après le bac : recrutement propre à l'école (Parcoursup) ; après prépa : e3a-Polytech (concours Polytech)",
+    apprentissage: true,
   },
   {
     id: "esme",
@@ -1497,6 +1684,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "prive",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Advance ; après prépa : concours commun EPITA / IPSA / ESME (inscription SCEI)",
+    site: "https://www.esme.fr/",
   },
   {
     id: "eurecom",
@@ -1506,6 +1694,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "prive",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Télécom",
+    site: "https://www.eurecom.fr",
   },
   {
     id: "ig2i",
@@ -1516,6 +1705,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac"],
     concours: "après le bac : recrutement propre à l'école (Parcoursup)",
+    apprentissage: true,
+    site: "https://www.ig2i.fr",
   },
   {
     id: "imt-mines-albi",
@@ -1526,6 +1717,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Télécom",
+    site: "https://www.imt-mines-albi.fr/",
     fiche: "imt-mines-albi",
   },
   {
@@ -1536,6 +1728,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Télécom",
+    apprentissage: true,
+    site: "https://www.imt-mines-ales.fr",
     fiche: "imt-mines-ales",
   },
   {
@@ -1549,6 +1743,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     concours:
       "après le bac : Geipi Polytech ; après prépa : Mines-Télécom, banque e3a-Polytech (formation en partenariat avec l'ISPA)",
     apprentissage: true,
+    site: "https://imt-nord-europe.fr/",
     fiche: "imt-nord-europe",
   },
   {
@@ -1561,6 +1756,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : CCINP",
     apprentissage: true,
+    site: "https://institut-agro.fr/dijon",
   },
   {
     id: "institut-agro-montpellier",
@@ -1570,6 +1766,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Centrale-Supélec (filière MP, 2024)",
+    site: "https://www.institut-agro-montpellier.fr/",
+    fiche: "institut-agro-montpellier",
   },
   {
     id: "institut-agro-rennes-angers",
@@ -1582,6 +1780,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     concours:
       "après le bac : recrutement propre à l'école (Parcoursup) ; après prépa : Centrale-Supélec (filière MP, 2024)",
     apprentissage: true,
+    fiche: "institut-agro-rennes-angers",
   },
   {
     id: "icam",
@@ -1593,6 +1792,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours:
       "après le bac : recrutement Icam ; après prépa : e3a-Polytech (concours Ingeni'Up) (site de Strasbourg-Europe)",
+    apprentissage: true,
+    site: "https://www.icam.fr/",
     fiche: "icam",
   },
   {
@@ -1603,6 +1804,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Île-de-France",
     recrutement: ["prepa"],
     concours: "après prépa : Centrale-Supélec",
+    apprentissage: true,
+    site: "https://www.institutoptique.fr/en",
     fiche: "supoptique",
   },
   {
@@ -1614,6 +1817,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    apprentissage: true,
+    site: "http://www.isty.uvsq.fr/",
   },
   {
     id: "iil",
@@ -1635,6 +1840,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Groupe INSA ; après prépa : banque CCINP (Groupe INSA)",
     apprentissage: true,
+    site: "https://www.insa-centrevaldeloire.fr/en/",
     fiche: "groupe-insa",
   },
   {
@@ -1647,6 +1853,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Groupe INSA ; après prépa : banque CCINP (Groupe INSA)",
     apprentissage: true,
+    site: "http://www.insa-lyon.fr/",
     fiche: "insa",
   },
   {
@@ -1659,6 +1866,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Groupe INSA ; après prépa : banque CCINP (Groupe INSA)",
     apprentissage: true,
+    site: "https://www.insa-rennes.fr/",
     fiche: "insa-rennes",
   },
   {
@@ -1671,6 +1879,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Groupe INSA ; après prépa : banque CCINP (Groupe INSA)",
     apprentissage: true,
+    site: "https://www.insa-strasbourg.fr",
     fiche: "groupe-insa",
   },
   {
@@ -1682,6 +1891,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Groupe INSA ; après prépa : banque CCINP (Groupe INSA)",
+    site: "http://www.insa-toulouse.fr/",
     fiche: "insa-toulouse",
   },
   {
@@ -1693,6 +1903,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Groupe INSA ; après prépa : banque CCINP (Groupe INSA)",
+    apprentissage: true,
+    site: "https://www.insa-hautsdefrance.fr",
     fiche: "groupe-insa",
   },
   {
@@ -1704,6 +1916,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Groupe INSA ; après prépa : banque CCINP (Groupe INSA)",
+    site: "https://www.insa-rouen.fr/",
     fiche: "groupe-insa",
   },
   {
@@ -1715,6 +1928,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Centrale-Supélec",
+    apprentissage: true,
+    site: "http://www2.agroparistech.fr",
     fiche: "agroparistech",
   },
   {
@@ -1726,6 +1941,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "prive",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Advance ; après prépa : concours commun EPITA / IPSA / ESME (inscription SCEI)",
+    site: "https://www.ipsa.fr",
     fiche: "ipsa",
   },
   {
@@ -1737,6 +1953,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : recrutement UniLaSalle ; après prépa : e3a-Polytech (concours Ingeni'Up)",
+    apprentissage: true,
+    site: "http://www.unilasalle.fr",
   },
   {
     id: "isa-btp",
@@ -1746,7 +1964,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Nouvelle-Aquitaine",
     statut: "public",
     recrutement: ["postbac"],
-    concours: "après le bac : recrutement propre à l'école (Parcoursup)",
+    concours: "après le bac : La Prépa des INP (places réservées)",
+    site: "http://isabtp.univ-pau.fr/",
   },
   {
     id: "isara",
@@ -1758,6 +1977,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac"],
     concours: "après le bac : réseau France Agro3",
     apprentissage: true,
+    site: "https://isara.fr/",
   },
   {
     id: "isep",
@@ -1768,6 +1988,9 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : e3a-Polytech (Puissance Alpha CPGE)",
+    apprentissage: true,
+    site: "https://www.isep.fr",
+    fiche: "isep",
   },
   {
     id: "isel",
@@ -1778,6 +2001,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    site: "https://isel.univ-lehavre.fr/",
   },
   {
     id: "isima",
@@ -1786,9 +2010,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Aubière",
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
     apprentissage: true,
+    site: "https://www.isima.fr",
   },
   {
     id: "isifc",
@@ -1807,8 +2032,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Toulouse",
     region: "Occitanie",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : Mines-Ponts",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : Mines-Ponts",
+    apprentissage: true,
+    site: "https://www.isae-supaero.fr/",
     fiche: "supaero",
   },
   {
@@ -1842,6 +2069,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["prepa"],
     concours: "après prépa : banque CCINP",
     apprentissage: true,
+    site: "http://www.itech.fr/",
   },
   {
     id: "isae-ensma",
@@ -1852,6 +2080,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : CCINP, Mines-Télécom",
+    site: "https://www.ensma.fr/",
+    fiche: "isae-ensma",
   },
   {
     id: "isae-supmeca",
@@ -1862,6 +2092,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Télécom",
+    apprentissage: true,
+    site: "https://www.isae-supmeca.fr/",
   },
   {
     id: "isen-mediterranee",
@@ -1869,8 +2101,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     court: "ISEN Méditerranée",
     ville: "Toulon",
     region: "Provence-Alpes-Côte d'Azur",
+    statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : e3a-Polytech (Puissance Alpha CPGE)",
+    site: "https://isen-mediterranee.fr",
   },
   {
     id: "isis",
@@ -1890,6 +2124,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "prive",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : recrutement propre à l'école (Parcoursup) ; après prépa : banque e3a-Polytech",
+    site: "https://ismans.cesi.fr/",
   },
   {
     id: "istom",
@@ -1897,8 +2132,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     court: "ISTOM",
     ville: "Angers",
     region: "Pays de la Loire",
+    statut: "eespig",
     recrutement: ["postbac"],
     concours: "après le bac : recrutement propre à l'école (Parcoursup)",
+    site: "https://www.istom.fr/fr",
   },
   {
     id: "iteem",
@@ -1919,6 +2156,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : e3a-Polytech (Puissance Alpha CPGE)",
+    site: "https://www.junia.com",
+    fiche: "junia",
   },
   {
     id: "isa-lille",
@@ -1929,6 +2168,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac"],
     concours: "après le bac : réseau France Agro3",
+    site: "https://www.junia.com",
+    fiche: "junia",
   },
   {
     id: "isen-lille",
@@ -1939,6 +2180,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "eespig",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Puissance Alpha ; après prépa : e3a-Polytech (Puissance Alpha CPGE)",
+    site: "https://www.junia.com",
+    fiche: "junia",
   },
   {
     id: "oniris",
@@ -1949,6 +2192,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : recrutement propre à l'école (Parcoursup) ; après prépa : CCINP",
+    apprentissage: true,
+    site: "https://www.oniris-nantes.fr",
   },
   {
     id: "seatech",
@@ -1957,8 +2202,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "La Garde",
     region: "Provence-Alpes-Côte d'Azur",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : CCINP",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : CCINP",
+    apprentissage: true,
+    site: "http://www.seatech.fr/",
   },
   {
     id: "sup-biotech",
@@ -1988,6 +2235,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : e3a-Polytech (concours Polytech)",
+    apprentissage: true,
+    site: "http://www.sup-galilee.univ-paris13.fr",
   },
   {
     id: "telecom-nancy",
@@ -1996,9 +2245,10 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     ville: "Villers-lès-Nancy",
     region: "Grand Est",
     statut: "public",
-    recrutement: ["prepa"],
-    concours: "après prépa : Mines-Télécom",
+    recrutement: ["postbac", "prepa"],
+    concours: "après le bac : La Prépa des INP (places réservées) ; après prépa : Mines-Télécom",
     apprentissage: true,
+    site: "http://www.telecomnancy.univ-lorraine.fr/",
   },
   {
     id: "telecom-paris",
@@ -2008,6 +2258,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Ponts",
+    apprentissage: true,
+    site: "https://www.telecom-paris.fr",
     fiche: "telecom-paris",
   },
   {
@@ -2020,6 +2272,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["prepa"],
     concours: "après prépa : CCINP, Mines-Télécom",
     apprentissage: true,
+    site: "https://www.telecom-physique.fr",
   },
   {
     id: "telecom-saint-etienne",
@@ -2031,6 +2284,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac", "prepa"],
     concours: "après le bac : Geipi Polytech ; après prépa : Mines-Télécom",
     apprentissage: true,
+    site: "http://www.telecom-st-etienne.fr",
   },
   {
     id: "telecom-sudparis",
@@ -2040,6 +2294,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["prepa"],
     concours: "après prépa : Mines-Télécom",
+    apprentissage: true,
+    site: "https://telecom-sudparis.eu",
     fiche: "telecom-sudparis",
   },
   {
@@ -2052,6 +2308,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac"],
     concours: "après le bac : Groupe des universités de technologie",
     apprentissage: true,
+    site: "https://www.utbm.fr/",
     fiche: "utbm",
   },
   {
@@ -2063,6 +2320,8 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     statut: "public",
     recrutement: ["postbac"],
     concours: "après le bac : Groupe des universités de technologie",
+    apprentissage: true,
+    site: "https://www.utc.fr",
     fiche: "utc",
   },
   {
@@ -2075,6 +2334,7 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     recrutement: ["postbac"],
     concours: "après le bac : Groupe des universités de technologie",
     apprentissage: true,
+    site: "https://www.utt.fr",
     fiche: "utt",
   },
   {
@@ -2095,5 +2355,6 @@ export const annuaire: EcoleAnnuaire[] = etTypo<EcoleAnnuaire[]>([
     region: "Auvergne-Rhône-Alpes",
     statut: "public",
     apprentissage: true,
+    site: "http://www.vetagro-sup.fr/",
   },
 ]);
