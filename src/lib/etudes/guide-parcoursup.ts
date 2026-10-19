@@ -13,8 +13,8 @@ const P = {
     url: "https://www.parcoursup.gouv.fr/sites/default/files/database/documents/2026-10/calendrier-parcoursup-2027-805_0.pdf",
   },
   calendrierPage: {
-    label: "Parcoursup, le calendrier pas à pas",
-    url: "https://www.parcoursup.gouv.fr/calendrier",
+    label: "Parcoursup, le calendrier de la session 2027, étape par étape",
+    url: "https://www.parcoursup.gouv.fr/calendrier?session=2027",
   },
   conseilsVoeux: {
     label: "Parcoursup, conseils pour formuler tes vœux (mars 2026)",
@@ -245,7 +245,7 @@ export const GUIDE_PSUP: Guide = etTypo({
             { label: "Candidats en 2026", valeur: "1 046 000, apprentissage compris" },
             { label: "Formations", valeur: "25 000" },
             { label: "Lycéens avec au moins une proposition", valeur: "91,5 % en 2026" },
-            { label: "Propositions par lycéen admis", valeur: "5,6 en moyenne" },
+            { label: "Propositions reçues par lycéen", valeur: "5,6 en moyenne, pour ceux qui en ont reçu" },
           ],
         },
         {
@@ -272,7 +272,7 @@ export const GUIDE_PSUP: Guide = etTypo({
       titre: "Tes vœux",
       court: "Les vœux",
       intro:
-        "Jusqu'à 10 vœux, sans les classer, de mi-janvier à mi-mars. Les formations en apprentissage ont leur propre liste, ouverte toute l'année.",
+        "Jusqu'à 10 vœux, sans les classer, de mi-janvier à mi-mars. Les formations en apprentissage ont leur propre liste, ouverte tout au long de la procédure, jusqu'au début septembre.",
       blocs: [
         {
           type: "faits",
@@ -302,22 +302,26 @@ export const GUIDE_PSUP: Guide = etTypo({
               "5 vœux au plus, chacun un regroupement d'instituts, avec des sous-vœux sans limite",
             ],
             [
-              "Écoles d'ingénieurs et de commerce en concours commun, Sciences Po et les IEP, PASS d'Île-de-France, écoles vétérinaires",
+              "Écoles d'ingénieurs et de commerce en concours commun, réseau des Sciences Po en région, PASS d'Île-de-France, écoles vétérinaires",
               "Un vœu, des sous-vœux sans limite, hors du plafond de 20",
             ],
-            ["Licences", "Un vœu par université : la même licence dans deux universités compte pour 2 vœux"],
+            ["Sciences Po Paris", "Un vœu, 2 campus au plus parmi 9, hors du plafond de 20"],
+            [
+              "Licences",
+              "Un vœu par licence et par université : la même licence dans deux universités, ou deux licences de la même université, comptent pour 2 vœux",
+            ],
           ],
         },
         {
           type: "liste",
           titre: "Une liste solide",
           items: [
-            "Varie les types de formations et les lieux, et garde toujours plusieurs vœux : c'est le premier conseil de Parcoursup.",
+            "Varie les types de formations et les lieux, et formule plusieurs vœux : Parcoursup demande d'éviter absolument un vœu unique.",
             "Pense aussi aux licences, qui admettent dans la limite de leurs places.",
             "Sur chaque fiche, ouvre les chiffres d'accès de l'an dernier : profil des admis, bacs, moyennes, spécialités.",
             "Un vœu plus sûr ne retire rien aux autres, puisque chaque formation ignore tes autres vœux.",
             "Certaines écoles demandent des frais de candidature, indiqués sur leur fiche, avec parfois une réduction pour les boursiers.",
-            "En apprentissage, tu peux ajouter des vœux tout au long de l'année, même après début avril.",
+            "En apprentissage, tu peux ajouter des vœux tout au long de la procédure, après début avril et jusqu'au début septembre.",
           ],
         },
         {
@@ -453,7 +457,7 @@ export const GUIDE_PSUP: Guide = etTypo({
             {
               titre: "Candidats de l'académie",
               texte:
-                "En licence, un taux maximal de candidats venus d'ailleurs ; pour les formations très demandées, une priorité possible aux candidats de l'académie.",
+                "En licence et en PASS, le recteur fixe un taux maximal de candidats venus d'un autre secteur ; pour les plus demandées, il peut donner priorité aux candidats de l'académie. Cette règle géographique concerne seulement ces formations.",
             },
           ],
         },
@@ -509,11 +513,11 @@ export const GUIDE_PSUP: Guide = etTypo({
           titre: "Les règles pour répondre",
           items: [
             "Le premier jour, les réponses arrivent le soir : le 2 juin à 19 h en 2026. Ensuite, une fois par jour, le matin : un coup d'œil quotidien suffit.",
-            "Le délai s'affiche en face de chaque proposition. En 2026, une proposition reçue le premier jour se décidait jusqu'au 4 juin ; ensuite, le jour même et le lendemain, jusqu'à 23 h 59.",
+            "Le délai s'affiche en face de chaque proposition, et un SMS te relance le dernier jour. En 2026, une proposition reçue le premier jour se décidait jusqu'au 4 juin ; ensuite, le jour même et le lendemain, jusqu'à 23 h 59.",
             "Une seule proposition acceptée à la fois : en accepter une nouvelle libère la précédente.",
             "Accepter une proposition laisse actifs les vœux en attente que tu choisis de garder.",
-            "Sans réponse dans le délai, la place passe au candidat suivant, et un mail te demande sous 3 jours si tu gardes tes vœux en attente.",
-            "Pendant les écrits du bac, les délais s'arrêtent.",
+            "Sans réponse dans le délai, la proposition part au candidat suivant ; une proposition déjà acceptée reste à toi. Pour garder tes vœux en attente, écris dans les 3 jours via la rubrique Contact de ton dossier : passé ce délai, ils sont considérés comme abandonnés.",
+            "Pendant les écrits du bac, les délais de réponse s'arrêtent : en 2027, du 11 au 18 juin en voies générale et technologique, du 11 au 16 juin en voie professionnelle.",
             "En apprentissage, « oui » veut dire « retenu sous réserve de contrat » : l'admission se concrétise avec un contrat signé.",
           ],
         },
@@ -525,7 +529,7 @@ export const GUIDE_PSUP: Guide = etTypo({
               quand: "Premier week-end de juin, du vendredi au lundi",
               titre: "Tu classes tes vœux en attente",
               texte:
-                "Obligatoire dès que tu as des vœux en attente, avec ou sans proposition acceptée : dans l'onglet Admission, tu ranges ceux que tu veux garder, du préféré au moins souhaité.",
+                "Obligatoire dès que tu as des vœux en attente, avec ou sans proposition acceptée : dans l'onglet Admission, tu ranges ceux que tu veux garder, du préféré au moins souhaité. Tes vœux en apprentissage restent hors de ce classement.",
               cle: true,
             },
             {
@@ -598,7 +602,7 @@ export const GUIDE_PSUP: Guide = etTypo({
             },
             {
               id: "s-complementaire",
-              quand: "À partir de mi-juin",
+              quand: "Dès le 10 juin en 2027",
               titre: "La phase complémentaire",
               texte:
                 "Jusqu'à 10 nouveaux vœux, dans les formations qui ont encore des places : la carte de ton dossier les affiche. Tes vœux en attente et ta proposition acceptée restent intacts ; une même formation peut se redemander dans un autre établissement.",
@@ -614,7 +618,7 @@ export const GUIDE_PSUP: Guide = etTypo({
             },
             {
               id: "s-apprentissage",
-              quand: "Tout l'été",
+              quand: "Jusqu'au début septembre",
               titre: "L'apprentissage",
               texte:
                 "Les vœux en apprentissage restent ouverts : avec un contrat signé, le CFA peut te faire une proposition.",
@@ -624,9 +628,9 @@ export const GUIDE_PSUP: Guide = etTypo({
         {
           type: "faits",
           faits: [
-            { label: "Phase complémentaire 2025", valeur: "plus de 83 000 candidats y ont trouvé une proposition" },
+            { label: "Phase complémentaire 2025", valeur: "83 000 candidats y ont reçu une proposition" },
             { label: "Places libres au 11 juillet 2026", valeur: "plus de 83 000, dans 6 000 formations" },
-            { label: "Candidats accompagnés par une CAES, été 2026", valeur: "un peu plus de 32 000" },
+            { label: "Candidats qui ont saisi une CAES, été 2026", valeur: "un peu plus de 32 000" },
           ],
         },
         {
@@ -678,7 +682,7 @@ export const GUIDE_PSUP: Guide = etTypo({
               quand: "Début juillet {B}",
               titre: "Ton inscription",
               texte:
-                "Avec ton bac, tu t'inscris selon les consignes de l'établissement, affichées dans ton dossier, avant la date indiquée. En 2026, pour un oui accepté début juillet : avant le 10 juillet à midi pour une formation en lycée, prépa ou BTS, et avant le 17 juillet à midi ailleurs.",
+                "Avec ton bac, tu t'inscris selon les consignes de l'établissement, affichées dans ton dossier, avant la date indiquée. En 2026 : pour une formation en lycée (prépa, BTS) acceptée définitivement au plus tard le 6 juillet, inscription avant le 10 juillet à midi ; ailleurs, acceptée au plus tard le 11 juillet, avant le 17 juillet à midi ; acceptée plus tard, avant le 24 août à 18 h.",
               cle: true,
             },
             {
@@ -686,7 +690,7 @@ export const GUIDE_PSUP: Guide = etTypo({
               quand: "Avant de t'inscrire",
               titre: "La CVEC",
               texte:
-                "La contribution de vie étudiante et de campus se paie sur cvec.etudiant.gouv.fr, sauf dans certaines formations comme le BTS ; les boursiers en sont exonérés.",
+                "La contribution de vie étudiante et de campus se paie sur cvec.etudiant.gouv.fr, sauf dans certaines formations comme le BTS. Boursier, tu en es exonéré, et tu télécharges quand même ton attestation sur ce site avant de t'inscrire.",
             },
             {
               id: "a-mobilite",
@@ -710,7 +714,7 @@ export const GUIDE_PSUP: Guide = etTypo({
           ton: "repere",
           titre: "Une formation hors Parcoursup",
           texte:
-            "Si tu choisis une formation hors Parcoursup, désinscris-toi une fois sûr de ton choix : certaines écoles demandent une attestation à l'inscription.",
+            "Si tu choisis une formation hors Parcoursup, désinscris-toi une fois sûr de ton choix : la formation te demandera une attestation de désinscription pour valider ton inscription.",
         },
       ],
       sources: [P.inscription, P.aides, P.mobilite, P.conseilsDossier],
@@ -729,7 +733,7 @@ export const GUIDE_PSUP: Guide = etTypo({
               texte:
                 "Chaque formation a un référent handicap, dont les coordonnées figurent sur sa fiche. La fiche de liaison, facultative, sert après l'admission, hors de l'examen des vœux.",
               points: [
-                "Dès le début des réponses, tu peux demander à la CAES de réexaminer ta situation, pour une formation proche de chez toi",
+                "Si une proposition reçue convient mal à ta situation, demande à la CAES de la réexaminer depuis la rubrique Contact de ton dossier, dès le début des réponses : elle cherche une formation compatible, proche de chez toi",
                 "Le même recours vaut pour un sportif de haut niveau, un élu local ou un jeune avec une charge de famille",
               ],
             },
@@ -802,11 +806,11 @@ export const GUIDE_PSUP: Guide = etTypo({
             },
             {
               q: "Mes absences apparaissent-elles dans mon dossier ?",
-              r: "Parcoursup reprend de tes bulletins les notes et les appréciations des professeurs, et rien d'autre.",
+              r: "De tes bulletins, Parcoursup reprend tes notes, les appréciations de tes professeurs et ta place dans la classe (rang, moyenne, effectif) ; tes absences restent hors de la plateforme. Seul un professeur peut évoquer ton assiduité dans son appréciation.",
             },
             {
               q: "Puis-je ajouter un vœu après la mi-mars ?",
-              r: "En apprentissage, oui, toute l'année. Pour les autres formations, la phase complémentaire ouvre 10 nouveaux vœux à partir de la mi-juin.",
+              r: "En apprentissage, oui, tout au long de la procédure, jusqu'au début septembre. Pour les autres formations, la phase complémentaire ouvre 10 nouveaux vœux dès le 10 juin en 2027.",
             },
           ],
         },
@@ -884,7 +888,8 @@ export const SESSION_PSUP = etTypo({
       au: "2027-09-09",
       quand: "Jeudi 10 juin 2027",
       titre: "La phase complémentaire ouvre",
-      texte: "Jusqu'à 10 nouveaux vœux, dans les formations qui ont encore des places, jusqu'au 9 septembre.",
+      texte:
+        "Jusqu'à 10 nouveaux vœux, dans les formations qui ont encore des places. La phase finit le 9 septembre ; ses vœux se ferment quelques jours avant (le 8 septembre en 2026, pour une fin le 10).",
     },
     {
       du: "2027-06-11",
@@ -967,6 +972,7 @@ export const SITUATIONS: Situation[] = etTypo([
       "Choisis la proposition qui te plaît le plus et accepte-la : une seule à la fois.",
       "Refuse les autres : leurs places iront à d'autres candidats.",
       "Garde en attente les vœux que tu préfères à celui que tu as accepté.",
+      "Le premier week-end de juin, classe ces vœux en attente, du préféré au moins souhaité : seuls les vœux classés restent en lice.",
     ],
     note: "Chaque proposition a sa propre date limite, affichée en face : tu as le temps de comparer.",
   },
@@ -976,8 +982,9 @@ export const SITUATIONS: Situation[] = etTypo([
     etapes: [
       "Regarde, pour chaque vœu, ta position, le nombre de places et le rang du dernier appelé l'an dernier : la liste avance chaque matin.",
       "Le premier week-end de juin, classe tes vœux en attente : c'est obligatoire pour les garder.",
-      "Dès la mi-juin, ajoute des vœux en phase complémentaire ; tes vœux en attente restent actifs.",
+      "Dès l'ouverture de la phase complémentaire, le 10 juin en 2027, ajoute des vœux ; tes vœux en attente restent actifs.",
       "Parles-en à ton professeur principal, ou à un conseiller d'orientation.",
+      "Toujours sans proposition début juillet ? Sollicite la CAES depuis ton dossier, dès le 1er juillet.",
     ],
     note: "En 2026, deux lycéens sur trois avaient une proposition dès le premier jour ; à l'automne, 91,5 % en avaient reçu au moins une.",
   },
@@ -986,11 +993,11 @@ export const SITUATIONS: Situation[] = etTypo([
     label: "Seulement des non",
     etapes: [
       "Demande un entretien à ton lycée, à un CIO ou au service d'orientation d'une université, dès les premiers jours de juin.",
-      "Dès la mi-juin, formule jusqu'à 10 vœux en phase complémentaire, dans les formations qui ont encore des places.",
+      "Dès l'ouverture de la phase complémentaire, le 10 juin en 2027, formule jusqu'à 10 vœux dans les formations qui ont encore des places.",
       "À partir du 1er juillet, sollicite la CAES depuis ton dossier : elle te propose des formations proches de ton projet.",
       "Si tu le souhaites, demande à chaque formation les motifs de sa réponse.",
     ],
-    note: "En 2025, plus de 83 000 candidats ont trouvé une proposition grâce à la phase complémentaire.",
+    note: "En 2025, 83 000 candidats ont reçu une proposition grâce à la phase complémentaire.",
   },
   {
     id: "amenagement",
@@ -1005,9 +1012,9 @@ export const SITUATIONS: Situation[] = etTypo([
     id: "delai",
     label: "Un délai m'a échappé",
     etapes: [
-      "La proposition laissée sans réponse est passée au candidat suivant.",
-      "Un mail te demande sous 3 jours si tu gardes tes vœux en attente : réponds-y.",
-      "Dès la mi-juin, la phase complémentaire t'ouvre 10 nouveaux vœux.",
+      "La proposition laissée sans réponse est passée au candidat suivant ; celle que tu avais déjà acceptée reste à toi.",
+      "Dans les 3 jours, écris via la rubrique Contact de ton dossier pour dire quels vœux en attente tu gardes : sans message de ta part, ils sont considérés comme abandonnés.",
+      "Dès l'ouverture de la phase complémentaire, le 10 juin en 2027, 10 nouveaux vœux s'offrent à toi.",
     ],
     note: "Un coup d'œil chaque matin suffit : les réponses arrivent une fois par jour.",
   },
@@ -1019,6 +1026,6 @@ export const SITUATIONS: Situation[] = etTypo([
       "Cherche un employeur, avec l'aide du CFA.",
       "Une fois le contrat signé, apporte-le au CFA : il te fait alors une proposition d'admission, à accepter dans ton dossier.",
     ],
-    note: "Les vœux en apprentissage restent possibles toute l'année, même après début avril.",
+    note: "Les vœux en apprentissage restent possibles tout au long de la procédure, après début avril et jusqu'au début septembre.",
   },
 ]);

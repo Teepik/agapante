@@ -57,7 +57,8 @@ const LIGNES: Record<Voie, Ligne[]> = etTypo({
 const OPTIONS: Record<Voie, { id: string; label: string; coef: number }[]> = etTypo({
   generale: [
     { id: "opt4", label: "Une option suivie en 1re et en Terminale : langue vivante C, arts, EPS…", coef: 4 },
-    { id: "opt4b", label: "Le latin ou le grec, en plus, en 1re et en Terminale", coef: 4 },
+    { id: "latin", label: "Le latin, en plus, en 1re et en Terminale", coef: 4 },
+    { id: "grec", label: "Le grec, en plus, en 1re et en Terminale", coef: 4 },
     {
       id: "opt2",
       label: "Une option de Terminale : maths complémentaires, maths expertes, ou droit et grands enjeux",
@@ -66,7 +67,9 @@ const OPTIONS: Record<Voie, { id: string; label: string; coef: number }[]> = etT
   ],
   techno: [
     { id: "opt4", label: "Une option suivie en 1re et en Terminale : langue vivante C, arts, EPS…", coef: 4 },
-    { id: "opt4b", label: "Une deuxième option en 1re et en Terminale, le latin ou le grec par exemple", coef: 4 },
+    { id: "opt4b", label: "Une deuxième option, en 1re et en Terminale", coef: 4 },
+    { id: "latin", label: "Le latin, en plus, en 1re et en Terminale", coef: 4 },
+    { id: "grec", label: "Le grec, en plus, en 1re et en Terminale", coef: 4 },
     { id: "opt2", label: "Une option de Terminale : droit et grands enjeux du monde contemporain", coef: 2 },
   ],
 });

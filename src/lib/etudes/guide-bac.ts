@@ -670,7 +670,7 @@ export const GUIDE_BAC: Guide = etTypo({
               quand: "Juin de Terminale",
               titre: "Le bac pro",
               texte:
-                "Sept épreuves obligatoires, en contrôle en cours de formation ou en épreuves finales selon ta spécialité. À partir de 2027, les écrits ont lieu en juin, comme ceux des autres bacs.",
+                "Sept épreuves obligatoires, en contrôle en cours de formation ou en épreuves finales selon ta spécialité. À partir de 2027, les écrits se calent sur ceux des autres bacs : maths et physique-chimie sur ordinateur dès fin mai, puis les autres écrits en juin.",
               cle: true,
             },
           ],
@@ -715,7 +715,7 @@ export const GUIDE_BAC: Guide = etTypo({
                 "Chaque BTS public réserve des places aux bacheliers professionnels, et l'avis favorable de ton conseil de classe te garantit d'être classé. En 2025, plus de 71 % des bacheliers pro ont reçu une proposition en BTS ; avec cet avis favorable, plus de 9 sur 10 ont reçu une proposition.",
               points: [
                 "Mention bien ou très bien, et encore sans proposition : une admission de droit en BTS, dans une spécialité cohérente",
-                "Sans place en BTS malgré un avis favorable : une classe passerelle d'un an t'y prépare, dans une cinquantaine de lycées",
+                "Sans place en BTS malgré un avis favorable : une classe passerelle d'un an peut t'y préparer, dans les lycées que ton académie désigne chaque année",
               ],
               ton: "courtes",
             },
@@ -763,7 +763,7 @@ export const GUIDE_BAC: Guide = etTypo({
             "C'est ta moyenne annuelle de chaque matière, telle qu'elle figure sur tes bulletins de 1re et de Terminale ; le coefficient se partage entre les deux années, par exemple 3 et 3 en histoire-géographie.",
             "Chaque moyenne est validée au dernier conseil de classe de l'année. Tu peux consulter ton livret scolaire avant qu'il parte au jury.",
             "En EPS, la note est la moyenne de trois évaluations, en Terminale.",
-            "Une moyenne manque, ou ne reflète pas ton année ? Ton lycée te convoque à une évaluation de remplacement.",
+            "Trop peu d'évaluations dans une matière pour une moyenne représentative, après des absences par exemple ? Ton chef d'établissement te convoque à une évaluation de remplacement. Une absence justifiée vaut une nouvelle convocation ; une absence injustifiée, la note 0.",
             "Une commission académique peut harmoniser les notes d'un lycée en cas d'écart manifeste. C'est rare : en 2024, moins de 1 % des élèves de 1re et 1,7 % des élèves de Terminale.",
             "Ton lycée a un projet d'évaluation, communiqué aux familles : les mêmes règles pour toute la classe.",
           ],
@@ -902,7 +902,7 @@ export const GUIDE_BAC: Guide = etTypo({
             "Tu as le droit de refaire ta Terminale dans ton lycée, à la rentrée qui suit, une fois.",
             "En la refaisant, tu gardes tes moyennes de 1re et, si tu le demandes, tes notes d'épreuves anticipées ; tes moyennes de Terminale sont recalculées. En voie générale, tu peux demander à échanger une spécialité de 1re contre une de Terminale.",
             "Tes notes d'épreuves finales d'au moins 10 peuvent être conservées, pendant cinq sessions au plus. Avec des notes conservées, le bac s'obtient sans mention ; en repassant toutes les épreuves, la mention reste possible.",
-            "Si tu te représentes plus d'un an après, de nouvelles évaluations remplacent tes moyennes de 1re.",
+            "Si tu te représentes plus d'un an après, les moyennes de ta nouvelle Terminale prennent tout le coefficient, et une évaluation ponctuelle remplace la spécialité arrêtée en 1re.",
           ],
         },
         {
@@ -929,7 +929,7 @@ export const GUIDE_BAC: Guide = etTypo({
       titre: "Ton lycée, ta situation : ce qui change",
       court: "Cas particuliers",
       intro:
-        "Le bac est le même pour tous, mais la façon de remplacer le contrôle continu dépend de ton établissement, et chacun peut obtenir des aménagements.",
+        "Le bac est le même pour tous, mais la façon de remplacer le contrôle continu dépend de ton établissement. Dans tous les établissements, un candidat à besoins particuliers (handicap, trouble de santé ou des apprentissages) peut demander des aménagements.",
       blocs: [
         {
           type: "cartes",
@@ -958,7 +958,8 @@ export const GUIDE_BAC: Guide = etTypo({
               points: [
                 "La demande se fait sur l'application Incluscol, par toi ou tes parents",
                 "Elle peut se faire dès la 2nde, pour la fin du 2e trimestre",
-                "Avec un PAP, un PAI ou un PPS en cours, le chef d'établissement saisit lui-même les aménagements",
+                "Dans un lycée public ou privé sous contrat, avec un PAP, un PAI ou un PPS valide, le chef d'établissement saisit lui-même les aménagements",
+                "Hors contrat, au CNED ou en candidat libre, toi ou tes parents faites la demande complète sur Incluscol",
                 "Le recteur décide ; un recours reste possible dans Incluscol",
               ],
             },
@@ -1026,7 +1027,7 @@ export const GUIDE_BAC: Guide = etTypo({
             },
             {
               q: "Le temps majoré est-il automatique avec un PAP ?",
-              r: "Il se demande sur Incluscol, dès la 2nde. Avec un PAP, un PAI ou un PPS, la procédure est simplifiée ; le recteur décide.",
+              r: "Il se demande sur Incluscol, dès la 2nde. Dans un lycée public ou privé sous contrat, avec un PAP, un PAI ou un PPS, la procédure est simplifiée : ton chef d'établissement saisit la demande. Le recteur décide.",
             },
             {
               q: "Qui choisit mes spécialités ?",
@@ -1066,6 +1067,13 @@ export const DATES_BAC = etTypo({
   session: 2027,
   generale: {
     terminale: [
+      {
+        du: "2027-06-01",
+        au: "2027-06-04",
+        quand: "Du mardi 1er au vendredi 4 juin 2027",
+        titre: "La partie pratique de physique-chimie et de SVT",
+        texte: "Si tu suis l'une de ces spécialités : l'évaluation de tes compétences expérimentales, au lycée.",
+      },
       { du: "2027-06-14", quand: "Lundi 14 juin 2027, de 8 h à 12 h", titre: "Philosophie", cle: true },
       {
         du: "2027-06-16",
@@ -1100,11 +1108,11 @@ export const DATES_BAC = etTypo({
         cle: true,
       },
       {
-        du: "2027-06-15",
+        du: "2027-06-21",
         au: "2027-07-09",
-        quand: "À la date fixée par ton académie",
+        quand: "Entre le lundi 21 juin et le vendredi 9 juillet 2027",
         titre: "Français, oral",
-        texte: "Ta convocation donne le jour et l'heure.",
+        texte: "Ton académie fixe le jour : ta convocation te le donne.",
       },
     ] satisfies Jalon[],
     remplacement: "Du lundi 6 au vendredi 10 septembre 2027",
@@ -1139,7 +1147,7 @@ export const DATES_BAC = etTypo({
       },
       {
         du: "2027-06-21",
-        au: "2027-07-02",
+        au: "2027-07-09",
         quand: "À partir du lundi 21 juin 2027",
         titre: "L'oral de projet",
         texte: "Ta convocation donne le jour et l'heure.",
