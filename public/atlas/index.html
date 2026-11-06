@@ -1,0 +1,1269 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Atlas immobilier France</title>
+<meta name="description" content="Prix de vente par commune et par quartier, loyers, habitants, emploi et tourisme pour 34 746 communes, avec un simulateur de rentabilité et le suivi de vos annonces.">
+<link rel="canonical" href="https://agapante.com/atlas">
+<meta name="theme-color" content="#1f5f8b">
+<link rel="manifest" href="/atlas/manifest.webmanifest">
+<link rel="icon" href="/atlas/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/atlas/icon-192.png">
+<style>
+@font-face{font-family:"Instrument Serif";src:url(/atlas/fonts/instrument-serif-latin-400-normal.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Inter";src:url(/atlas/fonts/inter-latin-wght-normal.woff2) format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<style>
+/* Layout : barre d'outils (indicateur, recherche) au-dessus d'une carte à gauche et d'un panneau commune à droite ; empilés sur mobile */
+:root{
+  --bg:#f3f4f1; --surface:#ffffff; --sunk:#ebede8; --fg:#1b2420; --muted:#5c6862; --line:#d6dbd6;
+  --accent:#1f5f8b; --accent-ink:#ffffff; --sel:#d9480f; --nodata:#dfe2dd; --stroke:rgba(255,255,255,.55);
+  --good:#2b7a47; --warn:#a46a10; --bad:#b03a2e;
+  --s0:#f2f0d8; --s1:#d5e7c4; --s2:#a6d4b4; --s3:#6fbcae; --s4:#3f9aa8; --s5:#2a729a; --s6:#24497a;
+  --display:"Instrument Serif",Georgia,serif; --body:"Inter",system-ui,sans-serif; --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111614; --surface:#18201d; --sunk:#0d1210; --fg:#e3eae6; --muted:#93a29b; --line:#2a3531;
+  --accent:#6fb3e0; --accent-ink:#0d1210; --sel:#ff8a4c; --nodata:#232c29; --stroke:rgba(0,0,0,.45);
+  --good:#6cc48a; --warn:#e2b155; --bad:#ef8a7c;
+  --s0:#26323a; --s1:#24485a; --s2:#246070; --s3:#2f7b7c; --s4:#4f9a7c; --s5:#86b778; --s6:#d0d46e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111614; --surface:#18201d; --sunk:#0d1210; --fg:#e3eae6; --muted:#93a29b; --line:#2a3531;
+  --accent:#6fb3e0; --accent-ink:#0d1210; --sel:#ff8a4c; --nodata:#232c29; --stroke:rgba(0,0,0,.45);
+  --good:#6cc48a; --warn:#e2b155; --bad:#ef8a7c;
+  --s0:#26323a; --s1:#24485a; --s2:#246070; --s3:#2f7b7c; --s4:#4f9a7c; --s5:#86b778; --s6:#d0d46e; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:14px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 32px}
+.app{max-width:1440px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 18px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(24px,3.4vw,32px);margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:13px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.field{display:flex;flex-direction:column;gap:3px;min-width:0}
+.field>span{font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+select,input{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:7px 9px;min-width:0}
+input[type=number]{font-family:var(--mono);font-size:13px;width:100%}
+select:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+#ind{min-width:min(100%,300px)}
+.search{position:relative;flex:1 1 220px;max-width:340px}
+.search input{width:100%}
+#sugg{position:absolute;z-index:20;left:0;right:0;top:100%;margin-top:4px;background:var(--surface);border:1px solid var(--line);border-radius:8px;max-height:260px;overflow:auto;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+#sugg button{display:flex;justify-content:space-between;gap:8px;width:100%;text-align:left;background:none;border:0;padding:7px 10px;color:var(--fg);font:inherit;cursor:pointer}
+#sugg button:hover,#sugg button.on{background:var(--sunk)}
+#sugg small{color:var(--muted)}
+.deps{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:500 12px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:5px 10px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:900px){.main{grid-template-columns:minmax(0,1fr)}}
+.mapbox{position:relative;background:var(--sunk);border:1px solid var(--line);border-radius:10px;overflow:hidden;height:min(78vh,760px);min-height:380px}
+canvas{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+.legend{position:absolute;left:10px;bottom:10px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;max-width:calc(100% - 20px)}
+.legend .t{font-weight:600;margin-bottom:5px}
+.legend .row{display:flex;gap:0;align-items:stretch}
+.legend .sw{height:10px;flex:1 1 0;min-width:22px}
+.legend .ticks{display:flex;justify-content:space-between;gap:6px;font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:3px}
+.legend .cats{display:flex;flex-wrap:wrap;gap:4px 10px}
+.legend .cats i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:6px 8px;font-size:12px;box-shadow:0 6px 18px rgba(0,0,0,.15);white-space:nowrap}
+.tip b{display:block}
+.zoombtns{position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:4px}
+.zoombtns button{width:32px;height:32px;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--fg);font:600 16px var(--body);cursor:pointer}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-width:0}
+.phead{padding:14px 16px 10px;border-bottom:1px solid var(--line)}
+.phead h2{font-family:var(--display);font-weight:400;font-size:24px;margin:0;line-height:1.15;text-wrap:balance}
+.phead .meta{color:var(--muted);font-size:13px;margin-top:3px;display:flex;flex-wrap:wrap;gap:4px 10px}
+.pill{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.03em;padding:2px 8px;border-radius:999px;border:1px solid currentColor}
+.pill.hot{color:var(--bad)} .pill.mid{color:var(--warn)} .pill.cool{color:var(--good)}
+.tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 8px;font:500 13px var(--body);color:var(--muted);cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+.pbody{padding:14px 16px 16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.kpi{background:var(--sunk);border-radius:8px;padding:9px 11px;min-width:0}
+.kpi .l{font-size:11.5px;color:var(--muted)}
+.kpi .v{font:500 19px var(--mono);font-variant-numeric:tabular-nums;margin-top:1px}
+.kpi .c{font-size:11.5px;color:var(--muted)}
+h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:2px 0 0;font-weight:600}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t td{padding:5px 0;border-bottom:1px solid var(--line);vertical-align:top}
+table.t td:last-child{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;padding-left:10px}
+table.t td .cmp{color:var(--muted);font-size:11.5px;margin-left:6px}
+.bars{display:flex;flex-direction:column;gap:7px}
+.bar2 .lab{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px}
+.bar2 .lab span:last-child{font-family:var(--mono);color:var(--muted)}
+.bar2 .track{display:flex;height:9px;border-radius:5px;overflow:hidden;background:var(--sunk)}
+.bar2 .track i{display:block;height:100%}
+.empty{color:var(--muted);font-size:13.5px;line-height:1.55}
+.note{font-size:12px;color:var(--muted)}
+/* Simulateur */
+.simgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 12px}
+.simgrid label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted);min-width:0}
+fieldset{border:1px solid var(--line);border-radius:9px;padding:10px 12px 12px;margin:0;min-width:0}
+legend{font-size:12px;font-weight:600;padding:0 5px;color:var(--fg)}
+.res{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (max-width:520px){.res{grid-template-columns:minmax(0,1fr)}.kpis{grid-template-columns:minmax(0,1fr)}}
+.rcard{border:1px solid var(--line);border-radius:9px;padding:10px;display:flex;flex-direction:column;gap:5px;min-width:0}
+.rcard.best{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.rcard h4{margin:0;font-size:13px;display:flex;justify-content:space-between;gap:6px}
+.rcard .big{font:500 20px var(--mono);font-variant-numeric:tabular-nums}
+.rcard dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:12px}
+.rcard dt{color:var(--muted)} .rcard dd{margin:0;font-family:var(--mono);text-align:right}
+.pos{color:var(--good)} .neg{color:var(--bad)}
+.foot{font-size:12px;color:var(--muted);max-width:110ch}
+.foot a{color:var(--accent)}
+.loading{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted)}
+/* Compte */
+.ann-auth{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px}
+@media (max-width:760px){.ann-auth{grid-template-columns:minmax(0,1fr);padding:18px}}
+.ann-auth h2{font-family:var(--display);font-weight:400;font-size:30px;margin:0 0 8px;line-height:1.1}
+.ann-auth p{margin:0;color:var(--muted);max-width:52ch}
+.auth-card{display:flex;flex-direction:column;gap:10px;background:var(--sunk);border-radius:10px;padding:18px}
+.auth-card h3{margin:0;font:600 17px var(--body);text-transform:none;letter-spacing:0;color:var(--fg)}
+.auth-card label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}
+.auth-card .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.err{color:var(--bad);font-size:13px;margin:0;min-height:1em}
+button.link{background:none;border:0;padding:0;color:var(--accent);font:inherit;cursor:pointer;text-decoration:underline}
+.who{margin:0;font-size:13px;color:var(--muted);text-align:right}
+/* Vues et annonces */
+header .views{margin-left:auto;display:flex;gap:4px;background:var(--sunk);border-radius:9px;padding:3px}
+.views button{border:0;background:none;color:var(--muted);font:600 13px var(--body);padding:7px 12px;border-radius:7px;cursor:pointer}
+.views button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.count{font-family:var(--mono);font-weight:500;color:var(--accent)}
+#view-annonces,#ann-app{display:flex;flex-direction:column;gap:14px}
+#ann-app[hidden]{display:none}
+#view-annonces[hidden]{display:none}
+.ann-top{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:860px){.ann-top{grid-template-columns:minmax(0,1fr)}}
+.ann-add,.ann-install{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.ann-add h2{font-family:var(--display);font-size:20px;margin:0 0 4px}
+#ann-paste{width:100%;margin-top:8px;font:13px var(--body);resize:vertical}
+textarea{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:8px 9px;width:100%}
+.ann-install summary{cursor:pointer;font-weight:600}
+.ann-install ol{padding-left:20px;font-size:13.5px;display:flex;flex-direction:column;gap:6px}
+.bm{display:inline-block;background:var(--accent);color:var(--accent-ink);font-weight:600;padding:4px 10px;border-radius:6px;text-decoration:none;cursor:grab}
+#bm-code{font:11px var(--mono);margin-top:6px}
+button.ghost,#bm-copy{font:500 13px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:7px;padding:6px 11px;cursor:pointer}
+button.primary{font:600 13px var(--body);border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:7px;padding:7px 14px;cursor:pointer}
+button.danger{color:var(--bad);border-color:var(--bad)}
+.ann-filters{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.seg{display:flex;gap:2px;background:var(--sunk);border-radius:8px;padding:3px}
+.seg button{border:0;background:none;color:var(--muted);font:600 12.5px var(--body);padding:6px 11px;border-radius:6px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg)}
+#ann-list{display:flex;flex-direction:column;gap:8px}
+.ann{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;grid-template-columns:minmax(0,2.2fr) repeat(4,minmax(0,1fr)) auto;gap:10px 16px;align-items:center}
+@media (max-width:900px){.ann{grid-template-columns:repeat(2,minmax(0,1fr))}.ann .t{grid-column:1/-1}.ann .acts{grid-column:1/-1}}
+.ann .t b{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ann .t span{font-size:12.5px;color:var(--muted)}
+.ann .m .l{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.ann .m .v{font:500 15px var(--mono);font-variant-numeric:tabular-nums}
+.ann .m .s{font-size:12px;color:var(--muted)}
+.ann .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.ann .acts a,.ann .acts button{font:500 12.5px var(--body);border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:7px;padding:5px 10px;cursor:pointer;text-decoration:none}
+.op{display:inline-block;font-size:11.5px;font-weight:600;border-radius:999px;padding:2px 9px;color:var(--accent-ink)}
+.op.lld{background:var(--s4)} .op.coloc{background:var(--s5)} .op.lcd{background:var(--warn)} .op.ar{background:var(--sel)}
+.r-good{color:var(--good)} .r-mid{color:var(--warn)} .r-bad{color:var(--bad)}
+.flag{font-size:11px;font-weight:600;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:1px 7px;margin-left:6px}
+.empty-ann{background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:22px;color:var(--muted);text-align:center}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(10,15,13,.45);display:grid;place-items:center;padding:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.modal[hidden]{display:none}
+.sheet{background:var(--surface);border-radius:12px;width:min(760px,100%);max-height:calc(100dvh - 24px);min-height:0;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,.3)}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.sheet-head h2{font-family:var(--display);font-size:20px;margin:0}
+.x{border:0;background:none;font-size:24px;color:var(--muted);cursor:pointer}
+.sheet-body{padding:14px 16px;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.sheet-body label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted);min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 12px}
+.grid2 .wide{grid-column:1/-1}
+@media (max-width:520px){.grid2{grid-template-columns:minmax(0,1fr)}}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.presets button{font:500 12px var(--body);border:1px solid var(--line);background:var(--sunk);color:var(--fg);border-radius:999px;padding:4px 10px;cursor:pointer}
+.sheet-foot{display:flex;gap:8px;align-items:center;padding:12px 16px;border-top:1px solid var(--line)}
+.sheet-foot .sp{flex:1}
+.ops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:620px){.ops{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.ops div{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px}
+.ops div.best{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.ops b{display:block;font:500 17px var(--mono)}
+</style>
+
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Atlas immobilier France</h1>
+    <span class="sub" id="cover">34 746 communes de France métropolitaine</span>
+    <nav class="views" aria-label="Vues">
+      <button id="v-carte" data-view="carte" aria-pressed="true">Carte</button>
+      <button id="v-annonces" data-view="annonces" aria-pressed="false">Mes annonces <span id="ann-count" class="count"></span></button>
+    </nav>
+  </header>
+
+  <div id="view-carte">
+  <div class="bar">
+    <label class="field" for="ind"><span>Indicateur affiché</span><select id="ind"></select></label>
+    <div class="field search"><span>Commune</span>
+      <input id="q" type="search" placeholder="Rechercher une commune ou un code postal…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="sugg">
+      <div id="sugg" hidden role="listbox"></div>
+    </div>
+    <label class="field" for="zone"><span>Zone</span><select id="zone"><option value="all">France entière</option></select></label>
+  </div>
+
+  <div class="main">
+    <div class="mapbox" id="mapbox">
+      <canvas id="map" aria-label="Carte des communes"></canvas>
+      <div class="loading" id="loading">Chargement des 34 746 communes…</div>
+      <div class="zoombtns"><button id="zin" aria-label="Zoomer">+</button><button id="zout" aria-label="Dézoomer">−</button><button id="zreset" aria-label="Vue d'ensemble">⤢</button></div>
+      <div class="legend" id="legend"></div>
+      <div class="tip" id="tip" hidden></div>
+    </div>
+
+    <section class="panel" aria-live="polite">
+      <div class="phead"><h2 id="pname">Choisissez une commune</h2><div class="meta" id="pmeta"><span>Cliquez sur la carte ou utilisez la recherche.</span></div></div>
+      <div class="tabs" role="tablist">
+        <button role="tab" id="t-marche" aria-selected="true" data-tab="marche">Marché</button>
+        <button role="tab" id="t-pop" aria-selected="false" data-tab="pop">Habitants</button>
+        <button role="tab" id="t-parc" aria-selected="false" data-tab="parc">Logements</button>
+        <button role="tab" id="t-attr" aria-selected="false" data-tab="attr">Attractivité</button>
+        <button role="tab" id="t-sim" aria-selected="false" data-tab="sim">Simulateur</button>
+      </div>
+      <div class="pbody" id="pbody"></div>
+    </section>
+  </div>
+  </div>
+
+  <section id="view-annonces" hidden>
+    <div class="ann-auth" id="ann-auth">
+      <div class="auth-copy">
+        <h2>Suivez vos annonces</h2>
+        <p>Enregistrez les annonces repérées sur Leboncoin, SeLoger, PAP ou Bien'ici en un clic. L'Atlas les chiffre selon quatre opérations (location longue durée, colocation, courte durée, achat-revente), les classe par rentabilité et suit les baisses de prix. Gratuit, sans publicité ; vos annonces restent visibles par vous seul.</p>
+      </div>
+      <form id="auth-form" class="auth-card" novalidate>
+        <h3 id="auth-title">Créez votre compte</h3>
+        <label id="auth-name-row" for="auth-name">Prénom<input id="auth-name" autocomplete="given-name" maxlength="80"></label>
+        <label for="auth-email">E-mail<input id="auth-email" type="email" autocomplete="email" required></label>
+        <label for="auth-password">Mot de passe<input id="auth-password" type="password" autocomplete="new-password" minlength="8" required></label>
+        <label class="hp" for="auth-site" aria-hidden="true">Site<input id="auth-site" tabindex="-1" autocomplete="off"></label>
+        <p id="auth-err" class="err" aria-live="polite"></p>
+        <button type="submit" id="auth-submit" class="primary">Créer mon compte</button>
+        <p id="auth-switch" class="note">Déjà un compte ? <button type="button" class="link" data-m="connexion">Se connecter</button></p>
+      </form>
+    </div>
+    <div id="ann-app" hidden>
+    <p class="who" id="ann-who"></p>
+    <div class="ann-top">
+      <div class="ann-add">
+        <h2>Ajouter une annonce</h2>
+        <p class="note">Sur la page d'une annonce Leboncoin, SeLoger, PAP ou Bien'ici, cliquez sur le favori « + Atlas » : une petite fenêtre confirme l'enregistrement. Sur téléphone, collez ici le lien et le texte de l'annonce.</p>
+        <textarea id="ann-paste" rows="3" placeholder="Collez ici le lien et le texte d'une annonce…"></textarea>
+        <div id="ann-msg" class="note" aria-live="polite"></div>
+      </div>
+      <details class="ann-install">
+        <summary>Installer le favori « + Atlas » (une fois)</summary>
+        <ol>
+          <li>Affichez la barre de favoris de votre navigateur (Ctrl+Maj+B).</li>
+          <li>Glissez ce bouton dans la barre : <a id="bm-link" class="bm" href="#">+ Atlas</a></li>
+          <li>Ou créez un favori nommé « + Atlas » et collez ce code comme adresse : <button id="bm-copy" type="button">Copier le code</button></li>
+          <li>Restez connecté à l'Atlas dans ce navigateur : le favori enregistre l'annonce dans votre compte.</li>
+        </ol>
+        <textarea id="bm-code" rows="3" readonly></textarea>
+      </details>
+    </div>
+    <div class="ann-filters">
+      <div class="seg" role="group" aria-label="Statut">
+        <button data-st="active" aria-pressed="true">En vente</button>
+        <button data-st="verif" aria-pressed="false">À vérifier</button>
+        <button data-st="archivee" aria-pressed="false">Archivées</button>
+      </div>
+      <label class="field" for="ann-op"><span>Opération</span><select id="ann-op">
+        <option value="all">Toutes</option><option value="lld">Location longue durée</option><option value="coloc">Colocation</option><option value="lcd">Location courte durée</option><option value="ar">Achat-revente</option></select></label>
+      <label class="field" for="ann-sort"><span>Trier par</span><select id="ann-sort">
+        <option value="rent">Rentabilité nette</option><option value="dec">Décote sur le quartier</option><option value="prix">Prix</option><option value="recent">Ajout récent</option><option value="verif">Vérification la plus ancienne</option></select></label>
+    </div>
+    <div id="ann-list"></div>
+    <p class="note" id="ann-hyp"></p>
+    </div>
+  </section>
+
+  <div class="modal" id="ann-modal" hidden role="dialog" aria-modal="true" aria-labelledby="ann-mtitle">
+    <form class="sheet" id="ann-form">
+      <div class="sheet-head"><h2 id="ann-mtitle">Annonce</h2><button type="button" class="x" id="ann-close" aria-label="Fermer">×</button></div>
+      <div class="sheet-body">
+        <div class="grid2">
+          <label class="wide" for="f-titre">Titre<input id="f-titre"></label>
+          <label class="wide" for="f-url">Lien de l'annonce<input id="f-url" type="url"></label>
+          <label for="f-prix">Prix affiché (€)<input id="f-prix" type="number" step="any"></label>
+          <label for="f-surface">Surface (m²)<input id="f-surface" type="number" step="any"></label>
+          <label for="f-pieces">Pièces<input id="f-pieces" type="number" step="1"></label>
+          <label for="f-type">Type<select id="f-type"><option value="maison">Maison</option><option value="appartement">Appartement</option><option value="immeuble">Immeuble</option><option value="autre">Autre</option></select></label>
+          <label for="f-commune">Commune<input id="f-commune" list="f-communes" placeholder="Nom ou code postal"><datalist id="f-communes"></datalist></label>
+          <label for="f-dpe">DPE<select id="f-dpe"><option value="">?</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></label>
+        </div>
+        <div id="ann-preview"></div>
+        <fieldset><legend>Travaux</legend>
+          <div class="presets"><button type="button" data-tm="0">Aucun</button><button type="button" data-tm="300">Rafraîchir · 300 €/m²</button><button type="button" data-tm="800">Rénover · 800 €/m²</button><button type="button" data-tm="1500">Ruine · 1 500 €/m²</button></div>
+          <label for="f-travaux">Budget travaux (€)<input id="f-travaux" type="number" step="any"></label>
+        </fieldset>
+        <fieldset><legend>Hypothèses propres à ce bien (facultatif)</legend>
+          <div class="grid2">
+            <label for="f-op">Opération retenue<select id="f-op"><option value="auto">Automatique (la plus rentable)</option><option value="lld">Location longue durée</option><option value="coloc">Colocation</option><option value="lcd">Location courte durée</option><option value="ar">Achat-revente</option></select></label>
+            <label for="f-loyer">Loyer mensuel hors charges (€)<input id="f-loyer" type="number" step="any" placeholder="estimé"></label>
+            <label for="f-chambres">Chambres en colocation<input id="f-chambres" type="number" step="1" placeholder="estimé"></label>
+            <label for="f-lch">Loyer par chambre (€/mois)<input id="f-lch" type="number" step="any" placeholder="estimé"></label>
+            <label for="f-nuit">Prix par nuit (€)<input id="f-nuit" type="number" step="any" placeholder="estimé"></label>
+            <label for="f-occ">Taux d'occupation (%)<input id="f-occ" type="number" step="any" placeholder="estimé"></label>
+            <label for="f-rev">Prix de revente après travaux (€)<input id="f-rev" type="number" step="any" placeholder="estimé"></label>
+          </div>
+        </fieldset>
+        <label for="f-notes">Notes<textarea id="f-notes" rows="3"></textarea></label>
+      </div>
+      <div class="sheet-foot">
+        <button type="button" id="ann-del" class="ghost danger">Supprimer</button>
+        <span class="sp"></span>
+        <button type="button" id="ann-cancel" class="ghost">Annuler</button>
+        <button type="submit" id="ann-save" class="primary">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+
+  <p class="foot" id="foot"></p>
+  <p class="foot">Atlas immobilier, un outil <a href="/">Agapante</a> · <a href="/politique-de-confidentialite">Confidentialité</a> · <a href="/mentions-legales">Mentions légales</a></p>
+</div>
+
+<script src="/atlas/vendor/d3.min.js"></script>
+<script src="/atlas/vendor/topojson-client.min.js"></script>
+<script>
+/* ---------- Données ---------- */
+let DEPS = {}, REGS = {};
+let META = {}, ROWS = {}, FIELDS = [], IDX = {};
+const get = (r, k) => { if (!r) return null; const i = IDX[k]; if (i === undefined) return null; const v = r[i]; return v === null || v === undefined || v === "" ? null : v; };
+
+/* Indicateurs : clé, libellé, format, type d'échelle */
+const nf0 = new Intl.NumberFormat("fr-FR",{maximumFractionDigits:0});
+const nf1 = new Intl.NumberFormat("fr-FR",{maximumFractionDigits:1,minimumFractionDigits:1});
+const F = {
+  eur: v => nf0.format(v) + " €", eurm2: v => nf0.format(v) + " €/m²", lm2: v => nf1.format(v) + " €/m²",
+  pct: v => nf1.format(v) + " %", n: v => nf0.format(v), pctS: v => (v>0?"+":"") + nf1.format(v) + " %"
+};
+const INDS = [
+  {k:"pxm", g:"Prix", l:"Prix médian maison (€/m²)", f:F.eurm2},
+  {k:"pxa", g:"Prix", l:"Prix médian appartement (€/m²)", f:F.eurm2},
+  {k:"dpxm", g:"Prix", l:"Évolution prix maison sur 3 ans", f:F.pctS, div:true},
+  {k:"nv", g:"Prix", l:"Ventes par an pour 100 logements", f:v=>nf1.format(v)},
+  {k:"lya", g:"Loyers", l:"Loyer appartement (€/m² CC)", f:F.lm2},
+  {k:"lym", g:"Loyers", l:"Loyer maison (€/m² CC)", f:F.lm2},
+  {k:"rba", g:"Rendement", l:"Rendement brut théorique appartement", f:F.pct},
+  {k:"rbm", g:"Rendement", l:"Rendement brut théorique maison", f:F.pct},
+  {k:"zt", g:"Tension", l:"Zone tendue et zonage ABC", cat:true},
+  {k:"vac", g:"Tension", l:"Logements vacants (%)", f:F.pct},
+  {k:"rs", g:"Tension", l:"Résidences secondaires (%)", f:F.pct},
+  {k:"loc", g:"Logements", l:"Ménages locataires (%)", f:F.pct},
+  {k:"mai", g:"Logements", l:"Part de maisons (%)", f:F.pct},
+  {k:"anc", g:"Logements", l:"Résidences principales d'avant 1946 (%)", f:F.pct},
+  {k:"pop", g:"Habitants", l:"Population", f:F.n, log:true},
+  {k:"dpop", g:"Habitants", l:"Évolution annuelle de la population", f:F.pctS, div:true},
+  {k:"a65", g:"Habitants", l:"Part des 65 ans et plus (%)", f:F.pct},
+  {k:"a1524", g:"Habitants", l:"Part des 15-24 ans (%)", f:F.pct},
+  {k:"etu", g:"Habitants", l:"Élèves et étudiants de 15-24 ans (% des 15 ans et plus)", f:F.pct},
+  {k:"cad", g:"Habitants", l:"Cadres parmi les actifs (%)", f:F.pct},
+  {k:"rev", g:"Habitants", l:"Revenu médian disponible (€/an)", f:F.eur},
+  {k:"tf", g:"Fiscalité", l:"Taux communal de taxe foncière (%)", f:F.pct},
+  {k:"demp", g:"Économie", l:"Évolution annuelle des emplois (2017-2023)", f:F.pctS, div:true},
+  {k:"cho", g:"Économie", l:"Taux de chômage (%)", f:F.pct},
+  {k:"conc", g:"Économie", l:"Emplois pour 100 actifs résidents", f:F.n},
+  {k:"emp", g:"Économie", l:"Nombre d'emplois dans la commune", f:F.n, log:true},
+  {k:"pcd", g:"Tourisme", l:"Potentiel de courte durée (indice 0-100)", f:F.n},
+  {k:"tft", g:"Tourisme", l:"Lits touristiques pour 100 habitants (avec résidences secondaires)", f:F.n, log:true},
+  {k:"ltm", g:"Tourisme", l:"Lits en hôtels, campings, résidences pour 100 habitants", f:v=>nf1.format(v), log:true},
+  {k:"occ", g:"Tourisme", l:"Taux d'occupation des hôtels du département, 2025 (%)", f:F.pct},
+  {k:"occe", g:"Tourisme", l:"Taux d'occupation des hôtels en juillet-août (%)", f:F.pct},
+  {k:"sais", g:"Tourisme", l:"Saisonnalité : occupation été ÷ hiver", f:v=>nf1.format(v)}
+];
+
+/* ---------- Carte ---------- */
+const cvs = document.getElementById("map"), ctx = cvs.getContext("2d"), box = document.getElementById("mapbox");
+let features = [], paths = [], bboxes = [], transform = d3.zoomIdentity, W = 0, H = 0, DPR = 1;
+let ind = INDS[0], scaleFn = null, selected = null, hover = null, activeDeps = new Set();
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+let PAL = [];
+const readPal = () => { PAL = [0,1,2,3,4,5,6].map(i => css("--s"+i)); };
+const projection = d3.geoConicConformal().parallels([44,49]).rotate([-3,0]);
+
+function resize(){
+  const r = box.getBoundingClientRect(); DPR = window.devicePixelRatio || 1;
+  W = r.width; H = r.height; cvs.width = Math.round(W*DPR); cvs.height = Math.round(H*DPR);
+  draw();
+}
+function buildPaths(){
+  const fc = {type:"FeatureCollection", features};
+  projection.fitExtent([[10,10],[1000,1000]], fc);
+  const gp = d3.geoPath(projection);
+  paths = features.map(f => new Path2D(gp(f) || ""));
+  bboxes = features.map(f => gp.bounds(f));
+}
+/* La carte est projetée dans un repère 1000×1000, puis ajustée à la boîte */
+function baseFit(){ const s = Math.min(W,H)/1010; return {s, x:(W-1010*s)/2, y:(H-1010*s)/2}; }
+function draw(){
+  if (!paths.length || !scaleFn) return;
+  const b = baseFit(), t = transform;
+  ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,cvs.width,cvs.height);
+  const k = b.s*t.k*DPR;
+  ctx.setTransform(k,0,0,k,(b.x*t.k+t.x)*DPR,(b.y*t.k+t.y)*DPR);
+  const nod = css("--nodata"), stroke = css("--stroke");
+  ctx.lineWidth = 0.35/(b.s*t.k); ctx.strokeStyle = stroke;
+  for (let i=0;i<features.length;i++){
+    const code = features[i].properties.code, dep = depOf(code);
+    if (!activeDeps.has(dep)) continue;
+    const v = valueOf(code, ind.k);
+    ctx.fillStyle = v === null ? nod : scaleFn(v);
+    ctx.fill(paths[i]);
+    if (t.k > 2.2) ctx.stroke(paths[i]);
+  }
+  // Quartiers (sections cadastrales) quand on zoome sur un indicateur de prix
+  if (quartierMode()){
+    const [vx0,vy0] = toMap(0,0), [vx1,vy1] = toMap(W,H), vis = [];
+    for (const d of visibleDeps()){
+      const q = Q[d]; if (!q || !q.items) { loadQ(d); continue; }
+      for (const it of q.items){
+        const bb = it.bb; if (bb[1][0]<vx0||bb[0][0]>vx1||bb[1][1]<vy0||bb[0][1]>vy1) continue;
+        if (it[QK[ind.k]]!==undefined) vis.push(it);
+      }
+    }
+    // Échelle recalculée sur les quartiers visibles, pour lire les écarts à l'intérieur de la ville
+    const vals = vis.map(it=>it[QK[ind.k]]).sort(d3.ascending);
+    if (vals.length >= 8){
+      const lo = d3.quantile(vals,.03), hi = d3.quantile(vals,.97), n = PAL.length;
+      const th = d3.range(1,n).map(i => lo + (hi-lo)*i/n);
+      qScale = d3.scaleThreshold().domain(th).range(PAL); qScale.th = th; qScale.lo = lo; qScale.hi = hi;
+    } else qScale = null;
+    const sc = qScale || scaleFn;
+    ctx.lineWidth = 0.6/(b.s*t.k); ctx.strokeStyle = stroke;
+    for (const it of vis){ ctx.fillStyle = sc(it[QK[ind.k]]); ctx.fill(it.path); ctx.stroke(it.path); }
+  } else qScale = null;
+  if ((qScale ? 1 : 0) !== legendMode || qScale) renderLegend();
+  // Limites de départements
+  ctx.lineWidth = 1.1/(b.s*t.k); ctx.strokeStyle = css("--muted");
+  if (depPaths) for (const [d,p] of depPaths) if (activeDeps.has(d)) ctx.stroke(p);
+  const hl = (i,col,w) => { if (i===null) return; ctx.lineWidth = w/(b.s*t.k); ctx.strokeStyle = col; ctx.stroke(paths[i]); };
+  hl(hover, css("--fg"), 1.4); hl(selected, css("--sel"), 2.6);
+  if (hoverQ){ ctx.lineWidth = 1.6/(b.s*t.k); ctx.strokeStyle = css("--fg"); ctx.stroke(hoverQ.path); }
+}
+/* ---------- Quartiers ---------- */
+const Q = {}, QK = {pxm:"m", pxa:"a"}, QZOOM = 5;
+let qScale = null, legendMode = 0;
+const ARMS = {"75056":"751", "69123":"6938", "13055":"132"};
+const inCommune = (id, c) => id.slice(0,5)===c || (ARMS[c] && id.startsWith(ARMS[c]));
+let hoverQ = null;
+const quartierMode = () => (ind.k in QK) && transform.k >= QZOOM;
+function visibleDeps(){
+  const b = baseFit(), t = transform;
+  const [x0,y0] = toMap(0,0), [x1,y1] = toMap(W,H), out = new Set();
+  for (let i=0;i<features.length;i++){
+    const bb = bboxes[i], cx = (bb[0][0]+bb[1][0])/2, cy = (bb[0][1]+bb[1][1])/2;
+    if (cx<x0||cx>x1||cy<y0||cy>y1) continue;
+    const d = depOf(features[i].properties.code); if (activeDeps.has(d)) out.add(d);
+  }
+  return out.size > 10 ? new Set() : out;
+}
+function loadQ(d){
+  if (Q[d]) return Q[d].promise;
+  Q[d] = {};
+  Q[d].promise = fetch("/atlas/data/q/" + d + ".json").then(r => r.ok ? r.json() : null).then(topo => {
+    if (!topo){ Q[d].items = []; return; }
+    const gp = d3.geoPath(projection);
+    const fs = topojson.feature(topo, topo.objects[Object.keys(topo.objects)[0]]).features;
+    Q[d].items = fs.map(f => ({...f.properties, path: new Path2D(gp(f) || ""), bb: gp.bounds(f)}));
+    draw(); if (cur && depOf(cur)===d) renderPanel();
+  }).catch(() => { Q[d].items = []; });
+  return Q[d].promise;
+}
+function pickQ(px,py){
+  if (!quartierMode()) return null;
+  const [x,y] = toMap(px,py);
+  ctx.setTransform(1,0,0,1,0,0);
+  for (const d of visibleDeps()){
+    const q = Q[d]; if (!q || !q.items) continue;
+    for (const it of q.items){
+      const bb = it.bb; if (x<bb[0][0]||x>bb[1][0]||y<bb[0][1]||y>bb[1][1]) continue;
+      if (it[QK[ind.k]]===undefined) continue;
+      if (ctx.isPointInPath(it.path, x, y)) return it;
+    }
+  }
+  return null;
+}
+const secLabel = id => { const pre = id.slice(5,8), code = id.slice(8).replace(/^0/,""); return "Section " + (pre!=="000" ? pre.replace(/^0+/,"") + " " : "") + code; };
+let depPaths = null;
+function depOf(code){ return code.slice(0,2); }
+
+function toMap(px,py){ const b = baseFit(), t = transform; return [((px - t.x)/t.k - b.x)/b.s, ((py - t.y)/t.k - b.y)/b.s]; }
+function pick(px,py){
+  const [x,y] = toMap(px,py);
+  for (let i=0;i<features.length;i++){
+    const bb = bboxes[i]; if (x<bb[0][0]||x>bb[1][0]||y<bb[0][1]||y>bb[1][1]) continue;
+    if (!activeDeps.has(depOf(features[i].properties.code))) continue;
+    ctx.setTransform(1,0,0,1,0,0);
+    if (ctx.isPointInPath(paths[i], x, y)) return i;
+  }
+  return null;
+}
+
+/* ---------- Échelles ---------- */
+const ZT_CATS = [["Abist","A bis, zone tendue","--s6"],["At","A, zone tendue","--s6"],["Abis","A bis","--s6"],["A","A","--s5"],["B1t","B1, zone tendue","--s5"],["B1","B1","--s4"],["B2t","B2, zone tendue","--s3"],["B2","B2","--s2"],["Ct","C, zone tendue","--s1"],["C","C","--s0"]];
+function valueOf(code, k){
+  const r = ROWS[code]; if (!r) return null;
+  if (k === "zt"){ const z = get(r,"abc"), t = get(r,"zt"); if (!z) return null; return z + (t ? "t" : ""); }
+  return get(r,k);
+}
+function setIndicator(k){
+  ind = INDS.find(i=>i.k===k) || INDS[0];
+  readPal();
+  if (ind.cat){
+    const m = Object.fromEntries(ZT_CATS.map(c=>[c[0], css(c[2])]));
+    scaleFn = v => m[v] || css("--nodata");
+  } else {
+    const vals = Object.keys(ROWS).filter(c=>activeDeps.has(depOf(c))).map(c=>valueOf(c,ind.k)).filter(v=>v!==null && isFinite(v)).sort(d3.ascending);
+    if (!vals.length){ scaleFn = () => css("--nodata"); renderLegend([]); draw(); return; }
+    let lo = d3.quantile(vals,.03), hi = d3.quantile(vals,.97);
+    if (ind.div){ const m = Math.max(Math.abs(lo),Math.abs(hi)); lo=-m; hi=m; }
+    const n = PAL.length;
+    const th = d3.range(1,n).map(i => ind.log ? Math.exp(Math.log(Math.max(lo,1)) + (Math.log(hi)-Math.log(Math.max(lo,1)))*i/n) : lo + (hi-lo)*i/n);
+    const q = d3.scaleThreshold().domain(th).range(PAL);
+    scaleFn = v => q(v); scaleFn.th = th; scaleFn.lo = lo; scaleFn.hi = hi;
+  }
+  renderLegend(); draw();
+}
+function renderLegend(){
+  const L = document.getElementById("legend");
+  if (ind.cat){
+    L.innerHTML = `<div class="t">${ind.l}</div><div class="cats">${ZT_CATS.filter(c=>!["Abist","At","Abis","A"].includes(c[0]) || c[0]==="At").map(c=>`<span><i style="background:var(${c[2]})"></i>${c[1]}</span>`).join("")}</div>`;
+    return;
+  }
+  const sc = (typeof qScale!=="undefined" && qScale) || scaleFn;
+  legendMode = (typeof qScale!=="undefined" && qScale) ? 1 : 0;
+  if (!sc || !sc.th){ L.innerHTML = `<div class="t">${ind.l}</div><div class="note">Pas de donnée</div>`; return; }
+  const ticks = [sc.lo, sc.th[2], sc.th[4], sc.hi].map(v=>shortFmt(v));
+  L.innerHTML = `<div class="t">${ind.l}</div><div class="row">${PAL.map(c=>`<span class="sw" style="background:${c}"></span>`).join("")}</div><div class="ticks">${ticks.map(t=>`<span>${t}</span>`).join("")}</div>${ind.k in QK ? `<div class="note" id="qhint" style="margin-top:5px">${quartierMode()?"Prix par quartier (sections cadastrales, 5 ventes au moins) · échelle des quartiers visibles":"Zoomez sur une ville pour voir les prix par quartier"}</div>`:""}`;
+}
+function shortFmt(v){
+  if (ind.f === F.eurm2 || ind.f === F.eur) return nf0.format(Math.round(v/10)*10);
+  if (ind.f === F.n) return v>=1000 ? nf0.format(Math.round(v/100)*100) : nf0.format(v);
+  return nf1.format(v);
+}
+
+/* ---------- Interaction ---------- */
+const zoom = d3.zoom().scaleExtent([1,200]).on("zoom", e => { transform = e.transform; draw(); const h = document.getElementById("qhint"); if (h) renderLegend(); });
+d3.select(cvs).call(zoom).on("dblclick.zoom", null);
+document.getElementById("zin").onclick = () => d3.select(cvs).transition().duration(250).call(zoom.scaleBy, 1.8);
+document.getElementById("zout").onclick = () => d3.select(cvs).transition().duration(250).call(zoom.scaleBy, 1/1.8);
+document.getElementById("zreset").onclick = () => d3.select(cvs).transition().duration(300).call(zoom.transform, d3.zoomIdentity);
+const tip = document.getElementById("tip");
+let downAt = null;
+cvs.addEventListener("pointerdown", e => { downAt = [e.clientX,e.clientY]; });
+cvs.addEventListener("pointerup", e => {
+  if (!downAt || Math.hypot(e.clientX-downAt[0], e.clientY-downAt[1]) > 5) return;
+  const r = cvs.getBoundingClientRect(), i = pick(e.clientX-r.left, e.clientY-r.top);
+  if (i !== null) selectCommune(features[i].properties.code, false);
+});
+cvs.addEventListener("pointermove", e => {
+  if (e.pointerType !== "mouse") return;
+  const r = cvs.getBoundingClientRect(), x = e.clientX-r.left, y = e.clientY-r.top, i = pick(x,y);
+  const hq = pickQ(x,y);
+  if (i !== hover || hq !== hoverQ){ hover = i; hoverQ = hq; draw(); }
+  if (i === null){ tip.hidden = true; return; }
+  if (hq){
+    const code = features[i].properties.code, name = (ROWS[code] && get(ROWS[code],"nom")) || "";
+    const isM = ind.k==="pxm", n = isM ? hq.nm : hq.na;
+    tip.innerHTML = `<b>${esc(name)} · ${secLabel(hq.id)}</b>${F.eurm2(hq[QK[ind.k]])} · ${n} ventes ${isM?"de maisons":"d'appartements"} (2021-2026)`;
+    tip.hidden = false;
+    const tx = Math.min(x+14, W - tip.offsetWidth - 6), ty = Math.max(6, y - tip.offsetHeight - 10);
+    tip.style.left = tx+"px"; tip.style.top = ty+"px"; return;
+  }
+  const code = features[i].properties.code, v = valueOf(code, ind.k);
+  const name = (ROWS[code] && get(ROWS[code],"nom")) || features[i].properties.nom;
+  tip.innerHTML = `<b>${esc(name)}</b>${ind.cat ? catLabel(v) : (v===null ? "n.d." : ind.f(v))}`;
+  tip.hidden = false;
+  const tx = Math.min(x+14, W - tip.offsetWidth - 6), ty = Math.max(6, y - tip.offsetHeight - 10);
+  tip.style.left = tx+"px"; tip.style.top = ty+"px";
+});
+cvs.addEventListener("pointerleave", () => { tip.hidden = true; if (hover!==null || hoverQ){ hover=null; hoverQ=null; draw(); } });
+const catLabel = v => { const c = ZT_CATS.find(c=>c[0]===v); return c ? c[1] : "n.d."; };
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function zoomTo(i){
+  const b = baseFit(), bb = bboxes[i];
+  const cx = (bb[0][0]+bb[1][0])/2, cy = (bb[0][1]+bb[1][1])/2;
+  const span = Math.max(bb[1][0]-bb[0][0], bb[1][1]-bb[0][1], 8);
+  const k = Math.min(150, Math.max(6, (Math.min(W,H)*0.6)/(span*b.s)));
+  const tx = W/2 - (b.x + cx*b.s)*k, ty = H/2 - (b.y + cy*b.s)*k;
+  d3.select(cvs).transition().duration(450).call(zoom.transform, d3.zoomIdentity.translate(tx,ty).scale(k));
+}
+
+/* ---------- Recherche ---------- */
+const q = document.getElementById("q"), sugg = document.getElementById("sugg");
+let SEARCH = [], sIdx = -1;
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[-'’]/g," ");
+q.addEventListener("input", () => {
+  const t = norm(q.value.trim()); sIdx = -1;
+  if (t.length < 2){ sugg.hidden = true; q.setAttribute("aria-expanded","false"); return; }
+  const score = s => (s.n===t ? 0 : 1);
+  const byPop = (a,b) => score(a)-score(b) || (b.pop||0)-(a.pop||0);
+  const res = SEARCH.filter(s => s.n.startsWith(t) || s.cp.some(c=>c.startsWith(t))).sort(byPop).concat(SEARCH.filter(s => !s.n.startsWith(t) && s.n.includes(t)).sort(byPop)).slice(0,12);
+  sugg.innerHTML = res.map((s,i)=>`<button role="option" data-code="${s.code}" id="sg${i}">${esc(s.nom)} <small>${s.cp[0]||""} · ${DEPS[depOf(s.code)]?.n||""}</small></button>`).join("") || `<div class="note" style="padding:8px 10px">Aucune commune trouvée.</div>`;
+  sugg.hidden = false; q.setAttribute("aria-expanded","true");
+});
+q.addEventListener("keydown", e => {
+  const items = [...sugg.querySelectorAll("button")]; if (!items.length) return;
+  if (e.key==="ArrowDown"||e.key==="ArrowUp"){ e.preventDefault(); sIdx = (sIdx + (e.key==="ArrowDown"?1:-1) + items.length) % items.length; items.forEach((b,i)=>b.classList.toggle("on",i===sIdx)); }
+  if (e.key==="Enter"){ e.preventDefault(); (items[sIdx] || items[0]).click(); }
+  if (e.key==="Escape"){ sugg.hidden = true; }
+});
+sugg.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; sugg.hidden = true; q.value = ""; selectCommune(b.dataset.code, true); });
+document.addEventListener("click", e => { if (!e.target.closest(".search")) sugg.hidden = true; });
+
+/* ---------- Panneau commune ---------- */
+let tab = "marche", cur = null;
+document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => { tab = b.dataset.tab; document.querySelectorAll(".tabs button").forEach(x=>x.setAttribute("aria-selected", x===b)); renderPanel(); }));
+function selectCommune(code, zoomIn){
+  cur = code;
+  const i = features.findIndex(f=>f.properties.code===code);
+  selected = i >= 0 ? i : null;
+  if (!activeDeps.has(depOf(code))){ activeDeps = new Set(Object.keys(DEPS)); document.getElementById("zone").value = "all"; setIndicator(ind.k); }
+  if (zoomIn && selected !== null) zoomTo(selected);
+  draw(); simDefaults(); renderPanel();
+}
+const depAvg = {};
+function computeDepAvg(){
+  const keys = ["pxm","pxa","lya","lym","ly12","ly3","rba","rbm","vac","rs","loc","mai","a65","a1524","cad","ret","etu","ouv","rev","pauv","tf","nv","dpop","dpxm","dpxa","pro","hlm","rp","app","t1","t5","anc","nlog","mob","emp","demp","cho","conc","tft","ltm","occ","pcd"];
+  const acc = {};
+  for (const [c,r] of Object.entries(ROWS)){
+    const d = depOf(c), a = acc[d] || (acc[d] = Object.fromEntries(keys.map(k=>[k,[]])));
+    for (const k of keys){ const v = get(r,k); if (v!==null) a[k].push(v); }
+  }
+  for (const [d,a] of Object.entries(acc)){ depAvg[d] = {}; for (const k of keys) depAvg[d][k] = a[k].length ? d3.median(a[k]) : null; }
+}
+function row(l,k,fmt,r,dep){
+  const v = get(r,k), a = depAvg[dep] && depAvg[dep][k];
+  return `<tr><td>${l}</td><td>${v===null?"n.d.":fmt(v)}${a!==null&&a!==undefined&&v!==null?`<span class="cmp">dép. ${fmt(a)}</span>`:""}</td></tr>`;
+}
+function kpi(l,v,c){ return `<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div>${c?`<div class="c">${c}</div>`:""}</div>`; }
+function stack(label, parts){
+  const tot = parts.reduce((s,p)=>s+(p[1]||0),0);
+  if (!tot) return `<div class="bar2"><div class="lab"><span>${label}</span><span>n.d.</span></div></div>`;
+  return `<div class="bar2"><div class="lab"><span>${label}</span><span>${parts.map(p=>`${p[0]} ${nf0.format(p[1]/tot*100)} %`).join(" · ")}</span></div><div class="track">${parts.map(p=>`<i style="width:${p[1]/tot*100}%;background:var(${p[2]})"></i>`).join("")}</div></div>`;
+}
+function quartierTable(){
+  const d = depOf(cur), q = Q[d];
+  if (!q || !q.items){ loadQ(d); return `<h3>Prix par quartier</h3><p class="note">Chargement des quartiers…</p>`; }
+  const its = q.items.filter(it => inCommune(it.id, cur));
+  if (its.length < 2) return "";
+  const rng = (k,n) => { const v = its.filter(it=>it[k]!==undefined); if (v.length<2) return null; v.sort((a,b)=>a[k]-b[k]); return {lo:v[0], hi:v[v.length-1], n:v.length}; };
+  const m = rng("m"), a = rng("a");
+  if (!m && !a) return "";
+  const line = (l,x,k) => x ? `<tr><td>${l}<span class="cmp">${x.n} quartiers</span></td><td>${F.eurm2(x.lo[k])} → ${F.eurm2(x.hi[k])}</td></tr>` : "";
+  return `<h3>Prix par quartier</h3><table class="t">${line("Maison, du moins cher au plus cher",m,"m")}${line("Appartement, du moins cher au plus cher",a,"a")}</table>
+    <p class="note">Médianes par section cadastrale sur les ventes de juillet 2021 à juin 2026 (5 ventes au moins). Choisissez « Prix médian maison » ou « appartement » et zoomez pour les voir sur la carte.</p>`;
+}
+function tension(r){
+  const z = get(r,"abc"), t = get(r,"zt");
+  if (t) return `<span class="pill hot">Zone tendue${t===2?" et touristique":""}${z?` · ${z==="Abis"?"A bis":z}`:""}</span>`;
+  if (z==="Abis" || z==="A") return `<span class="pill hot">Zone ${z==="Abis"?"A bis":"A"}</span>`;
+  if (z==="B1") return `<span class="pill mid">Zone B1</span>`;
+  if (z) return `<span class="pill cool">Zone ${z}</span>`;
+  return "";
+}
+function renderPanel(){
+  const P = document.getElementById("pbody"), r = cur && ROWS[cur];
+  if (!cur){ P.innerHTML = `<p class="empty">La fiche affiche, pour la commune choisie, les prix de vente et les loyers, les habitants, le parc de logements et un simulateur de rentabilité pré-rempli avec ses chiffres.</p>`; return; }
+  const dep = depOf(cur), name = r ? get(r,"nom") : (features[selected]?.properties.nom || cur);
+  document.getElementById("pname").textContent = name;
+  document.getElementById("pmeta").innerHTML = `<span>${DEPS[dep]?.n||""} · ${cur}</span>${r&&get(r,"pop")!==null?`<span>${nf0.format(get(r,"pop"))} habitants</span>`:""}${r?tension(r):""}`;
+  if (!r){ P.innerHTML = `<p class="empty">Aucune donnée pour cette commune.</p>`; return; }
+  if (tab==="marche"){
+    const pm=get(r,"pxm"), pa=get(r,"pxa"), lm=get(r,"lym"), la=get(r,"lya");
+    P.innerHTML = `<div class="kpis">
+      ${kpi("Prix médian maison", pm?F.eurm2(pm):"n.d.", get(r,"nvm")!==null?`${nf0.format(get(r,"nvm"))} ventes par an`:"")}
+      ${kpi("Prix médian appartement", pa?F.eurm2(pa):"trop peu de ventes", get(r,"nva")!==null?`${nf0.format(get(r,"nva"))} ventes par an`:"")}
+      ${kpi("Loyer maison", lm?F.lm2(lm):"n.d.", lm?`≈ ${nf0.format(lm*90)} € / mois pour 90 m²`:"")}
+      ${kpi("Loyer appartement", la?F.lm2(la):"n.d.", la?`≈ ${nf0.format(la*50)} € / mois pour 50 m²`:"")}
+      </div>
+      <h3>Prix et liquidité</h3>
+      <table class="t">
+        ${row("Évolution prix maison sur 3 ans","dpxm",F.pctS,r,dep)}
+        ${row("Évolution prix appartement sur 3 ans","dpxa",F.pctS,r,dep)}
+        ${row("Ventes par an pour 100 logements","nv",v=>nf1.format(v),r,dep)}
+      </table>
+      ${quartierTable()}
+      <h3>Loyers d'annonce (charges comprises)</h3>
+      <table class="t">
+        ${row("Appartement T1-T2","ly12",F.lm2,r,dep)}
+        ${row("Appartement T3 et plus","ly3",F.lm2,r,dep)}
+        ${row("Maison","lym",F.lm2,r,dep)}
+        ${row("Rendement brut théorique appartement","rba",F.pct,r,dep)}
+        ${row("Rendement brut théorique maison","rbm",F.pct,r,dep)}
+      </table>
+      <h3>Tension et fiscalité</h3>
+      <table class="t">
+        <tr><td>Zone tendue</td><td>${get(r,"zt")===2?"Oui, tendue et touristique":get(r,"zt")?"Oui":"Non"}</td></tr>
+        <tr><td>Zonage ABC</td><td>${get(r,"abc")?(get(r,"abc")==="Abis"?"A bis":get(r,"abc")):"n.d."}</td></tr>
+        ${row("Logements vacants","vac",F.pct,r,dep)}
+        ${row("Taux communal de taxe foncière","tf",F.pct,r,dep)}
+      </table>
+      <p class="note">${get(r,"lyaq")&&get(r,"lyaq")!=="commune"?"Trop peu d'annonces dans la commune : loyers estimés par le modèle du ministère à l'échelle "+(get(r,"lyaq")==="epci"?"de l'intercommunalité":"d'un groupe de communes voisines")+". ":""}Prix : médiane des ventes sur 24 mois (juillet 2024 – juin 2026). Rendement brut théorique : loyer annuel d'annonce charges comprises divisé par le prix médian au m². « dép. » : médiane des communes du département.</p>`;
+  } else if (tab==="pop"){
+    P.innerHTML = `<div class="kpis">
+      ${kpi("Population", get(r,"pop")!==null?F.n(get(r,"pop")):"n.d.", get(r,"dpop")!==null?`${F.pctS(get(r,"dpop"))} par an`:"")}
+      ${kpi("Revenu médian disponible", get(r,"rev")?F.eur(get(r,"rev")):"n.d.", "par unité de consommation")}
+      </div>
+      <h3>Âges</h3>
+      <table class="t">${row("15-24 ans","a1524",F.pct,r,dep)}${row("65 ans et plus","a65",F.pct,r,dep)}${row("Arrivés d'une autre commune dans l'année","mob",F.pct,r,dep)}</table>
+      <h3>Profils (population de 15 ans et plus)</h3>
+      <table class="t">
+        ${row("Cadres (parmi les actifs)","cad",F.pct,r,dep)}
+        ${row("Retraités","ret",F.pct,r,dep)}
+        ${row("Élèves et étudiants de 15-24 ans","etu",F.pct,r,dep)}
+        ${row("Ouvriers et employés (parmi les actifs)","ouv",F.pct,r,dep)}
+      </table>
+      <table class="t">${row("Taux de pauvreté","pauv",F.pct,r,dep)}</table>
+      <p class="note">Une forte part de 15-24 ans et d'étudiants signale une demande de petites surfaces et de chambres ; une forte part de 65 ans et plus annonce des successions et des maisons mises en vente. Recensement 2023, revenus 2023.</p>`;
+  } else if (tab==="parc"){
+    P.innerHTML = `<div class="bars">
+      ${stack("Occupation", [["Principales",get(r,"rp"),"--s4"],["Secondaires",get(r,"rs"),"--s2"],["Vacants",get(r,"vac"),"--sel"]])}
+      ${stack("Type", [["Maisons",get(r,"mai"),"--s5"],["Appartements",get(r,"app"),"--s2"]])}
+      ${stack("Statut des ménages", [["Propriétaires",get(r,"pro"),"--s5"],["Locataires",get(r,"loc"),"--s3"]])}
+      </div>
+      <table class="t">
+        ${row("Logements","nlog",F.n,r,dep)}
+        ${row("Locataires HLM (part des ménages)","hlm",F.pct,r,dep)}
+        ${row("Résidences principales de 1-2 pièces","t1",F.pct,r,dep)}
+        ${row("Résidences principales de 5 pièces et plus","t5",F.pct,r,dep)}
+        ${row("Résidences principales construites avant 1946","anc",F.pct,r,dep)}
+      </table>
+      <p class="note">Peu de petits logements face à beaucoup de jeunes : manque de T1-T2. Beaucoup de vacants : marché détendu ou parc à rénover.</p>`;
+  } else if (tab==="attr"){
+    const pcd = get(r,"pcd");
+    P.innerHTML = `<div class="kpis">
+      ${kpi("Emplois dans la commune", get(r,"emp")!==null?F.n(get(r,"emp")):"n.d.", get(r,"demp")!==null?`${F.pctS(get(r,"demp"))} par an depuis 2017`:"")}
+      ${kpi("Potentiel de courte durée", pcd!==null?`${nf0.format(pcd)} / 100`:"commune peu touristique", pcd!==null?"parmi les communes touristiques":"moins de 50 lits touristiques pour 100 habitants")}
+      </div>
+      <h3>Économie</h3>
+      <table class="t">
+        ${row("Taux de chômage","cho",F.pct,r,dep)}
+        ${row("Emplois pour 100 actifs résidents","conc",F.n,r,dep)}
+        ${row("Évolution annuelle des emplois 2017-2023","demp",F.pctS,r,dep)}
+      </table>
+      <p class="note">Plus de 100 emplois pour 100 actifs : pôle d'emploi qui attire des salariés de l'extérieur, donc des locataires. Moins de 100 : commune résidentielle.</p>
+      <h3>Tourisme</h3>
+      <table class="t">
+        ${row("Lits touristiques pour 100 habitants","tft",F.n,r,dep)}
+        ${row("dont hôtels, campings, résidences","ltm",v=>nf1.format(v),r,dep)}
+        <tr><td>Hôtels du département occupés en 2025</td><td>${get(r,"occ")!==null?F.pct(get(r,"occ")):"n.d."}</td></tr>
+        <tr><td>en juillet-août · de novembre à février</td><td>${get(r,"occe")!==null?F.pct(get(r,"occe"))+" · "+F.pct(get(r,"occh")):"n.d."}</td></tr>
+      </table>
+      <p class="note">Lits touristiques : 2 par chambre d'hôtel, 3 par emplacement de camping, 5 par résidence secondaire (convention Insee). Le taux d'occupation des hôtels mesure le rapport entre la demande et l'offre ; l'Insee le publie par département. Le potentiel de courte durée classe les communes touristiques : 35 % intensité touristique, 25 % occupation d'été, 40 % prix d'achat bas. Le prix par nuit et le remplissage des locations type Airbnb ne sont pas publiés : renseignez-les dans le simulateur.</p>`;
+  } else renderSim();
+}
+
+/* ---------- Simulateur ---------- */
+const S = {};
+const SIM_FIELDS = [
+ ["Acquisition", [["surf","Surface (m²)",70],["prix","Prix d'achat (€)",150000],["trav","Travaux (€)",30000],["notaire","Frais de notaire (%)",7.5],["apport","Apport (€)",30000],["taux","Taux du crédit (%)",3.4],["duree","Durée du crédit (ans)",20]]],
+ ["Charges annuelles", [["tf","Taxe foncière (€/an)",1000],["copro","Copropriété non récupérable (€/an)",0],["assur","Assurance PNO (€/an)",200],["entret","Entretien (% des loyers)",5]]],
+ ["Location longue durée", [["loyer","Loyer hors charges (€/mois)",700],["vacLLD","Vacance (mois/an)",0.5],["gestLLD","Gestion (% des loyers)",0]]],
+ ["Location courte durée", [["nuit","Prix moyen par nuit (€)",90],["occ","Taux d'occupation (%)",55],["concier","Conciergerie (% du CA)",20],["plateforme","Commission plateforme (%)",3],["energie","Énergie, internet (€/mois)",120],["mobilier","Mobilier et équipement (€)",8000]]],
+ ["Colocation ou moyenne durée", [["nbCh","Nombre de chambres",4],["loyerCh","Loyer par chambre, charges comprises (€/mois)",420],["chColoc","Énergie, internet, eau payés par vous (€/mois)",250],["vacCh","Vacance par chambre (mois/an)",1]]],
+ ["Achat-revente", [["prixRev","Prix de revente (€)",230000],["mois","Durée de portage (mois)",9],["fraisVente","Frais de vente (% du prix)",4]]],
+ ["Fiscalité et objectif", [["tmi","Tranche marginale d'imposition (%)",11],["ps","Prélèvements sociaux (%)",17.2],["cible","Rendement brut visé (%)",15]]]
+];
+function simDefaults(){
+  const r = cur && ROWS[cur];
+  const surf = S.surf || 70;
+  if (!r) return;
+  const maisonish = (get(r,"mai")||50) >= 60;
+  const px = (maisonish ? get(r,"pxm") : get(r,"pxa")) || get(r,"pxm") || get(r,"pxa");
+  const ly = (maisonish ? get(r,"lym") : get(r,"lya")) || get(r,"lya") || get(r,"lym");
+  S.surf = surf;
+  if (px){ S.prixRev = Math.round(px*surf*1.08/1000)*1000; S.prix = Math.round(px*surf*0.6/1000)*1000; }
+  if (ly){ S.loyer = Math.round(ly*surf*0.88/10)*10; }
+  if (get(r,"occ")) S.occ = Math.round(get(r,"occ"));
+  const tf = get(r,"tf");
+  // Base imposable = 50 % de la valeur locative cadastrale, estimée à la moitié du loyer de marché annuel
+  if (tf && ly){ S.tf = Math.round((ly*surf*12*0.5*0.5) * tf/100 / 10)*10; }
+  S._src = {px, ly, maisonish};
+}
+SIM_FIELDS.forEach(([,fs]) => fs.forEach(([k,,d]) => { if (S[k]===undefined) S[k]=d; }));
+function mens(capital, tauxAn, ans){ const i = tauxAn/100/12, n = ans*12; if (capital<=0) return 0; return i===0 ? capital/n : capital*i/(1-Math.pow(1+i,-n)); }
+function compute(){
+  const cout = S.prix*(1+S.notaire/100) + S.trav;
+  const empr = Math.max(0, cout - S.apport);
+  const m = mens(empr, S.taux, S.duree), annuite = m*12;
+  const interets1 = empr*S.taux/100; // approximation 1re année
+  const fixes = S.tf + S.copro + S.assur;
+  // LLD
+  const caL = S.loyer*(12 - S.vacLLD);
+  const chL = fixes + caL*(S.entret + S.gestLLD)/100;
+  const netL = caL - chL;
+  // Fiscalité LLD : micro-foncier (30 %) si ≤ 15 000 €, sinon réel
+  const baseMicroF = caL*0.7, baseReelF = Math.max(0, caL - chL - interets1);
+  const baseF = caL <= 15000 ? Math.min(baseMicroF, baseReelF) : baseReelF;
+  const impL = baseF*(S.tmi + S.ps)/100;
+  // LCD
+  const nuits = 365*S.occ/100, caC = nuits*S.nuit;
+  const chC = fixes + caC*(S.concier + S.plateforme + S.entret)/100 + S.energie*12;
+  const netC = caC - chC;
+  // Fiscalité LCD : LMNP au réel (amortissement bâti 85 % sur 30 ans + travaux sur 15 ans + mobilier sur 7 ans), BIC non négatif
+  const amort = (S.prix*0.85)/30 + S.trav/15 + S.mobilier/7;
+  const baseC = Math.max(0, caC - chC - interets1 - amort);
+  const impC = baseC*(S.tmi + S.ps)/100;
+  const coutC = cout + S.mobilier;
+  const emprC = Math.max(0, coutC - S.apport), mC = mens(emprC, S.taux, S.duree);
+  // Colocation meublée (LMNP au réel)
+  const caK = S.nbCh*S.loyerCh*(12 - S.vacCh);
+  const chK = fixes + caK*S.entret/100 + S.chColoc*12;
+  const netK = caK - chK;
+  const baseK = Math.max(0, caK - chK - interets1 - amort);
+  const impK = baseK*(S.tmi + S.ps)/100;
+  // Prix d'achat maximal pour atteindre le rendement brut visé (frais de notaire, travaux et mobilier compris)
+  const maxPrix = (loyersAn, extra) => Math.max(0, (loyersAn/(S.cible/100) - S.trav - extra)/(1+S.notaire/100));
+  // Achat-revente (particulier : plus-value immobilière 19 % + 17,2 % sans abattement avant 6 ans)
+  const portage = (empr*S.taux/100)*(S.mois/12) + fixes*(S.mois/12);
+  const fv = S.prixRev*S.fraisVente/100;
+  const prixAcqPV = S.prix*1.075 + Math.max(S.trav, 0); // frais d'acquisition forfaitaires 7,5 % ; travaux justifiés
+  const pv = Math.max(0, S.prixRev - fv - prixAcqPV);
+  const impR = pv*0.362;
+  const margeR = S.prixRev - fv - cout - portage - impR;
+  const fondsR = Math.max(S.apport, 1);
+  return {
+    cout, empr, m,
+    L:{ca:caL, net:netL, brut: S.loyer*12/cout*100, netRdt: netL/cout*100, cf:(netL - annuite - impL)/12, imp:impL, max:maxPrix(S.loyer*12, 0)},
+    C:{ca:caC, net:netC, brut: caC/coutC*100, netRdt: netC/coutC*100, cf:(netC - mC*12 - impC)/12, imp:impC, nuits, max:maxPrix(caC, S.mobilier)},
+    K:{ca:caK, net:netK, brut: S.nbCh*S.loyerCh*12/coutC*100, netRdt: netK/coutC*100, cf:(netK - mC*12 - impK)/12, imp:impK, max:maxPrix(S.nbCh*S.loyerCh*12, S.mobilier)},
+    R:{marge:margeR, roi: margeR/fondsR*100, pv, imp:impR, portage, roiAn: margeR/fondsR*100*12/Math.max(S.mois,1)}
+  };
+}
+function renderSim(){
+  const P = document.getElementById("pbody");
+  const src = S._src;
+  const intro = src ? `<p class="note">Pré-rempli pour une ${src.maisonish?"maison":"appartement"} de ${S.surf} m² : achat à 60 % du prix médian (bien à rénover), revente rénovée à 108 % du prix médian${src.ly?", loyer à 88 % du loyer d'annonce (hors charges), taxe foncière estimée avec le taux communal":""}, taux d'occupation repris des hôtels du département. Ajustez avec les chiffres de votre bien.</p>` : `<p class="note">Choisissez une commune pour pré-remplir les prix et loyers locaux.</p>`;
+  P.innerHTML = intro + `<div id="res"></div>` + SIM_FIELDS.map(([t,fs]) => `<fieldset><legend>${t}</legend><div class="simgrid">${fs.map(([k,l])=>`<label for="s-${k}">${l}<input type="number" id="s-${k}" data-k="${k}" value="${S[k]}" step="any" inputmode="decimal"></label>`).join("")}</div></fieldset>`).join("")
+    + `<p class="note">Hypothèses : intérêts de la 1re année ; location nue en micro-foncier ou au réel selon le plus favorable ; courte durée et colocation en LMNP au réel avec amortissements (bâti 85 % sur 30 ans, travaux sur 15 ans, mobilier sur 7 ans) ; « prix max. » : prix d'achat net vendeur qui donne le rendement brut visé, frais de notaire, travaux et mobilier compris ; achat-revente en tant que particulier (plus-value à 36,2 % sans abattement avant 6 ans de détention, hors résidence principale). Prélèvements sociaux : 17,2 % sur la location nue, 18,6 % sur la location meublée depuis 2026 ; ajustez la case. À valider avec votre expert-comptable.</p>`;
+  P.querySelectorAll("input[data-k]").forEach(inp => inp.addEventListener("input", () => { const v = parseFloat(inp.value.replace(",", ".")); if (isFinite(v)){ S[inp.dataset.k]=v; renderRes(); } }));
+  renderRes();
+}
+function renderRes(){
+  const el = document.getElementById("res"); if (!el) return;
+  const c = compute();
+  const sc = [["L", c.L.cf], ["K", c.K.cf], ["C", c.C.cf], ["R", c.R.marge/Math.max(S.mois,1)]];
+  const best = sc.reduce((a,b)=>b[1]>a[1]?b:a)[0];
+  const cls = v => v>=0?"pos":"neg";
+  const eur = v => (v<0?"−":"") + nf0.format(Math.abs(Math.round(v))) + " €";
+  el.innerHTML = `<p class="note">Coût total du projet : <b>${eur(c.cout)}</b> · emprunt ${eur(c.empr)} · mensualité ${eur(c.m)}</p>
+  <div class="res">
+    <div class="rcard ${best==="L"?"best":""}"><h4>Longue durée</h4><div class="big ${cls(c.L.cf)}">${eur(c.L.cf)}<small style="font-size:12px"> /mois</small></div>
+      <dl><dt>Rendement brut</dt><dd>${nf1.format(c.L.brut)} %</dd><dt>Rendement net</dt><dd>${nf1.format(c.L.netRdt)} %</dd><dt>Loyers / an</dt><dd>${eur(c.L.ca)}</dd><dt>Impôt estimé</dt><dd>${eur(c.L.imp)}</dd><dt>Prix max. pour ${nf0.format(S.cible)} %</dt><dd>${eur(c.L.max)}</dd></dl></div>
+    <div class="rcard ${best==="K"?"best":""}"><h4>Colocation</h4><div class="big ${cls(c.K.cf)}">${eur(c.K.cf)}<small style="font-size:12px"> /mois</small></div>
+      <dl><dt>Rendement brut</dt><dd>${nf1.format(c.K.brut)} %</dd><dt>Rendement net</dt><dd>${nf1.format(c.K.netRdt)} %</dd><dt>Loyers / an</dt><dd>${eur(c.K.ca)}</dd><dt>Impôt estimé</dt><dd>${eur(c.K.imp)}</dd><dt>Prix max. pour ${nf0.format(S.cible)} %</dt><dd>${eur(c.K.max)}</dd></dl></div>
+    <div class="rcard ${best==="C"?"best":""}"><h4>Courte durée</h4><div class="big ${cls(c.C.cf)}">${eur(c.C.cf)}<small style="font-size:12px"> /mois</small></div>
+      <dl><dt>Rendement brut</dt><dd>${nf1.format(c.C.brut)} %</dd><dt>Rendement net</dt><dd>${nf1.format(c.C.netRdt)} %</dd><dt>CA / an (${nf0.format(c.C.nuits)} nuits)</dt><dd>${eur(c.C.ca)}</dd><dt>Impôt estimé</dt><dd>${eur(c.C.imp)}</dd><dt>Prix max. pour ${nf0.format(S.cible)} %</dt><dd>${eur(c.C.max)}</dd></dl></div>
+    <div class="rcard ${best==="R"?"best":""}"><h4>Achat-revente</h4><div class="big ${cls(c.R.marge)}">${eur(c.R.marge)}</div>
+      <dl><dt>Rentabilité de l'apport</dt><dd>${nf0.format(c.R.roi)} %</dd><dt>Portage (intérêts, charges)</dt><dd>${eur(c.R.portage)}</dd><dt>Plus-value imposable</dt><dd>${eur(c.R.pv)}</dd><dt>Impôt sur la plus-value</dt><dd>${eur(c.R.imp)}</dd></dl></div>
+  </div>
+  <p class="note">Montant en gros : trésorerie mensuelle après crédit et impôts (location) ou gain net après impôt (revente). Le cadre surligné rapporte le plus par mois de capital mobilisé.</p>`;
+}
+
+/* ---------- Zone ---------- */
+function syncDeps(){}
+function buildDeps(){
+  const sel = document.getElementById("zone");
+  const byReg = d3.group(Object.entries(DEPS), ([,v]) => v.r);
+  sel.innerHTML = `<option value="all">France entière</option>` + [...byReg].sort((a,b)=>REGS[a[0]].localeCompare(REGS[b[0]],"fr")).map(([r,ds]) =>
+    `<optgroup label="${esc(REGS[r])}"><option value="r-${r}">${esc(REGS[r])} (toute la région)</option>${ds.map(([d,v])=>`<option value="d-${d}">${d} · ${esc(v.n)}</option>`).join("")}</optgroup>`).join("");
+  sel.addEventListener("change", () => {
+    const v = sel.value;
+    activeDeps = v==="all" ? new Set(Object.keys(DEPS)) : v.startsWith("r-") ? new Set(Object.keys(DEPS).filter(d=>DEPS[d].r===v.slice(2))) : new Set([v.slice(2)]);
+    setIndicator(ind.k); fitActive();
+  });
+}
+function fitActive(){
+  const idx = features.map((f,i)=>i).filter(i=>activeDeps.has(depOf(features[i].properties.code)));
+  if (!idx.length || activeDeps.size===Object.keys(DEPS).length){ d3.select(cvs).transition().duration(350).call(zoom.transform, d3.zoomIdentity); return; }
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9; idx.forEach(i=>{const b=bboxes[i]; x0=Math.min(x0,b[0][0]); y0=Math.min(y0,b[0][1]); x1=Math.max(x1,b[1][0]); y1=Math.max(y1,b[1][1]);});
+  const b = baseFit(), k = Math.min(30, 0.9*Math.min(W/((x1-x0)*b.s), H/((y1-y0)*b.s)));
+  const cx=(x0+x1)/2, cy=(y0+y1)/2;
+  d3.select(cvs).transition().duration(350).call(zoom.transform, d3.zoomIdentity.translate(W/2-(b.x+cx*b.s)*k, H/2-(b.y+cy*b.s)*k).scale(k));
+}
+
+/* ---------- Démarrage ---------- */
+async function boot(){
+  const [topo, data] = await Promise.all([fetch("/atlas/data/communes_fr.json").then(r=>r.json()), fetch("/atlas/data/data_fr.json").then(r=>r.json())]);
+  META = data.meta || {}; FIELDS = data.fields;
+  DEPS = META.deps || {}; REGS = META.regs || {}; activeDeps = new Set(Object.keys(DEPS)); FIELDS.forEach((f,i)=>IDX[f]=i); ROWS = data.rows;
+  const obj = topo.objects[Object.keys(topo.objects)[0]];
+  features = topojson.feature(topo, obj).features;
+  // Limites départementales
+  const byDep = d3.group(obj.geometries, g => g.properties.code.slice(0,2));
+  buildPaths();
+  const gp = d3.geoPath(projection);
+  depPaths = [...byDep].map(([d,gs]) => [d, new Path2D(gp(topojson.mesh(topo, {type:"GeometryCollection", geometries:gs}, (a,b)=>a===b || depOf(a.properties.code)!==depOf(b.properties.code))) || "")]);
+  SEARCH = Object.entries(ROWS).map(([code,r]) => ({code, nom:get(r,"nom"), pop:get(r,"pop"), n:norm(get(r,"nom")||""), cp:(get(r,"cp")||"").split(" ").filter(Boolean)}));
+  computeDepAvg();
+  const sel = document.getElementById("ind");
+  sel.innerHTML = [...d3.group(INDS, i=>i.g)].map(([g,is])=>`<optgroup label="${g}">${is.map(i=>`<option value="${i.k}">${i.l}</option>`).join("")}</optgroup>`).join("");
+  sel.addEventListener("change", () => setIndicator(sel.value));
+  buildDeps();
+  document.getElementById("foot").innerHTML = META.sources || "";
+  document.getElementById("loading").remove();
+  setIndicator(ind.k); resize(); renderPanel();
+  if (META.example) selectCommune(META.example, false);
+}
+new ResizeObserver(() => resize()).observe(box);
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => setIndicator(ind.k));
+new MutationObserver(() => setIndicator(ind.k)).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+boot().catch(err => { console.error(err.stack); const l = document.getElementById("loading"); if (l) l.textContent = "La carte n’a pas pu se charger : " + err.message; });
+</script>
+<script>
+/* ================= Mes annonces ================= */
+// Hypothèses communes, affichées sous la liste
+const HYP = { notaire: 0.08, chargesLLD: 0.25, chargesColoc: 0.30, chargesLCD: 0.45, mobilierLCD: 8000, mobilierCh: 2000, fraisVente: 0.05, portageMois: 9, plusValue: 0.362, verifJours: 14 };
+const OPS = { lld: "Location longue durée", coloc: "Colocation", lcd: "Courte durée", ar: "Achat-revente" };
+const OPS_COURT = { lld: "Longue durée", coloc: "Colocation", lcd: "Courte durée", ar: "Achat-revente" };
+let ANN = [], annCol = null, annFilter = "active", editing = null, annReady = false;
+const $ = id => document.getElementById(id);
+const eur = v => v==null||!isFinite(v) ? "—" : nf0.format(Math.round(v)) + " €";
+const pct1 = v => v==null||!isFinite(v) ? "—" : nf1.format(v) + " %";
+const today = () => new Date().toISOString();
+const daysSince = iso => iso ? (Date.now() - new Date(iso).getTime())/864e5 : 999;
+
+/* ---------- Vues ---------- */
+function setView(v){
+  $("view-carte").hidden = v !== "carte"; $("view-annonces").hidden = v !== "annonces";
+  document.querySelectorAll(".views button").forEach(b => b.setAttribute("aria-pressed", b.dataset.view === v));
+  if (v === "carte") resize(); else renderAnn();
+  try { history.replaceState(null, "", v === "annonces" ? "#annonces" : location.pathname + location.search); } catch(e){}
+}
+document.querySelectorAll(".views button").forEach(b => b.addEventListener("click", () => setView(b.dataset.view)));
+window.addEventListener("hashchange", () => setView(location.hash === "#annonces" ? "annonces" : "carte"));
+
+/* ---------- Favori « + Atlas » (s'exécute sur le site d'annonces, sans IA) ---------- */
+const BOOKMARKLET = `javascript:(()=>{try{let d=null;const T=document.body.innerText;const n=document.getElementById('__NEXT_DATA__');if(n){let ad=null;const f=o=>{if(ad||!o||typeof o!=='object')return;if(o.list_id&&o.subject&&o.price!==undefined){ad=o;return}for(const k in o)f(o[k])};f(JSON.parse(n.textContent));if(ad){const a={};(ad.attributes||[]).forEach(x=>a[x.key]=x.value_label||x.value);const L=ad.location||{};d={src:'leboncoin',id:'lbc-'+ad.list_id,url:ad.url||location.href,titre:ad.subject,prix:Array.isArray(ad.price)?ad.price[0]:ad.price,surface:parseFloat(a.square),pieces:parseInt(a.rooms),type:a.real_estate_type,dpe:a.energy_rate,terrain:parseFloat(a.land_plot_surface),cp:L.zipcode,ville:L.city,lat:L.lat,lon:L.lng,publie:ad.first_publication_date,texte:(ad.body||'').slice(0,1500)}}}if(!d){const ld=[...document.querySelectorAll('script[type="application/ld+json"]')].map(s=>{try{return JSON.parse(s.textContent)}catch(e){return null}});const all=JSON.stringify(ld);const g=(re)=>{const m=all.match(re);return m?m[1]:null};d={src:location.hostname,url:location.href,titre:document.title,prix:g(/"price"\\s*:\\s*"?(\\d+)/),cp:g(/"postalCode"\\s*:\\s*"(\\d{5})"/),lat:g(/"latitude"\\s*:\\s*"?([\\d.]+)/),lon:g(/"longitude"\\s*:\\s*"?([\\d.-]+)/),texte:T.slice(0,4000)}}d.vu=new Date().toISOString();if(/n.est plus disponible|annonce (a été )?(supprimée|désactivée|expirée)|plus en ligne|n.existe plus/i.test(T.slice(0,3000)))d.indispo=true;const w=window.open('${location.origin}/atlas/ajout#'+encodeURIComponent(JSON.stringify(d)),'atlas-ajout','width=440,height=520');if(!w)alert('Autorisez les fenêtres pour ce site afin d\\u2019utiliser le favori Atlas.')}catch(e){alert('Atlas : '+e.message)}})();`;
+$("bm-link").setAttribute("href", BOOKMARKLET);
+$("bm-link").addEventListener("click", e => { e.preventDefault(); $("ann-msg").textContent = "Glissez ce bouton dans votre barre de favoris ; il s'utilise sur la page d'une annonce."; });
+$("bm-code").value = BOOKMARKLET;
+$("bm-copy").addEventListener("click", () => {
+  navigator.clipboard.writeText(BOOKMARKLET).then(() => { $("bm-copy").textContent = "Code copié"; }, () => { $("bm-code").select(); $("bm-copy").textContent = "Sélectionné : Ctrl+C"; });
+});
+
+/* ---------- Lecture d'une annonce collée (règles fixes, sans IA) ---------- */
+const num = s => { if (s==null) return null; const v = parseFloat(String(s).replace(/\s| | /g,"").replace(",", ".")); return isFinite(v) ? v : null; };
+function parseText(t){
+  const d = {};
+  const url = t.match(/https?:\/\/[^\s"']+/); if (url) d.url = url[0];
+  const prices = [...t.matchAll(/(\d{1,3}(?:[\s  .]\d{3})+|\d{4,7})\s*(?:€|euros?)/gi)].map(m => num(m[1].replace(/\./g,""))).filter(v => v >= 5000 && v <= 20000000);
+  if (prices.length) d.prix = prices[0];
+  const surf = t.match(/(\d{1,4}(?:[,.]\d{1,2})?)\s*m(?:²|2)(?![a-z0-9])/i); if (surf) d.surface = num(surf[1]);
+  const pc = t.match(/(\d{1,2})\s*pi[eè]ces?/i); if (pc) d.pieces = parseInt(pc[1]);
+  const cp = t.match(/\b((?:0[1-9]|[1-8]\d|9[0-5]|2[AB])\d{3})\b/); if (cp) d.cp = cp[1];
+  const dpe = t.match(/(?:DPE|classe [ée]nerg[ée]tique|[ée]nergie)\s*:?\s*([A-G])\b/i); if (dpe) d.dpe = dpe[1].toUpperCase();
+  if (/\bmaison|long[eè]re|pavillon|ferme|grange|villa\b/i.test(t)) d.type = "maison"; else if (/\bappartement|studio|\bT\d\b|\bF\d\b/i.test(t)) d.type = "appartement";
+  const ln = t.split("\n").map(s => s.trim()).filter(Boolean); d.titre = (ln.find(l => !/^https?:/.test(l)) || "").slice(0,120);
+  return d;
+}
+function normalize(raw){
+  let d;
+  const m = raw.match(/ATLAS-ANNONCE:(\{[\s\S]*\})/);
+  if (m){ try { d = JSON.parse(m[1]); } catch(e){ d = null; } }
+  if (!d) d = { texte: raw };
+  if (d.texte){ const p = parseText(d.texte); for (const k in p) if (d[k]==null || d[k]==="" || (typeof d[k]==="number" && !isFinite(d[k]))) d[k] = p[k]; }
+  d.prix = num(d.prix); d.surface = num(d.surface); d.pieces = d.pieces ? parseInt(d.pieces) : null; d.lat = num(d.lat); d.lon = num(d.lon);
+  d.type = /appart/i.test(d.type||"") ? "appartement" : /maison|villa|ferme|long/i.test(d.type||"") ? "maison" : /immeuble/i.test(d.type||"") ? "immeuble" : (d.type || "maison");
+  d.code = guessCommune(d.cp, d.ville, d.texte);
+  if (!d.id) d.id = d.url ? "u-" + hash(d.url.split("?")[0]) : "a-" + Date.now().toString(36);
+  delete d.texte;
+  return d;
+}
+function hash(s){ let h = 0; for (let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i)) | 0; return (h>>>0).toString(36); }
+function guessCommune(cp, ville, texte){
+  const cands = cp ? SEARCH.filter(s => s.cp.includes(cp)) : [];
+  if (ville){ const n = norm(ville); const hit = (cands.length ? cands : SEARCH).find(s => s.n === n); if (hit) return hit.code; }
+  if (cands.length === 1) return cands[0].code;
+  if (cands.length > 1 && texte){ const t = norm(texte); const hit = cands.filter(s => t.includes(s.n)).sort((a,b)=>b.n.length-a.n.length)[0]; if (hit) return hit.code; }
+  if (cands.length) return cands.sort((a,b)=>(b.pop||0)-(a.pop||0))[0].code;
+  return null;
+}
+const communeLabel = code => code && ROWS[code] ? `${get(ROWS[code],"nom")} (${(get(ROWS[code],"cp")||"").split(" ")[0]})` : "";
+
+/* ---------- Prix du quartier à l'adresse de l'annonce ---------- */
+function quartierPrice(a){
+  if (!a.code || a.lat==null || a.lon==null) return null;
+  const d = depOf(a.code), q = Q[d];
+  if (!q || !q.items){ loadQ(d).then(() => renderAnn()); return null; }
+  const p = projection([a.lon, a.lat]); if (!p) return null;
+  ctx.setTransform(1,0,0,1,0,0);
+  for (const it of q.items){ const bb = it.bb; if (p[0]<bb[0][0]||p[0]>bb[1][0]||p[1]<bb[0][1]||p[1]>bb[1][1]) continue; if (ctx.isPointInPath(it.path, p[0], p[1])) return it; }
+  return null;
+}
+
+/* ---------- Rentabilité par opération (calcul déterministe) ---------- */
+function evaluate(a){
+  const r = a.code && ROWS[a.code];
+  const res = { ok: !!(r && a.prix && a.surface) };
+  if (!res.ok) return res;
+  const isM = a.type !== "appartement";
+  const pxCom = (isM ? get(r,"pxm") : get(r,"pxa")) || get(r,"pxm") || get(r,"pxa");
+  const sec = quartierPrice(a);
+  const pxQ = sec ? (isM ? (sec.m ?? sec.a) : (sec.a ?? sec.m)) : null;
+  const ref = pxQ || pxCom;
+  const ly = (isM ? get(r,"lym") : get(r,"lya")) || get(r,"lya") || get(r,"lym");
+  const travaux = a.travaux || 0;
+  const achat = a.prix * (1 + HYP.notaire);
+  const cout = achat + travaux;
+  res.pm2 = a.prix / a.surface; res.ref = ref; res.refQuartier = !!pxQ; res.sec = sec;
+  res.decote = ref ? (1 - res.pm2 / ref) * 100 : null;
+  res.cout = cout;
+  // Longue durée : loyer d'annonce charges comprises × 0,88 pour l'estimer hors charges
+  const loyer = a.loyer || (ly ? ly * a.surface * 0.88 : null);
+  if (loyer){ const brut = loyer*12/cout*100; res.lld = { brut, net: brut*(1-HYP.chargesLLD), ca: loyer*12, loyer, est: !a.loyer }; }
+  // Colocation : chambres et loyer par chambre estimés à partir des loyers de petites surfaces
+  const ly12 = get(r,"ly12");
+  const ch = a.chambres || Math.max(0, Math.min((a.pieces||0) - 1, Math.floor(a.surface/22)));
+  if (ch >= 3 && ly12){
+    const lch = a.loyerCh || ly12 * 25;
+    const c2 = cout + HYP.mobilierCh*ch, ca = ch*lch*11;
+    res.coloc = { brut: ch*lch*12/c2*100, net: ca*(1-HYP.chargesColoc)/c2*100, ca, ch, lch, est: !a.loyerCh };
+  }
+  // Courte durée : prix par nuit et occupation estimés (intensité touristique, occupation des hôtels du département)
+  const tft = get(r,"tft") || 0, k = tft >= 150 ? 2.2 : tft >= 50 ? 1.8 : 1.4;
+  const nuit = a.nuit || (ly ? ly * a.surface * 12 / 365 * k : null);
+  const occ = a.occ || get(r,"occ") || 50;
+  if (nuit){ const c3 = cout + HYP.mobilierLCD, ca = nuit*365*occ/100; res.lcd = { brut: ca/c3*100, net: ca*(1-HYP.chargesLCD)/c3*100, ca, nuit, occ, est: !a.nuit || !a.occ }; }
+  // Achat-revente en nom propre : revente au prix du quartier + 5 % une fois rénové
+  const rev = a.prixRev || (ref ? ref * a.surface * 1.05 : null);
+  if (rev){
+    const portage = cout * 0.035 * HYP.portageMois/12 + (a.prix*0.004);
+    const pv = Math.max(0, rev*(1-HYP.fraisVente) - a.prix*1.075 - travaux);
+    const marge = rev*(1-HYP.fraisVente) - cout - portage - pv*HYP.plusValue;
+    res.ar = { marge, rev, brut: (rev*(1-HYP.fraisVente) - cout)/cout*100, net: marge/cout*100*12/HYP.portageMois, est: !a.prixRev };
+  }
+  const cand = ["lld","coloc","lcd","ar"].filter(o => res[o]);
+  res.best = a.op && a.op !== "auto" && res[a.op] ? a.op : cand.sort((x,y) => res[y].net - res[x].net)[0];
+  // Prix d'achat maximal pour 15 % brut sur l'opération retenue (location)
+  const o = res[res.best];
+  if (o && res.best !== "ar") res.prixMax15 = Math.max(0, ((o.ca / (res.best==="coloc"?11/12:1)) / 0.15 - travaux - (res.best==="lcd"?HYP.mobilierLCD:res.best==="coloc"?HYP.mobilierCh*o.ch:0)) / (1+HYP.notaire));
+  return res;
+}
+
+/* ---------- Compte et données (base du site, une copie par compte) ---------- */
+let ME = null;
+const api = async (path, opts = {}) => {
+  const r = await fetch("/atlas/api/" + path, { credentials: "same-origin", headers: { "Content-Type": "application/json" }, ...opts });
+  let body = {}; try { body = await r.json(); } catch(e){}
+  if (!r.ok) { const err = new Error(body.error || "Le serveur ne répond pas. Réessayez dans un instant."); err.status = r.status; throw err; }
+  return body;
+};
+async function initAnnonces(){
+  try { ME = (await api("compte")).user; } catch(e){ ME = null; }
+  renderAccount();
+  if (ME) await loadAnn();
+}
+async function loadAnn(){
+  try {
+    ANN = (await api("annonces")).annonces || [];
+    annCol = true;
+    $("ann-count").textContent = ANN.filter(a => a.statut !== "archivee").length || "";
+    renderAnn(); draw();
+    // Annonces ajoutées par le favori : la commune est retrouvée ici à partir du code postal et de la ville
+    for (const a of ANN.filter(a => !a.code && (a.cp || a.ville))){ const c = guessCommune(a.cp, a.ville, a.titre); if (c){ a.code = c; await saveAnn(a); } }
+  } catch(e){ if (e.status === 401){ ME = null; renderAccount(); } else $("ann-msg").textContent = e.message; }
+}
+async function saveAnn(a){
+  const body = {...a}; delete body._p;
+  for (const k in body) if (body[k] === undefined || (typeof body[k] === "number" && !isFinite(body[k]))) delete body[k];
+  try {
+    const { annonce } = await api("annonces", { method: "PUT", body: JSON.stringify(body) });
+    const i = ANN.findIndex(x => x.id === annonce.id);
+    if (i >= 0) ANN[i] = annonce; else ANN.unshift(annonce);
+    $("ann-count").textContent = ANN.filter(x => x.statut !== "archivee").length || "";
+    renderAnn(); draw();
+  } catch(e){ $("ann-msg").textContent = e.message; throw e; }
+}
+function renderAccount(){
+  const box = $("ann-auth"), app = $("ann-app"), who = $("ann-who");
+  box.hidden = !!ME; app.hidden = !ME;
+  who.innerHTML = ME ? `${esc(ME.name)} · <button type="button" id="ann-logout" class="link">Se déconnecter</button>` : "";
+  if (ME) $("ann-logout").addEventListener("click", async () => { await api("compte", { method: "POST", body: JSON.stringify({ action: "deconnexion" }) }); ME = null; ANN = []; $("ann-count").textContent = ""; renderAccount(); draw(); });
+}
+let authMode = "inscription";
+function setAuthMode(m){
+  authMode = m;
+  $("auth-title").textContent = m === "inscription" ? "Créez votre compte" : "Connectez-vous";
+  $("auth-name-row").hidden = m !== "inscription";
+  $("auth-name").required = m === "inscription";
+  $("auth-submit").textContent = m === "inscription" ? "Créer mon compte" : "Se connecter";
+  $("auth-switch").innerHTML = m === "inscription" ? `Déjà un compte ? <button type="button" class="link" data-m="connexion">Se connecter</button>` : `Pas encore de compte ? <button type="button" class="link" data-m="inscription">Créer un compte</button>`;
+  $("auth-password").autocomplete = m === "inscription" ? "new-password" : "current-password";
+  $("auth-err").textContent = "";
+}
+$("auth-switch").addEventListener("click", e => { const b = e.target.closest("button[data-m]"); if (b) setAuthMode(b.dataset.m); });
+$("auth-form").addEventListener("submit", async e => {
+  e.preventDefault(); $("auth-err").textContent = ""; $("auth-submit").disabled = true;
+  try {
+    await api("compte", { method: "POST", body: JSON.stringify({ action: authMode, name: $("auth-name").value, email: $("auth-email").value, password: $("auth-password").value, site: $("auth-site").value }) });
+    ME = (await api("compte")).user; renderAccount(); await loadAnn();
+  } catch(err){ $("auth-err").textContent = err.message; }
+  $("auth-submit").disabled = false;
+});
+
+/* ---------- Coller une annonce ---------- */
+$("ann-paste").addEventListener("paste", e => {
+  const raw = (e.clipboardData || window.clipboardData).getData("text");
+  if (!raw) return;
+  e.preventDefault(); $("ann-paste").value = "";
+  ingest(raw);
+});
+$("ann-paste").addEventListener("keydown", e => { if (e.key === "Enter" && (e.ctrlKey || e.metaKey)){ e.preventDefault(); const v = $("ann-paste").value; $("ann-paste").value = ""; if (v.trim()) ingest(v); } });
+async function ingest(raw){
+  const d = normalize(raw);
+  try {
+    const r = await api("ajout", { method: "POST", body: JSON.stringify(d) });
+    const titre = r.annonce.titre || "L'annonce";
+    $("ann-msg").textContent = { ajoutee: `« ${titre} » ajoutée.`, prix: `Prix mis à jour : ${eur(r.ancienPrix)} → ${eur(r.annonce.prix)}.`, verifiee: `« ${titre} » est toujours en ligne : vérification enregistrée.`, archivee: `« ${titre} » n'est plus en ligne : archivée.`, indisponible: "Cette annonce n'est plus en ligne." }[r.etat] || "";
+    await loadAnn();
+    if (r.etat === "ajoutee") openEditor(ANN.find(x => x.id === r.annonce.id) || r.annonce, false);
+  } catch(e){ $("ann-msg").textContent = e.message; }
+}
+
+/* ---------- Fiche d'édition ---------- */
+const F_ = { titre:"f-titre", url:"f-url", prix:"f-prix", surface:"f-surface", pieces:"f-pieces", type:"f-type", dpe:"f-dpe", travaux:"f-travaux", op:"f-op", loyer:"f-loyer", chambres:"f-chambres", loyerCh:"f-lch", nuit:"f-nuit", occ:"f-occ", prixRev:"f-rev", notes:"f-notes" };
+const NUMF = new Set(["prix","surface","pieces","travaux","loyer","chambres","loyerCh","nuit","occ","prixRev"]);
+function openEditor(a, isNew){
+  editing = {a: {...a}, isNew};
+  for (const [k,id] of Object.entries(F_)) $(id).value = a[k] ?? (k==="op" ? "auto" : "");
+  $("f-commune").value = communeLabel(a.code);
+  $("ann-mtitle").textContent = isNew ? "Nouvelle annonce" : "Annonce";
+  $("ann-del").hidden = isNew;
+  $("ann-modal").hidden = false; preview();
+  setTimeout(() => $(isNew && !a.code ? "f-commune" : "f-travaux").focus(), 30);
+}
+function readForm(){
+  const a = editing.a;
+  for (const [k,id] of Object.entries(F_)){ const v = $(id).value; a[k] = NUMF.has(k) ? num(v) : (v || null); }
+  const lab = $("f-commune").value.trim();
+  if (lab && lab !== communeLabel(a.code)){
+    const m = lab.match(/\((\d{5}|2[AB]\d{3})\)/), n = norm(lab.replace(/\(.*\)/,"").trim());
+    const hit = SEARCH.find(s => s.n === n && (!m || s.cp.includes(m[1]))) || SEARCH.find(s => s.cp.includes(lab)) || SEARCH.filter(s => s.n.startsWith(n)).sort((x,y)=>(y.pop||0)-(x.pop||0))[0];
+    if (hit) a.code = hit.code;
+  }
+  return a;
+}
+$("f-commune").addEventListener("input", () => {
+  const t = norm($("f-commune").value.trim()); if (t.length < 2) return;
+  $("f-communes").innerHTML = SEARCH.filter(s => s.n.startsWith(t) || s.cp.some(c=>c.startsWith(t))).sort((x,y)=>(y.pop||0)-(x.pop||0)).slice(0,12).map(s => `<option value="${esc(s.nom)} (${s.cp[0]||""})">`).join("");
+});
+document.querySelectorAll(".presets button").forEach(b => b.addEventListener("click", () => { const s = num($("f-surface").value) || 0; $("f-travaux").value = Math.round(s * +b.dataset.tm / 100) * 100; preview(); }));
+$("ann-form").addEventListener("input", () => preview());
+function preview(){
+  const a = readForm(), r = evaluate(a), el = $("ann-preview");
+  if (!r.ok){ el.innerHTML = `<p class="note">Renseignez le prix, la surface et la commune pour calculer la rentabilité.</p>`; return; }
+  el.innerHTML = `<div class="note" style="margin-bottom:6px">${nf0.format(r.pm2)} €/m² affiché · ${r.refQuartier?"médiane du quartier":"médiane de la commune"} ${nf0.format(r.ref)} €/m² · ${r.decote>=0?"décote":"surcote"} de ${nf0.format(Math.abs(r.decote))} % · coût total ${eur(r.cout)}</div>
+  <div class="ops">${["lld","coloc","lcd","ar"].map(o => r[o] ? `<div class="${r.best===o?"best":""}"><span>${OPS[o]}</span><b class="${cls(r[o].net)}">${pct1(r[o].net)}</b>${o==="ar"?`marge ${eur(r[o].marge)}`:`brut ${pct1(r[o].brut)}`}</div>` : `<div><span>${OPS[o]}</span><b>—</b>${o==="coloc"?"moins de 3 chambres":""}</div>`).join("")}</div>
+  ${r.prixMax15!=null?`<p class="note">Prix d'achat maximal pour 15 % brut en ${OPS[r.best].toLowerCase()} : <b>${eur(r.prixMax15)}</b>.</p>`:""}`;
+}
+const cls = v => v >= 9 ? "r-good" : v >= 5 ? "r-mid" : "r-bad";
+function closeEditor(){ $("ann-modal").hidden = true; editing = null; }
+$("ann-close").addEventListener("click", closeEditor); $("ann-cancel").addEventListener("click", closeEditor);
+$("ann-modal").addEventListener("keydown", e => { if (e.key === "Escape") closeEditor(); });
+$("ann-form").addEventListener("submit", async e => {
+  e.preventDefault(); const a = readForm();
+  if (!a.code){ $("f-commune").focus(); $("f-commune").setCustomValidity("Choisissez une commune dans la liste."); $("f-commune").reportValidity(); setTimeout(()=>$("f-commune").setCustomValidity(""), 2000); return; }
+  try { await saveAnn(a); closeEditor(); $("ann-msg").textContent = `« ${a.titre||"Annonce"} » enregistrée.`; setView("annonces"); } catch(err){}
+});
+let delArm = false;
+$("ann-del").addEventListener("click", async () => {
+  if (!delArm){ delArm = true; $("ann-del").textContent = "Confirmer la suppression"; setTimeout(() => { delArm = false; $("ann-del").textContent = "Supprimer"; }, 4000); return; }
+  delArm = false; $("ann-del").textContent = "Supprimer";
+  try { await api("annonces?id=" + encodeURIComponent(editing.a.id), { method: "DELETE" }); ANN = ANN.filter(x => x.id !== editing.a.id); closeEditor(); renderAnn(); draw(); } catch(e){ $("ann-msg").textContent = e.message; }
+});
+
+/* ---------- Liste ---------- */
+document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => { annFilter = b.dataset.st; document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x===b)); renderAnn(); }));
+$("ann-op").addEventListener("change", () => renderAnn()); $("ann-sort").addEventListener("change", () => renderAnn());
+function renderAnn(){
+  const list = $("ann-list"); if (!list || $("view-annonces").hidden) return;
+  if (!ME){ return; }
+  const opF = $("ann-op").value, sort = $("ann-sort").value;
+  let rows = ANN.map(a => ({a, r: evaluate(a)}));
+  rows = rows.filter(({a}) => annFilter === "archivee" ? a.statut === "archivee" : a.statut !== "archivee" && (annFilter !== "verif" || daysSince(a.verifieLe) >= HYP.verifJours));
+  if (opF !== "all") rows = rows.filter(({r}) => r.best === opF);
+  const key = { rent: x => -(x.r.ok ? x.r[x.r.best]?.net ?? -99 : -99), dec: x => -(x.r.decote ?? -99), prix: x => x.a.prix || 0, recent: x => -new Date(x.a.ajouteLe||0), verif: x => new Date(x.a.verifieLe||0) }[sort];
+  rows.sort((x,y) => key(x) - key(y));
+  if (!rows.length){
+    list.innerHTML = `<div class="empty-ann">${ANN.length ? "Aucune annonce dans cette sélection." : "Vos annonces apparaîtront ici. Copiez une annonce avec le favori « + Atlas » puis collez-la dans le cadre ci-dessus."}</div>`;
+  } else list.innerHTML = rows.map(({a, r}) => {
+    const o = r.ok && r.best ? r[r.best] : null;
+    const old = daysSince(a.verifieLe) >= HYP.verifJours && a.statut !== "archivee";
+    const h = a.historique || [], baisse = h.length > 1 && h[h.length-1].prix < h[0].prix ? h[0].prix - h[h.length-1].prix : 0;
+    return `<article class="ann" data-id="${esc(a.id)}">
+      <div class="t"><b>${esc(a.titre || "Annonce sans titre")}</b><span>${esc(communeLabel(a.code) || a.cp || "Commune à préciser")} · ${a.surface?nf0.format(a.surface)+" m²":"? m²"}${a.pieces?` · ${a.pieces} p.`:""}${a.dpe?` · DPE ${esc(a.dpe)}`:""}${old?`<span class="flag">à vérifier</span>`:""}${a.statut==="archivee"?` · ${esc(a.archiveRaison||"archivée")}`:""}</span></div>
+      <div class="m"><div class="l">Prix</div><div class="v">${eur(a.prix)}</div><div class="s">${r.ok?nf0.format(r.pm2)+" €/m²":""}${baisse?` · −${eur(baisse)}`:""}</div></div>
+      <div class="m"><div class="l">Vs ${r.refQuartier?"quartier":"commune"}</div><div class="v ${r.decote>=20?"r-good":r.decote>=0?"r-mid":"r-bad"}">${r.ok&&r.decote!=null?(r.decote>=0?"−":"+")+nf0.format(Math.abs(r.decote))+" %":"—"}</div><div class="s">${r.ok?nf0.format(r.ref)+" €/m²":""}</div></div>
+      <div class="m"><div class="l">Opération</div><div>${r.best?`<span class="op ${r.best}">${OPS_COURT[r.best]}</span>`:"—"}</div><div class="s">${a.travaux?"travaux "+eur(a.travaux):"travaux à estimer"}</div></div>
+      <div class="m"><div class="l">Rentabilité nette</div><div class="v ${o?cls(o.net):""}">${o?pct1(o.net):"—"}</div><div class="s">${o?(r.best==="ar"?"marge "+eur(o.marge):"brut "+pct1(o.brut)):""}</div></div>
+      <div class="acts">${a.url?`<a href="${esc(a.url)}" target="_blank" rel="noopener">Ouvrir</a>`:""}
+        <button data-act="edit">Modifier</button>
+        ${a.statut==="archivee"?`<button data-act="restore">Remettre en vente</button>`:`<button data-act="ok">Toujours en vente</button><button data-act="arch">Archiver</button>`}</div>
+    </article>`; }).join("");
+  $("ann-hyp").textContent = `Calcul sans IA, à partir des données de l'Atlas. Frais d'achat ${HYP.notaire*100} %. Longue durée : loyer d'annonce de la commune × 0,88 (hors charges), charges et vacance ${HYP.chargesLLD*100} %. Colocation : loyer par chambre = loyer au m² des T1-T2 × 25, 1 mois de vacance, charges ${HYP.chargesColoc*100} % (énergie comprise), mobilier ${eur(HYP.mobilierCh)} par chambre. Courte durée : prix par nuit = loyer journalier × 1,4 à 2,2 selon l'intensité touristique, occupation des hôtels du département, conciergerie, ménage et énergie ${HYP.chargesLCD*100} %, mobilier ${eur(HYP.mobilierLCD)}. Achat-revente : revente au prix du quartier + 5 %, frais de vente ${HYP.fraisVente*100} %, ${HYP.portageMois} mois de portage, plus-value à ${nf1.format(HYP.plusValue*100)} %, rentabilité ramenée à l'année. Remplacez chaque estimation dans la fiche du bien.`;
+}
+$("ann-list").addEventListener("click", async e => {
+  const b = e.target.closest("button[data-act]"); if (!b) return;
+  const a = ANN.find(x => x.id === b.closest(".ann").dataset.id); if (!a) return;
+  const act = b.dataset.act;
+  if (act === "edit") openEditor(a, false);
+  else if (act === "ok") await saveAnn({...a, verifieLe: today()});
+  else if (act === "arch") await saveAnn({...a, statut: "archivee", archiveLe: today(), archiveRaison: "Retirée de la vente"});
+  else if (act === "restore") await saveAnn({...a, statut: "active", verifieLe: today(), archiveRaison: null});
+});
+
+/* ---------- Annonces sur la carte ---------- */
+const _draw = draw;
+draw = function(){
+  _draw();
+  if (!ANN.length || !paths.length) return;
+  const b = baseFit(), t = transform, k = b.s*t.k*DPR;
+  ctx.setTransform(k,0,0,k,(b.x*t.k+t.x)*DPR,(b.y*t.k+t.y)*DPR);
+  const rad = 5/(b.s*t.k);
+  for (const a of ANN){
+    if (a.statut === "archivee") continue;
+    let p = a.lat!=null && a.lon!=null ? projection([a.lon, a.lat]) : null;
+    if (!p && a.code){ const i = features.findIndex(f => f.properties.code === a.code); if (i>=0){ const bb = bboxes[i]; p = [(bb[0][0]+bb[1][0])/2, (bb[0][1]+bb[1][1])/2]; } }
+    if (!p) continue;
+    a._p = p;
+    ctx.beginPath(); ctx.arc(p[0], p[1], rad, 0, Math.PI*2);
+    ctx.fillStyle = css("--sel"); ctx.fill(); ctx.lineWidth = 1.5/(b.s*t.k); ctx.strokeStyle = css("--surface"); ctx.stroke();
+  }
+};
+cvs.addEventListener("pointerup", e => {
+  if (!ANN.length) return;
+  const r = cvs.getBoundingClientRect(), [x,y] = toMap(e.clientX-r.left, e.clientY-r.top), b = baseFit();
+  const tol = 8/(b.s*transform.k);
+  const hit = ANN.find(a => a._p && a.statut !== "archivee" && Math.hypot(a._p[0]-x, a._p[1]-y) < tol);
+  if (hit){ e.stopImmediatePropagation(); openEditor(hit, false); }
+}, true);
+
+/* ---------- Démarrage ---------- */
+(async () => {
+  // Attend que les communes soient chargées
+  while (!SEARCH.length) await new Promise(r => setTimeout(r, 200));
+  if (location.hash === "#annonces") setView("annonces");
+  initAnnonces();
+})();
+</script>
+
+
+</body>
+</html>

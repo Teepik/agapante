@@ -50,6 +50,15 @@ export default function ConfidentialitePage() {
           ne permet pas de reconstituer l&apos;adresse d&apos;origine.
         </p>
 
+        <p>
+          Via un compte de l&apos;Atlas immobilier (agapante.com/atlas) : prénom, adresse e-mail,
+          mot de passe chiffré, empreinte non réversible de l&apos;adresse IP à l&apos;inscription,
+          et les annonces immobilières que vous choisissez d&apos;enregistrer avec vos notes et
+          hypothèses. Ces annonces ne sont visibles que par vous ; elles servent uniquement au
+          fonctionnement de l&apos;outil. Pour supprimer votre compte et ses annonces, écrivez à{" "}
+          {siteConfig.contact.email}.
+        </p>
+
         <h2 id="finalites">Finalités et base légale</h2>
         <table>
           <thead>
@@ -119,9 +128,9 @@ export default function ConfidentialitePage() {
         <h2 id="cookies">Cookies</h2>
         <p>
           Ce site n&apos;utilise aucun cookie de mesure d&apos;audience, de publicité ou de
-          traçage. Un unique cookie technique est déposé lors de la connexion à l&apos;espace
-          d&apos;administration réservé à l&apos;éditeur du site ; il est strictement nécessaire au
-          fonctionnement de cet espace et ne concerne pas les visiteurs.
+          traçage. Des cookies techniques de session sont déposés uniquement lors de la connexion à
+          l&apos;espace d&apos;administration ou à un compte de l&apos;Atlas immobilier ; ils sont
+          strictement nécessaires au fonctionnement de ces espaces.
         </p>
 
         <h2 id="securite">Sécurité</h2>

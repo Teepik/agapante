@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ajout à l'Atlas</title>
+<meta name="robots" content="noindex">
+<style>
+@font-face{font-family:"Inter";src:url(/atlas/fonts/inter-latin-wght-normal.woff2) format("woff2");font-weight:100 900;font-display:swap}
+:root{--bg:#f3f4f1;--surface:#fff;--fg:#1b2420;--muted:#5c6862;--line:#d6dbd6;--accent:#1f5f8b;--accent-ink:#fff;--good:#2b7a47;--bad:#b03a2e;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#111614;--surface:#18201d;--fg:#e3eae6;--muted:#93a29b;--line:#2a3531;--accent:#6fb3e0;--accent-ink:#0d1210;--good:#6cc48a;--bad:#ef8a7c;color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.5 "Inter",system-ui,sans-serif;padding:20px 16px}
+main{max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:8px}
+h1{font-size:15px;margin:0;color:var(--muted);font-weight:600;letter-spacing:.02em}
+.t{font-weight:600;font-size:16px}
+.s{color:var(--muted);font-size:13px}
+.ok{color:var(--good);font-weight:600}
+.err{color:var(--bad);font-weight:600}
+label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}
+input{font:inherit;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:8px 9px}
+button,a.btn{font:600 13.5px "Inter",system-ui,sans-serif;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:9px 14px;cursor:pointer;text-align:center;text-decoration:none}
+a.ghost{background:none;color:var(--accent)}
+</style>
+</head>
+<body>
+<main>
+  <h1>ATLAS IMMOBILIER</h1>
+  <div class="card" id="out"><span class="s">Enregistrement de l'annonce…</span></div>
+  <form class="card" id="login" hidden>
+    <span class="s">Connectez-vous à l'Atlas pour enregistrer cette annonce.</span>
+    <label for="email">E-mail<input id="email" type="email" autocomplete="email" required></label>
+    <label for="password">Mot de passe<input id="password" type="password" autocomplete="current-password" required></label>
+    <button type="submit">Se connecter et enregistrer</button>
+    <a class="btn ghost" href="/atlas#annonces" target="_blank" rel="noopener">Créer un compte</a>
+  </form>
+</main>
+<script>
+// Lecture des informations de l'annonce transmises par le favori « + Atlas » (règles fixes, sans IA)
+const num = s => { if (s == null) return null; const v = parseFloat(String(s).replace(/\s| | /g, "").replace(",", ".")); return isFinite(v) ? v : null; };
+function parseText(t){
+  const d = {};
+  const prices = [...t.matchAll(/(\d{1,3}(?:[\s  .]\d{3})+|\d{4,7})\s*(?:€|euros?)/gi)].map(m => num(m[1].replace(/\./g, ""))).filter(v => v >= 5000 && v <= 20000000);
+  if (prices.length) d.prix = prices[0];
+  const surf = t.match(/(\d{1,4}(?:[,.]\d{1,2})?)\s*m(?:²|2)(?![a-z0-9])/i); if (surf) d.surface = num(surf[1]);
+  const pc = t.match(/(\d{1,2})\s*pi[eè]ces?/i); if (pc) d.pieces = parseInt(pc[1]);
+  const cp = t.match(/\b((?:0[1-9]|[1-8]\d|9[0-5]|2[AB])\d{3})\b/); if (cp) d.cp = cp[1];
+  const dpe = t.match(/(?:DPE|classe [ée]nerg[ée]tique|[ée]nergie)\s*:?\s*([A-G])\b/i); if (dpe) d.dpe = dpe[1].toUpperCase();
+  if (/\bmaison|long[eè]re|pavillon|ferme|grange|villa\b/i.test(t)) d.type = "maison"; else if (/\bappartement|studio\b/i.test(t)) d.type = "appartement";
+  return d;
+}
+function hash(s){ let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0; return (h >>> 0).toString(36); }
+let d = null;
+try { d = JSON.parse(decodeURIComponent(location.hash.slice(1))); } catch (e) {}
+const out = document.getElementById("out");
+const eur = v => v == null ? "" : new Intl.NumberFormat("fr-FR").format(Math.round(v)) + " €";
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+if (d){
+  if (d.texte){ const p = parseText(d.texte); for (const k in p) if (d[k] == null || d[k] === "" || (typeof d[k] === "number" && !isFinite(d[k]))) d[k] = p[k]; delete d.texte; }
+  for (const k of ["prix", "surface", "lat", "lon", "terrain"]) d[k] = num(d[k]);
+  d.type = /appart/i.test(d.type || "") ? "appartement" : /maison|villa|ferme|long/i.test(d.type || "") ? "maison" : (d.type || null);
+  if (!d.id) d.id = d.url ? "u-" + hash(d.url.split("?")[0]) : "a-" + Date.now().toString(36);
+  for (const k in d) if (d[k] == null || (typeof d[k] === "number" && !isFinite(d[k]))) delete d[k];
+}
+async function send(){
+  const r = await fetch("/atlas/api/ajout", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(d) });
+  if (r.status === 401){ out.hidden = true; document.getElementById("login").hidden = false; document.getElementById("email").focus(); return; }
+  const b = await r.json().catch(() => ({}));
+  if (!r.ok){ out.innerHTML = `<span class="err">${esc(b.error || "Enregistrement impossible.")}</span>`; return; }
+  const a = b.annonce || {};
+  const msg = { ajoutee: "Annonce ajoutée", prix: `Prix mis à jour : ${eur(b.ancienPrix)} → ${eur(a.prix)}`, verifiee: "Toujours en ligne : vérification enregistrée", archivee: "N'est plus en ligne : archivée", indisponible: "Cette annonce n'est plus en ligne" }[b.etat] || "Enregistrée";
+  out.hidden = false;
+  out.innerHTML = `<span class="${b.etat === "indisponible" ? "err" : "ok"}">${esc(msg)}</span><span class="t">${esc(a.titre || "Annonce")}</span><span class="s">${[eur(a.prix), a.surface ? a.surface + " m²" : "", a.ville || a.cp || ""].filter(Boolean).map(esc).join(" · ")}</span><a class="btn" href="/atlas#annonces" target="_blank" rel="noopener">Voir dans l'Atlas</a>`;
+  if (b.etat !== "ajoutee") setTimeout(() => window.close(), 2500);
+}
+document.getElementById("login").addEventListener("submit", async e => {
+  e.preventDefault();
+  const r = await fetch("/atlas/api/compte", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "connexion", email: document.getElementById("email").value, password: document.getElementById("password").value }) });
+  if (!r.ok){ const b = await r.json().catch(() => ({})); alert(b.error || "Connexion impossible."); return; }
+  document.getElementById("login").hidden = true; send();
+});
+if (!d) out.innerHTML = `<span class="err">Aucune annonce reçue. Utilisez le favori « + Atlas » sur la page d'une annonce.</span>`;
+else send().catch(() => { out.innerHTML = `<span class="err">Le serveur ne répond pas. Réessayez dans un instant.</span>`; });
+</script>
+</body>
+</html>
