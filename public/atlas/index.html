@@ -171,7 +171,7 @@ button.danger{color:var(--bad);border-color:var(--bad)}
 .r-good{color:var(--good)} .r-mid{color:var(--warn)} .r-bad{color:var(--bad)}
 .flag{font-size:11px;font-weight:600;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:1px 7px;margin-left:6px}
 .empty-ann{background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:22px;color:var(--muted);text-align:center}
-.modal{position:fixed;inset:0;z-index:50;background:rgba(10,15,13,.45);display:grid;place-items:center;padding:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(10,15,13,.45);display:grid;grid-template-columns:minmax(0,1fr);place-items:center;padding:max(12px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(12px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
 .modal[hidden]{display:none}
 .sheet{background:var(--surface);border-radius:12px;width:min(760px,100%);max-height:calc(100dvh - 24px);min-height:0;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,.3)}
 .sheet-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
@@ -182,6 +182,24 @@ button.danger{color:var(--bad);border-color:var(--bad)}
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 12px}
 .grid2 .wide{grid-column:1/-1}
 @media (max-width:520px){.grid2{grid-template-columns:minmax(0,1fr)}}
+#postes summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--accent);padding:6px 0}
+#postes[open] summary{margin-bottom:4px}
+.poste{display:grid;grid-template-columns:minmax(0,1.3fr) auto minmax(0,.8fr);gap:6px 10px;align-items:center;padding:8px 0;border-top:1px solid var(--line)}
+.poste .pn{font-size:13px;color:var(--fg);min-width:0}
+.poste .pn small{display:block;color:var(--muted);font-size:11.5px}
+.poste .tri{display:flex;gap:2px;background:var(--sunk);border-radius:8px;padding:3px}
+.poste .tri button{border:0;background:none;color:var(--muted);font:600 12px var(--body);padding:7px 9px;border-radius:6px;cursor:pointer;min-height:34px}
+.poste .tri button[aria-pressed="true"][data-e="0"]{background:var(--surface);color:var(--good)}
+.poste .tri button[aria-pressed="true"][data-e="1"]{background:var(--surface);color:var(--warn)}
+.poste .tri button[aria-pressed="true"][data-e="2"]{background:var(--surface);color:var(--bad)}
+.poste input{min-width:0}
+.poste .pnote{grid-column:1/-1}
+@media (max-width:620px){.poste{grid-template-columns:minmax(0,1fr)}.poste .tri button{flex:1}}
+.postes-tot{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--line);font-size:13px}
+.ann .t span.etape{margin-right:4px;font-size:11px;font-weight:600;border-radius:999px;padding:1px 8px;border:1px solid var(--line);color:var(--fg);background:var(--sunk);white-space:nowrap}
+.ann .t span.etape.avisiter{border-color:var(--accent);color:var(--accent)}
+.ann .t span.etape.visite,.ann .t span.etape.offre{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.ann .t span.etape.acquis{background:var(--s5);border-color:var(--s5)}
 .presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
 .presets button{font:500 12px var(--body);border:1px solid var(--line);background:var(--sunk);color:var(--fg);border-radius:999px;padding:4px 10px;cursor:pointer}
 .sheet-foot{display:flex;gap:8px;align-items:center;padding:12px 16px;border-top:1px solid var(--line)}
@@ -297,8 +315,9 @@ button.danger{color:var(--bad);border-color:var(--bad)}
       </div>
       <label class="field" for="ann-op"><span>Opération</span><select id="ann-op">
         <option value="all">Toutes</option><option value="lld">Location longue durée</option><option value="coloc">Colocation</option><option value="lcd">Location courte durée</option><option value="ar">Achat-revente</option></select></label>
+      <label class="field" for="ann-etape"><span>Étape</span><select id="ann-etape"></select></label>
       <label class="field" for="ann-sort"><span>Trier par</span><select id="ann-sort">
-        <option value="rent">Rentabilité nette</option><option value="dec">Décote sur le quartier</option><option value="prix">Prix</option><option value="recent">Ajout récent</option><option value="verif">Vérification la plus ancienne</option></select></label>
+        <option value="rent">Rentabilité nette</option><option value="etape">Étape</option><option value="dec">Décote sur le quartier</option><option value="prix">Prix</option><option value="recent">Ajout récent</option><option value="verif">Vérification la plus ancienne</option></select></label>
     </div>
     <div id="ann-list"></div>
     <p class="note" id="ann-hyp"></p>
@@ -329,9 +348,21 @@ button.danger{color:var(--bad);border-color:var(--bad)}
           </div>
           <div id="cmp-out" aria-live="polite"><p class="note">Choisissez la commune pour voir les ventes.</p></div>
         </fieldset>
+        <fieldset><legend>Suivi</legend>
+          <div class="grid2">
+            <label for="f-etape">Étape<select id="f-etape"><option value="repere">Repéré</option><option value="avisiter">À visiter</option><option value="visite">Visité</option><option value="offre">Offre faite</option><option value="acquis">Acquis</option><option value="abandon">Abandonné</option></select></label>
+            <label for="f-visite">Date de visite<input id="f-visite" type="date"></label>
+            <label for="f-offre">Montant de l'offre (€)<input id="f-offre" type="number" step="any"></label>
+          </div>
+        </fieldset>
         <fieldset><legend>Travaux</legend>
           <div class="presets"><button type="button" data-tm="0">Aucun</button><button type="button" data-tm="300">Rafraîchir · 300 €/m²</button><button type="button" data-tm="800">Rénover · 800 €/m²</button><button type="button" data-tm="1500">Ruine · 1 500 €/m²</button></div>
           <label for="f-travaux">Budget travaux (€)<input id="f-travaux" type="number" step="any"></label>
+          <details id="postes"><summary>Visite : état et chiffrage poste par poste</summary>
+            <p class="note">Notez chaque poste pendant la visite. Le montant proposé est un ordre de grandeur selon la surface : remplacez-le par les devis.</p>
+            <div id="postes-list"></div>
+            <div class="postes-tot"><span id="postes-tot"></span><button type="button" class="ghost" id="postes-use">Reporter dans le budget travaux</button></div>
+          </details>
         </fieldset>
         <fieldset><legend>Hypothèses propres à ce bien (facultatif)</legend>
           <div class="grid2">
@@ -986,7 +1017,7 @@ const num = s => { if (s==null) return null; const v = parseFloat(String(s).repl
 function parseText(t){
   const d = {};
   const url = t.match(/https?:\/\/[^\s"']+/); if (url) d.url = url[0];
-  const prices = [...t.matchAll(/(\d{1,3}(?:[\s  .]\d{3})+|\d{4,7})\s*(?:€|euros?)/gi)].map(m => num(m[1].replace(/\./g,""))).filter(v => v >= 5000 && v <= 20000000);
+  const prices = [...t.matchAll(/(?<!\d)(\d{1,3}(?:[\s  .]\d{3})+|\d{4,7})\s*(?:€|euros?)/gi)].map(m => num(m[1].replace(/\./g,""))).filter(v => v >= 5000 && v <= 20000000);
   if (prices.length) d.prix = prices[0];
   const surf = t.match(/(\d{1,4}(?:[,.]\d{1,2})?)\s*m(?:²|2)(?![a-z0-9])/i); if (surf) d.surface = num(surf[1]);
   const pc = t.match(/(\d{1,2})\s*pi[eè]ces?/i); if (pc) d.pieces = parseInt(pc[1]);
@@ -1161,11 +1192,13 @@ async function ingest(raw){
 }
 
 /* ---------- Fiche d'édition ---------- */
-const F_ = { titre:"f-titre", url:"f-url", prix:"f-prix", surface:"f-surface", pieces:"f-pieces", type:"f-type", dpe:"f-dpe", travaux:"f-travaux", op:"f-op", loyer:"f-loyer", chambres:"f-chambres", loyerCh:"f-lch", nuit:"f-nuit", occ:"f-occ", prixRev:"f-rev", notes:"f-notes" };
-const NUMF = new Set(["prix","surface","pieces","travaux","loyer","chambres","loyerCh","nuit","occ","prixRev"]);
+const F_ = { titre:"f-titre", url:"f-url", prix:"f-prix", surface:"f-surface", pieces:"f-pieces", type:"f-type", dpe:"f-dpe", etape:"f-etape", visiteLe:"f-visite", offrePrix:"f-offre", travaux:"f-travaux", op:"f-op", loyer:"f-loyer", chambres:"f-chambres", loyerCh:"f-lch", nuit:"f-nuit", occ:"f-occ", prixRev:"f-rev", notes:"f-notes" };
+const NUMF = new Set(["prix","surface","pieces","offrePrix","travaux","loyer","chambres","loyerCh","nuit","occ","prixRev"]);
 function openEditor(a, isNew){
   editing = {a: {...a}, isNew};
-  for (const [k,id] of Object.entries(F_)) $(id).value = a[k] ?? (k==="op" ? "auto" : "");
+  for (const [k,id] of Object.entries(F_)) $(id).value = a[k] ?? (k==="op" ? "auto" : k==="etape" ? "repere" : "");
+  postes = JSON.parse(JSON.stringify(a.postes || {})); renderPostes();
+  $("postes").open = ["visite","offre","acquis"].includes(a.etape) || Object.keys(postes).length > 0;
   $("f-commune").value = communeLabel(a.code);
   $("ann-mtitle").textContent = isNew ? "Nouvelle annonce" : "Annonce";
   $("ann-del").hidden = isNew;
@@ -1175,6 +1208,8 @@ function openEditor(a, isNew){
 function readForm(){
   const a = editing.a;
   for (const [k,id] of Object.entries(F_)){ const v = $(id).value; a[k] = NUMF.has(k) ? num(v) : (v || null); }
+  const ps = {}; for (const [k,v] of Object.entries(postes)) if (v.e != null || v.m != null || v.n) ps[k] = v;
+  a.postes = Object.keys(ps).length ? ps : null;
   const lab = $("f-commune").value.trim();
   if (lab && lab !== communeLabel(a.code)){
     const m = lab.match(/\((\d{5}|2[AB]\d{3})\)/), n = norm(lab.replace(/\(.*\)/,"").trim());
@@ -1188,7 +1223,7 @@ $("f-commune").addEventListener("input", () => {
   $("f-communes").innerHTML = SEARCH.filter(s => s.n.startsWith(t) || s.cp.some(c=>c.startsWith(t))).sort((x,y)=>(y.pop||0)-(x.pop||0)).slice(0,12).map(s => `<option value="${esc(s.nom)} (${s.cp[0]||""})">`).join("");
 });
 document.querySelectorAll(".presets button").forEach(b => b.addEventListener("click", () => { const s = num($("f-surface").value) || 0; $("f-travaux").value = Math.round(s * +b.dataset.tm / 100) * 100; preview(); }));
-$("ann-form").addEventListener("input", e => { preview(); if (e.target.closest("#cmp")) return; clearTimeout(cmpTimer); cmpTimer = setTimeout(comparables, 400); });
+$("ann-form").addEventListener("input", e => { preview(); if (e.target.closest("#cmp") || e.target.closest("#postes")) return; clearTimeout(cmpTimer); cmpTimer = setTimeout(comparables, 400); });
 function preview(){
   const a = readForm(), r = evaluate(a), el = $("ann-preview");
   if (!r.ok){ el.innerHTML = `<p class="note">Renseignez le prix, la surface et la commune pour calculer la rentabilité.</p>`; return; }
@@ -1197,6 +1232,66 @@ function preview(){
   ${r.prixMax15!=null?`<p class="note">Prix d'achat maximal pour 15 % brut en ${OPS[r.best].toLowerCase()} : <b>${eur(r.prixMax15)}</b>.</p>`:""}`;
 }
 const cls = v => v >= 9 ? "r-good" : v >= 5 ? "r-mid" : "r-bad";
+
+/* ---------- Visite : état et chiffrage poste par poste (ratios fixes, sans IA) ---------- */
+// [clé, libellé, mode, coût pour « bon », « à reprendre », « à refaire »] ; mode m2 : € par m² habitable
+const POSTES = [
+  ["toit","Toiture et charpente","m2",[0,40,180]],
+  ["murs","Murs, façades, maçonnerie","m2",[0,30,120]],
+  ["menu","Menuiseries extérieures","m2",[0,25,90]],
+  ["elec","Électricité","m2",[0,30,90]],
+  ["plomb","Plomberie et sanitaires","m2",[0,20,70]],
+  ["chauf","Chauffage et eau chaude","m2",[0,25,90]],
+  ["isol","Isolation","m2",[0,30,100]],
+  ["humid","Humidité et ventilation","m2",[0,15,60]],
+  ["int","Sols, murs et plafonds intérieurs","m2",[0,40,150]],
+  ["cuis","Cuisine et salle de bain","fixe",[0,4000,15000]],
+  ["assain","Assainissement (fosse ou tout-à-l'égout)","fixe",[0,1500,9000]],
+  ["ext","Extérieurs, clôtures, accès","fixe",[0,1000,5000]],
+  ["env","Environnement : bruit, vis-à-vis, voisinage","info"],
+  ["lum","Luminosité et exposition","info"],
+  ["park","Stationnement","info"],
+  ["res","Réseau mobile et internet","info"],
+];
+const TRI = { cout: ["Bon","À reprendre","À refaire"], info: ["Bon","Moyen","Mauvais"] };
+let postes = {};
+const posteEst = (p, e) => { if (p[2] === "info" || e == null) return 0; const s = num($("f-surface").value) || 0; return p[2] === "m2" ? Math.round(s * p[3][e] / 100) * 100 : p[3][e]; };
+function renderPostes(){
+  $("postes-list").innerHTML = POSTES.map(p => {
+    const v = postes[p[0]] || {}, lab = TRI[p[2] === "info" ? "info" : "cout"];
+    return `<div class="poste" data-k="${p[0]}"><div class="pn">${esc(p[1])}${p[2]==="info"?"<small>Sans chiffrage</small>":""}</div>
+      <div class="tri" role="group" aria-label="${esc(p[1])}">${lab.map((l,i) => `<button type="button" data-e="${i}" aria-pressed="${v.e===i}">${l}</button>`).join("")}</div>
+      ${p[2]==="info" ? "<span></span>" : `<input class="pm" type="number" step="any" inputmode="numeric" aria-label="Montant ${esc(p[1])} (€)" placeholder="${v.e ? nf0.format(posteEst(p, v.e)) + " €" : "montant €"}" value="${v.m ?? ""}">`}
+      <input class="pnote" aria-label="Note ${esc(p[1])}" placeholder="Note" value="${esc(v.n || "")}"></div>`;
+  }).join("");
+  postesTotal();
+}
+function postesTotal(){
+  let t = 0, n = 0;
+  for (const p of POSTES){ const v = postes[p[0]]; if (!v || p[2] === "info") continue; const m = v.m ?? posteEst(p, v.e); if (m){ t += m; n++; } }
+  const seen = POSTES.filter(p => postes[p[0]]?.e != null).length;
+  $("postes-tot").innerHTML = seen ? `${seen} poste${seen>1?"s":""} vu${seen>1?"s":""} sur ${POSTES.length} · total des travaux : <b>${eur(t)}</b>` : "Notez l'état de chaque poste pendant la visite.";
+  $("postes-use").hidden = !t; $("postes-use").dataset.t = t;
+}
+$("postes-list").addEventListener("click", e => {
+  const b = e.target.closest(".tri button"); if (!b) return;
+  const k = b.closest(".poste").dataset.k, i = +b.dataset.e, v = postes[k] || (postes[k] = {});
+  v.e = v.e === i ? null : i;
+  const row = b.closest(".poste"), p = POSTES.find(x => x[0] === k);
+  row.querySelectorAll(".tri button").forEach(x => x.setAttribute("aria-pressed", +x.dataset.e === v.e));
+  const pm = row.querySelector(".pm"); if (pm) pm.placeholder = v.e ? nf0.format(posteEst(p, v.e)) + " €" : "montant €";
+  postesTotal();
+});
+$("postes-list").addEventListener("input", e => {
+  const row = e.target.closest(".poste"); if (!row) return;
+  const v = postes[row.dataset.k] || (postes[row.dataset.k] = {});
+  if (e.target.classList.contains("pm")) v.m = num(e.target.value); else v.n = e.target.value.slice(0, 300);
+  postesTotal();
+});
+$("postes-use").addEventListener("click", () => { $("f-travaux").value = $("postes-use").dataset.t; preview(); });
+$("f-surface").addEventListener("input", () => { if (editing) renderPostes(); });
+const ETAPES = { repere: "Repéré", avisiter: "À visiter", visite: "Visité", offre: "Offre faite", acquis: "Acquis", abandon: "Abandonné" };
+const ETAPE_ORD = ["repere","avisiter","visite","offre","acquis","abandon"];
 
 /* ---------- Ventes comparables (DVF détaillées, sans IA) ---------- */
 const CMP = new Map();   // code commune → Promise des ventes
@@ -1256,6 +1351,8 @@ $("ann-close").addEventListener("click", closeEditor); $("ann-cancel").addEventL
 $("ann-modal").addEventListener("keydown", e => { if (e.key === "Escape") closeEditor(); });
 $("ann-form").addEventListener("submit", async e => {
   e.preventDefault(); const a = readForm();
+  if (a.etape === "abandon" && a.statut !== "archivee"){ a.statut = "archivee"; a.archiveLe = today(); a.archiveRaison = "Abandonnée"; }
+  else if (a.etape !== "abandon" && a.statut === "archivee" && a.archiveRaison === "Abandonnée"){ a.statut = "active"; a.archiveRaison = null; }
   if (!a.code){ $("f-commune").focus(); $("f-commune").setCustomValidity("Choisissez une commune dans la liste."); $("f-commune").reportValidity(); setTimeout(()=>$("f-commune").setCustomValidity(""), 2000); return; }
   try { await saveAnn(a); closeEditor(); $("ann-msg").textContent = `« ${a.titre||"Annonce"} » enregistrée.`; setView("annonces"); } catch(err){}
 });
@@ -1268,15 +1365,19 @@ $("ann-del").addEventListener("click", async () => {
 
 /* ---------- Liste ---------- */
 document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => { annFilter = b.dataset.st; document.querySelectorAll(".seg button").forEach(x => x.setAttribute("aria-pressed", x===b)); renderAnn(); }));
-$("ann-op").addEventListener("change", () => renderAnn()); $("ann-sort").addEventListener("change", () => renderAnn());
+$("ann-op").addEventListener("change", () => renderAnn()); $("ann-etape").addEventListener("change", () => renderAnn()); $("ann-sort").addEventListener("change", () => renderAnn());
 function renderAnn(){
   const list = $("ann-list"); if (!list || $("view-annonces").hidden) return;
   if (!ME){ return; }
-  const opF = $("ann-op").value, sort = $("ann-sort").value;
+  const opF = $("ann-op").value, sort = $("ann-sort").value, etF = $("ann-etape").value || "all";
   let rows = ANN.map(a => ({a, r: evaluate(a)}));
   rows = rows.filter(({a}) => annFilter === "archivee" ? a.statut === "archivee" : a.statut !== "archivee" && (annFilter !== "verif" || daysSince(a.verifieLe) >= HYP.verifJours));
+  const cnt = {}; rows.forEach(({a}) => { const k = a.etape || "repere"; cnt[k] = (cnt[k]||0) + 1; });
+  $("ann-etape").innerHTML = `<option value="all">Toutes (${rows.length})</option>` + ETAPE_ORD.filter(k => cnt[k] || k === etF).map(k => `<option value="${k}">${ETAPES[k]} (${cnt[k]||0})</option>`).join("");
+  $("ann-etape").value = etF;
+  if (etF !== "all") rows = rows.filter(({a}) => (a.etape || "repere") === etF);
   if (opF !== "all") rows = rows.filter(({r}) => r.best === opF);
-  const key = { rent: x => -(x.r.ok ? x.r[x.r.best]?.net ?? -99 : -99), dec: x => -(x.r.decote ?? -99), prix: x => x.a.prix || 0, recent: x => -new Date(x.a.ajouteLe||0), verif: x => new Date(x.a.verifieLe||0) }[sort];
+  const key = { rent: x => -(x.r.ok ? x.r[x.r.best]?.net ?? -99 : -99), dec: x => -(x.r.decote ?? -99), prix: x => x.a.prix || 0, recent: x => -new Date(x.a.ajouteLe||0), etape: x => -ETAPE_ORD.indexOf(x.a.etape || "repere") * 1000 - (x.r.ok ? x.r[x.r.best]?.net ?? 0 : 0), verif: x => new Date(x.a.verifieLe||0) }[sort];
   rows.sort((x,y) => key(x) - key(y));
   if (!rows.length){
     list.innerHTML = `<div class="empty-ann">${ANN.length ? "Aucune annonce dans cette sélection." : "Vos annonces apparaîtront ici. Copiez une annonce avec le favori « + Atlas » puis collez-la dans le cadre ci-dessus."}</div>`;
@@ -1285,7 +1386,7 @@ function renderAnn(){
     const old = daysSince(a.verifieLe) >= HYP.verifJours && a.statut !== "archivee";
     const h = a.historique || [], baisse = h.length > 1 && h[h.length-1].prix < h[0].prix ? h[0].prix - h[h.length-1].prix : 0;
     return `<article class="ann" data-id="${esc(a.id)}">
-      <div class="t"><b>${esc(a.titre || "Annonce sans titre")}</b><span>${esc(communeLabel(a.code) || a.cp || "Commune à préciser")} · ${a.surface?nf0.format(a.surface)+" m²":"? m²"}${a.pieces?` · ${a.pieces} p.`:""}${a.dpe?` · DPE ${esc(a.dpe)}`:""}${old?`<span class="flag">à vérifier</span>`:""}${a.statut==="archivee"?` · ${esc(a.archiveRaison||"archivée")}`:""}</span></div>
+      <div class="t"><b>${esc(a.titre || "Annonce sans titre")}</b><span>${a.etape && a.etape !== "repere" ? `<span class="etape ${a.etape}">${ETAPES[a.etape]}${a.etape==="avisiter"&&a.visiteLe?" · "+dateFr(a.visiteLe):""}${a.etape==="offre"&&a.offrePrix?" · "+eur(a.offrePrix):""}</span> ` : ""}${esc(communeLabel(a.code) || a.cp || "Commune à préciser")} · ${a.surface?nf0.format(a.surface)+" m²":"? m²"}${a.pieces?` · ${a.pieces} p.`:""}${a.dpe?` · DPE ${esc(a.dpe)}`:""}${old?`<span class="flag">à vérifier</span>`:""}${a.statut==="archivee"?` · ${esc(a.archiveRaison||"archivée")}`:""}</span></div>
       <div class="m"><div class="l">Prix</div><div class="v">${eur(a.prix)}</div><div class="s">${r.ok?nf0.format(r.pm2)+" €/m²":""}${baisse?` · −${eur(baisse)}`:""}</div></div>
       <div class="m"><div class="l">Vs ${r.refQuartier?"quartier":"commune"}</div><div class="v ${r.decote>=20?"r-good":r.decote>=0?"r-mid":"r-bad"}">${r.ok&&r.decote!=null?(r.decote>=0?"−":"+")+nf0.format(Math.abs(r.decote))+" %":"—"}</div><div class="s">${r.ok?nf0.format(r.ref)+" €/m²":""}</div></div>
       <div class="m"><div class="l">Opération</div><div>${r.best?`<span class="op ${r.best}">${OPS_COURT[r.best]}</span>`:"—"}</div><div class="s">${a.travaux?"travaux "+eur(a.travaux):"travaux à estimer"}</div></div>

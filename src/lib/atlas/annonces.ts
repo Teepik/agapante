@@ -2,8 +2,8 @@ import "server-only";
 import { q, one, MAX_ANNONCES, type Annonce } from "./db";
 
 /** Champs acceptés pour une annonce : tout le reste est ignoré. */
-const TEXT = ["titre", "url", "src", "cp", "ville", "code", "type", "dpe", "notes", "op", "statut", "archiveRaison", "ajouteLe", "verifieLe", "archiveLe", "publie", "vu"] as const;
-const NUM = ["prix", "surface", "pieces", "terrain", "lat", "lon", "travaux", "loyer", "chambres", "loyerCh", "nuit", "occ", "prixRev"] as const;
+const TEXT = ["titre", "url", "src", "cp", "ville", "code", "type", "dpe", "notes", "op", "statut", "archiveRaison", "ajouteLe", "verifieLe", "archiveLe", "publie", "vu", "etape", "visiteLe"] as const;
+const NUM = ["prix", "surface", "pieces", "terrain", "lat", "lon", "travaux", "loyer", "chambres", "loyerCh", "nuit", "occ", "prixRev", "offrePrix"] as const;
 
 export function cleanId(id: unknown): string | null {
   const s = String(id ?? "").trim();
@@ -30,6 +30,18 @@ export function sanitize(input: Record<string, unknown>): Annonce | null {
       const o = h as { date?: unknown; prix?: unknown };
       return { date: String(o?.date ?? "").slice(0, 40), prix: Number(o?.prix) };
     }).filter(h => Number.isFinite(h.prix));
+  }
+  if (input.postes && typeof input.postes === "object" && !Array.isArray(input.postes)) {
+    const ps: Record<string, { e?: number; m?: number; n?: string }> = {};
+    for (const [k, v] of Object.entries(input.postes as Record<string, unknown>).slice(0, 30)) {
+      if (!/^[a-z]{1,12}$/.test(k) || !v || typeof v !== "object") continue;
+      const o = v as { e?: unknown; m?: unknown; n?: unknown }, p: { e?: number; m?: number; n?: string } = {};
+      if (o.e === 0 || o.e === 1 || o.e === 2) p.e = o.e;
+      if (typeof o.m === "number" && Number.isFinite(o.m)) p.m = o.m;
+      if (o.n) p.n = String(o.n).slice(0, 300);
+      if (Object.keys(p).length) ps[k] = p;
+    }
+    if (Object.keys(ps).length) out.postes = ps;
   }
   out.statut = out.statut === "archivee" ? "archivee" : "active";
   return out;
