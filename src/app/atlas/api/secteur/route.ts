@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 30;
+// Géorisques filtre les appels venus de l'étranger : la fonction tourne à Paris
+export const preferredRegion = "cdg1";
 
 /**
  * Risques et DPE autour d'un bien, lus par le serveur sur les sources publiques :
@@ -16,7 +18,7 @@ type Risque = { nom: string; statut: string; niveau: "fort" | "moyen" | "faible"
 
 const get = async (url: string) => {
   const r = await fetch(url, { cache: "no-store", headers: { accept: "application/json" }, signal: AbortSignal.timeout(12000) });
-  if (!r.ok) throw new Error(String(r.status));
+  if (!r.ok) throw new Error(`${new URL(url).hostname} ${r.status}`);
   return r.json();
 };
 
@@ -75,6 +77,7 @@ export async function GET(req: Request) {
     position: pos,
     risques: risk.status === "fulfilled" ? risk.value.risques : null,
     lienGeorisques: risk.status === "fulfilled" && "lien" in risk.value ? risk.value.lien : null,
+    erreurRisques: risk.status === "rejected" ? String((risk.reason as Error)?.message ?? risk.reason).slice(0, 120) : undefined,
     dpeZone: dZone.status === "fulfilled" ? dZone.value : null,
     dpeCommune: dCom.status === "fulfilled" ? dCom.value : null,
     sources: "Géorisques (ministère de la Transition écologique), DPE des logements existants (Ademe)",
