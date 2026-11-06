@@ -77,7 +77,7 @@ export async function GET(req: Request) {
     position: pos,
     risques: risk.status === "fulfilled" ? risk.value.risques : null,
     lienGeorisques: risk.status === "fulfilled" && "lien" in risk.value ? risk.value.lien : null,
-    erreurRisques: risk.status === "rejected" ? String((risk.reason as Error)?.message ?? risk.reason).slice(0, 120) : undefined,
+    erreurRisques: risk.status === "rejected" ? (() => { const e = risk.reason as Error & { cause?: { code?: string; message?: string } }; return `${e?.message ?? e} ${e?.cause?.code ?? ""} ${e?.cause?.message ?? ""}`.trim().slice(0, 160); })() : undefined,
     dpeZone: dZone.status === "fulfilled" ? dZone.value : null,
     dpeCommune: dCom.status === "fulfilled" ? dCom.value : null,
     sources: "Géorisques (ministère de la Transition écologique), DPE des logements existants (Ademe)",

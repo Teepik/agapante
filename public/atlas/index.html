@@ -1432,7 +1432,7 @@ async function secteur(){
   if (!editing || riskKey !== key) return;
   riskData = d;
   const rs = d.risques;
-  const risquesH = rs == null ? `<p class="note">Géorisques ne répond pas pour l'instant.</p>`
+  const risquesH = rs == null ? `<p class="note">Le service Géorisques ne répond pas pour l'instant : <a href="https://www.georisques.gouv.fr/mes-risques/connaitre-les-risques-pres-de-chez-moi" target="_blank" rel="noopener">consultez les risques à l'adresse sur Géorisques</a>.</p>`
     : rs.length ? `<div class="risks">${rs.sort((x,y)=>({fort:0,moyen:1,faible:2,info:3}[x.niveau]-{fort:0,moyen:1,faible:2,info:3}[y.niveau])).map(x => `<span class="${x.niveau}" title="${esc(x.statut)}">${esc(x.nom)} · ${esc(x.statut.toLowerCase())}</span>`).join("")}</div>`
     : `<p class="note">Aucun risque recensé à cette adresse par Géorisques.</p>`;
   const lignes = [];
