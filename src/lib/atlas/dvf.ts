@@ -42,7 +42,10 @@ async function year(code: string, y: number): Promise<string | null> {
 export async function ventesCommune(code: string): Promise<{ ventes: Vente[]; annees: number[] }> {
   const now = new Date().getFullYear();
   const years = [now - 5, now - 4, now - 3, now - 2, now - 1, now];
-  const texts = await Promise.all(years.map(y => year(code, y).catch(() => null)));
+  let echecs = 0;
+  const texts = await Promise.all(years.map(y => year(code, y).catch(() => { echecs++; return null; })));
+  // Source injoignable : erreur (pas de liste vide mise en cache)
+  if (echecs && texts.every(t => t == null)) throw new Error("DVF injoignable");
   const muts = new Map<string, { date: string; prix: number; nature: string; logements: { t: "M" | "A"; s: number; p: number | null }[]; parcelles: Map<string, number>; lat: number | null; lon: number | null; adr: string }>();
   const annees: number[] = [];
   texts.forEach((t, i) => {

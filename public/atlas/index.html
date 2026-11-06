@@ -204,6 +204,30 @@ button.danger{color:var(--bad);border-color:var(--bad)}
 .presets button{font:500 12px var(--body);border:1px solid var(--line);background:var(--sunk);color:var(--fg);border-radius:999px;padding:4px 10px;cursor:pointer}
 .sheet-foot{display:flex;gap:8px;align-items:center;padding:12px 16px;border-top:1px solid var(--line)}
 .sheet-foot .sp{flex:1}
+#risk h4.sub,#fin h4.sub{font-size:12.5px;margin:0 0 6px;font-weight:600;color:var(--fg)}
+#risk,#fin{display:flex;flex-direction:column;gap:10px;min-width:0}
+.dpe-rule{border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.45;border:1px solid var(--line);background:var(--sunk)}
+.dpe-rule.bad{border-color:var(--bad)}
+.dpe-rule.mid{border-color:var(--warn)}
+.dpe-rule b{color:var(--fg)}
+.risks{display:flex;flex-wrap:wrap;gap:6px}
+.risks span{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:3px 10px;background:var(--surface)}
+.risks span.fort{border-color:var(--bad);color:var(--bad)}
+.risks span.moyen{border-color:var(--warn);color:var(--warn)}
+.dpebar{display:flex;height:22px;border-radius:6px;overflow:hidden;font:600 11px var(--body)}
+.dpebar i{display:flex;align-items:center;justify-content:center;color:#1b2420;font-style:normal;min-width:0;overflow:hidden}
+.dpe-l{display:grid;grid-template-columns:minmax(0,110px) minmax(0,1fr);gap:6px 10px;align-items:center;font-size:12px;color:var(--muted)}
+.pj-t{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+.pj-t table{border-collapse:collapse;width:100%;font-size:12.5px}
+.pj-t th,.pj-t td{padding:7px 9px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+.pj-t th:first-child,.pj-t td:first-child{text-align:left;white-space:normal}
+.pj-t th{color:var(--muted);font-weight:500;background:var(--bg)}
+.pj-t tr.best td{background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.pj-t tr:last-child td{border-bottom:0}
+.pj-chart svg{width:100%;height:auto;display:block}
+.pj-chart text{font:11px var(--body);fill:var(--muted)}
+.pj-leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.pj-leg i{display:inline-block;width:12px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
 #cmp{display:flex;flex-direction:column;gap:10px;min-width:0}
 .cmp-ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:flex-end}
 .cmp-ctl label.chk{flex-direction:row;align-items:center;gap:6px;font-size:12.5px;color:var(--fg)}
@@ -348,6 +372,21 @@ button.danger{color:var(--bad);border-color:var(--bad)}
           </div>
           <div id="cmp-out" aria-live="polite"><p class="note">Choisissez la commune pour voir les ventes.</p></div>
         </fieldset>
+        <fieldset id="risk"><legend>Risques et énergie</legend><div id="risk-out" aria-live="polite"></div></fieldset>
+        <fieldset id="fin"><legend>Financement et projection</legend>
+          <div class="grid2">
+            <label for="f-apport">Apport (€)<input id="f-apport" type="number" step="any" inputmode="numeric"></label>
+            <label for="f-taux">Taux du crédit (%)<input id="f-taux" type="number" step="0.05" placeholder="3,4"></label>
+            <label for="f-duree">Durée du crédit (ans)<input id="f-duree" type="number" step="1" placeholder="20"></label>
+            <label for="f-tmi">Votre tranche d'imposition (%)<select id="f-tmi"><option value="">30 % (par défaut)</option><option value="0">0 %</option><option value="11">11 %</option><option value="30">30 %</option><option value="41">41 %</option><option value="45">45 %</option></select></label>
+          </div>
+          <div class="cmp-ctl">
+            <label for="pj-h">Horizon<select id="pj-h"><option value="10">10 ans</option><option value="15">15 ans</option><option value="20" selected>20 ans</option></select></label>
+            <label for="pj-gl">Hausse des loyers (%/an)<input id="pj-gl" type="number" step="0.1" value="1.5"></label>
+            <label for="pj-gv">Hausse des prix (%/an)<input id="pj-gv" type="number" step="0.1" value="1.5"></label>
+          </div>
+          <div id="proj-out"></div>
+        </fieldset>
         <fieldset><legend>Suivi</legend>
           <div class="grid2">
             <label for="f-etape">Étape<select id="f-etape"><option value="repere">Repéré</option><option value="avisiter">À visiter</option><option value="visite">Visité</option><option value="offre">Offre faite</option><option value="acquis">Acquis</option><option value="abandon">Abandonné</option></select></label>
@@ -379,6 +418,7 @@ button.danger{color:var(--bad);border-color:var(--bad)}
       </div>
       <div class="sheet-foot">
         <button type="button" id="ann-del" class="ghost danger">Supprimer</button>
+        <button type="button" id="ann-dossier" class="ghost">Dossier pour la banque</button>
         <span class="sp"></span>
         <button type="button" id="ann-cancel" class="ghost">Annuler</button>
         <button type="submit" id="ann-save" class="primary">Enregistrer</button>
@@ -769,6 +809,7 @@ function renderPanel(){
         ${row("Taux communal de taxe foncière","tf",F.pct,r,dep)}
       </table>
       <p class="note">${get(r,"lyaq")&&get(r,"lyaq")!=="commune"?"Trop peu d'annonces dans la commune : loyers estimés par le modèle du ministère à l'échelle "+(get(r,"lyaq")==="epci"?"de l'intercommunalité":"d'un groupe de communes voisines")+". ":""}Prix : médiane des ventes sur 24 mois (juillet 2024 – juin 2026). Rendement brut théorique : loyer annuel d'annonce charges comprises divisé par le prix médian au m². « dép. » : médiane des communes du département.</p>`;
+    P.insertAdjacentHTML("beforeend", `<h3>Ventes récentes</h3><div id="pv-ventes"></div>`); ventesPanel();
   } else if (tab==="pop"){
     P.innerHTML = `<div class="kpis">
       ${kpi("Population", get(r,"pop")!==null?F.n(get(r,"pop")):"n.d.", get(r,"dpop")!==null?`${F.pctS(get(r,"dpop"))} par an`:"")}
@@ -1192,8 +1233,8 @@ async function ingest(raw){
 }
 
 /* ---------- Fiche d'édition ---------- */
-const F_ = { titre:"f-titre", url:"f-url", prix:"f-prix", surface:"f-surface", pieces:"f-pieces", type:"f-type", dpe:"f-dpe", etape:"f-etape", visiteLe:"f-visite", offrePrix:"f-offre", travaux:"f-travaux", op:"f-op", loyer:"f-loyer", chambres:"f-chambres", loyerCh:"f-lch", nuit:"f-nuit", occ:"f-occ", prixRev:"f-rev", notes:"f-notes" };
-const NUMF = new Set(["prix","surface","pieces","offrePrix","travaux","loyer","chambres","loyerCh","nuit","occ","prixRev"]);
+const F_ = { titre:"f-titre", url:"f-url", prix:"f-prix", surface:"f-surface", pieces:"f-pieces", type:"f-type", dpe:"f-dpe", etape:"f-etape", visiteLe:"f-visite", offrePrix:"f-offre", apport:"f-apport", taux:"f-taux", duree:"f-duree", tmi:"f-tmi", travaux:"f-travaux", op:"f-op", loyer:"f-loyer", chambres:"f-chambres", loyerCh:"f-lch", nuit:"f-nuit", occ:"f-occ", prixRev:"f-rev", notes:"f-notes" };
+const NUMF = new Set(["prix","surface","pieces","offrePrix","apport","taux","duree","tmi","travaux","loyer","chambres","loyerCh","nuit","occ","prixRev"]);
 function openEditor(a, isNew){
   editing = {a: {...a}, isNew};
   for (const [k,id] of Object.entries(F_)) $(id).value = a[k] ?? (k==="op" ? "auto" : k==="etape" ? "repere" : "");
@@ -1202,7 +1243,7 @@ function openEditor(a, isNew){
   $("f-commune").value = communeLabel(a.code);
   $("ann-mtitle").textContent = isNew ? "Nouvelle annonce" : "Annonce";
   $("ann-del").hidden = isNew;
-  $("ann-modal").hidden = false; preview(); cmpCode = null; comparables();
+  $("ann-modal").hidden = false; preview(); cmpCode = null; comparables(); riskKey = null; secteur(); renderProj();
   setTimeout(() => $(isNew && !a.code ? "f-commune" : "f-travaux").focus(), 30);
 }
 function readForm(){
@@ -1223,12 +1264,13 @@ $("f-commune").addEventListener("input", () => {
   $("f-communes").innerHTML = SEARCH.filter(s => s.n.startsWith(t) || s.cp.some(c=>c.startsWith(t))).sort((x,y)=>(y.pop||0)-(x.pop||0)).slice(0,12).map(s => `<option value="${esc(s.nom)} (${s.cp[0]||""})">`).join("");
 });
 document.querySelectorAll(".presets button").forEach(b => b.addEventListener("click", () => { const s = num($("f-surface").value) || 0; $("f-travaux").value = Math.round(s * +b.dataset.tm / 100) * 100; preview(); }));
-$("ann-form").addEventListener("input", e => { preview(); if (e.target.closest("#cmp") || e.target.closest("#postes")) return; clearTimeout(cmpTimer); cmpTimer = setTimeout(comparables, 400); });
+$("ann-form").addEventListener("input", e => { preview(); renderProj(); if (e.target.closest("#cmp") || e.target.closest("#postes") || e.target.closest("#fin")) return; clearTimeout(cmpTimer); cmpTimer = setTimeout(() => { comparables(); secteur(); }, 400); });
 function preview(){
   const a = readForm(), r = evaluate(a), el = $("ann-preview");
   if (!r.ok){ el.innerHTML = `<p class="note">Renseignez le prix, la surface et la commune pour calculer la rentabilité.</p>`; return; }
   el.innerHTML = `<div class="note" style="margin-bottom:6px">${nf0.format(r.pm2)} €/m² affiché · ${r.refQuartier?"médiane du quartier":"médiane de la commune"} ${nf0.format(r.ref)} €/m² · ${r.decote>=0?"décote":"surcote"} de ${nf0.format(Math.abs(r.decote))} % · coût total ${eur(r.cout)}</div>
   <div class="ops">${["lld","coloc","lcd","ar"].map(o => r[o] ? `<div class="${r.best===o?"best":""}"><span>${OPS[o]}</span><b class="${cls(r[o].net)}">${pct1(r[o].net)}</b>${o==="ar"?`marge ${eur(r[o].marge)}`:`brut ${pct1(r[o].brut)}`}</div>` : `<div><span>${OPS[o]}</span><b>—</b>${o==="coloc"?"moins de 3 chambres":""}</div>`).join("")}</div>
+  ${dpeAlerte(a)}
   ${r.prixMax15!=null?`<p class="note">Prix d'achat maximal pour 15 % brut en ${OPS[r.best].toLowerCase()} : <b>${eur(r.prixMax15)}</b>.</p>`:""}`;
 }
 const cls = v => v >= 9 ? "r-good" : v >= 5 ? "r-mid" : "r-bad";
@@ -1346,6 +1388,330 @@ $("cmp-out").addEventListener("click", e => {
 });
 ["cmp-r","cmp-y","cmp-t","cmp-s"].forEach(id => $(id).addEventListener("change", e => { e.stopPropagation(); comparables(); }));
 let cmpTimer = null;
+
+/* ---------- Risques et énergie (Géorisques, Ademe, calendrier légal ; sans IA) ---------- */
+const DPE_COL = { A:"#009c6d", B:"#52b153", C:"#a5cc74", D:"#f4e70f", E:"#f0b50f", F:"#eb8235", G:"#d7221f" };
+const RENO_M2 = { G: 400, F: 300, E: 180 };   // ordre de grandeur pour atteindre la classe D (isolation, chauffage, ventilation)
+function dpeStatut(dpe){
+  const y = new Date().getFullYear();
+  if (dpe === "G") return { niv: "bad", txt: "Classe G : la location en résidence principale, vide ou meublée, est interdite depuis le 1er janvier 2025 (nouveau bail ou renouvellement). Une rénovation énergétique est nécessaire avant de louer à l'année." };
+  if (dpe === "F") return { niv: y >= 2028 ? "bad" : "mid", txt: `Classe F : location en résidence principale interdite à partir du 1er janvier 2028${y < 2028 ? `, soit dans ${2028 - y} an${2028 - y > 1 ? "s" : ""}` : ""}. Prévoyez la rénovation dans le budget.` };
+  if (dpe === "E") return { niv: "mid", txt: "Classe E : location en résidence principale interdite à partir du 1er janvier 2034." };
+  if (dpe && "ABCD".includes(dpe)) return { niv: "", txt: `Classe ${dpe} : louable sans contrainte de calendrier.` };
+  return { niv: "mid", txt: "DPE à demander : il doit figurer dans l'annonce et conditionne la mise en location." };
+}
+function dpeAlerte(a){
+  if (a.dpe === "G") return `<p class="note" style="color:var(--bad)">DPE G : location à l'année interdite en l'état ; la longue durée et la colocation supposent une rénovation énergétique.</p>`;
+  if (a.dpe === "F") return `<p class="note" style="color:var(--warn)">DPE F : location à l'année interdite à partir de 2028 sans rénovation énergétique.</p>`;
+  return "";
+}
+const SECT = new Map();
+function secteurData(a){
+  const hasPos = a.lat != null && a.lon != null;
+  const t = a.type === "maison" || a.type === "appartement" ? a.type : "";
+  const key = `code=${a.code}${hasPos ? `&lat=${(+a.lat).toFixed(3)}&lon=${(+a.lon).toFixed(3)}` : ""}${t ? "&type=" + t : ""}`;
+  if (!SECT.has(key)) SECT.set(key, fetch("/atlas/api/secteur?" + key).then(r => r.ok ? r.json() : Promise.reject(new Error("indispo"))).catch(e => { SECT.delete(key); throw e; }));
+  return { key, p: SECT.get(key) };
+}
+function dpeBar(d){
+  const tot = Object.values(d).reduce((x,y)=>x+y,0); if (!tot) return "";
+  return `<div class="dpebar" role="img" aria-label="Répartition des classes DPE">${"ABCDEFG".split("").filter(c=>d[c]).map(c => `<i style="width:${d[c]/tot*100}%;background:${DPE_COL[c]}" title="${c} : ${nf0.format(d[c]/tot*100)} %">${d[c]/tot >= .06 ? c : ""}</i>`).join("")}</div>`;
+}
+const passoires = d => { const tot = Object.values(d).reduce((x,y)=>x+y,0); return tot ? ((d.F||0)+(d.G||0))/tot*100 : null; };
+let riskKey = null, riskData = null;
+async function secteur(){
+  const out = $("risk-out"); if (!editing) return;
+  const a = editing.a, st = dpeStatut(a.dpe);
+  const reno = RENO_M2[a.dpe] && a.surface ? Math.round(RENO_M2[a.dpe] * a.surface / 500) * 500 : null;
+  const rule = `<div class="dpe-rule ${st.niv}">${st.txt}${reno ? `<br>Rénovation pour viser la classe D : de l'ordre de <b>${eur(reno)}</b> (${RENO_M2[a.dpe]} €/m², à confirmer par un audit énergétique). <button type="button" class="link" id="reno-add">Ajouter au budget travaux</button>` : ""}
+    <br><span class="note">Meublé de tourisme en zone tendue : la loi Le Meur exige un DPE de A à E pour une nouvelle mise en location, puis de A à D en 2034 ; la mairie peut fixer des règles plus strictes. Un projet de loi en discussion depuis juillet 2026 pourrait autoriser la location d'un F ou d'un G pendant des travaux engagés.</span></div>`;
+  if (!a.code){ riskKey = null; riskData = null; out.innerHTML = rule; return; }
+  const { key, p } = secteurData(a);
+  if (key !== riskKey){ riskKey = key; riskData = null; out.innerHTML = rule + `<p class="note">Lecture des risques et des DPE du secteur…</p>`; }
+  let d; try { d = await p; } catch(e){ out.innerHTML = rule + `<p class="note">Risques et DPE momentanément indisponibles. Réessayez dans un instant.</p>`; return; }
+  if (!editing || riskKey !== key) return;
+  riskData = d;
+  const rs = d.risques;
+  const risquesH = rs == null ? `<p class="note">Géorisques ne répond pas pour l'instant.</p>`
+    : rs.length ? `<div class="risks">${rs.sort((x,y)=>({fort:0,moyen:1,faible:2,info:3}[x.niveau]-{fort:0,moyen:1,faible:2,info:3}[y.niveau])).map(x => `<span class="${x.niveau}" title="${esc(x.statut)}">${esc(x.nom)} · ${esc(x.statut.toLowerCase())}</span>`).join("")}</div>`
+    : `<p class="note">Aucun risque recensé à cette adresse par Géorisques.</p>`;
+  const lignes = [];
+  if (d.dpeZone) lignes.push(`<span>À moins de 500 m</span>${dpeBar(d.dpeZone)}`);
+  if (d.dpeCommune) lignes.push(`<span>Commune</span>${dpeBar(d.dpeCommune)}`);
+  const pz = d.dpeZone && passoires(d.dpeZone), pc = d.dpeCommune && passoires(d.dpeCommune);
+  out.innerHTML = rule + `<div><h4 class="sub">Risques ${d.position ? "à l'adresse de l'annonce" : "recensés dans la commune"}</h4>${risquesH}
+    ${d.lienGeorisques ? `<p class="note"><a href="${esc(d.lienGeorisques)}" target="_blank" rel="noopener">Rapport complet sur Géorisques</a></p>` : ""}</div>
+    ${lignes.length ? `<div><h4 class="sub">DPE des ${a.type === "appartement" ? "appartements" : a.type === "maison" ? "maisons" : "logements"} du secteur</h4><div class="dpe-l">${lignes.join("")}</div>
+    <p class="note">${pc != null ? `${nf0.format(pc)} % de passoires (F et G) dans la commune${pz != null ? `, ${nf0.format(pz)} % autour du bien` : ""}. ` : ""}Un secteur riche en passoires compte des vendeurs pressés par le calendrier : terrain de négociation pour un bien à rénover.</p></div>` : ""}
+    <p class="note">Sources : Géorisques (État), DPE des logements existants depuis juillet 2021 (Ademe). Position de l'annonce approximative sur certains sites.</p>`;
+}
+$("risk-out").addEventListener("click", e => {
+  if (e.target.id !== "reno-add" || !editing) return;
+  const a = editing.a, reno = RENO_M2[a.dpe] && a.surface ? Math.round(RENO_M2[a.dpe] * a.surface / 500) * 500 : 0;
+  $("f-travaux").value = (num($("f-travaux").value) || 0) + reno; preview(); renderProj(); secteur();
+});
+
+/* ---------- Financement et projection sur 10 à 20 ans, par régime fiscal (règles fixes, sans IA) ---------- */
+const PROJ = { psNu: 0.172, psMeuble: 0.186, psPV: 0.172, abattementMicro: 0.30, seuilMicro: 15000 };
+const fin = a => {
+  const r = evaluate(a); if (!r.ok) return null;
+  const op = r.best === "ar" ? ["lld","coloc","lcd"].filter(o => r[o]).sort((x,y) => r[y].net - r[x].net)[0] : r.best;
+  if (!op) return null;
+  const o = r[op];
+  const mob = op === "lcd" ? HYP.mobilierLCD : op === "coloc" ? HYP.mobilierCh * o.ch : 0;
+  const cout = r.cout + mob;
+  const apport = a.apport != null ? a.apport : Math.round(cout * 0.1 / 1000) * 1000;
+  const taux = a.taux != null ? a.taux : 3.4, duree = a.duree != null ? a.duree : 20, tmi = a.tmi != null ? a.tmi : 30;
+  const empr = Math.max(0, cout - apport), m = mens(empr, taux, duree);
+  const chg = op === "lld" ? HYP.chargesLLD : op === "coloc" ? HYP.chargesColoc : HYP.chargesLCD;
+  return { r, op, o, mob, cout, apport, taux, duree, tmi, empr, m, chg };
+};
+function abattementsPV(n){
+  const ir = n <= 5 ? 0 : n <= 21 ? (n-5)*0.06 : 1;
+  const ps = n <= 5 ? 0 : n <= 21 ? (n-5)*0.0165 : n === 22 ? 0.28 : n < 30 ? 0.28 + (n-22)*0.09 : 1;
+  return { ir: Math.min(1, ir), ps: Math.min(1, ps) };
+}
+const surtaxe = b => b <= 50000 ? 0 : b * Math.min(0.06, 0.02 + Math.floor((b - 50000) / 50000) * 0.01);
+const impotIS = b => b <= 0 ? 0 : Math.min(b, 42500)*0.15 + Math.max(0, b - 42500)*0.25;
+function projeter(a, H, gl, gv){
+  const f0 = fin(a); if (!f0) return null;
+  const { r, op, o, mob, cout, apport, taux, duree, tmi, empr, m, chg } = f0;
+  const travaux = a.travaux || 0, prix = a.prix;
+  const V0 = r.ref ? r.ref * a.surface : cout;
+  // Tableau d'amortissement du prêt, par année
+  const sched = []; let crd = empr; const i = taux/100/12;
+  for (let y = 1; y <= H; y++){
+    let int = 0, cap = 0;
+    for (let k = 0; k < 12; k++){ if (y > duree || crd <= 0) break; const it = crd*i; const c = Math.min(crd, m - it); int += it; cap += c; crd -= c; }
+    sched.push({ int, cap, ann: int + cap, crd: Math.max(0, crd) });
+  }
+  const amBati = prix*(1+HYP.notaire)*0.85/30, amTrav = travaux/15, amMob = mob/7;
+  const regs = op === "lld" ? ["nu","lmnp","is"] : ["lmnp","is"];
+  const lab = { nu: "Nom propre, location nue", lmnp: "Nom propre, meublé (LMNP au réel)", is: op === "lld" ? "SCI à l'impôt sur les sociétés" : "Société à l'IS (SARL de famille)" };
+  return { f0, op, V0, rows: regs.map(k => {
+    let defF = 0, reportAm = 0, defIS = 0, cum = 0, imp = 0, amCum = 0; const ys = [];
+    for (let y = 1; y <= H; y++){
+      const loyers = o.ca * Math.pow(1 + gl/100, y - 1), charges = loyers * chg, s = sched[y-1];
+      const avant = loyers - charges - s.ann;
+      let tax = 0;
+      const am = amBati + (y <= 15 ? amTrav : 0) + (y <= 7 ? amMob : 0);
+      if (k === "nu"){
+        if (loyers <= PROJ.seuilMicro && defF === 0){ tax = loyers*(1 - PROJ.abattementMicro)*(tmi/100 + PROJ.psNu); }
+        else { let b = loyers - charges - s.int - defF; if (b < 0){ defF = -b; b = 0; } else defF = 0; tax = b*(tmi/100 + PROJ.psNu); }
+      } else if (k === "lmnp"){
+        const avAm = loyers - charges - s.int;
+        const dispo = am + reportAm;
+        const used = Math.max(0, Math.min(dispo, avAm));
+        reportAm = dispo - used; amCum += used;
+        const b = Math.max(0, avAm - used); tax = b*(tmi/100 + PROJ.psMeuble);
+      } else {
+        let b = loyers - charges - s.int - am - defIS; if (b < 0){ defIS = -b; b = 0; } else defIS = 0;
+        tax = impotIS(b); amCum += am;
+      }
+      cum += avant - tax; imp += tax;
+      // Valeur nette si revente à la fin de l'année y
+      const V = V0 * Math.pow(1 + gv/100, y), cession = V*(1 - HYP.fraisVente);
+      let impPV;
+      if (k === "is"){ const vnc = cout - Math.min(cout*0.85, amCum); impPV = impotIS(cession - vnc); }
+      else {
+        const acq = prix*Math.max(1 + HYP.notaire, 1.075) + (y > 5 ? Math.max(travaux, prix*0.15) : travaux);
+        const pv = Math.max(0, cession - acq + (k === "lmnp" ? amCum : 0));
+        const ab = abattementsPV(y), bIR = pv*(1 - ab.ir);
+        impPV = bIR*0.19 + surtaxe(bIR) + pv*(1 - ab.ps)*PROJ.psPV;
+      }
+      const net = cession - s.crd - impPV + cum - apport;
+      ys.push({ y, loyers, charges, ann: s.ann, tax, cf: avant - tax, cum, crd: s.crd, V, impPV, net });
+    }
+    return { k, label: lab[k], ys, cf1: ys[0].cf/12, imp, net: ys[H-1].net };
+  }) };
+}
+const PJ_COL = { nu: "var(--s4)", lmnp: "var(--accent)", is: "var(--warn)" };
+function pjChart(P, H){
+  const Wd = 600, Ht = 190, pl = 56, pr = 30, pt = 10, pb = 24;
+  const all = P.rows.flatMap(r => r.ys.map(y => y.net)); let lo = Math.min(0, ...all), hi = Math.max(0, ...all); if (hi === lo) hi = lo + 1;
+  const x = y => pl + (y - 1)/(Math.max(1, H - 1))*(Wd - pl - pr), yy = v => pt + (hi - v)/(hi - lo)*(Ht - pt - pb);
+  const ticks = d3.ticks(lo, hi, 4);
+  return `<div class="pj-chart"><svg viewBox="0 0 ${Wd} ${Ht}" role="img" aria-label="Enrichissement net par année et par régime">
+    ${ticks.map(t => `<line x1="${pl}" x2="${Wd-pr}" y1="${yy(t)}" y2="${yy(t)}" stroke="var(--line)" stroke-width="${t===0?1.5:1}"/><text x="${pl-6}" y="${yy(t)+4}" text-anchor="end">${nf0.format(t/1000)} k€</text>`).join("")}
+    ${[1, Math.round(H/2), H].map(t => `<text x="${x(t)}" y="${Ht-6}" text-anchor="middle">an ${t}</text>`).join("")}
+    ${P.rows.map(r => `<polyline fill="none" stroke="${PJ_COL[r.k]}" stroke-width="2.5" stroke-linejoin="round" points="${r.ys.map(v => `${x(v.y).toFixed(1)},${yy(v.net).toFixed(1)}`).join(" ")}"/>`).join("")}
+  </svg><div class="pj-leg">${P.rows.map(r => `<span><i style="background:${PJ_COL[r.k]}"></i>${esc(r.label)}</span>`).join("")}</div></div>`;
+}
+let lastProj = null;
+function renderProj(){
+  const out = $("proj-out"); if (!editing) return;
+  const a = readForm(), H = +$("pj-h").value, gl = num($("pj-gl").value) ?? 1.5, gv = num($("pj-gv").value) ?? 1.5;
+  const P = projeter(a, H, gl, gv); lastProj = P ? { P, H, gl, gv } : null;
+  if (!P){ out.innerHTML = `<p class="note">Renseignez le prix, la surface et la commune pour projeter l'opération.</p>`; $("f-apport").placeholder = ""; return; }
+  const f = P.f0;
+  $("f-apport").placeholder = nf0.format(f.apport) + " (10 %)";
+  const best = P.rows.slice().sort((x,y) => y.net - x.net)[0];
+  out.innerHTML = `<p class="note">Coût total ${eur(f.cout)} (achat, frais de notaire, travaux${f.mob ? ", mobilier" : ""}) · emprunt ${eur(f.empr)} sur ${f.duree} ans à ${nf1.format(f.taux)} % · mensualité <b>${eur(f.m)}</b> hors assurance. Projection en ${OPS[P.op].toLowerCase()}${f.r.best === "ar" ? " (l'achat-revente se juge sur sa marge, ci-dessus)" : ""}.</p>
+    <div class="pj-t"><table><thead><tr><th>Régime</th><th>Trésorerie / mois, an 1</th><th>Impôts sur ${H} ans</th><th>Enrichissement net à ${H} ans</th></tr></thead><tbody>
+    ${P.rows.map(r => `<tr class="${r === best ? "best" : ""}"><td>${esc(r.label)}</td><td class="${r.cf1 >= 0 ? "r-good" : "r-bad"}">${r.cf1 >= 0 ? "+" : "−"}${eur(Math.abs(r.cf1))}</td><td>${eur(r.imp)}</td><td><b>${eur(r.net)}</b></td></tr>`).join("")}
+    </tbody></table></div>
+    ${pjChart(P, H)}
+    <details><summary class="note" style="cursor:pointer">Détail année par année : ${esc(best.label)}</summary>
+    <div class="pj-t"><table><thead><tr><th>Année</th><th>Loyers</th><th>Charges</th><th>Crédit</th><th>Impôts</th><th>Trésorerie</th><th>Capital dû</th><th>Valeur du bien</th><th>Net si revente</th></tr></thead><tbody>
+    ${best.ys.map(v => `<tr><td>${v.y}</td><td>${eur(v.loyers)}</td><td>${eur(v.charges)}</td><td>${eur(v.ann)}</td><td>${eur(v.tax)}</td><td class="${v.cf >= 0 ? "r-good" : "r-bad"}">${eur(v.cf)}</td><td>${eur(v.crd)}</td><td>${eur(v.V)}</td><td>${eur(v.net)}</td></tr>`).join("")}
+    </tbody></table></div></details>
+    <p class="note">Enrichissement net : prix de revente moins frais de vente, capital restant dû et impôt sur la plus-value, plus la trésorerie cumulée, moins l'apport. Valeur de départ : prix médian ${f.r.refQuartier ? "du quartier" : "de la commune"} × surface. Nom propre : micro-foncier ou réel (déficit reporté sur les loyers suivants), prélèvements sociaux 17,2 % en nu et 18,6 % en meublé ; plus-value des particuliers avec abattements pour durée de détention (exonération d'impôt après 22 ans, de prélèvements après 30 ans) et réintégration des amortissements en LMNP depuis 2025. Société à l'IS : amortissements, IS à 15 % puis 25 %, plus-value calculée sur la valeur nette comptable ; trésorerie laissée dans la société (flat tax en cas de distribution). Assurance emprunteur, taxe foncière et frais de comptabilité compris dans les charges forfaitaires. À valider avec votre expert-comptable.</p>`;
+}
+["pj-h","pj-gl","pj-gv"].forEach(id => $(id).addEventListener("input", renderProj));
+
+/* ---------- Ventes comparables : calcul partagé (fiche, carte, dossier) ---------- */
+function cmpStats(d, o){
+  // o : { lat, lon, R (m, 0 = commune), ans, T ("M"|"A"|null), surface }
+  const since = new Date(); since.setFullYear(since.getFullYear() - o.ans); const sinceS = since.toISOString().slice(0,10);
+  const hasPos = o.lat != null && o.lon != null;
+  let rows = d.ventes.filter(v => v[0] >= sinceS);
+  if (o.T) rows = rows.filter(v => v[3] === o.T);
+  if (o.surface) rows = rows.filter(v => v[2] >= o.surface*0.6 && v[2] <= o.surface*1.4);
+  rows = rows.map(v => ({ v, d: hasPos && v[6] != null ? distM(o.lat, o.lon, v[6], v[7]) : null, pm2: v[1]/v[2] }));
+  if (o.R && hasPos) rows = rows.filter(x => x.d != null && x.d <= o.R);
+  rows.sort((x,y) => hasPos && o.R ? x.d - y.d : (x.v[0] < y.v[0] ? 1 : -1));
+  const pm = rows.map(x => x.pm2);
+  return { rows, n: rows.length, med: quant(pm,.5), q1: quant(pm,.25), q3: quant(pm,.75) };
+}
+
+/* ---------- Dossier pour la banque (page imprimable, enregistrable en PDF) ---------- */
+$("ann-dossier").addEventListener("click", async () => {
+  if (!editing) return;
+  const a = { ...readForm() }, r = evaluate(a);
+  const w = window.open("", "_blank");
+  if (!w){ $("ann-msg").textContent = "Autorisez les fenêtres pour l'Atlas afin d'ouvrir le dossier."; return; }
+  w.document.write(`<!doctype html><meta charset="utf-8"><title>Dossier</title><p style="font:15px system-ui;padding:24px">Préparation du dossier…</p>`);
+  let cs = null, sec = null;
+  if (a.code){
+    try { const d = await ventes(a.code); const T = a.type === "maison" ? "M" : a.type === "appartement" ? "A" : null;
+      cs = cmpStats(d, { lat: a.lat, lon: a.lon, R: a.lat != null ? 500 : 0, ans: 5, T, surface: a.surface });
+      if (cs.n < 5) cs = cmpStats(d, { lat: a.lat, lon: a.lon, R: 0, ans: 5, T, surface: a.surface }); cs.annees = d.annees; } catch(e){}
+    try { sec = await secteurData(a).p; } catch(e){}
+  }
+  const P = projeter(a, 20, 1.5, 1.5), f = P ? P.f0 : null;
+  const best = P ? P.rows.slice().sort((x,y) => y.net - x.net)[0] : null;
+  const st = dpeStatut(a.dpe);
+  const postesVus = POSTES.filter(p => a.postes?.[p[0]]?.e != null);
+  const commune = communeLabel(a.code) || a.ville || a.cp || "";
+  const td = (l, v) => `<tr><th>${l}</th><td>${v}</td></tr>`;
+  const op = r.ok && r.best ? r[r.best] : null;
+  const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Dossier de financement — ${esc(a.titre || "Bien")}</title>
+<style>
+@page{size:A4;margin:16mm 15mm}
+*{box-sizing:border-box}
+body{font:10.5pt/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:#1b2420;margin:0;background:#fff}
+main{max-width:180mm;margin:0 auto;padding:10mm 0}
+header{border-bottom:2px solid #1f5f8b;padding-bottom:8px;margin-bottom:14px}
+h1{font-size:19pt;margin:0 0 2px;font-weight:650}
+.meta{color:#5c6862;font-size:9.5pt}
+h2{font-size:12pt;margin:18px 0 6px;color:#1f5f8b;border-bottom:1px solid #d6dbd6;padding-bottom:3px;break-after:avoid}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+.kpi{border:1px solid #d6dbd6;border-radius:6px;padding:7px 9px}
+.kpi span{display:block;font-size:8.5pt;color:#5c6862;text-transform:uppercase;letter-spacing:.04em}
+.kpi b{font-size:13pt;font-variant-numeric:tabular-nums}
+table{border-collapse:collapse;width:100%;font-size:9.5pt;break-inside:avoid}
+th,td{padding:4px 6px;border-bottom:1px solid #e3e6e2;text-align:left;vertical-align:top}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+table.kv th{width:42%;font-weight:500;color:#5c6862}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.note{font-size:8.5pt;color:#5c6862}
+.alert{border:1px solid #b03a2e;border-radius:6px;padding:6px 9px;font-size:9.5pt}
+.btn{position:fixed;top:12px;right:12px;font:600 13px system-ui;background:#1f5f8b;color:#fff;border:0;border-radius:8px;padding:9px 14px;cursor:pointer}
+@media print{.btn{display:none}main{padding:0}}
+@media (max-width:640px){.kpis{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}main{padding:16px}}
+</style></head><body><button class="btn" onclick="print()">Imprimer ou enregistrer en PDF</button><main>
+<header><h1>${esc(a.titre || "Projet d'acquisition")}</h1>
+<div class="meta">${esc(commune)}${a.surface ? " · " + nf0.format(a.surface) + " m²" : ""}${a.pieces ? " · " + a.pieces + " pièces" : ""}${a.terrain ? " · terrain " + nf0.format(a.terrain) + " m²" : ""}${a.dpe ? " · DPE " + esc(a.dpe) : ""} · Dossier établi le ${new Date().toLocaleDateString("fr-FR")}${ME ? " par " + esc(ME.name) : ""}</div></header>
+
+<div class="kpis">
+ <div class="kpi"><span>Prix</span><b>${eur(a.prix)}</b></div>
+ <div class="kpi"><span>Coût total du projet</span><b>${f ? eur(f.cout) : r.ok ? eur(r.cout) : "—"}</b></div>
+ <div class="kpi"><span>Mensualité</span><b>${f ? eur(f.m) : "—"}</b></div>
+ <div class="kpi"><span>Rentabilité nette</span><b>${op ? pct1(op.net) : "—"}</b></div>
+</div>
+
+<div class="two"><div>
+<h2>Le bien</h2><table class="kv">
+${td("Adresse", esc(commune))}${td("Type", esc(a.type || "—"))}${td("Surface habitable", a.surface ? nf0.format(a.surface) + " m²" : "—")}${td("Pièces", a.pieces || "—")}${td("Prix affiché", eur(a.prix))}${r.ok ? td("Prix au m²", nf0.format(r.pm2) + " €/m²") : ""}${a.offrePrix ? td("Offre proposée", eur(a.offrePrix)) : ""}${a.url ? td("Annonce", `<a href="${esc(a.url)}">${esc(a.url.replace(/^https?:\/\//, "").slice(0, 60))}</a>`) : ""}
+</table></div><div>
+<h2>Prix du marché</h2><table class="kv">
+${r.ok ? td(r.refQuartier ? "Médiane du quartier" : "Médiane de la commune", nf0.format(r.ref) + " €/m²") + td(r.decote >= 0 ? "Décote du prix affiché" : "Surcote du prix affiché", nf0.format(Math.abs(r.decote)) + " %") : ""}
+${cs && cs.n ? td("Ventes comparables", `${cs.n} ventes ${a.lat != null && cs.rows[0]?.d != null && cs.rows.every(x => x.d <= 500) ? "à moins de 500 m" : "dans la commune"}, 5 ans`) + td("Médiane des ventes comparables", nf0.format(cs.med) + " €/m²" + (cs.n >= 4 ? ` (${nf0.format(cs.q1)} à ${nf0.format(cs.q3)})` : "")) + (a.surface ? td("Valeur à la médiane", eur(cs.med * a.surface)) : "") : ""}
+</table></div></div>
+
+${cs && cs.n ? `<h2>Ventes comparables</h2><table><thead><tr><th>Date</th><th>Adresse</th><th class="n">Surface</th><th class="n">Prix</th><th class="n">€/m²</th>${cs.rows[0]?.d != null ? `<th class="n">Distance</th>` : ""}</tr></thead><tbody>
+${cs.rows.slice(0, 10).map(({v, d, pm2}) => `<tr><td>${dateFr(v[0])}</td><td>${esc(v[8] || "—")}</td><td class="n">${nf0.format(v[2])} m²</td><td class="n">${eur(v[1])}</td><td class="n">${nf0.format(pm2)}</td>${d != null ? `<td class="n">${d < 1000 ? nf0.format(Math.round(d/10)*10) + " m" : nf1.format(d/1000) + " km"}</td>` : ""}</tr>`).join("")}
+</tbody></table><p class="note">Ventes réelles enregistrées par les notaires (DVF, DGFiP), un seul logement par vente.</p>` : ""}
+
+<h2>Travaux</h2>
+${postesVus.length ? `<table><thead><tr><th>Poste</th><th>État constaté</th><th class="n">Montant</th><th>Observation</th></tr></thead><tbody>
+${postesVus.map(p => { const v = a.postes[p[0]]; const m = p[2] === "info" ? null : (v.m ?? posteEst(p, v.e)); return `<tr><td>${esc(p[1])}</td><td>${TRI[p[2]==="info"?"info":"cout"][v.e]}</td><td class="n">${m ? eur(m) : "—"}</td><td>${esc(v.n || "")}</td></tr>`; }).join("")}
+</tbody></table>` : ""}
+<table class="kv">${td("Budget travaux retenu", eur(a.travaux || 0))}</table>
+
+<h2>Plan de financement</h2>
+${f ? `<div class="two"><table class="kv">
+${td("Prix d'achat", eur(a.prix))}${td("Frais de notaire (" + HYP.notaire*100 + " %)", eur(a.prix*HYP.notaire))}${td("Travaux", eur(a.travaux || 0))}${f.mob ? td("Mobilier", eur(f.mob)) : ""}${td("<b>Coût total</b>", "<b>" + eur(f.cout) + "</b>")}
+</table><table class="kv">
+${td("Apport", eur(f.apport))}${td("Emprunt", eur(f.empr))}${td("Durée et taux", f.duree + " ans à " + nf1.format(f.taux) + " %")}${td("Mensualité hors assurance", eur(f.m))}
+</table></div>` : `<p class="note">Prix, surface et commune nécessaires.</p>`}
+
+<h2>Exploitation prévue : ${P ? esc(OPS[P.op].toLowerCase()) : "—"}</h2>
+${P ? (() => { const o = P.f0.o, y1 = best.ys[0]; return `<table class="kv">
+${td("Recettes annuelles estimées", eur(o.ca))}${P.op === "lcd" ? td("Prix par nuit et occupation", eur(o.nuit) + " · " + nf0.format(o.occ) + " %") : P.op === "coloc" ? td("Chambres et loyer par chambre", o.ch + " × " + eur(o.lch)) : td("Loyer mensuel hors charges", eur(o.loyer))}
+${td("Charges, vacance et gestion", nf0.format(P.f0.chg*100) + " % des recettes")}${td("Rentabilité brute / nette", pct1(o.brut) + " / " + pct1(o.net))}
+${td("Trésorerie mensuelle, année 1 (" + esc(best.label) + ")", (y1.cf >= 0 ? "+" : "−") + eur(Math.abs(y1.cf/12)))}
+${td("Mensualité couverte par les loyers nets", nf0.format(o.ca*(1-P.f0.chg)/12/Math.max(1,P.f0.m)*100) + " %")}
+</table>`; })() : ""}
+
+${P ? `<h2>Projection sur 20 ans</h2><table><thead><tr><th>Régime</th><th class="n">Trésorerie / mois, an 1</th><th class="n">Enrichissement à 10 ans</th><th class="n">à 20 ans</th></tr></thead><tbody>
+${P.rows.map(x => `<tr><td>${esc(x.label)}</td><td class="n">${eur(x.cf1)}</td><td class="n">${eur(x.ys[9]?.net)}</td><td class="n">${eur(x.ys[19]?.net)}</td></tr>`).join("")}
+</tbody></table><p class="note">Hypothèses : loyers et prix +1,5 % par an, valeur de départ au prix médian, fiscalité 2026 ; enrichissement net = revente nette d'impôt et de crédit + trésorerie cumulée − apport.</p>` : ""}
+
+<h2>Risques et énergie</h2>
+<p class="${st.niv === "bad" ? "alert" : ""}">${esc(st.txt)}</p>
+${sec && sec.risques ? `<p>${sec.risques.length ? "Risques recensés : " + sec.risques.map(x => esc(x.nom) + " (" + esc(x.statut.toLowerCase()) + ")").join(", ") + "." : "Aucun risque recensé à l'adresse par Géorisques."}</p>` : ""}
+${sec && sec.dpeCommune ? `<p class="note">Passoires énergétiques (F et G) dans la commune : ${nf0.format(passoires(sec.dpeCommune))} % des DPE.</p>` : ""}
+${a.notes ? `<h2>Notes</h2><p>${esc(a.notes).replace(/\n/g, "<br>")}</p>` : ""}
+<p class="note" style="margin-top:20px">Sources : DVF (DGFiP, Etalab), carte des loyers (ministère du Logement), Insee, Géorisques, Ademe. Estimations calculées par l'Atlas immobilier (agapante.com/atlas), à confirmer par devis et avis professionnels.</p>
+</main></body></html>`;
+  w.document.open(); w.document.write(html); w.document.close();
+});
+
+/* ---------- Ventes récentes sur la carte (point cliqué ou commune) ---------- */
+let clickPt = null;
+function toLonLat(x, y){
+  const b = baseFit(), t = transform;
+  const px = (x - t.x - b.x*t.k)/(b.s*t.k), py = (y - t.y - b.y*t.k)/(b.s*t.k);
+  const ll = projection.invert([px, py]); return ll && isFinite(ll[0]) ? ll : null;
+}
+cvs.addEventListener("pointerup", e => {
+  if (!downAt || Math.hypot(e.clientX-downAt[0], e.clientY-downAt[1]) > 5) return;
+  const r = cvs.getBoundingClientRect(), ll = toLonLat(e.clientX - r.left, e.clientY - r.top);
+  clickPt = ll ? { lon: ll[0], lat: ll[1], code: cur } : null;
+  setTimeout(() => { if (clickPt) clickPt.code = cur; ventesPanel(); }, 0);
+}, true);
+let vpR = 1000, vpT = "";
+async function ventesPanel(){
+  const el = document.getElementById("pv-ventes"); if (!el || !cur) return;
+  const code = cur, pt = clickPt && clickPt.code === code ? clickPt : null;
+  el.innerHTML = `<p class="note">Lecture des ventes…</p>`;
+  let d; try { d = await ventes(code); } catch(e){ el.innerHTML = `<p class="note">Ventes momentanément indisponibles.</p>`; return; }
+  if (cur !== code || !document.getElementById("pv-ventes")) return;
+  const R = pt ? vpR : 0;
+  const s = cmpStats(d, { lat: pt?.lat, lon: pt?.lon, R, ans: 2, T: vpT || null });
+  el.innerHTML = `<div class="cmp-ctl">
+      ${pt ? `<label for="pv-r">Autour du point cliqué<select id="pv-r">${[300,500,1000,2000].map(v => `<option value="${v}" ${v===vpR?"selected":""}>${v>=1000?v/1000+" km":v+" m"}</option>`).join("")}</select></label>` : ""}
+      <label for="pv-t">Type<select id="pv-t"><option value="">Tous</option><option value="M" ${vpT==="M"?"selected":""}>Maisons</option><option value="A" ${vpT==="A"?"selected":""}>Appartements</option></select></label>
+    </div>
+    <p class="note">${s.n ? `${nf0.format(s.n)} ventes ${pt ? `à moins de ${R>=1000?R/1000+" km":R+" m"} du point cliqué` : "dans la commune"} sur 2 ans · médiane <b>${nf0.format(s.med)} €/m²</b>${s.n >= 4 ? ` · moitié entre ${nf0.format(s.q1)} et ${nf0.format(s.q3)} €/m²` : ""}` : `0 vente ${pt ? "autour du point cliqué" : "dans la commune"} sur 2 ans${pt ? " : élargissez le rayon" : ""}.`}</p>
+    ${s.n ? `<div class="cmp-tw"><table><thead><tr><th>Date</th><th>Adresse</th><th>Type</th><th>Surface</th><th>Prix</th><th>€/m²</th>${pt?"<th>Distance</th>":""}</tr></thead><tbody>
+    ${s.rows.slice(0, 12).map(({v, d, pm2}) => `<tr><td>${dateFr(v[0])}</td><td>${esc(v[8] || "—")}</td><td>${v[3]==="M"?"Maison":"Appart."}</td><td>${nf0.format(v[2])} m²</td><td>${eur(v[1])}</td><td>${nf0.format(pm2)}</td>${pt?`<td>${d==null?"—":d<1000?nf0.format(Math.round(d/10)*10)+" m":nf1.format(d/1000)+" km"}</td>`:""}</tr>`).join("")}
+    </tbody></table></div>` : ""}
+    <p class="note">${pt ? "Cliquez ailleurs sur la carte pour déplacer le point." : "Cliquez sur la carte pour voir les ventes autour d'un point précis."} Source : DVF (DGFiP, Etalab), un seul logement par vente.</p>`;
+  document.getElementById("pv-r")?.addEventListener("change", e => { vpR = +e.target.value; ventesPanel(); });
+  document.getElementById("pv-t").addEventListener("change", e => { vpT = e.target.value; ventesPanel(); });
+}
 function closeEditor(){ $("ann-modal").hidden = true; editing = null; }
 $("ann-close").addEventListener("click", closeEditor); $("ann-cancel").addEventListener("click", closeEditor);
 $("ann-modal").addEventListener("keydown", e => { if (e.key === "Escape") closeEditor(); });

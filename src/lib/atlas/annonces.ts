@@ -3,7 +3,7 @@ import { q, one, MAX_ANNONCES, type Annonce } from "./db";
 
 /** Champs acceptés pour une annonce : tout le reste est ignoré. */
 const TEXT = ["titre", "url", "src", "cp", "ville", "code", "type", "dpe", "notes", "op", "statut", "archiveRaison", "ajouteLe", "verifieLe", "archiveLe", "publie", "vu", "etape", "visiteLe"] as const;
-const NUM = ["prix", "surface", "pieces", "terrain", "lat", "lon", "travaux", "loyer", "chambres", "loyerCh", "nuit", "occ", "prixRev", "offrePrix"] as const;
+const NUM = ["prix", "surface", "pieces", "terrain", "lat", "lon", "travaux", "loyer", "chambres", "loyerCh", "nuit", "occ", "prixRev", "offrePrix", "apport", "taux", "duree", "tmi"] as const;
 
 export function cleanId(id: unknown): string | null {
   const s = String(id ?? "").trim();
