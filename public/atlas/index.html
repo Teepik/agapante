@@ -186,6 +186,20 @@ button.danger{color:var(--bad);border-color:var(--bad)}
 .presets button{font:500 12px var(--body);border:1px solid var(--line);background:var(--sunk);color:var(--fg);border-radius:999px;padding:4px 10px;cursor:pointer}
 .sheet-foot{display:flex;gap:8px;align-items:center;padding:12px 16px;border-top:1px solid var(--line)}
 .sheet-foot .sp{flex:1}
+#cmp{display:flex;flex-direction:column;gap:10px;min-width:0}
+.cmp-ctl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:flex-end}
+.cmp-ctl label.chk{flex-direction:row;align-items:center;gap:6px;font-size:12.5px;color:var(--fg)}
+.cmp-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+@media (max-width:620px){.cmp-sum{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.cmp-sum div{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--muted)}
+.cmp-sum b{display:block;font:500 16px var(--mono);color:var(--fg)}
+.cmp-tw{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+.cmp-tw table{border-collapse:collapse;width:100%;font-size:12px;white-space:nowrap}
+.cmp-tw th,.cmp-tw td{padding:6px 8px;text-align:right;border-bottom:1px solid var(--line)}
+.cmp-tw th{color:var(--muted);font-weight:500;background:var(--bg)}
+.cmp-tw td:nth-child(2),.cmp-tw th:nth-child(2){text-align:left;white-space:normal;min-width:140px}
+.cmp-tw tr:last-child td{border-bottom:0}
+.cmp-act{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .ops{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 @media (max-width:620px){.ops{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .ops div{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12.5px}
@@ -306,6 +320,15 @@ button.danger{color:var(--bad);border-color:var(--bad)}
           <label for="f-dpe">DPE<select id="f-dpe"><option value="">?</option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></label>
         </div>
         <div id="ann-preview"></div>
+        <fieldset id="cmp"><legend>Ventes comparables</legend>
+          <div class="cmp-ctl">
+            <label for="cmp-r">Autour du bien<select id="cmp-r"><option value="300">300 m</option><option value="500" selected>500 m</option><option value="1000">1 km</option><option value="2000">2 km</option><option value="0">Toute la commune</option></select></label>
+            <label for="cmp-y">Période<select id="cmp-y"><option value="2">2 dernières années</option><option value="5" selected>5 dernières années</option></select></label>
+            <label class="chk"><input type="checkbox" id="cmp-t" checked> Même type</label>
+            <label class="chk"><input type="checkbox" id="cmp-s" checked> Surface proche (±40 %)</label>
+          </div>
+          <div id="cmp-out" aria-live="polite"><p class="note">Choisissez la commune pour voir les ventes.</p></div>
+        </fieldset>
         <fieldset><legend>Travaux</legend>
           <div class="presets"><button type="button" data-tm="0">Aucun</button><button type="button" data-tm="300">Rafraîchir · 300 €/m²</button><button type="button" data-tm="800">Rénover · 800 €/m²</button><button type="button" data-tm="1500">Ruine · 1 500 €/m²</button></div>
           <label for="f-travaux">Budget travaux (€)<input id="f-travaux" type="number" step="any"></label>
@@ -1146,7 +1169,7 @@ function openEditor(a, isNew){
   $("f-commune").value = communeLabel(a.code);
   $("ann-mtitle").textContent = isNew ? "Nouvelle annonce" : "Annonce";
   $("ann-del").hidden = isNew;
-  $("ann-modal").hidden = false; preview();
+  $("ann-modal").hidden = false; preview(); cmpCode = null; comparables();
   setTimeout(() => $(isNew && !a.code ? "f-commune" : "f-travaux").focus(), 30);
 }
 function readForm(){
@@ -1165,7 +1188,7 @@ $("f-commune").addEventListener("input", () => {
   $("f-communes").innerHTML = SEARCH.filter(s => s.n.startsWith(t) || s.cp.some(c=>c.startsWith(t))).sort((x,y)=>(y.pop||0)-(x.pop||0)).slice(0,12).map(s => `<option value="${esc(s.nom)} (${s.cp[0]||""})">`).join("");
 });
 document.querySelectorAll(".presets button").forEach(b => b.addEventListener("click", () => { const s = num($("f-surface").value) || 0; $("f-travaux").value = Math.round(s * +b.dataset.tm / 100) * 100; preview(); }));
-$("ann-form").addEventListener("input", () => preview());
+$("ann-form").addEventListener("input", e => { preview(); if (e.target.closest("#cmp")) return; clearTimeout(cmpTimer); cmpTimer = setTimeout(comparables, 400); });
 function preview(){
   const a = readForm(), r = evaluate(a), el = $("ann-preview");
   if (!r.ok){ el.innerHTML = `<p class="note">Renseignez le prix, la surface et la commune pour calculer la rentabilité.</p>`; return; }
@@ -1174,6 +1197,60 @@ function preview(){
   ${r.prixMax15!=null?`<p class="note">Prix d'achat maximal pour 15 % brut en ${OPS[r.best].toLowerCase()} : <b>${eur(r.prixMax15)}</b>.</p>`:""}`;
 }
 const cls = v => v >= 9 ? "r-good" : v >= 5 ? "r-mid" : "r-bad";
+
+/* ---------- Ventes comparables (DVF détaillées, sans IA) ---------- */
+const CMP = new Map();   // code commune → Promise des ventes
+function ventes(code){
+  if (!CMP.has(code)) CMP.set(code, fetch("/atlas/api/comparables?code=" + encodeURIComponent(code)).then(r => r.ok ? r.json() : Promise.reject(new Error("indispo"))).catch(e => { CMP.delete(code); throw e; }));
+  return CMP.get(code);
+}
+const distM = (la1, lo1, la2, lo2) => { const R = 6371000, r = Math.PI/180, dLa = (la2-la1)*r, dLo = (lo2-lo1)*r; const h = Math.sin(dLa/2)**2 + Math.cos(la1*r)*Math.cos(la2*r)*Math.sin(dLo/2)**2; return 2*R*Math.asin(Math.sqrt(h)); };
+const quant = (arr, q) => { if (!arr.length) return null; const s = [...arr].sort((x,y)=>x-y), i = (s.length-1)*q, lo = Math.floor(i), hi = Math.ceil(i); return s[lo] + (s[hi]-s[lo])*(i-lo); };
+const dateFr = d => d ? d.slice(8,10) + "/" + d.slice(5,7) + "/" + d.slice(0,4) : "";
+let cmpCode = null, cmpMed = null;
+async function comparables(){
+  const out = $("cmp-out"); if (!editing) return;
+  const a = editing.a, hasPos = a.lat != null && a.lon != null;
+  $("cmp-r").disabled = !hasPos;
+  if (!a.code){ cmpCode = null; out.innerHTML = `<p class="note">Choisissez la commune pour voir les ventes.</p>`; return; }
+  if (cmpCode !== a.code){ cmpCode = a.code; out.innerHTML = `<p class="note">Lecture des ventes de ${esc(communeLabel(a.code))}…</p>`; }
+  let d;
+  try { d = await ventes(a.code); } catch(e){ out.innerHTML = `<p class="note">Les ventes de cette commune sont momentanément indisponibles. Réessayez dans un instant.</p>`; return; }
+  if (!editing || editing.a.code !== d.code) return;
+  const R = hasPos ? +$("cmp-r").value : 0, ans = +$("cmp-y").value;
+  const T = a.type === "maison" ? "M" : a.type === "appartement" ? "A" : null;
+  const since = new Date(); since.setFullYear(since.getFullYear() - ans); const sinceS = since.toISOString().slice(0,10);
+  let rows = d.ventes.filter(v => v[0] >= sinceS);
+  if ($("cmp-t").checked && T) rows = rows.filter(v => v[3] === T);
+  if ($("cmp-s").checked && a.surface) rows = rows.filter(v => v[2] >= a.surface*0.6 && v[2] <= a.surface*1.4);
+  rows = rows.map(v => ({ v, d: hasPos && v[6] != null ? distM(a.lat, a.lon, v[6], v[7]) : null, pm2: v[1]/v[2] }));
+  if (R) rows = rows.filter(x => x.d != null && x.d <= R);
+  rows.sort((x,y) => hasPos && R ? x.d - y.d : (x.v[0] < y.v[0] ? 1 : -1));
+  const where = R ? `à moins de ${R >= 1000 ? R/1000 + " km" : R + " m"}` : "dans la commune";
+  if (!rows.length){ cmpMed = null; out.innerHTML = `<p class="note">0 vente correspondante ${where} sur la période : élargissez le rayon ou décochez un filtre.</p>${hasPos ? "" : `<p class="note">L'annonce n'a pas de position précise : la recherche porte sur toute la commune.</p>`}`; return; }
+  const pm = rows.map(x => x.pm2), med = quant(pm, .5), q1 = quant(pm, .25), q3 = quant(pm, .75);
+  cmpMed = med;
+  const own = a.prix && a.surface ? a.prix / a.surface : null, ecart = own ? (own/med - 1)*100 : null;
+  const val = a.surface ? med * a.surface : null;
+  const NAT = { V: "", F: " · neuf (VEFA)", J: " · adjudication" };
+  out.innerHTML = `<div class="cmp-sum">
+      <div>Ventes ${esc(where)}<b>${nf0.format(rows.length)}</b>${ans} an${ans>1?"s":""}</div>
+      <div>Médiane<b>${nf0.format(med)} €/m²</b>${rows.length >= 4 ? `moitié entre ${nf0.format(q1)} et ${nf0.format(q3)}` : "peu de ventes : à prendre avec prudence"}</div>
+      <div>Annonce<b class="${ecart==null?"":ecart<=-20?"r-good":ecart<=0?"r-mid":"r-bad"}">${own ? (ecart>=0?"+":"−") + nf0.format(Math.abs(ecart)) + " %" : "—"}</b>${own ? nf0.format(own) + " €/m² affichés" : "prix et surface à renseigner"}</div>
+      <div>Valeur à la médiane<b>${val ? eur(val) : "—"}</b>${val && a.prix ? (a.prix < val ? "marge de " + eur(val - a.prix) : "au-dessus de " + eur(a.prix - val)) : "surface à renseigner"}</div>
+    </div>
+    <div class="cmp-tw"><table><thead><tr><th>Date</th><th>Adresse</th><th>Type</th><th>Surface</th><th>Pièces</th><th>Terrain</th><th>Prix</th><th>€/m²</th>${hasPos?"<th>Distance</th>":""}</tr></thead><tbody>
+    ${rows.slice(0, 15).map(({v, d, pm2}) => `<tr><td>${dateFr(v[0])}</td><td>${esc(v[8] || "—")}${NAT[v[9]] || ""}</td><td>${v[3]==="M"?"Maison":"Appart."}</td><td>${nf0.format(v[2])} m²</td><td>${v[4] ?? "—"}</td><td>${v[5] ? nf0.format(v[5]) + " m²" : "—"}</td><td>${eur(v[1])}</td><td>${nf0.format(pm2)}</td>${hasPos?`<td>${d==null?"—":d<1000?nf0.format(Math.round(d/10)*10)+" m":nf1.format(d/1000)+" km"}</td>`:""}</tr>`).join("")}
+    </tbody></table></div>
+    <div class="cmp-act">${val ? `<button type="button" class="ghost" id="cmp-rev">Prendre ${eur(val * 1.05)} comme prix de revente (médiane + 5 %)</button>` : ""}<span class="note">${rows.length > 15 ? `Les 15 ${R ? "plus proches" : "plus récentes"} sur ${nf0.format(rows.length)}. ` : ""}Ventes réelles enregistrées par les notaires (DVF, DGFiP, ${d.annees.length ? d.annees[0] + "–" + d.annees[d.annees.length-1] : ""}), un seul logement par vente. ${hasPos ? "Position de l'annonce approximative sur certains sites." : "Annonce sans position précise : toute la commune."}</span></div>`;
+}
+$("cmp-out").addEventListener("click", e => {
+  if (e.target.id !== "cmp-rev" || !cmpMed || !editing) return;
+  const s = num($("f-surface").value); if (!s) return;
+  $("f-rev").value = Math.round(cmpMed * s * 1.05 / 1000) * 1000; preview();
+});
+["cmp-r","cmp-y","cmp-t","cmp-s"].forEach(id => $(id).addEventListener("change", e => { e.stopPropagation(); comparables(); }));
+let cmpTimer = null;
 function closeEditor(){ $("ann-modal").hidden = true; editing = null; }
 $("ann-close").addEventListener("click", closeEditor); $("ann-cancel").addEventListener("click", closeEditor);
 $("ann-modal").addEventListener("keydown", e => { if (e.key === "Escape") closeEditor(); });
