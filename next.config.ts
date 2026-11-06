@@ -18,11 +18,22 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "5mb",
     },
   },
+  async rewrites() {
+    return [
+      // Atlas immobilier : application autonome servie depuis public/atlas
+      { source: "/atlas", destination: "/atlas/index.html" },
+      { source: "/atlas/ajout", destination: "/atlas/ajout.html" },
+    ];
+  },
   async headers() {
     return [
       {
         source: "/:path*",
         headers: securityHeaders,
+      },
+      {
+        source: "/atlas/data/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
       },
       {
         // « Autour de moi » sur la page Études : la position sert au calcul des distances, dans le navigateur.
