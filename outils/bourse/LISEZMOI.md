@@ -6,13 +6,14 @@ simulateur rendement/risque et constructeur de portefeuille.
 
 ## Données
 
-- **Collecte** : `src/app/bourse/api/collecte/route.ts`, appelée chaque jour par Vercel Cron (`vercel.json`).
-  Chaque passage relève pendant une quarantaine de secondes les titres les plus anciens sur Yahoo Finance
+- **Collecte** : `src/app/bourse/api/collecte/route.ts`, appelée six fois par jour par Vercel Cron (`vercel.json`, une entrée
+  quotidienne par passage). Chaque passage relève pendant un peu plus de trois minutes les titres les plus anciens sur Yahoo Finance
   (bibliothèque `yahoo-finance2`, aucune IA) : fiche (valorisation, comptes, prévisions des analystes) et cours
   hebdomadaires sur cinq ans (depuis 2005 pour les indices et les devises). Puis il recalcule notes, catégories,
   pièges, thèmes, rendements attendus et rendements hebdomadaires en euros (`src/lib/bourse/traitement.ts`).
-- **Univers** : `src/lib/bourse/univers.json` (indices américains et européens) et `src/lib/bourse/config.ts`
-  (ETF, indices de référence, devises, tables de thèmes).
+- **Univers** : `src/lib/bourse/univers.json` (près de 4 900 actions), `src/lib/bourse/univers-etf.json` (près de 3 000 ETF
+  classés par catégorie, zone, durée et couverture) et `src/lib/bourse/config.ts` (ETF de la sélection éditoriale, indices
+  de référence, devises, tables de thèmes). Listes tirées des indices et de FinanceDatabase (base ouverte, licence MIT).
 - **Base Neon** : table `bourse_titres` (relevé brut par titre) et table `bourse_donnees` (données calculées
   `actions`, `rets`, `statut`, et l'espace personnel `etat:*` : suivi, alertes, journal, portefeuilles, réglages).
 - **Atlas par pays** : `src/lib/bourse/atlas.json` et `monde.json` (fond de carte).

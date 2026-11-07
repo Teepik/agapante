@@ -60,7 +60,7 @@ export async function collecter(opts: { budgetMs?: number; traiter?: boolean; re
         }
       }
     };
-    await Promise.all(Array.from({ length: 10 }, travailleur));
+    await Promise.all(Array.from({ length: 8 }, travailleur));
     const restants = dus.filter((d) => !faits.has(d.cle)).map((d) => d.cle).concat(aReprendre);
     await libererEssai(restants);
     bilan.enAttente = restants.length;

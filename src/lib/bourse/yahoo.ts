@@ -9,7 +9,7 @@ const yf = new YahooFinance({
   suppressNotices: ["yahooSurvey", "ripHistorical"],
   versionCheck: false,
   validation: { logErrors: false, logOptionsErrors: false },
-  queue: { concurrency: 10, interval: 35 },
+  queue: { concurrency: 8, interval: 60 },
 });
 const SANS_VALIDATION = { validateResult: false as const };
 
