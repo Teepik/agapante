@@ -184,6 +184,7 @@ Q.scanAdd = (an, Rb, w, cands, a = .05) => {
   const T = Rb[0].length, N = Rb.length, mu = Rb.map(Q.mean);
   const port = new Float64Array(T); for (let t = 0; t < T; t++){ let s = 0; for (let i = 0; i < N; i++) s += w[i] * (Rb[i][t] - mu[i]); port[t] = s; }
   const vP = Q.mean(Array.from(port, x => x * x)), sumWV = w.reduce((s, wi, i) => s + wi * an.vols[i] / 100 / Math.sqrt(52), 0);
+  const volB = Math.sqrt(vP * 52) * 100, enbB = (sumWV / Math.sqrt(Math.max(vP, 1e-16))) ** 2;   // base calculée de la même façon que les ajouts
   const out = [];
   for (const c of cands){
     const r = c.r.slice(c.r.length - T); let n = 0; for (const v of r) if (v === v) n++; if (n < 52) continue;
@@ -191,7 +192,7 @@ Q.scanAdd = (an, Rb, w, cands, a = .05) => {
     let cv = 0, vc = 0; for (let t = 0; t < T; t++){ const d = rc[t] - mc; cv += port[t] * d; vc += d * d; } cv /= T; vc /= T;
     const vN = (1 - a) ** 2 * vP + 2 * a * (1 - a) * cv + a * a * vc;
     const dr = ((1 - a) * sumWV + a * Math.sqrt(vc)) / Math.sqrt(Math.max(vN, 1e-16));
-    out.push({c, enb:dr * dr, vol:Math.sqrt(vN * 52) * 100, rho:cv / Math.sqrt(vP * vc), mu:(1 - a) * an.mu + a * (c.mu || 0)});
+    out.push({c, enb:dr * dr, vol:Math.sqrt(vN * 52) * 100, volB, enbB, rho:cv / Math.sqrt(vP * vc), mu:(1 - a) * an.mu + a * (c.mu || 0)});
   }
   return out;
 };

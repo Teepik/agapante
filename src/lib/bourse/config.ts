@@ -2,7 +2,7 @@
 
 export type Classe =
   | "act_monde" | "act_us" | "act_eu" | "act_jp" | "act_em" | "act_style" | "act_theme" | "act_pays" | "act_secteur"
-  | "monetaire" | "etat" | "credit" | "monde_oblig" | "or" | "matieres" | "immo_cote";
+  | "monetaire" | "etat" | "credit" | "monde_oblig" | "or" | "metal" | "matieres" | "crypto" | "immo_cote";
 
 /** ETF suivis : nom, ISIN, frais annuels (%), classe, éligible au PEA, placement correspondant dans l'atlas. */
 export const ETF: Record<string, [string, string, number, Classe, boolean, string | null]> = {

@@ -319,3 +319,8 @@ table.res.etfT{min-width:1180px}
 table.res.etfT td.cat{white-space:normal;text-align:left;font-family:var(--body);font-size:12px;max-width:260px;color:var(--muted)}
 table.res.etfT th:nth-child(2){text-align:left}
 #etf-bar select{max-width:230px}
+.orow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:center;border-bottom:1px solid var(--line)}
+.orow .rrow{border-bottom:0}
+.orow .v{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.why{display:flex;flex-wrap:wrap;gap:3px;justify-content:flex-end}
+@media (max-width:620px){.orow .rrow{grid-template-columns:minmax(0,1fr)}.orow .v{align-items:flex-start}.why{justify-content:flex-start}}

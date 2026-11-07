@@ -4,7 +4,7 @@ const RISQ = [
   {l:"Dynamique", vol:13}, {l:"Offensif", vol:16}, {l:"Très offensif", vol:19}
 ];
 const OR_PART = [0, .04, .05, .06, .07, .07, .05];
-const CST_DEF = {risque:4, horizon:10, montant:50000, pea:true, geoEU:45, vifs:50, liq:5, profil:"qualite", w:{...PROFILS[1].w}, themes:{}, menaces:true, pieges:true,
+const CST_DEF = {risque:4, horizon:10, montant:50000, pea:true, geoEU:45, vifs:50, liq:5, crypto:0, profil:"qualite", w:{...PROFILS[1].w}, themes:{}, menaces:true, pieges:true,
   sectEx:[], pond:"egale", n:{}, picks:{}};
 let CST = JSON.parse(JSON.stringify(CST_DEF));
 const maxEq = h => h <= 1 ? .1 : h <= 2 ? .25 : h <= 3 ? .35 : h <= 4 ? .45 : h <= 5 ? .55 : h <= 7 ? .7 : h <= 9 ? .85 : 1;
@@ -120,13 +120,20 @@ function cstLists(){
   if (monP.length && eqGuess < 1 && split.monetaire > 0 && ((1 - eqGuess) * split.monetaire >= .025 || nB === 0)) lists.push({id:"mon", titre:"Monétaire", poche:"monetaire", pool:monP, n:1, auto:[monP[0].x], why:"Rémunéré au taux de la BCE (€STR), quasiment sans variation : la réserve de sécurité."});
   const orP = cstPoolSimple("or");
   if (orP.length && OR_PART[CST.risque - 1] > 0 && eqGuess < 1) lists.push({id:"or", titre:"Or", poche:"or", pool:orP, n:1, auto:[orP[0].x], why:"Peu lié aux actions comme aux obligations, l'or amortit les crises d'inflation et les chocs géopolitiques."});
+  if (CST.crypto > 0){
+    const crP = B.E.filter(e => e.cls === "crypto" && (e.hist || 0) >= 52).map(e => ({x:e, s:qualite(e) + (e.spot ? -8 : 10) + (e.cr === "BTC" ? 15 : e.cr === "ETH" ? 8 : e.cr === "PANIER" ? 4 : 0)})).sort((a, b) => b.s - a.s);
+    if (crP.length) lists.push({id:"crypto", titre:"Cryptomonnaies", poche:"crypto", pool:crP, n:CST.n.crypto ?? 1, auto:crP.slice(0, CST.n.crypto ?? 1).map(o => o.x),
+      why:`${CST.crypto} % du portefeuille, retirés de la part défensive puis compensés par la part des actions pour garder la volatilité visée. Un produit coté sur bitcoin passe en tête : il se garde sur un compte-titres, comme une action.`});
+  }
   for (const l of lists){ const man = CST.picks[l.id]; l.sel = man ? man.map(id => B.byId.get(id)).filter(Boolean) : l.auto; l.manual = !!man; }
   return lists;
 }
 /* Poids à l'intérieur de chaque poche, puis part des actions recalée sur la volatilité visée */
 function cstBuild(lists){
   const split = defSplit(CST.horizon), g0 = OR_PART[CST.risque - 1];
-  const inner = {actions:new Map(), obligations:new Map(), monetaire:new Map(), or:new Map()};
+  const inner = {actions:new Map(), obligations:new Map(), monetaire:new Map(), or:new Map(), crypto:new Map()};
+  const crl = lists.find(l => l.id === "crypto"); if (crl && crl.sel.length) crl.sel.forEach(x => inner.crypto.set(x.id, 1 / crl.sel.length));
+  const c0 = inner.crypto.size ? CST.crypto / 100 : 0;
   const st = lists.find(l => l.id === "actions"), et = lists.find(l => l.id === "etf");
   const vifsShare = st && st.sel.length ? (et && et.sel.length ? CST.vifs / 100 : 1) : 0;
   if (st && st.sel.length){ const raw = st.sel.map(x => CST.pond === "vol" && ok(x.vol) ? 1 / Math.max(8, x.vol) : 1), t = raw.reduce((a, b) => a + b, 0); st.sel.forEach((x, i) => inner.actions.set(x.id, vifsShare * raw[i] / t)); }
@@ -141,17 +148,17 @@ function cstBuild(lists){
   const gold = lists.find(l => l.id === "or"); if (gold && gold.sel.length) inner.or.set(gold.sel[0].id, 1);
   const hasB = inner.obligations.size > 0, hasM = inner.monetaire.size > 0, hasO = inner.or.size > 0, hasA = inner.actions.size > 0;
   const defW = {obligations:hasB ? (hasM ? split.etat + split.credit : 1) : 0, monetaire:hasM ? (hasB ? split.monetaire : 1) : 0};
-  const ids = [...new Set([...inner.actions.keys(), ...inner.obligations.keys(), ...inner.monetaire.keys(), ...inner.or.keys()])];
+  const ids = [...new Set([...inner.actions.keys(), ...inner.obligations.keys(), ...inner.monetaire.keys(), ...inner.or.keys(), ...inner.crypto.keys()])];
   if (!ids.length) return null;
-  const weights = e => { const g = hasO ? Math.min(g0, Math.max(0, 1 - e)) : 0, d = Math.max(0, 1 - e - g), sd = defW.obligations + defW.monetaire || 1;
-    return ids.map(id => (inner.actions.get(id) || 0) * (hasA ? e : 0) + (inner.obligations.get(id) || 0) * d * defW.obligations / sd + (inner.monetaire.get(id) || 0) * d * defW.monetaire / sd + (inner.or.get(id) || 0) * g); };
+  const weights = e => { const g = hasO ? Math.min(g0, Math.max(0, 1 - e - c0)) : 0, d = Math.max(0, 1 - e - g - c0), sd = defW.obligations + defW.monetaire || 1;
+    return ids.map(id => (inner.actions.get(id) || 0) * (hasA ? e : 0) + (inner.obligations.get(id) || 0) * d * defW.obligations / sd + (inner.monetaire.get(id) || 0) * d * defW.monetaire / sd + (inner.or.get(id) || 0) * g + (inner.crypto.get(id) || 0) * c0); };
   const ser = ids.map(id => B.R.get(id)), T0 = B.dates.length;
   const Rw = Q.window(ser.map(r => r || new Float64Array(T0).fill(NaN)), 260, 52), cov = Q.covShrink(Rw).sigma;
   const volOf = w => Math.sqrt(Math.max(0, Q.quad(cov, w)) * 52) * 100;
-  const mx = hasA ? maxEq(CST.horizon) : 0, target = RISQ[CST.risque - 1].vol;
+  const mx = hasA ? Math.min(maxEq(CST.horizon), 1 - c0) : 0, target = RISQ[CST.risque - 1].vol;
   let best = 0, bd = Infinity;
-  for (let e = 0; e <= mx + 1e-9; e += .005){ const w = weights(e), s = w.reduce((a, b) => a + b, 0); if (s < .999 && hasA && !(hasB || hasM || hasO)) continue; const d = Math.abs(volOf(w.map(x => x / (s || 1))) - target); if (d < bd){ bd = d; best = e; } }
-  if (hasA && !(hasB || hasM || hasO)) best = 1;
+  for (let e = 0; e <= mx + 1e-9; e += .005){ const w = weights(e), s = w.reduce((a, b) => a + b, 0); if (s < .995 && hasA && !(hasB || hasM || hasO)) continue; const d = Math.abs(volOf(w.map(x => x / (s || 1))) - target); if (d < bd){ bd = d; best = e; } }
+  if (hasA && !(hasB || hasM || hasO)) best = 1 - c0;
   let w = weights(best); const s = w.reduce((a, b) => a + b, 0); w = w.map(x => x / (s || 1));
   return {ids, w, e:best, vol:volOf(w), target, mx, bd};
 }
@@ -179,6 +186,7 @@ function renderConstructeur(){
         <label for="c-h">Horizon (ans)<input id="c-h" type="number" min="1" max="30" step="1" value="${CST.horizon}"></label></div>
       <label class="rg"><span>Part des actions en titres vifs <b>${CST.vifs} %</b><small>le reste en ETF</small></span><input type="range" min="0" max="100" step="10" value="${CST.vifs}" id="c-vifs"></label>
       <label class="rg"><span>Europe dans les actions <b>${CST.pea ? "100 % (PEA)" : CST.geoEU + " %"}</b><small>${CST.pea ? "le PEA n'accepte que des sociétés européennes" : "le reste hors d'Europe (États-Unis, Japon, Canada…)"}</small></span><input type="range" min="0" max="100" step="5" value="${CST.geoEU}" id="c-geo" ${CST.pea ? "disabled" : ""}></label>
+      <label class="rg"><span>Part en cryptomonnaies <b>${CST.crypto} %</b><small>0 % par défaut ; au-delà de 3 %, la volatilité du bitcoin pèse lourd</small></span><input type="range" min="0" max="10" step="1" value="${CST.crypto}" id="c-crypto"></label>
       <label class="field" for="c-liq"><span>Liquidité minimale des actions</span><select id="c-liq">${[[0, "Sans minimum"], [1, "1 M€ échangés par jour"], [5, "5 M€ par jour"], [20, "20 M€ par jour"], [100, "100 M€ par jour (grandes valeurs)"]].map(([v, l]) => `<option value="${v}" ${CST.liq === v ? "selected" : ""}>${l}</option>`).join("")}</select></label>
       <label class="chk"><input type="checkbox" id="c-pea" ${CST.pea ? "checked" : ""}> Actions logées dans un PEA</label>
       <label class="chk"><input type="checkbox" id="c-pg" ${CST.pieges ? "checked" : ""}> Écarter les pièges (value piège, dividende fragile, dette lourde…)</label>
@@ -192,8 +200,8 @@ function renderConstructeur(){
     <div class="stack" id="cst-out"></div></div>`;
   // Réglages
   const upd = () => { CST.picks = {}; cstSave(); renderConstructeur(); };
-  const rg = (id, k) => { const el = $(id); el.oninput = () => { CST[k] = +el.value; el.previousElementSibling.querySelector("b").textContent = k === "risque" ? RISQ[CST.risque - 1].l : CST[k] + " %"; }; el.onchange = () => { if (k !== "risque") CST.n = {}; upd(); }; };
-  rg("#c-risque", "risque"); rg("#c-vifs", "vifs"); rg("#c-geo", "geoEU");
+  const rg = (id, k) => { const el = $(id); el.oninput = () => { CST[k] = +el.value; el.previousElementSibling.querySelector("b").textContent = k === "risque" ? RISQ[CST.risque - 1].l : CST[k] + " %"; }; el.onchange = () => { CST[k] = +el.value; if (k !== "risque" && k !== "crypto") CST.n = {}; upd(); }; };
+  rg("#c-risque", "risque"); rg("#c-vifs", "vifs"); rg("#c-geo", "geoEU"); rg("#c-crypto", "crypto");
   $("#c-m").onchange = e => { CST.montant = Math.max(1000, +e.target.value || 1000); CST.n = {}; upd(); };
   $("#c-h").onchange = e => { CST.horizon = clamp(Math.round(+e.target.value || 1), 1, 30); upd(); };
   $("#c-liq").oninput = e => { CST.liq = +e.target.value; upd(); };
@@ -225,7 +233,7 @@ function renderCstOut(lists, built){
   const check = (good, l, v, c) => `<div class="chk2 ${good === true ? "good" : good === false ? "bad" : "neu"}"><i></i><div><b>${l}</b> <span>${v}</span>${c ? `<small>${c}</small>` : ""}</div></div>`;
   out.innerHTML = `
     <div class="card"><div class="btnrow" style="justify-content:space-between"><h2>Allocation proposée</h2><button class="primary" id="c-create">Créer ce portefeuille fictif</button></div>
-      <div class="alloc">${["actions", "obligations", "monetaire", "or"].filter(k => poches[k] > 1e-4).map(k => `<div title="${POCHE_L[k]} : ${nf0.format(poches[k] * 100)} %" style="--w:${poches[k] * 100}%;--c:var(${{actions:"--c2", obligations:"--c1", monetaire:"--c5", or:"--c4"}[k]})"><b>${POCHE_L[k]}</b><span>${nf0.format(poches[k] * 100)} % · ${F.eur(poches[k] * M)}</span></div>`).join("")}</div>
+      <div class="alloc">${["actions", "obligations", "monetaire", "or", "crypto"].filter(k => poches[k] > 1e-4).map(k => `<div title="${POCHE_L[k]} : ${nf0.format(poches[k] * 100)} %" style="--w:${poches[k] * 100}%;--c:var(${{actions:"--c2", obligations:"--c1", monetaire:"--c5", or:"--c4", crypto:"--c3"}[k]})"><b>${POCHE_L[k]}</b><span>${nf0.format(poches[k] * 100)} % · ${F.eur(poches[k] * M)}</span></div>`).join("")}</div>
       <div class="checks">
         ${check(okVol, "Volatilité estimée", `${nf1.format(built.vol)} % pour ${nf1.format(built.target)} % visés`, okVol ? "" : built.e >= built.mx - .001 ? `Plafond de ${nf0.format(built.mx * 100)} % d'actions pour un horizon de ${CST.horizon} an${CST.horizon > 1 ? "s" : ""}.` : "Cible hors d'atteinte avec ces lignes : changez le style ou la part en titres vifs.")}
         ${check(an.enb >= Math.min(6, L.length * .5), "Paris indépendants", nf1.format(an.enb) + " pour " + L.length + " lignes", `facteur dominant : ${nf0.format(an.pc1 * 100)} % du risque`)}

@@ -1,5 +1,5 @@
 /* ================= Navigation et démarrage ================= */
-const VIEWS = ["carte","actions","etf","ruptures","portefeuille","constructeur","comparateur","taux","suivi","methode"];
+const VIEWS = ["carte","actions","opportunites","etf","ruptures","portefeuille","constructeur","comparateur","taux","suivi","methode"];
 let CUR = "carte";
 function go(v, push = true){
   if (!VIEWS.includes(v)) v = "carte";
@@ -11,6 +11,7 @@ function go(v, push = true){
   if (v === "carte") drawMap();
   if (v === "actions") renderActions();
   if (v === "etf") renderEtf();
+  if (v === "opportunites") renderOpportunites();
   if (v === "ruptures") renderRuptures();
   if (v === "portefeuille") renderPortefeuille();
   if (v === "constructeur") renderConstructeur();

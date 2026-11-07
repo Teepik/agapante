@@ -15,10 +15,12 @@ const CATS = ["Croissance à prix raisonnable","Qualité et croissance","Croissa
 const CAT_C = {"Croissance à prix raisonnable":"--c5","Qualité et croissance":"--c1","Croissance":"--c3","Qualité":"--c1","Value":"--c4","Momentum":"--c2","Défensive":"--c5","Rendement":"--c6","Redressement":"--c2","Profil équilibré":"--muted"};
 const CLS_L = {act_monde:"Actions monde", act_us:"Actions États-Unis", act_eu:"Actions Europe", act_jp:"Actions Japon", act_em:"Actions émergentes", act_pays:"Actions d'un pays ou d'une région",
   act_secteur:"Actions sectorielles", act_style:"Actions, facteur de style", act_theme:"Actions thématiques", monetaire:"Monétaire", etat:"Obligations d'État euro",
-  credit:"Obligations d'entreprise euro", monde_oblig:"Obligations hors euro", or:"Or", matieres:"Matières premières", immo_cote:"Immobilier coté", action:"Action"};
+  credit:"Obligations d'entreprise euro", monde_oblig:"Obligations hors euro", or:"Or", metal:"Métaux précieux", matieres:"Matières premières", crypto:"Cryptomonnaies", immo_cote:"Immobilier coté", action:"Action"};
 const POCHE = {act_monde:"actions", act_us:"actions", act_eu:"actions", act_jp:"actions", act_em:"actions", act_pays:"actions", act_secteur:"actions", act_style:"actions", act_theme:"actions", action:"actions",
-  monetaire:"monetaire", etat:"obligations", credit:"obligations", monde_oblig:"obligations", or:"or", matieres:"or", immo_cote:"actions"};
-const POCHE_L = {actions:"Actions", obligations:"Obligations", monetaire:"Monétaire", or:"Or et matières premières"};
+  monetaire:"monetaire", etat:"obligations", credit:"obligations", monde_oblig:"obligations", or:"or", metal:"or", matieres:"or", crypto:"crypto", immo_cote:"actions"};
+const POCHE_L = {actions:"Actions", obligations:"Obligations", monetaire:"Monétaire", or:"Or et matières premières", crypto:"Cryptomonnaies"};
+const MET_L = {argent:"argent", platine:"platine", palladium:"palladium", panier:"panier de métaux précieux"};
+const CR_L = {BTC:"bitcoin", ETH:"ether", SOL:"solana", XRP:"XRP", PANIER:"panier de cryptomonnaies"};
 const ZONE_L = {all:"Toutes", eu:"Europe", us:"États-Unis", jp:"Japon", ca:"Canada", au:"Australie", autres:"Autres pays"};
 const BT_L = {gov:"d'État", corp:"d'entreprises de qualité", hy:"à haut rendement", infl:"indexées sur l'inflation", em:"émergentes", agg:"diversifiées", float:"à taux variable"};
 const BC_L = {USD:"en dollars", GBP:"en livres", GLOBAL:"du monde entier", EMLOC:"en devises locales", CNY:"en yuans"};
@@ -66,10 +68,10 @@ function muEtf(e){
   if (pl) reel = reelDe(pl.r(X)) + (ETF_ADJ[e.id] || 0);
   else if (POCHE[e.cls] === "obligations" || e.cls === "monetaire") reel = e.cls === "monetaire" && !e.bt ? reelDe(ESTR) : reelDe(bondNominal(e));
   else if (e.cls === "or") reel = reelDe(PLI.or.r(X));
-  else if (e.cls === "matieres") reel = 0;
+  else if (e.cls === "matieres" || e.cls === "metal" || e.cls === "crypto") reel = 0;
   else if (e.cls === "immo_cote") reel = basketEY(geoWeights(e.geo || "EUROPE")) - .5;
   else { const w = geoWeights(e.geo); reel = basketEY(w) + (STY_ADJ[e.sty] || 0) + (e.cls === "act_theme" ? -1 : 0); }
-  return reel - (ok(e.ter) ? e.ter : .3);
+  return reel - (ok(e.ter) ? e.ter : e.spot ? 0 : .3);
 }
 /* Rendements hebdomadaires chargés à la demande */
 const R_ATTENTE = new Map();
@@ -119,7 +121,7 @@ async function loadBourse(){
     console.error(err);
   }
   $("#b-date").textContent = B.etat === "pret" ? `${nf0.format(B.A.length)} actions et ${nf0.format(B.E.length)} ETF · cours au ${new Date(B.meta.fin).toLocaleDateString("fr-FR", {day:"numeric", month:"long", year:"numeric"})}` : "";
-  if (["actions","etf","ruptures","portefeuille","constructeur","suivi"].includes(CUR)) go(CUR, false);
+  if (["actions","opportunites","etf","ruptures","portefeuille","constructeur","suivi"].includes(CUR)) go(CUR, false);
 }
 /* Rafraîchit les rendements attendus des ETF quand le foyer (inflation, hypothèse) change */
 function refreshMuEtf(){ for (const e of B.E) e.mu = muEtf(e); }
@@ -155,6 +157,8 @@ function etfSousTitre(e){
   if (e.cls === "act_secteur") return `Actions · ${SEC_FR[e.sec] || e.sec || "secteur"}${e.geo ? " · " + geoL(e.geo) : ""}`;
   if (e.cls === "act_style" && e.sty) return `Actions · ${STY_ETF[e.sty]}${e.geo ? " · " + geoL(e.geo) : ""}`;
   if (e.cls === "act_pays") return `Actions · ${geoL(e.geo)}`;
+  if (e.cls === "metal") return `Métaux précieux · ${MET_L[e.met] || "physique"}`;
+  if (e.cls === "crypto") return `Cryptomonnaies · ${CR_L[e.cr] || ""}${e.spot ? " · détention en direct" : " · produit coté (ETP)"}`;
   return CLS_L[e.cls] || e.cls;
 }
 const GEO_N = {WORLD:"monde", EUROPE:"Europe", EMU:"zone euro", EM:"émergents", US:"États-Unis", NORDIC:"pays nordiques", LATAM:"Amérique latine", APXJ:"Asie-Pacifique hors Japon"};

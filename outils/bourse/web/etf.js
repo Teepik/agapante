@@ -12,7 +12,7 @@ const ETF_COLS = [
   {k:"T", l:"Durée", tip:"Durée ou échéance des obligations, en années", asc:true},
   {k:"sig", l:"", t:"txt"}
 ];
-function etfGeo(e){ return POCHE[e.cls] === "obligations" || e.cls === "monetaire" ? (e.bp || (e.bc === "USD" ? "US" : e.bc === "GLOBAL" ? "WORLD" : e.bc === "EMLOC" ? "EM" : e.bc === "GBP" ? "GB" : "EMU")) : e.geo || (e.cls === "act_us" ? "US" : e.cls === "act_eu" ? "EUROPE" : e.cls === "act_jp" ? "JP" : e.cls === "act_em" ? "EM" : e.cls === "act_monde" ? "WORLD" : null); }
+function etfGeo(e){ if (["crypto", "metal", "or", "matieres"].includes(e.cls)) return null; return POCHE[e.cls] === "obligations" || e.cls === "monetaire" ? (e.bp || (e.bc === "USD" ? "US" : e.bc === "GLOBAL" ? "WORLD" : e.bc === "EMLOC" ? "EM" : e.bc === "GBP" ? "GB" : "EMU")) : e.geo || (e.cls === "act_us" ? "US" : e.cls === "act_eu" ? "EUROPE" : e.cls === "act_jp" ? "JP" : e.cls === "act_em" ? "EM" : e.cls === "act_monde" ? "WORLD" : null); }
 function initEtf(){
   const cls = [...new Set(B.E.map(e => e.cls))].sort((a, b) => Object.keys(CLS_L).indexOf(a) - Object.keys(CLS_L).indexOf(b));
   $("#etf-cls").innerHTML = `<option value="all">Toutes</option>` + cls.map(c => `<option value="${c}">${esc(CLS_L[c] || c)}</option>`).join("");

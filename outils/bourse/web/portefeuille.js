@@ -33,8 +33,8 @@ function realized(id, a, b){
   return n >= 3 ? (v - 1) * 100 : null;
 }
 const FIXED_SHOCK = {
-  "2008":{monetaire:5, etat:9, credit:-4, monde_oblig:20, matieres:-45, hy:-28, infl:3, em:0, float:2, "EUNW.DE":-28, "IBCI.DE":3, "IUS7.DE":0},
-  "2020":{monetaire:0, etat:-2, credit:-7, monde_oblig:3, matieres:-20, hy:-17, infl:-5, em:-15, float:-2, "EUNW.DE":-17, "IBCI.DE":-5, "IUS7.DE":-15}
+  "2008":{monetaire:5, etat:9, credit:-4, monde_oblig:20, matieres:-45, metal:-10, hy:-28, infl:3, em:0, float:2, "EUNW.DE":-28, "IBCI.DE":3, "IUS7.DE":0},
+  "2020":{monetaire:0, etat:-2, credit:-7, monde_oblig:3, matieres:-20, metal:-25, crypto:-35, hy:-17, infl:-5, em:-15, float:-2, "EUNW.DE":-17, "IBCI.DE":-5, "IUS7.DE":-15}
 };
 function shockOf(x, ep){
   const C = B.chocs[ep]; if (!C) return null;
@@ -55,9 +55,9 @@ function shockOf(x, ep){
 }
 const SCEN = [
   {id:"ia", l:"L'enthousiasme pour l'IA retombe", d:"Gagnants directs de l'IA −40 %, indirects −25 %, le reste du marché −10 % (selon son bêta), obligations d'État +3 %.",
-    f:x => x.kind === "etf" && POCHE[x.cls] !== "actions" ? (x.cls === "etat" ? 3 : x.cls === "or" ? 5 : 0) : ((x.th || {}).ia >= 2 ? -40 : (x.th || {}).ia === 1 ? -25 : -10 * (ok(x.beta) ? x.beta : 1))},
+    f:x => x.cls === "crypto" ? -25 : x.kind === "etf" && POCHE[x.cls] !== "actions" ? (x.cls === "etat" ? 3 : x.cls === "or" ? 5 : 0) : ((x.th || {}).ia >= 2 ? -40 : (x.th || {}).ia === 1 ? -25 : -10 * (ok(x.beta) ? x.beta : 1))},
   {id:"tw", l:"Blocus de Taïwan", d:"Sociétés très dépendantes de la Chine ou de Taïwan −35 %, exposées −20 %, le reste −15 % (selon son bêta), or +12 %, obligations d'État +4 %.",
-    f:x => x.kind === "etf" && POCHE[x.cls] !== "actions" ? (x.cls === "etat" ? 4 : x.cls === "or" ? 12 : x.cls === "credit" ? -4 : 0) : ((x.th || {}).chine <= -2 ? -35 : (x.th || {}).chine === -1 ? -20 : -15 * (ok(x.beta) ? x.beta : 1))},
+    f:x => x.cls === "crypto" ? -20 : x.kind === "etf" && POCHE[x.cls] !== "actions" ? (x.cls === "etat" ? 4 : x.cls === "or" ? 12 : x.cls === "metal" ? 8 : x.cls === "credit" ? -4 : 0) : ((x.th || {}).chine <= -2 ? -35 : (x.th || {}).chine === -1 ? -20 : -15 * (ok(x.beta) ? x.beta : 1))},
   {id:"paix", l:"Paix durable en Europe de l'Est", d:"Défense −25 % (directs) et −12 % (indirects) ; le reste du marché +4 % (selon son bêta).",
     f:x => x.kind === "etf" && POCHE[x.cls] !== "actions" ? 0 : ((x.th || {}).defense >= 2 ? -25 : (x.th || {}).defense === 1 ? -12 : 4 * (ok(x.beta) ? x.beta : 1))}
 ];
@@ -70,10 +70,10 @@ function lookThrough(L){
     const ob = POCHE[x.cls] === "obligations" || x.cls === "monetaire";
     const zw = ETF_ZONE_US[x.id] ? {US:1} : x.ed ? (W_ZONE[x.cls] || {_:1})
       : ob ? (x.bp ? {[x.bp]:1} : x.bc === "USD" ? {US:1} : x.bc === "GLOBAL" ? {US:.45, EZ:.3, JP:.1, _:.15} : x.bc === "GBP" ? {GB:1} : x.bc === "EMLOC" ? W_EM : x.bc === "CNY" ? {CN:1} : {EZ:1})
-      : x.cls === "or" ? {OR:1} : x.cls === "matieres" ? {MP:1} : geoWeights(x.geo);
+      : x.cls === "or" ? {OR:1} : x.cls === "metal" ? {MET:1} : x.cls === "matieres" ? {MP:1} : x.cls === "crypto" ? {CR:1} : geoWeights(x.geo);
     for (const [k, v] of Object.entries(zw)){
-      const nm = k === "_" ? "Autres pays" : k === "EZ" ? "Zone euro (obligations, monétaire)" : k === "OR" ? "Or" : k === "MP" ? "Matières premières" : (P[k] ? P[k].nom : k);
-      add(pays, nm, w * v); add(ccy, x.hdg ? "EUR" : k === "MP" ? "USD (matières premières)" : CCY_OF[k] || (P[k] && P[k].ccy) || "Autres devises", w * v);
+      const nm = k === "_" ? "Autres pays" : k === "EZ" ? "Zone euro (obligations, monétaire)" : k === "OR" ? "Or" : k === "MET" ? "Métaux précieux" : k === "MP" ? "Matières premières" : k === "CR" ? "Cryptomonnaies" : (P[k] ? P[k].nom : k);
+      add(pays, nm, w * v); add(ccy, x.hdg ? "EUR" : k === "MP" || k === "MET" ? "USD (matières premières)" : k === "CR" ? "Cryptomonnaies" : CCY_OF[k] || (P[k] && P[k].ccy) || "Autres devises", w * v);
     }
     add(sect, x.cls === "act_secteur" && x.sec ? (SEC_FR[x.sec] || x.sec) : POCHE[x.cls] === "actions" ? "ETF actions (diversifié)" : POCHE_L[POCHE[x.cls]], w);
     add(cat, CLS_L[x.cls], w);
@@ -245,7 +245,7 @@ function renderPfAnalyse(p, L, an){
     <div class="card"><h2>Pistes d'amélioration</h2>
       ${heavy.length ? `<div class="callout">${heavy.slice(0, 4).map(o => `<b>${esc(o.x.nom)}</b> pèse ${nf0.format(o.rc * 100)} % du risque pour ${nf0.format(o.w * 100)} % du poids`).join(" ; ")}. Alléger ces lignes réduit le risque plus que les autres.</div>` : ""}
       ${scan.length ? `<h3>Ajouts qui diversifient le plus (5 % du portefeuille)</h3><div class="tblwrap" style="border:0"><table class="t" style="min-width:520px"><thead><tr><th>Ajout</th><th class="n">Paris indép.</th><th class="n">Volatilité</th><th class="n">Rdt réel att.</th><th class="n">Corrélation</th><th></th></tr></thead><tbody>
-        ${scan.map(o => `<tr><td><button class="lk" data-f="${esc(o.c.id)}">${esc(o.c.x.nom)}</button><span class="cmp" style="display:block;margin:0">${assetLabel(o.c.x)}</span></td><td class="n">${nf1.format(an.enb)} → <b>${nf1.format(o.enb)}</b></td><td class="n">${nf1.format(o.vol)} %</td><td class="n">${F.pct(o.mu)}</td><td class="n">${nf2.format(o.rho)}</td>
+        ${scan.map(o => `<tr><td><button class="lk" data-f="${esc(o.c.id)}">${esc(o.c.x.nom)}</button><span class="cmp" style="display:block;margin:0">${assetLabel(o.c.x)}</span></td><td class="n">${nf1.format(o.enbB)} → <b>${nf1.format(o.enb)}</b></td><td class="n">${nf1.format(o.volB)} → ${nf1.format(o.vol)} %</td><td class="n">${F.pct(o.mu)}</td><td class="n">${nf2.format(o.rho)}</td>
           <td class="n"><button class="ghost small" data-add="${esc(o.c.id)}">Ajouter</button></td></tr>`).join("")}</tbody></table></div>` : ""}
     </div>`;
   $$("#pf-an [data-f]").forEach(b => b.onclick = () => openFiche(b.dataset.f));
