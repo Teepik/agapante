@@ -111,7 +111,8 @@ function anCalc(d, x){
   const g = (c, k) => c && ok(c[k]) ? c[k] : null;
   const div = (a, b) => ok(a) && ok(b) && b !== 0 ? a / b : null;
   const somme = (cs, f) => { let s = 0, m = 0; for (const c of cs){ const v = f(c); if (ok(v)){ s += v; m++; } } return m ? s : null; };
-  const fin = x && x.secteur === "Finance";
+  // Banques, assureurs, marchés de capitaux : bilan et flux de trésorerie d'une autre nature (dépôts, primes, titres)
+  const fin = !!x && (x.industrie ? /bank|insurance|mortgage|capital markets/i.test(x.industrie) : x.secteur === "Finance");
   const rev = c => g(c, "totalRevenue"), ni = c => g(c, "netIncomeCommonStockholders") ?? g(c, "netIncome");
   const cash = c => g(c, "cashCashEquivalentsAndShortTermInvestments") ?? g(c, "cashAndCashEquivalents");
   const intang = c => g(c, "goodwillAndOtherIntangibleAssets") ?? (ok(g(c, "goodwill")) || ok(g(c, "otherIntangibleAssets")) ? (g(c, "goodwill") || 0) + (g(c, "otherIntangibleAssets") || 0) : null);
@@ -397,10 +398,10 @@ function renderAnChiffres(d, x, data){
     ${K.n ? `<div class="kpis k3">
       ${k("Score de Piotroski", ok(K.pioS) ? `${K.pioS} / ${K.pioN}` : "—", "solidité et amélioration des comptes, sur 9 critères", K.pioS >= 7 ? "good" : K.pioS <= 3 ? "bad" : "")}
       ${k("Altman Z''", fmt(K.z, v => nf1.format(v)), zL, ok(K.z) ? (K.z > 2.6 ? "good" : K.z < 1.1 ? "bad" : "") : "")}
-      ${k("Trésorerie disponible / bénéfice", (() => { const c3 = K.C.slice(-3), f = c3.reduce((s, c) => s + (K.f.fcf(c) || 0), 0), n = c3.reduce((s, c) => s + (K.f.ni(c) || 0), 0); return n > 0 ? anP(f / n) : "—"; })(), "sur trois ans ; au-delà de 90 %, un bénéfice bien réel")}
+      ${K.fin ? k("Trésorerie disponible / bénéfice", "—", "sans objet pour une banque ou un assureur") : k("Trésorerie disponible / bénéfice", (() => { const c3 = K.C.slice(-3), f = c3.reduce((s, c) => s + (K.f.fcf(c) || 0), 0), n = c3.reduce((s, c) => s + (K.f.ni(c) || 0), 0); return n > 0 ? anP(f / n) : "—"; })(), "sur trois ans ; au-delà de 90 %, un bénéfice bien réel")}
       ${k("Nombre d'actions", ok(dsh) ? F.pctS(dsh * 100) : "—", K.n >= 2 ? `en ${K.n - 1} an${K.n > 2 ? "s" : ""} : ${ok(dsh) && dsh > 0 ? "dilution" : "relution par les rachats"}` : "")}
       ${k("Rentabilité du capital investi", anP(K.f.roic(L)), "dernier exercice, après impôt")}
-      ${k("Distribué aux actionnaires", ok(distrib) ? anP(distrib) : "—", al ? `de la trésorerie disponible sur ${al.n} ans` : "")}</div>
+      ${K.fin ? k("Dividendes et rachats", al ? anM((al.div || 0) + (al.rach || 0)) + " " + dev : "—", al ? `sur ${al.n} ans` : "") : k("Distribué aux actionnaires", ok(distrib) ? anP(distrib) : "—", al ? `de la trésorerie disponible sur ${al.n} ans` : "")}</div>
       ${K.flags.length || K.forces.length ? `<div class="det"><div><h3>Signaux d'alerte</h3>${K.flags.length ? K.flags.map(([t, s]) => `<div class="sigl bad"><b>${esc(t)}</b><span>${esc(s)}</span></div>`).join("") : '<p class="note">Rien de saillant dans les comptes.</p>'}</div>
         <div><h3>Points forts</h3>${K.forces.length ? K.forces.map(([t, s]) => `<div class="sigl good"><b>${esc(t)}</b><span>${esc(s)}</span></div>`).join("") : '<p class="note">Rien de saillant dans les comptes.</p>'}</div></div>` : ""}
       <h3>Bilan : ce qu'elle possède, ce qu'elle doit</h3>${anTable(K, T.bilan)}
