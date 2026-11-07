@@ -313,7 +313,7 @@ export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: 
 
   /* ---- ETF : liste éditoriale, puis ETF découverts (classement fait à la constitution de l'univers) ---- */
   const etf: Record<string, unknown>[] = [];
-  const vus = new Set<string>();
+  const vus = new Set<string>(actions.map((a) => a.id as string));
   const ajouterEtf = (id: string, meta: Record<string, unknown>) => {
     const r = R.get(id);
     if (!r || vus.has(id)) return;

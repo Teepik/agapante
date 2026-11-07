@@ -245,8 +245,10 @@ const valeurHisto = (o: Fiche, champ: string, t: string): unknown => {
   if (typeof v !== "number" || !Number.isFinite(v)) return null;
   return t === "smallint" ? Math.max(-32000, Math.min(32000, Math.round(v))) : v;
 };
-export async function ecrireHisto(semaine: string, lignes: { type: "a" | "e"; o: Fiche }[]) {
+export async function ecrireHisto(semaine: string, toutes: { type: "a" | "e"; o: Fiche }[]) {
   const sql = getSql();
+  const vus = new Set<string>();
+  const lignes = toutes.filter((l) => { const id = String(l.o.id); if (vus.has(id)) return false; vus.add(id); return true; });
   const noms = HISTO_COLS.map((c) => c[0]);
   const texte = `
     INSERT INTO bourse_histo (semaine, id, type, ${noms.join(", ")})
