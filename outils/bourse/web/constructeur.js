@@ -74,7 +74,7 @@ function cstEtfPool(){
 }
 function cstBondPool(){
   const infl = CMP.infl === "installee" || CMP.infl === "choc";
-  const score = e => ({"EUNH.DE":90, "DBXN.DE":70, "IBCI.DE":infl ? 85 : 55, "EUN5.DE":88, "EUNW.DE":CST.risque >= 5 ? 60 : 30, "SXRM.DE":CST.risque >= 4 ? 62 : 45, "IUS7.DE":CST.risque >= 6 ? 50 : 25}[e.id] || 20);
+  const score = e => ({"EUNH.DE":90, "IBCI.DE":infl ? 85 : 55, "EUN5.DE":88, "EUNW.DE":CST.risque >= 5 ? 60 : 30, "SXRM.DE":CST.risque >= 4 ? 62 : 45, "IUS7.DE":CST.risque >= 6 ? 50 : 25}[e.id] || 20);
   return B.E.filter(e => POCHE[e.cls] === "obligations").map(e => ({x:e, s:score(e)})).sort((a, b) => b.s - a.s);
 }
 function cstLists(){

@@ -33,7 +33,6 @@ export const ETF: Record<string, [string, string, number, Classe, boolean, strin
   "DFEN.DE": ["VanEck Defense", "IE000YYE6WK5", 0.55, "act_theme", false, "europe"],
   "CSH2.PA": ["Amundi Smart Overnight Return (€STR)", "LU1190417599", 0.1, "monetaire", false, "monetaire"],
   "EUNH.DE": ["iShares Core € Govt Bond", "IE00B4WXJJ64", 0.07, "etat", false, "etfGov"],
-  "DBXN.DE": ["Xtrackers II Eurozone Government Bond", "LU0290355717", 0.15, "etat", false, "etfGov"],
   "IBCI.DE": ["iShares € Inflation Linked Govt Bond", "IE00B0M62X26", 0.09, "etat", false, "etfGov"],
   "EUN5.DE": ["iShares Core € Corp Bond", "IE00B3F81R35", 0.09, "credit", false, "etfIG"],
   "EUNW.DE": ["iShares € High Yield Corp Bond", "IE00B66F4759", 0.5, "credit", false, "etfHY"],
