@@ -187,7 +187,7 @@ function anCalc(d, x){
     if (!(e > 0)) F_.push(["Intérêts sans résultat pour les payer", "Le résultat d'exploitation est nul ou négatif alors que la dette coûte des intérêts."]);
     else if (L.interestExpense / e > .3) F_.push(["Charge d'intérêts lourde", `Les intérêts absorbent ${pc(L.interestExpense / e)} du résultat d'exploitation.`]); }
   if (!fin){ const cx = somme(der3, capex), am = somme(der3, c => g(c, "reconciledDepreciation"));
-    if (cx > 0 && am > 0 && cx < .8 * am) F_.push(["Investissements sous l'usure", `Investissements : ${pc(cx / am)} des amortissements sur ${der3.length} ans. L'outil vieillit, ou les bénéfices sont flattés par des économies difficiles à prolonger.`]); }
+    if (cx > 0 && am > 0 && cx < .7 * am) F_.push(["Investissements sous l'usure", `Investissements : ${pc(cx / am)} des amortissements sur ${der3.length} ans. L'outil vieillit, ou les bénéfices sont flattés par des économies difficiles à prolonger. En normes IFRS, une partie des amortissements vient des loyers : à vérifier dans le rapport annuel.`]); }
   const rc = C.map(roic).filter(ok);
   if (rc.length >= 3){ const m = rc.reduce((s, v) => s + v, 0) / rc.length; if (m > .15) G.push(["Capital investi très rentable", `Rentabilité du capital investi de ${pc(m)} en moyenne après impôt : chaque euro réinvesti crée de la valeur.`]); else if (m < .06 && !fin) F_.push(["Capital investi peu rentable", `Rentabilité du capital investi de ${pc(m)} en moyenne, sous le coût du capital : la croissance détruit de la valeur.`]); }
   // Actions, rachats, dilution
@@ -209,6 +209,8 @@ function anCalc(d, x){
   if (ok(ai.net) && ai.net > 0 && (ai.nbAchats || 0) >= 2) G.push(["Achats d'initiés", `${ai.nbAchats} achats de dirigeants ou d'administrateurs sur six mois.`]);
   if (act.initiés >= .05) G.push(["Dirigeants actionnaires", `Initiés : ${nf1.format(act.initiés * 100)} % du capital. Leur intérêt rejoint celui des actionnaires, à condition de vérifier qui contrôle vraiment.`]);
   if (rk.global >= 8) F_.push(["Gouvernance à risque", `Note de risque de gouvernance ISS de ${rk.global} sur 10${rk.remuneration >= 8 ? ", rémunération des dirigeants signalée" : ""}${rk.actionnaires >= 8 ? ", droits des actionnaires limités" : ""}.`]);
+  else if ([["remuneration", "rémunération des dirigeants"], ["actionnaires", "droits des actionnaires"], ["conseil", "conseil d'administration"], ["audit", "audit et contrôle"]].some(([c]) => rk[c] >= 9))
+    F_.push(["Gouvernance à surveiller", `Notes de risque ISS de 9 ou 10 sur 10 pour ${[["remuneration", "rémunération des dirigeants"], ["actionnaires", "droits des actionnaires"], ["conseil", "conseil d'administration"], ["audit", "audit et contrôle"]].filter(([c]) => rk[c] >= 9).map(([c, l]) => `${l} (${rk[c]})`).join(", ")}.`]);
   else if (ok(rk.global) && rk.global <= 3) G.push(["Gouvernance solide", `Note de risque de gouvernance ISS de ${rk.global} sur 10.`]);
   return out;
 }
