@@ -123,3 +123,25 @@ export async function releverTitre(l: Ligne): Promise<Releve> {
   if (h.vol13 !== null) f.vol13 = Math.round(h.vol13);
   return { sym, fiche: f, serie: h.serie };
 }
+
+/** Diagnostic d'un symbole ou d'un ISIN (route de collecte, paramètres ?test= et ?isin=). */
+export async function diagnostic(opts: { sym?: string; isin?: string }) {
+  const out: Record<string, unknown> = {};
+  if (opts.isin) {
+    const r = (await yf.search(opts.isin, { quotesCount: 10, newsCount: 0 }, SANS_VALIDATION)) as unknown as { quotes?: Obj[] };
+    out.recherche = (r.quotes ?? []).map((q) => ({ symbol: q.symbol, exchange: q.exchange, quoteType: q.quoteType, nom: q.shortname ?? q.longname }));
+    out.resolu = await resoudreIsin(opts.isin);
+  }
+  if (opts.sym) {
+    const depuis = new Date(Date.now() - (5 * 365.25 + 21) * 864e5);
+    const brut = (await yf.chart(opts.sym, { period1: depuis, interval: "1wk" }, SANS_VALIDATION)) as unknown as { meta?: Obj; quotes?: Obj[] };
+    const q = brut.quotes ?? [];
+    out.points = q.length;
+    out.premiers = q.slice(0, 2);
+    out.derniers = q.slice(-2);
+    out.meta = brut.meta ? { currency: brut.meta.currency, exchangeName: brut.meta.exchangeName, firstTradeDate: brut.meta.firstTradeDate, dataGranularity: brut.meta.dataGranularity, range: brut.meta.range } : null;
+    const h = await serieHebdo(opts.sym, depuis);
+    out.semaines = h.serie.t.length;
+  }
+  return out;
+}

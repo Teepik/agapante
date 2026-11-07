@@ -1,6 +1,7 @@
 import { accesCollecte, ENTETES_PRIVEES } from "@/lib/bourse/acces";
 import { collecter } from "@/lib/bourse/collecte";
 import { erreursRecentes, etatCollecte, schemaBourse } from "@/lib/bourse/stockage";
+import { diagnostic } from "@/lib/bourse/yahoo";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -14,6 +15,9 @@ export async function GET(req: Request) {
   if (!(await accesCollecte(req))) return new Response("Non autorisé", { status: 401 });
   const q = new URL(req.url).searchParams;
   try {
+    if (q.get("test") || q.get("isin")) {
+      return Response.json(await diagnostic({ sym: q.get("test") ?? undefined, isin: q.get("isin") ?? undefined }), { headers: ENTETES_PRIVEES });
+    }
     if (q.get("etat") === "1") {
       await schemaBourse();
       return Response.json({ etat: await etatCollecte(), erreurs: await erreursRecentes() }, { headers: ENTETES_PRIVEES });
