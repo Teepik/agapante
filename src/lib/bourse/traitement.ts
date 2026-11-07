@@ -103,7 +103,10 @@ export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: 
     const r: Num[] = [];
     for (let i = 1; i < T; i++) {
       const a = p[i - 1], b = p[i];
-      r.push(Number.isFinite(a) && Number.isFinite(b) ? (1 + b / a - 1) * (1 + fx[i]) - 1 : NaN);
+      let x = Number.isFinite(a) && Number.isFinite(b) ? b / a - 1 : NaN;
+      // Erreurs de cotation (pic isolé, passage pence ↔ livre) : un titre ne double pas et ne perd pas 60 % en une semaine sans nouvelle majeure
+      if (x > 1 || x < -0.6) x = 0;
+      r.push(Number.isFinite(x) ? (1 + x) * (1 + fx[i]) - 1 : NaN);
     }
     R.set(l.sym!, r);
   }
@@ -170,8 +173,10 @@ export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: 
     const liq = vol13 > 0 && price > 0 ? (vol13 / 5) * price * fxe : NaN;
     const paysEn = (f.country as string) || l.univ?.p || (l.univ?.r === "us" ? "United States" : null);
     const pct = (v: unknown, lo: number, hi: number) => { const x = nn(v, lo, hi); return Number.isFinite(x) ? x * 100 : NaN; };
-    let nom = String(f.longName || f.shortName || l.univ?.n || l.sym).replace(" S.A.", "").replace(/,? Inc\.?$/, "").replace(/ \(The\)$/, "");
-    if (nom === nom.toUpperCase() && nom.length > 4) nom = nom.replace(/\B\w+/g, (w) => w.toLowerCase());
+    let nom = String(f.longName || f.shortName || l.univ?.n || l.sym).trim();
+    const SUFFIXES = /(,|\s)\s*(Inc\.?|Incorporated|Corporation|Corp\.?|Company|Co\.|plc|PLC|S\.A\.|SA|SE|S\.E\.|N\.V\.|NV|AG|A\/S|ASA|AB|Oyj|Abp|S\.p\.A\.|SpA|S\.A\.B\.|Société Européenne|\(publ\)|\(The\)|Holding AG|Ltd\.?|Limited|KGaA|& Co\.)$/;
+    for (let k = 0; k < 4 && SUFFIXES.test(nom); k++) nom = nom.replace(SUFFIXES, "").trim().replace(/[,-]$/, "").trim();
+    if (nom === nom.toUpperCase() && nom.includes(" ") && nom.length > 8) nom = nom.replace(/\B[A-ZÀ-Ý]+/g, (w) => w.toLowerCase());
     items.push({
       id: l.sym!, nom, x: l.univ?.x ?? null, isin: l.univ?.isin ?? null,
       pays: paysEn ? PAYS_FR[paysEn] ?? paysEn : null, paysEn, zone: l.univ?.r === "us" ? "us" : "eu",
