@@ -193,8 +193,10 @@ export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: 
       id: l.sym!, nom, x: l.univ?.x ?? null, isin: l.univ?.isin ?? null,
       pays: paysEn ? PAYS_FR[paysEn] ?? paysEn : null, paysEn, zone: ZONES[l.univ?.r ?? ""] ?? "autres",
       secteurEn: sect, secteur: sect ? SECT_FR[sect] ?? sect : "—", industrie: (f.industry as string) || null, ccy,
-      px: price, tgt, mcap: Number.isFinite(mcapEur) ? mcapEur / 1e9 : NaN, per: pet, perF: pef, pb: nn(f.priceToBook, 0, 200),
-      evEbitda: nn(f.enterpriseToEbitda, 0, 150), dy: Number.isFinite(dy) ? dy * 100 : NaN, payout: nn(f.payoutRatio, 0, 5),
+      px: price, tgt, mcap: Number.isFinite(mcapEur) ? mcapEur / 1e9 : NaN, per: pet, perF: pef,
+      // Certificats américains de sociétés étrangères : cours en dollars, comptes en devise locale, ces deux ratios n'ont pas de sens
+      pb: l.univ?.r === "autres" && !finSame ? NaN : nn(f.priceToBook, 0, 200),
+      evEbitda: l.univ?.r === "autres" && !finSame ? NaN : nn(f.enterpriseToEbitda, 0, 150), dy: Number.isFinite(dy) ? dy * 100 : NaN, payout: nn(f.payoutRatio, 0, 5),
       fcfY: Number.isFinite(fcfY) ? fcfY * 100 : NaN, roe: pct(f.returnOnEquity, -5, 5), opm: pct(f.operatingMargins, -5, 1),
       gm: pct(f.grossMargins, -5, 1), nde, revG: pct(f.revenueGrowth, -1, 10), epsG: pct(f.earningsGrowth, -1, 10),
       g1: Number.isFinite(g1) ? g1 * 100 : NaN, ltg: Number.isFinite(ltg) ? ltg * 100 : NaN, rev90,

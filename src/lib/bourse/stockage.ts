@@ -72,6 +72,8 @@ export async function inscrireUnivers(entrees: { cle: string; type: TypeTitre; u
       ON CONFLICT (cle) DO UPDATE SET univ = EXCLUDED.univ, type = EXCLUDED.type
     `;
   }
+  // L'univers fait foi : un titre retiré de la liste quitte la base (doublons, symboles abandonnés).
+  if (entrees.length > 1000) await sql`DELETE FROM bourse_titres WHERE NOT (cle = ANY(${entrees.map((e) => e.cle)}::text[]))`;
 }
 
 /** Titres à relever : devises et indices d'abord, puis les plus anciens. Les petits ETF et les petites sociétés sont relus moins souvent ;
