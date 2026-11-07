@@ -209,7 +209,7 @@ export async function analyseSociete(sym: string) {
   }
   try {
     const modules = ["price", "summaryDetail", "financialData", "defaultKeyStatistics", "assetProfile", "insiderTransactions", "insiderHolders",
-      "majorHoldersBreakdown", "netSharePurchaseActivity", "recommendationTrend", "upgradeDowngradeHistory", "calendarEvents", "earningsHistory", "esgScores"];
+      "majorHoldersBreakdown", "netSharePurchaseActivity", "recommendationTrend", "upgradeDowngradeHistory", "calendarEvents", "earningsHistory"];
     const qs = async (m: string[]) => (await yf.quoteSummary(sym, { modules: m as never }, SANS_VALIDATION)) as unknown as Record<string, Obj | undefined>;
     let r: Record<string, Obj | undefined>;
     try {
@@ -237,13 +237,11 @@ export async function analyseSociete(sym: string) {
     out.achatsInities = { periode: txt(np.period), achats: num(np.buyInfoShares), nbAchats: num(np.buyInfoCount), ventes: num(np.sellInfoShares), nbVentes: num(np.sellInfoCount), net: num(np.netInfoShares), partNet: num(np.netPercentInsiderShares) };
     out.transactions = ((r.insiderTransactions?.transactions as Obj[] | undefined) ?? []).slice(0, 15).map((t) => ({ qui: txt(t.filerName), role: txt(t.filerRelation), quoi: txt(t.transactionText), date: date(t.startDate), titres: num(t.shares), valeur: num(t.value) }));
     out.consensus = ((r.recommendationTrend?.trend as Obj[] | undefined) ?? []).map((t) => ({ periode: txt(t.period), achatFort: num(t.strongBuy), achat: num(t.buy), conserver: num(t.hold), vente: num(t.sell), venteForte: num(t.strongSell) }));
-    out.avis = ((r.upgradeDowngradeHistory?.history as Obj[] | undefined) ?? []).slice(0, 12).map((h) => ({ date: date(h.epochGradeDate), firme: txt(h.firm), avant: txt(h.fromGrade), apres: txt(h.toGrade), action: txt(h.action) }));
+    out.avis = ((r.upgradeDowngradeHistory?.history as Obj[] | undefined) ?? []).filter((h) => ["up", "down", "init"].includes(String(h.action))).slice(0, 10).map((h) => ({ date: date(h.epochGradeDate), firme: txt(h.firm), avant: txt(h.fromGrade), apres: txt(h.toGrade), action: txt(h.action) }));
     const ce = r.calendarEvents ?? {};
     const er = (ce.earnings ?? {}) as Obj;
     out.calendrier = { resultats: ((er.earningsDate as unknown[]) ?? []).map(date).filter(Boolean), dividende: date(ce.exDividendDate), versement: date(ce.dividendDate) };
     out.surprises = ((r.earningsHistory?.history as Obj[] | undefined) ?? []).map((h) => ({ trimestre: date(h.quarter), attendu: num(h.epsEstimate), publie: num(h.epsActual), ecart: num(h.surprisePercent) }));
-    const esg = r.esgScores ?? {};
-    out.esg = { total: num(esg.totalEsg), env: num(esg.environmentScore), social: num(esg.socialScore), gouv: num(esg.governanceScore), controverse: num(esg.highestControversy), percentile: num(esg.percentile) };
     out.devise = txt((r.price as Obj | undefined)?.currency); out.deviseComptes = txt((r.financialData as Obj | undefined)?.financialCurrency);
     out.capi = num((r.price as Obj | undefined)?.marketCap); out.cours = num((r.financialData as Obj | undefined)?.currentPrice) ?? num((r.price as Obj | undefined)?.regularMarketPrice);
   } catch (e) {

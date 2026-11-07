@@ -431,15 +431,15 @@ function renderAnChiffres(d, x, data){
       <p class="note">Déclarations publiées (surtout pour les sociétés américaines) ; libellés d'origine, en anglais. Une vente isolée s'explique souvent par une option exercée ou un impôt ; des achats répétés avec son propre argent disent davantage.</p>` : ""}
     ${pr.resume ? `<details><summary>Activité décrite par la société (en anglais)</summary><p class="note" lang="en" style="font-size:13px;color:var(--fg)">${esc(pr.resume)}</p></details>` : ""}`;
   // Marché
-  const cs = (data.consensus || [])[0], es = data.esg || {}, cal = data.calendrier || {};
+  const cs = (data.consensus || [])[0], cal = data.calendrier || {};
   const prochain = (cal.resultats || []).find(t => new Date(t) >= new Date(Date.now() - 864e5));
   mk.innerHTML = `<h2>Le regard du marché</h2>
     <div class="kpis k3">${k("Consensus des analystes", cs ? `${(cs.achatFort || 0) + (cs.achat || 0)} à l'achat` : "—", cs ? `${cs.conserver || 0} à conserver · ${(cs.vente || 0) + (cs.venteForte || 0)} à la vente` : "")}
       ${k("Prochains résultats", prochain ? anJour(prochain) : "—", prochain && !d.revue ? '<button class="ghost small" id="an-revue-res">Retenir comme date de revue</button>' : "")}
-      ${k("Risque ESG (Sustainalytics)", fmt(es.total, nf1.format), ok(es.controverse) ? `controverse la plus grave : ${es.controverse} sur 5` : "plus bas, mieux c'est")}</div>
+      ${k("Prochain détachement du dividende", cal.dividende && new Date(cal.dividende) >= new Date(Date.now() - 864e5) ? anJour(cal.dividende) : "—", cal.dividende && new Date(cal.dividende) < new Date(Date.now() - 864e5) ? `dernier : ${anJour(cal.dividende)}` : "")}</div>
     ${(data.surprises || []).length ? `<h3>Résultats trimestriels face aux attentes</h3><div class="tblwrap" style="border:0"><table class="t" style="min-width:420px"><thead><tr><th>Trimestre</th><th class="n">Attendu</th><th class="n">Publié</th><th class="n">Écart</th></tr></thead><tbody>
       ${data.surprises.map(s => `<tr><td>${s.trimestre ? new Date(s.trimestre).toLocaleDateString("fr-FR", {month:"short", year:"numeric"}) : "—"}</td><td class="n">${fmt(s.attendu, nf2.format)}</td><td class="n">${fmt(s.publie, nf2.format)}</td><td class="n ${s.ecart > 0 ? "pos" : s.ecart < 0 ? "neg" : ""}">${fmt(s.ecart, v => F.pctS(v * 100))}</td></tr>`).join("")}</tbody></table></div>` : ""}
-    ${(data.avis || []).length ? `<h3>Derniers changements d'avis</h3><div class="tblwrap" style="border:0"><table class="t" style="min-width:480px"><thead><tr><th>Date</th><th>Banque ou bureau</th><th>Avis</th></tr></thead><tbody>
+    ${(data.avis || []).length ? `<h3>Derniers relèvements, abaissements et premières recommandations</h3><div class="tblwrap" style="border:0"><table class="t" style="min-width:480px"><thead><tr><th>Date</th><th>Banque ou bureau</th><th>Avis</th></tr></thead><tbody>
       ${data.avis.map(a => `<tr><td>${a.date ? new Date(a.date).toLocaleDateString("fr-FR") : "—"}</td><td>${esc(a.firme)}</td><td lang="en" class="l">${a.avant ? esc(a.avant) + " → " : ""}<b>${esc(a.apres || "")}</b></td></tr>`).join("")}</tbody></table></div>` : ""}
     <p class="note">Le consensus résume l'avis des analystes ; il suit souvent le cours plus qu'il ne l'anticipe. Utile surtout pour savoir ce que le marché attend déjà.</p>`;
   if ($("#an-revue-res")) $("#an-revue-res").onclick = () => { d.revue = String(prochain).slice(0, 10); anSauver(d, true); renderDossier(); };
