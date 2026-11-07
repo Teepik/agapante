@@ -12,8 +12,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function AdminLoginPage() {
-  if (await isAuthenticated()) redirect("/admin/demandes");
+export default async function AdminLoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ suite?: string }>;
+}) {
+  const { suite } = await searchParams;
+  const vers = suite === "/bourse" ? suite : undefined;
+  if (await isAuthenticated()) redirect(vers ?? "/admin/demandes");
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden px-6 py-16">
@@ -24,7 +30,7 @@ export default async function AdminLoginPage() {
           <Mark className="h-7 w-7" />
           <span className="display text-[1.3rem] text-chalk">Agapante</span>
         </Link>
-        <LoginForm />
+        <LoginForm suite={vers} />
         <Link
           href="/"
           className="mt-8 text-[0.85rem] text-mute transition-colors hover:text-chalk-dim"

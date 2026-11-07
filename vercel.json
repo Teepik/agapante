@@ -1,3 +1,32 @@
 {
-  "crons": [{ "path": "/conduites/api/cron", "schedule": "0 17 * * *" }]
+  "crons": [
+    {
+      "path": "/conduites/api/cron",
+      "schedule": "0 17 * * *"
+    },
+    {
+      "path": "/bourse/api/collecte?passage=1",
+      "schedule": "23 4 * * *"
+    },
+    {
+      "path": "/bourse/api/collecte?passage=2",
+      "schedule": "23 8 * * *"
+    },
+    {
+      "path": "/bourse/api/collecte?passage=3",
+      "schedule": "23 12 * * *"
+    },
+    {
+      "path": "/bourse/api/collecte?passage=4",
+      "schedule": "23 16 * * *"
+    },
+    {
+      "path": "/bourse/api/collecte?passage=5",
+      "schedule": "23 20 * * *"
+    },
+    {
+      "path": "/bourse/api/collecte?passage=6",
+      "schedule": "23 0 * * *"
+    }
+  ]
 }

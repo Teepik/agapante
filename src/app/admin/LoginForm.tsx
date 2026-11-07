@@ -19,15 +19,18 @@ function SubmitButton() {
   );
 }
 
-export function LoginForm() {
+export function LoginForm({ suite }: { suite?: string }) {
   const [state, formAction] = useActionState(login, initial);
 
   return (
     <form action={formAction} className="surface-card w-full max-w-md p-8">
       <h1 className="display text-[1.9rem] text-chalk">Espace d&apos;administration</h1>
       <p className="mt-3 text-[0.92rem] leading-relaxed text-mute">
-        Accès réservé. Saisissez le mot de passe pour consulter les demandes de contact.
+        {suite === "/bourse"
+          ? "Accès réservé. Saisissez le mot de passe pour ouvrir l'outil Bourse."
+          : "Accès réservé. Saisissez le mot de passe pour consulter les demandes de contact."}
       </p>
+      {suite ? <input type="hidden" name="suite" value={suite} /> : null}
 
       {state.error ? (
         <p
