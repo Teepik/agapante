@@ -39,6 +39,18 @@ export function schemaBourse(): Promise<void> {
       await sql`ALTER TABLE bourse_titres ADD COLUMN IF NOT EXISTS maj_fiche TIMESTAMPTZ`;
       await sql`UPDATE bourse_titres SET maj_fiche = maj WHERE maj_fiche IS NULL AND fiche IS NOT NULL`;
       await sql`
+        CREATE TABLE IF NOT EXISTS bourse_histo (
+          semaine DATE NOT NULL, id TEXT NOT NULL, type CHAR(1) NOT NULL,
+          px REAL, mcap REAL, per REAL, per_f REAL, pb REAL, ev_ebitda REAL, dy REAL, payout REAL, fcf_y REAL, roe REAL, opm REAL, gm REAL, nde REAL,
+          rev_g REAL, eps_g REAL, g1 REAL, ltg REAL, rev90 REAL, upside REAL, reco REAL, n_ana SMALLINT, liq REAL, vol REAL, beta REAL,
+          mom12 REAL, mom3 REAL, dd1y REAL, mu_r REAL,
+          s_v SMALLINT, s_g SMALLINT, s_q SMALLINT, s_m SMALLINT, s_d SMALLINT, s_y SMALLINT, s_s SMALLINT,
+          cat TEXT, pg TEXT, conf SMALLINT, aum REAL, ter REAL,
+          PRIMARY KEY (semaine, id)
+        )
+      `;
+      await sql`CREATE INDEX IF NOT EXISTS bourse_histo_id_idx ON bourse_histo (id, semaine)`;
+      await sql`
         CREATE TABLE IF NOT EXISTS bourse_rets (
           id  TEXT PRIMARY KEY,
           r   TEXT NOT NULL
@@ -212,4 +224,59 @@ export async function lireRets(ids: string[]): Promise<Record<string, string>> {
 export async function lireFiche(sym: string): Promise<Record<string, unknown> | null> {
   const rows = (await getSql()`SELECT fiche FROM bourse_titres WHERE sym = ${sym} LIMIT 1`) as unknown as { fiche: Record<string, unknown> | null }[];
   return rows.length ? rows[0].fiche : null;
+}
+
+/* ---------------- Historique hebdomadaire des notes et chiffres clés ---------------- */
+/** Colonnes de bourse_histo et champ correspondant des fiches calculées. */
+export const HISTO_COLS: [string, string, "real" | "smallint" | "text"][] = [
+  ["px", "px", "real"], ["mcap", "mcap", "real"], ["per", "per", "real"], ["per_f", "perF", "real"], ["pb", "pb", "real"], ["ev_ebitda", "evEbitda", "real"],
+  ["dy", "dy", "real"], ["payout", "payout", "real"], ["fcf_y", "fcfY", "real"], ["roe", "roe", "real"], ["opm", "opm", "real"], ["gm", "gm", "real"], ["nde", "nde", "real"],
+  ["rev_g", "revG", "real"], ["eps_g", "epsG", "real"], ["g1", "g1", "real"], ["ltg", "ltg", "real"], ["rev90", "rev90", "real"], ["upside", "upside", "real"],
+  ["reco", "reco", "real"], ["n_ana", "nAna", "smallint"], ["liq", "liq", "real"], ["vol", "vol", "real"], ["beta", "beta", "real"], ["mom12", "mom12", "real"],
+  ["mom3", "mom3", "real"], ["dd1y", "dd1y", "real"], ["mu_r", "muR", "real"],
+  ["s_v", "sc.v", "smallint"], ["s_g", "sc.g", "smallint"], ["s_q", "sc.q", "smallint"], ["s_m", "sc.m", "smallint"], ["s_d", "sc.d", "smallint"], ["s_y", "sc.y", "smallint"], ["s_s", "sc.s", "smallint"],
+  ["cat", "cat", "text"], ["pg", "pg", "text"], ["conf", "conf", "smallint"], ["aum", "aum", "real"], ["ter", "ter", "real"],
+];
+type Fiche = Record<string, unknown>;
+const valeurHisto = (o: Fiche, champ: string, t: string): unknown => {
+  let v: unknown = champ.startsWith("sc.") ? (o.sc as Record<string, unknown> | undefined)?.[champ.slice(3)] : o[champ];
+  if (champ === "pg") v = Array.isArray(v) && v.length ? (v as string[][]).map((p) => p[0]).join("|") : null;
+  if (t === "text") return typeof v === "string" ? v : null;
+  if (typeof v !== "number" || !Number.isFinite(v)) return null;
+  return t === "smallint" ? Math.max(-32000, Math.min(32000, Math.round(v))) : v;
+};
+export async function ecrireHisto(semaine: string, lignes: { type: "a" | "e"; o: Fiche }[]) {
+  const sql = getSql();
+  const noms = HISTO_COLS.map((c) => c[0]);
+  const texte = `
+    INSERT INTO bourse_histo (semaine, id, type, ${noms.join(", ")})
+    SELECT $1::date, u.* FROM unnest($2::text[], $3::text[], ${HISTO_COLS.map((c, i) => `$${i + 4}::${c[2]}[]`).join(", ")})
+      AS u(id, type, ${noms.join(", ")})
+    ON CONFLICT (semaine, id) DO UPDATE SET type = EXCLUDED.type, ${noms.map((n) => `${n} = EXCLUDED.${n}`).join(", ")}`;
+  for (let i = 0; i < lignes.length; i += 800) {
+    const lot = lignes.slice(i, i + 800);
+    const params: unknown[] = [semaine, lot.map((l) => String(l.o.id)), lot.map((l) => l.type)];
+    for (const [, champ, t] of HISTO_COLS) params.push(lot.map((l) => valeurHisto(l.o, champ, t)));
+    await sql.query(texte, params);
+  }
+}
+/** Notes d'une semaine passée (la plus récente au plus tard à la date donnée) : id → notes, catégorie, pièges. */
+export async function notesAnterieures(jours: number): Promise<{ semaine: string | null; notes: Map<string, { sc: (number | null)[]; cat: string | null; pg: string | null }> }> {
+  const sql = getSql();
+  const r = (await sql`SELECT max(semaine)::text AS s FROM bourse_histo WHERE semaine <= current_date - ${jours}::int`) as unknown as { s: string | null }[];
+  const semaine = r[0]?.s ?? null;
+  const notes = new Map<string, { sc: (number | null)[]; cat: string | null; pg: string | null }>();
+  if (!semaine) return { semaine, notes };
+  const rows = (await sql`SELECT id, s_v, s_g, s_q, s_m, s_d, s_y, s_s, cat, pg FROM bourse_histo WHERE semaine = ${semaine}::date AND type = 'a'`) as unknown as Record<string, unknown>[];
+  for (const x of rows) notes.set(String(x.id), { sc: ["s_v", "s_g", "s_q", "s_m", "s_d", "s_y", "s_s"].map((k) => (x[k] as number | null) ?? null), cat: (x.cat as string) ?? null, pg: (x.pg as string) ?? null });
+  return { semaine, notes };
+}
+export async function lireHisto(id: string) {
+  return getSql()`SELECT semaine::text AS semaine, * FROM bourse_histo WHERE id = ${id} ORDER BY semaine`;
+}
+export async function semainesHisto() {
+  return getSql()`SELECT semaine::text AS semaine, count(*)::int AS titres FROM bourse_histo GROUP BY semaine ORDER BY semaine`;
+}
+export async function lireSemaine(semaine: string) {
+  return getSql()`SELECT * FROM bourse_histo WHERE semaine = ${semaine}::date`;
 }

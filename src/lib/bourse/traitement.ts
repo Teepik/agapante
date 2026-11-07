@@ -60,7 +60,10 @@ function b64(a: Num[]): string {
   return Buffer.from(t.buffer).toString("base64");
 }
 
-export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: number }> }, semaines = 260): Sortie {
+export type NotesPassees = Map<string, { sc: (number | null)[]; cat: string | null; pg: string | null }>;
+
+export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: number }> }, semaines = 260,
+  passe: { w1?: NotesPassees; w4?: NotesPassees; w13?: NotesPassees; depuis?: Record<string, string | null> } = {}): Sortie {
   const parSym = new Map<string, Ligne>();
   for (const l of lignes) if (l.serie && l.sym) parSym.set(l.sym, l);
   const titres = lignes.filter((l) => (l.type === "action" || l.type === "etf") && l.serie && l.sym);
@@ -297,6 +300,13 @@ export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: 
     out.momRel = r2(momRel); out.conf = conf; out.muR = r2(muR); out.cat = cat;
     out.cyclique = !!it.secteurEn && CYCL.has(it.secteurEn) && (ok(it.beta) ? (it.beta as number) : 1) > 0.9;
     out.sc = sc; out.th = th; out.pg = pg;
+    // Notes passées (historique hebdomadaire) : 7 notes dans l'ordre v g q m d y s, catégorie, pièges
+    for (const [k, m] of [["h1", passe.w1], ["h4", passe.w4], ["h13", passe.w13]] as const) {
+      const p = m?.get(it.id);
+      if (!p) continue;
+      out[k] = p.sc; out["c" + k.slice(1)] = p.cat;
+      if (k === "h1") out.pg1 = p.pg;
+    }
     return out;
   });
   actions.sort((a, b) => ((b.mcap as number) ?? 0) - ((a.mcap as number) ?? 0));
@@ -368,7 +378,7 @@ export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: 
     fin, actions: actions.length, etf: etf.length, semaines: dates.length, themes: THEMES,
     zones: actions.reduce<Record<string, number>>((o, a) => { o[a.zone as string] = (o[a.zone as string] || 0) + 1; return o; }, {}),
     styles: { v: "Value", g: "Croissance", q: "Qualité", m: "Momentum", d: "Défensive", y: "Rendement", s: "Petite et moyenne capitalisation" },
-    eyEU: r2(EY_EU), eyUS: r2(EY_US), gmed: r2(gmed),
+    eyEU: r2(EY_EU), eyUS: r2(EY_US), gmed: r2(gmed), histo: passe.depuis ?? {},
   };
   const cols = [...new Set(actions.flatMap((a) => Object.keys(a)))].filter((k) => k !== "resume");
   const rows = actions.map((a) => cols.map((k) => (a[k] === undefined ? null : a[k])));

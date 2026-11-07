@@ -30,7 +30,7 @@ export async function GET(req: Request) {
     }
     if (q.get("reessayer") === "1") { await schemaBourse(); await reessayerEchecs(); }
     const budget = Number(q.get("budget"));
-    const bilan = await collecter({ traiter: q.get("traiter") !== "0", relever: q.get("relever") !== "0", budgetMs: budget > 0 ? Math.min(230, budget) * 1000 : undefined });
+    const bilan = await collecter({ traiter: q.get("traiter") !== "0", relever: q.get("relever") !== "0", budgetMs: budget > 0 ? Math.min(230, budget) * 1000 : undefined, histo: q.get("histo") === "1" });
     return Response.json(bilan, { headers: ENTETES_PRIVEES });
   } catch (e) {
     console.error("collecte bourse", e);

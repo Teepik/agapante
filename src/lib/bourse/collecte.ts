@@ -4,9 +4,10 @@ import atlas from "./atlas.json";
 import univers from "./univers.json";
 import universEtf from "./univers-etf.json";
 import {
-  ecrireDonnee, ecrireRets, enregistrerEchec, enregistrerTitre, etatCollecte, inscrireUnivers, libererEssai, lireTout, marquerEssai,
-  schemaBourse, titresARelever, type EntreeUnivers, type Ligne,
+  ecrireDonnee, ecrireHisto, ecrireRets, enregistrerEchec, enregistrerTitre, etatCollecte, inscrireUnivers, libererEssai, lireDonnee, lireTout,
+  marquerEssai, notesAnterieures, schemaBourse, titresARelever, type EntreeUnivers, type Ligne,
 } from "./stockage";
+import { lundi } from "./yahoo";
 import { traiter } from "./traitement";
 import { LimiteYahoo, releverTitre } from "./yahoo";
 
@@ -24,13 +25,13 @@ export function entreesUnivers() {
 
 export type BilanCollecte = {
   releves: number; fiches: number; echecs: number; limites: number; enAttente: number; traite: boolean; duree: number;
-  erreurs: { cle: string; erreur: string }[]; etat?: unknown; traitement?: Record<string, unknown>;
+  erreurs: { cle: string; erreur: string }[]; etat?: unknown; traitement?: Record<string, unknown>; histo?: string;
 };
 
 const FICHE_JOURS = 6.5;
 
 /** Relève un lot de titres dans le temps imparti (cours à chaque passage, comptes une fois par semaine), puis recalcule /bourse. */
-export async function collecter(opts: { budgetMs?: number; traiter?: boolean; relever?: boolean } = {}): Promise<BilanCollecte> {
+export async function collecter(opts: { budgetMs?: number; traiter?: boolean; relever?: boolean; histo?: boolean } = {}): Promise<BilanCollecte> {
   const t0 = Date.now();
   const budget = opts.budgetMs ?? 200_000;
   await schemaBourse();
@@ -67,11 +68,21 @@ export async function collecter(opts: { budgetMs?: number; traiter?: boolean; re
   }
   if (opts.traiter !== false) {
     const lignes: Ligne[] = await lireTout();
-    const s = traiter(lignes, atlas as unknown as { pays: Record<string, { cape?: number }> });
+    const [w1, w4, w13] = await Promise.all([notesAnterieures(6), notesAnterieures(27), notesAnterieures(90)]);
+    const s = traiter(lignes, atlas as unknown as { pays: Record<string, { cape?: number }> }, 260,
+      { w1: w1.notes, w4: w4.notes, w13: w13.notes, depuis: { w1: w1.semaine, w4: w4.semaine, w13: w13.semaine } });
     await ecrireDonnee("actions", s.actions);
     await ecrireDonnee("etf", s.etf);
     await ecrireDonnee("retsmeta", s.retsmeta);
     await ecrireRets(s.rets);
+    // Instantané de la semaine (une écriture par jour au plus ; la dernière de la semaine fait foi)
+    const semaine = lundi(new Date());
+    const derniere = await lireDonnee<{ semaine: string; date: string }>("histo:maj");
+    if (!derniere || derniere.contenu.semaine !== semaine || Date.now() - new Date(derniere.contenu.date).getTime() > 20 * 3600e3 || opts.histo) {
+      await ecrireHisto(semaine, [...s.liste.map((o) => ({ type: "a" as const, o })), ...s.etf.etf.map((o) => ({ type: "e" as const, o }))]);
+      await ecrireDonnee("histo:maj", { semaine, date: new Date().toISOString(), titres: s.liste.length + s.etf.etf.length });
+      bilan.histo = semaine;
+    }
     bilan.traite = true;
     bilan.traitement = { actions: s.actions.rows.length, etf: s.etf.etf.length, semaines: s.retsmeta.dates.length, fin: s.actions.meta.fin,
       tailleActions: JSON.stringify(s.actions).length, tailleEtf: JSON.stringify(s.etf).length };

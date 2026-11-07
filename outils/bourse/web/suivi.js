@@ -83,7 +83,7 @@ function renderSuivi(){
           <div class="acts"><button class="ghost small" data-go="${c.code}">Voir</button><button class="ghost small danger" data-del="${i}" aria-label="Retirer">Retirer</button></div></div>`; }
       if (it.type === "action" || it.type === "etf"){ const x = B.byId.get(it.id); if (!x) return B.etat === "pret" ? `<div class="item"><div class="t"><b>${esc(it.id)}</b><span>Absent des données du jour</span></div><div class="acts"><button class="ghost small danger" data-del="${i}">Retirer</button></div></div>` : "";
         const dpx = it.snap && ok(it.snap.px) && ok(x.px) ? (x.px / it.snap.px - 1) * 100 : null;
-        return `<div class="item"><div class="t"><b>${esc(x.nom)}</b><span>${x.kind === "action" ? `${esc(x.cat)} · note ${fmt(noteProfil(x), v => nf0.format(v))} · ` : esc(CLS_L[x.cls]) + " · "}cours ${ok(x.px) ? nf2.format(x.px) + " " + esc(x.ccy || "") : "—"}${ok(dpx) ? ` (${F.pctS(dpx)} depuis l'ajout)` : ""} · rdt réel att. ${fmt(x.mu, F.pct)}${x.pg && x.pg.length ? " · " + esc(x.pg.map(p => p[0]).join(", ")) : ""} · ajouté le ${esc(new Date(it.at).toLocaleDateString("fr-FR"))}</span></div>
+        return `<div class="item"><div class="t"><b>${esc(x.nom)}</b><span>${x.kind === "action" ? `${esc(x.cat)}${it.snap && it.snap.cat && it.snap.cat !== x.cat ? ` (${esc(it.snap.cat)} à l'ajout)` : ""} · note ${fmt(noteProfil(x), v => nf0.format(v))}${it.snap && ok(it.snap.note) ? ` (${nf0.format(it.snap.note)} à l'ajout)` : ""} · ` : esc(CLS_L[x.cls]) + " · "}cours ${ok(x.px) ? nf2.format(x.px) + " " + esc(x.ccy || "") : "—"}${ok(dpx) ? ` (${F.pctS(dpx)} depuis l'ajout)` : ""} · rdt réel att. ${fmt(x.mu, F.pct)}${x.pg && x.pg.length ? " · " + esc(x.pg.map(p => p[0]).join(", ")) : ""} · ajouté le ${esc(new Date(it.at).toLocaleDateString("fr-FR"))}</span></div>
           <div class="acts"><button class="ghost small" data-fi="${esc(x.id)}">Voir</button><button class="ghost small danger" data-del="${i}">Retirer</button></div></div>`; }
       const p = PLI[it.id]; if (!p) return "";
       const s = evaluate(p, ctx());
@@ -122,7 +122,7 @@ function addWatch(it){
   if (items.some(x => x.type === it.type && x.id === it.id)){ toast("Déjà dans votre liste de suivi"); return; }
   let snap = {};
   if (it.type === "pays"){ const c = P[it.id]; snap = {per:c.per, y10:c.y10, sA:c.sA, sO:c.sO, cape:c.cape}; }
-  else if (it.type === "action" || it.type === "etf"){ const x = B.byId.get(it.id); snap = {px:x && x.px, mu:x && x.mu}; }
+  else if (it.type === "action" || it.type === "etf"){ const x = B.byId.get(it.id); snap = {px:x && x.px, mu:x && x.mu, note:x && x.kind === "action" ? noteProfil(x) : null, cat:x && x.cat}; }
   else { const s = evaluate(PLI[it.id], ctx()); snap = {r:s.r}; }
   items.push({...it, at:Date.now(), snap});
   Store.save("suivi", {items}); toast("Ajouté à votre liste de suivi");
