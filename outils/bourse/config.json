@@ -1,0 +1,161 @@
+{
+ "limit": 40,
+ "eu_targets": {
+  "gb": 130,
+  "fr": 75,
+  "de": 70,
+  "ch": 50,
+  "se": 50,
+  "nl": 32,
+  "it": 35,
+  "es": 26,
+  "dk": 22,
+  "fi": 18,
+  "no": 16,
+  "be": 15,
+  "at": 8,
+  "pt": 6,
+  "ie": 6,
+  "pl": 10
+ },
+ "eu_exchanges": {
+  "fr": [
+   "PAR"
+  ],
+  "de": [
+   "GER"
+  ],
+  "gb": [
+   "LSE"
+  ],
+  "nl": [
+   "AMS"
+  ],
+  "es": [
+   "MCE"
+  ],
+  "it": [
+   "MIL"
+  ],
+  "ch": [
+   "EBS"
+  ],
+  "se": [
+   "STO"
+  ],
+  "dk": [
+   "CPH"
+  ],
+  "no": [
+   "OSL"
+  ],
+  "fi": [
+   "HEL"
+  ],
+  "be": [
+   "BRU"
+  ],
+  "at": [
+   "VIE"
+  ],
+  "pt": [
+   "LIS"
+  ],
+  "ie": [
+   "ISE"
+  ],
+  "pl": [
+   "WSE"
+  ]
+ },
+ "etf": [
+  "WPEA.PA",
+  "DCAM.PA",
+  "PSP5.PA",
+  "PUST.PA",
+  "PTPXE.PA",
+  "PAEEM.PA",
+  "MEUD.PA",
+  "CAC.PA",
+  "MSE.PA",
+  "EUNL.DE",
+  "VWCE.DE",
+  "IS3N.DE",
+  "SXR8.DE",
+  "IS3Q.DE",
+  "IS3S.DE",
+  "IS3R.DE",
+  "IQQ0.DE",
+  "ZPRV.DE",
+  "ZPRX.DE",
+  "XAIX.DE",
+  "2B76.DE",
+  "VVSM.DE",
+  "IQQH.DE",
+  "USPY.DE",
+  "DFEN.DE",
+  "CSH2.PA",
+  "EUNH.DE",
+  "DBXN.DE",
+  "IBCI.DE",
+  "EUN5.DE",
+  "EUNW.DE",
+  "SXRM.DE",
+  "IUS7.DE",
+  "GOLD.PA",
+  "IQQP.DE"
+ ],
+ "proxies": [
+  "^GSPC",
+  "^STOXX",
+  "^FCHI",
+  "^GDAXI",
+  "^N225",
+  "EEM",
+  "GC=F",
+  "TLT",
+  "IEF",
+  "^TNX",
+  "^VIX",
+  "XLK",
+  "XLF",
+  "XLE",
+  "XLV",
+  "XLI",
+  "XLU",
+  "XLP",
+  "XLY",
+  "XLB",
+  "XLRE",
+  "XLC",
+  "SMH",
+  "ITA"
+ ],
+ "fx": [
+  "EURUSD=X",
+  "EURGBP=X",
+  "EURCHF=X",
+  "EURSEK=X",
+  "EURDKK=X",
+  "EURNOK=X",
+  "EURPLN=X",
+  "EURJPY=X"
+ ],
+ "repli_wikipedia": {
+  "https://en.wikipedia.org/wiki/CAC_40": ".PA",
+  "https://en.wikipedia.org/wiki/DAX": ".DE",
+  "https://en.wikipedia.org/wiki/FTSE_100_Index": ".L",
+  "https://en.wikipedia.org/wiki/AEX_index": ".AS",
+  "https://en.wikipedia.org/wiki/IBEX_35": ".MC",
+  "https://en.wikipedia.org/wiki/FTSE_MIB": ".MI",
+  "https://en.wikipedia.org/wiki/Swiss_Market_Index": ".SW",
+  "https://en.wikipedia.org/wiki/OMX_Stockholm_30": ".ST",
+  "https://en.wikipedia.org/wiki/OMX_Copenhagen_25": ".CO",
+  "https://en.wikipedia.org/wiki/OMX_Helsinki_25": ".HE",
+  "https://en.wikipedia.org/wiki/OBX_Index": ".OL",
+  "https://en.wikipedia.org/wiki/BEL_20": ".BR",
+  "https://en.wikipedia.org/wiki/PSI-20": ".LS",
+  "https://en.wikipedia.org/wiki/Austrian_Traded_Index": ".VI",
+  "https://en.wikipedia.org/wiki/MDAX": ".DE"
+ }
+}
