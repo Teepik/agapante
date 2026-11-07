@@ -1,0 +1,187 @@
+<div class="app">
+  <header>
+    <h1>Bourse</h1>
+    <span class="sub"><span id="cover">Atlas financier et sélection d'actions</span><br><span id="b-date"></span></span>
+    <nav class="views" aria-label="Vues">
+      <button data-view="actions" aria-pressed="false">Actions</button>
+      <button data-view="ruptures" aria-pressed="false">Ruptures</button>
+      <button data-view="portefeuille" aria-pressed="false">Portefeuille</button>
+      <button data-view="constructeur" aria-pressed="false">Constructeur</button>
+      <button data-view="carte" aria-pressed="true">Carte</button>
+      <button data-view="comparateur" aria-pressed="false">Comparateur net</button>
+      <button data-view="taux" aria-pressed="false">Taux euro</button>
+      <button data-view="suivi" aria-pressed="false">Mon suivi <span id="suivi-count" class="count"></span></button>
+      <button data-view="methode" aria-pressed="false">Méthode</button>
+    </nav>
+  </header>
+
+  <!-- ============ CARTE ============ -->
+  <section id="view-carte" class="app">
+    <div class="bar">
+      <div class="field"><span>Classe</span>
+        <div class="seg" id="grp" role="group" aria-label="Classe d'indicateurs">
+          <button data-g="Actions" aria-pressed="true">Actions</button>
+          <button data-g="Obligations" aria-pressed="false">Obligations</button>
+          <button data-g="Devises" aria-pressed="false">Devises</button>
+          <button data-g="Macro" aria-pressed="false">Macro</button>
+        </div>
+      </div>
+      <label class="field" for="ind"><span>Indicateur affiché</span><select id="ind"></select></label>
+      <div class="field search"><span>Pays</span>
+        <input id="q" type="search" placeholder="Rechercher un pays…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="sugg">
+        <div id="sugg" class="sugg" hidden role="listbox"></div>
+      </div>
+      <label class="field" for="zone"><span>Zone</span><select id="zone">
+        <option value="all">Monde</option><option value="Europe">Europe</option><option value="Amériques">Amériques</option>
+        <option value="Asie-Pacifique">Asie-Pacifique</option><option value="Moyen-Orient et Afrique">Moyen-Orient et Afrique</option>
+        <option value="DM">Pays développés</option><option value="EM">Pays émergents</option><option value="FM">Marchés frontières</option>
+      </select></label>
+      <label class="chk" for="hatch"><input type="checkbox" id="hatch" checked> Signaler les points de vigilance</label>
+    </div>
+    <div class="main">
+      <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+        <div class="mapbox" id="mapbox">
+          <svg id="map" role="img" aria-label="Carte du monde des indicateurs financiers"></svg>
+          <div class="loading" id="loading">Chargement de la carte…</div>
+          <div class="zoombtns"><button id="zin" aria-label="Zoomer">+</button><button id="zout" aria-label="Dézoomer">−</button><button id="zreset" aria-label="Vue d'ensemble">⤢</button></div>
+          <div class="tip" id="tip" hidden></div>
+        </div>
+        <div class="legend" id="legend"></div>
+        <div class="ranking" id="ranking"></div>
+      </div>
+      <section class="panel" aria-live="polite">
+        <div class="phead"><h2 id="pname">Choisissez un pays</h2><div class="meta" id="pmeta"><span>Cliquez sur la carte, sur le classement ou utilisez la recherche.</span></div><div class="flags" id="pflags"></div></div>
+        <div class="tabs" role="tablist">
+          <button role="tab" data-tab="synthese" aria-selected="true">Synthèse</button>
+          <button role="tab" data-tab="actions" aria-selected="false">Actions</button>
+          <button role="tab" data-tab="obligations" aria-selected="false">Obligations</button>
+          <button role="tab" data-tab="devise" aria-selected="false">Devise</button>
+          <button role="tab" data-tab="acces" aria-selected="false">Investir depuis la France</button>
+        </div>
+        <div class="pbody" id="pbody"></div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ============ ACTIONS ============ -->
+  <section id="view-actions" class="stack" hidden>
+    <div class="bar" id="act-bar" hidden>
+      <div class="field search"><span>Société</span><input id="act-q" type="search" placeholder="Nom, code, ISIN ou industrie…" autocomplete="off"></div>
+      <div class="field"><span>Zone</span><div class="seg" id="act-zone" role="group" aria-label="Zone"><button data-z="all" aria-pressed="true">Toutes</button><button data-z="eu" aria-pressed="false">Europe</button><button data-z="us" aria-pressed="false">États-Unis</button></div></div>
+      <label class="field" for="act-sect"><span>Secteur</span><select id="act-sect"></select></label>
+      <label class="field" for="act-cat"><span>Catégorie</span><select id="act-cat"></select></label>
+      <label class="field" for="act-theme"><span>Rupture</span><select id="act-theme"></select></label>
+      <label class="field" for="act-cap"><span>Taille</span><select id="act-cap"></select></label>
+      <label class="field" for="act-liq"><span>Liquidité</span><select id="act-liq"></select></label>
+      <label class="chk" for="act-pea"><input type="checkbox" id="act-pea"> Éligibles au PEA</label>
+      <label class="chk" for="act-pg"><input type="checkbox" id="act-pg"> Écarter les pièges</label>
+    </div>
+    <div id="act-body" class="stack"></div>
+  </section>
+
+  <!-- ============ RUPTURES ============ -->
+  <section id="view-ruptures" hidden><div id="rup-body" class="stack"></div></section>
+
+  <!-- ============ PORTEFEUILLE ============ -->
+  <section id="view-portefeuille" hidden><div id="pf-body" class="stack"></div></section>
+
+  <!-- ============ CONSTRUCTEUR ============ -->
+  <section id="view-constructeur" hidden><div id="cst-body" class="stack"></div></section>
+
+  <!-- ============ COMPARATEUR ============ -->
+  <section id="view-comparateur" hidden>
+    <div class="cmpgrid">
+      <div class="card" id="cmp-form">
+        <h2>Votre situation</h2>
+        <div class="field"><span>Projet</span><div class="chips" id="projets"></div></div>
+        <div class="form">
+          <label for="f-montant">Montant placé (€)<input id="f-montant" type="number" min="100" step="100" value="20000"></label>
+          <label for="f-horizon">Horizon (ans)<input id="f-horizon" type="number" min="1" max="30" step="1" value="10"></label>
+          <label for="f-tol" class="wide">Probabilité de perte acceptée à l'horizon<select id="f-tol">
+            <option value="0">Aucune perte</option><option value="2">2 % au plus</option><option value="10">10 % au plus</option><option value="20">20 % au plus</option><option value="35">35 % au plus</option><option value="100" selected>Sans limite</option></select></label>
+          <label for="f-revenu">Revenu net imposable du foyer (€)<input id="f-revenu" type="number" min="0" step="1000" value="55000"></label>
+          <label for="f-parts">Parts fiscales<input id="f-parts" type="number" min="1" max="12" step="0.5" value="7"></label>
+          <label for="f-infl" class="wide">Chemin d'inflation<select id="f-infl"></select></label>
+          <label for="f-hyp" class="wide">Rendement attendu des actions<select id="f-hyp">
+            <option value="valo">Prudent : valorisation actuelle (1 / CAPE)</option><option value="cons">Consensus des gérants (J.P. Morgan, Vanguard, Schroders, Amundi)</option></select></label>
+          <label for="f-apea">PEA déjà ouvert depuis (ans)<input id="f-apea" type="number" min="0" max="40" step="1" value="0"></label>
+          <label for="f-aav">Assurance-vie ouverte depuis (ans)<input id="f-aav" type="number" min="0" max="40" step="1" value="0"></label>
+          <label for="f-fav">Frais annuels de l'assurance-vie sur les unités de compte (%)<input id="f-fav" type="number" min="0" max="2" step="0.05" value="0.5"></label>
+          <label for="f-ad">Adultes titulaires de livrets<input id="f-ad" type="number" min="1" max="2" step="1" value="2"></label>
+          <label for="f-enf">Enfants titulaires d'un Livret A<input id="f-enf" type="number" min="0" max="12" step="1" value="6"></label>
+        </div>
+        <div class="summary" id="cmp-fisc"></div>
+        <p class="note">Le calcul retient pour chaque placement l'enveloppe qui laisse le plus après impôt, compare prélèvement forfaitaire et barème, et déduit frais, défauts attendus et prélèvements sociaux. Les montants sont nominaux puis exprimés en euros d'aujourd'hui avec le chemin d'inflation choisi.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+        <div class="card">
+          <div class="btnrow" style="justify-content:space-between">
+            <h2 id="cmp-title">Rendement net et risque</h2>
+            <div class="seg" id="cmp-real" role="group" aria-label="Unité">
+              <button data-real="1" aria-pressed="true">En euros d'aujourd'hui</button>
+              <button data-real="0" aria-pressed="false">Nominal</button>
+            </div>
+          </div>
+          <div class="chips" id="cmp-fam"></div>
+          <div class="chart" id="cmp-scatter"></div>
+          <p class="note" id="cmp-scnote"></p>
+        </div>
+      </div>
+    </div>
+    <div class="tblwrap" style="margin-top:14px"><table class="res" id="cmp-table"></table></div>
+    <div class="card" id="cmp-detail" style="margin-top:14px"></div>
+  </section>
+
+  <!-- ============ TAUX EURO ============ -->
+  <section id="view-taux" hidden>
+    <div class="tgrid">
+      <div class="card">
+        <h2>Courbes des taux d'État</h2>
+        <div class="legendline" id="crv-leg"></div>
+        <div class="chart" id="crv-chart"></div>
+        <div style="overflow-x:auto"><table class="t" id="crv-table" style="min-width:480px"></table></div>
+        <p class="note">Taux du 6 novembre 2026 (Trading Economics). L'écart France-Allemagne mesure la prime que les marchés demandent sur la dette française.</p>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;min-width:0">
+        <div class="card" id="oblig-calc"></div>
+      </div>
+    </div>
+    <div class="tgrid" style="margin-top:14px">
+      <div style="display:flex;flex-direction:column;gap:14px;min-width:0"><div class="card" id="monetaire"></div><div class="card" id="agenda"></div></div>
+      <div class="card" id="credit"></div>
+    </div>
+  </section>
+
+  <!-- ============ SUIVI ============ -->
+  <section id="view-suivi" hidden>
+    <p class="store" id="store-status"></p>
+    <div class="sgrid">
+      <div class="card" id="watch"></div>
+      <div class="card" id="alerts"></div>
+    </div>
+    <div class="card" id="journal" style="margin-top:14px"></div>
+  </section>
+
+  <!-- ============ MÉTHODE ============ -->
+  <section id="view-methode" hidden>
+    <div class="card"><div class="prose" id="methode"></div></div>
+  </section>
+
+  <p class="foot" id="foot"></p>
+</div>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <form class="sheet" id="m-form">
+    <div class="sheet-head"><h2 id="m-title"></h2><button type="button" class="x" id="m-close" aria-label="Fermer">×</button></div>
+    <div class="sheet-body" id="m-body"></div>
+    <div class="sheet-foot"><button type="button" class="ghost" id="m-cancel">Annuler</button><button type="submit" class="primary" id="m-ok">Enregistrer</button></div>
+  </form>
+</div>
+<div class="modal" id="fiche" hidden role="dialog" aria-modal="true" aria-labelledby="f-title">
+  <div class="sheet wide">
+    <div class="sheet-head"><h2 id="f-title"></h2><button type="button" class="x" id="f-close" aria-label="Fermer">×</button></div>
+    <div class="sheet-body" id="f-body"></div>
+    <div class="sheet-foot" id="f-foot"></div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>

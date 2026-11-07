@@ -28,6 +28,12 @@ import { isAllowedShowcaseImageUrl, resolveShowcaseImageUrl } from "@/lib/showca
 
 export type LoginState = { error: string };
 
+/** Destination après connexion : uniquement les outils internes prévus (évite toute redirection ouverte). */
+function destinationSure(v: FormDataEntryValue | null): string {
+  const s = String(v ?? "");
+  return s === "/bourse" || s.startsWith("/bourse#") ? s : "/admin/demandes";
+}
+
 export async function login(_prev: LoginState, formData: FormData): Promise<LoginState> {
   const password = String(formData.get("password") ?? "");
 
@@ -46,7 +52,7 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
   }
 
   await createSession();
-  redirect("/admin/demandes");
+  redirect(destinationSure(formData.get("suite")));
 }
 
 export async function logout(): Promise<void> {

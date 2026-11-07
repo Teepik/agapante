@@ -9,7 +9,3 @@ build
 .vercel
 *.tsbuildinfo
 next-env.d.ts
-
-# Collecte de /bourse : données jamais versionnées
-outils/bourse/_brut/
-outils/bourse/_sortie/

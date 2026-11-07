@@ -1,16 +1,34 @@
-# Collecte de agapante.com/bourse
+# /bourse
 
-Chaque samedi à 3 h 17 (UTC), GitHub Actions exécute trois scripts, sans aucune IA :
+Outil personnel (accès : mot de passe d'administration d'Agapante) : atlas financier par pays, classement d'un millier
+d'actions par style, gagnants et perdants des ruptures, portefeuilles fictifs avec mesure de la diversification,
+simulateur rendement/risque et constructeur de portefeuille.
 
-1. `collecte.py` relève sur Yahoo Finance (bibliothèque yfinance, accès officieux) les cours hebdomadaires sur 5 ans,
-   les comptes et les prévisions des analystes d'environ 1 100 actions (S&P 500 et grandes valeurs européennes),
-   d'une trentaine d'ETF, d'indices de référence depuis 2005 et des devises.
-2. `traitement.py` calcule les rendements en euros, les notes de style (value, croissance, qualité, momentum,
-   défensive, rendement, taille), les catégories, les pièges, l'exposition aux ruptures et le rendement attendu de chaque titre.
-3. `enregistrer.py` range le résultat dans la base Neon du site (table `bourse_donnees`).
+## Données
 
-Le dépôt est public : aucune donnée de marché n'y est versionnée. Le secret GitHub `DATABASE_URL`
-(même valeur que sur Vercel) est nécessaire à l'enregistrement.
+- **Collecte** : `src/app/bourse/api/collecte/route.ts`, appelée chaque jour par Vercel Cron (`vercel.json`).
+  Chaque passage relève pendant une quarantaine de secondes les titres les plus anciens sur Yahoo Finance
+  (bibliothèque `yahoo-finance2`, aucune IA) : fiche (valorisation, comptes, prévisions des analystes) et cours
+  hebdomadaires sur cinq ans (depuis 2005 pour les indices et les devises). Puis il recalcule notes, catégories,
+  pièges, thèmes, rendements attendus et rendements hebdomadaires en euros (`src/lib/bourse/traitement.ts`).
+- **Univers** : `src/lib/bourse/univers.json` (indices américains et européens) et `src/lib/bourse/config.ts`
+  (ETF, indices de référence, devises, tables de thèmes).
+- **Base Neon** : table `bourse_titres` (relevé brut par titre) et table `bourse_donnees` (données calculées
+  `actions`, `rets`, `statut`, et l'espace personnel `etat:*` : suivi, alertes, journal, portefeuilles, réglages).
+- **Atlas par pays** : `src/lib/bourse/atlas.json` et `monde.json` (fond de carte).
 
-`config.json` fixe l'univers ; `limit` à 0 lance la collecte complète. Sur une branche d'essai, les données
-sont chiffrées avec `cle_essai_publique.pem` avant d'être poussées sur la branche `bourse-essai`.
+Appels manuels (session d'administration ouverte, ou déploiement de prévisualisation) :
+
+- `/bourse/api/collecte` : un passage de collecte et de recalcul ;
+- `/bourse/api/collecte?etat=1` : état de la collecte et dernières erreurs ;
+- `/bourse/api/collecte?relever=0` : recalcul seul.
+
+## Interface
+
+Sources dans `outils/bourse/web/` (JavaScript sans dépendance hors d3 et topojson-client). Après modification :
+
+```
+node outils/bourse/web/assembler.mjs
+```
+
+Le script produit `src/lib/bourse/appli.generated.ts`, page autonome servie par `src/app/bourse/route.ts`.
