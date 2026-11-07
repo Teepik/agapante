@@ -120,8 +120,11 @@ export async function libererEssai(cles: string[]) {
 }
 
 export async function enregistrerEchec(cle: string, erreur: string, sym?: string | null) {
+  // Historique trop court (fonds récent) ou titre absent de Yahoo : inutile de réessayer avant deux semaines.
+  const definitif = /historique insuffisant|no data found|symbole introuvable|delisted/i.test(erreur);
   await getSql()`
-    UPDATE bourse_titres SET essai = now(), echecs = echecs + 1, erreur = ${erreur.slice(0, 300)}, sym = COALESCE(${sym ?? null}, sym)
+    UPDATE bourse_titres SET essai = now(), echecs = CASE WHEN ${definitif} THEN GREATEST(echecs + 1, 3) ELSE echecs + 1 END,
+      erreur = ${erreur.slice(0, 300)}, sym = COALESCE(${sym ?? null}, sym)
     WHERE cle = ${cle}
   `;
 }
