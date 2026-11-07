@@ -210,12 +210,19 @@ export async function analyseSociete(sym: string) {
   try {
     const modules = ["price", "summaryDetail", "financialData", "defaultKeyStatistics", "assetProfile", "insiderTransactions", "insiderHolders",
       "majorHoldersBreakdown", "netSharePurchaseActivity", "recommendationTrend", "upgradeDowngradeHistory", "calendarEvents", "earningsHistory", "esgScores"];
+    const qs = async (m: string[]) => (await yf.quoteSummary(sym, { modules: m as never }, SANS_VALIDATION)) as unknown as Record<string, Obj | undefined>;
     let r: Record<string, Obj | undefined>;
     try {
-      r = (await yf.quoteSummary(sym, { modules: modules as never }, SANS_VALIDATION)) as unknown as Record<string, Obj | undefined>;
+      r = await qs(modules);
     } catch {
-      // Certains modules manquent pour des titres hors États-Unis : on se replie sur l'essentiel.
-      r = (await yf.quoteSummary(sym, { modules: ["price", "financialData", "defaultKeyStatistics", "assetProfile", "majorHoldersBreakdown", "recommendationTrend", "calendarEvents"] as never }, SANS_VALIDATION)) as unknown as Record<string, Obj | undefined>;
+      // Un module absent fait échouer toute la requête : l'essentiel d'abord, puis chaque module facultatif à part.
+      const essentiels = ["price", "financialData", "defaultKeyStatistics", "assetProfile", "majorHoldersBreakdown", "recommendationTrend", "calendarEvents"];
+      r = await qs(essentiels);
+      const autres = modules.filter((m) => !essentiels.includes(m));
+      const res = await Promise.allSettled(autres.map((m) => qs([m])));
+      const absents: string[] = [];
+      res.forEach((x, i) => { if (x.status === "fulfilled") Object.assign(r, x.value); else absents.push(autres[i]); });
+      out.modulesAbsents = absents;
     }
     const ap = r.assetProfile ?? {};
     const date = (v: unknown) => (v instanceof Date ? v.toISOString().slice(0, 10) : typeof v === "number" ? new Date(v * (v < 1e12 ? 1000 : 1)).toISOString().slice(0, 10) : typeof v === "string" ? v.slice(0, 10) : null);
