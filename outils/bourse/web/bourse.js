@@ -20,7 +20,10 @@ const POCHE = {act_monde:"actions", act_us:"actions", act_eu:"actions", act_jp:"
   monetaire:"monetaire", etat:"obligations", credit:"obligations", monde_oblig:"obligations", or:"or", matieres:"or", immo_cote:"actions"};
 const POCHE_L = {actions:"Actions", obligations:"Obligations", monetaire:"Monétaire", or:"Or et matières premières"};
 const ZONE_L = {all:"Toutes", eu:"Europe", us:"États-Unis", jp:"Japon", ca:"Canada", au:"Australie", autres:"Autres pays"};
-const BT_L = {gov:"emprunts d'État", corp:"entreprises de qualité", hy:"haut rendement", infl:"indexées sur l'inflation", em:"pays émergents", agg:"ensemble du marché", float:"taux variable"};
+const BT_L = {gov:"d'État", corp:"d'entreprises de qualité", hy:"à haut rendement", infl:"indexées sur l'inflation", em:"émergentes", agg:"diversifiées", float:"à taux variable"};
+const BC_L = {USD:"en dollars", GBP:"en livres", GLOBAL:"du monde entier", EMLOC:"en devises locales", CNY:"en yuans"};
+/* Durée des ETF obligataires de la sélection éditoriale */
+const ED_T = {"EUNH.DE":7.5, "IBCI.DE":8, "EUN5.DE":4.4, "EUNW.DE":3, "SXRM.DE":7.5, "IUS7.DE":7};
 const SEC_FR = {"Technology":"Technologie", "Healthcare":"Santé", "Financial Services":"Finance", "Consumer Cyclical":"Consommation cyclique", "Industrials":"Industrie",
   "Communication Services":"Communication", "Consumer Defensive":"Consommation courante", "Energy":"Énergie", "Basic Materials":"Matériaux", "Real Estate":"Immobilier", "Utilities":"Services aux collectivités"};
 const STY_ETF = {v:"Value", g:"Croissance", q:"Qualité", m:"Momentum", d:"Faible volatilité", y:"Dividendes", s:"Petites et moyennes valeurs"};
@@ -108,7 +111,7 @@ async function loadBourse(){
       B.A = a.rows.map(r => { const o = {}; a.cols.forEach((k, i) => { if (r[i] !== null) o[k] = r[i]; }); o.th = o.th || {}; o.sc = o.sc || {}; o.pg = o.pg || []; return o; });
       B.E = e.etf; B.usd = rm.usd ? decode64(rm.usd) : null;
       for (const x of B.A){ x.kind = "action"; x.cls = "action"; x.mu = x.muR; B.byId.set(x.id, x); }
-      for (const x of B.E){ x.kind = "etf"; x.th = x.th || {}; x.mu = muEtf(x); x.zone = x.cls === "act_us" || x.geo === "US" ? "us" : x.cls === "act_eu" ? "eu" : "monde"; B.byId.set(x.id, x); }
+      for (const x of B.E){ x.kind = "etf"; x.th = x.th || {}; if (x.ed && ED_T[x.id]) x.T = ED_T[x.id]; x.mu = muEtf(x); x.zone = x.cls === "act_us" || x.geo === "US" ? "us" : x.cls === "act_eu" ? "eu" : "monde"; B.byId.set(x.id, x); }
       B.etat = "pret";
     }
   } catch(err){
@@ -148,7 +151,7 @@ function piegePills(pg){ return (pg || []).map(([t, d]) => `<span class="pill wa
 function assetLabel(x){ return x.kind === "etf" ? `${esc(x.id)} · ${esc(etfSousTitre(x))}${x.pea ? " · PEA" : ""}` : `${esc(x.id)} · ${esc(x.pays || "")} · ${esc(x.secteur || "")}`; }
 function etfSousTitre(e){
   if (!e.bt && !e.sty && !e.sec && !e.geo) return CLS_L[e.cls] || e.cls;
-  if (POCHE[e.cls] === "obligations" || (e.cls === "monetaire" && e.bt)) return `Obligations ${BT_L[e.bt] || ""}${e.bc && e.bc !== "EUR" ? (e.bc === "GLOBAL" ? ", monde" : e.bc === "EMLOC" ? ", devises locales" : ", " + e.bc) : ""}${e.hdg ? ", couvertes en euros" : ""}${e.ech ? ` · échéance ${e.ech}` : ok(e.T) ? ` · durée ≈ ${nf1.format(e.T)} ans` : ""}`;
+  if (POCHE[e.cls] === "obligations" || (e.cls === "monetaire" && e.bt)) return `Obligations ${BT_L[e.bt] || ""}${e.bp && P[e.bp] && e.bc === "EUR" ? " (" + P[e.bp].nom + ")" : ""}${e.bc && e.bc !== "EUR" ? " " + (BC_L[e.bc] || e.bc) : ""}${e.hdg ? ", couvertes en euros" : ""}${e.ech ? ` · échéance ${e.ech}` : ok(e.T) ? ` · durée ≈ ${nf1.format(e.T)} ans` : ""}`;
   if (e.cls === "act_secteur") return `Actions · ${SEC_FR[e.sec] || e.sec || "secteur"}${e.geo ? " · " + geoL(e.geo) : ""}`;
   if (e.cls === "act_style" && e.sty) return `Actions · ${STY_ETF[e.sty]}${e.geo ? " · " + geoL(e.geo) : ""}`;
   if (e.cls === "act_pays") return `Actions · ${geoL(e.geo)}`;

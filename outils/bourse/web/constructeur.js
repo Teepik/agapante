@@ -145,7 +145,8 @@ function cstBuild(lists){
   if (!ids.length) return null;
   const weights = e => { const g = hasO ? Math.min(g0, Math.max(0, 1 - e)) : 0, d = Math.max(0, 1 - e - g), sd = defW.obligations + defW.monetaire || 1;
     return ids.map(id => (inner.actions.get(id) || 0) * (hasA ? e : 0) + (inner.obligations.get(id) || 0) * d * defW.obligations / sd + (inner.monetaire.get(id) || 0) * d * defW.monetaire / sd + (inner.or.get(id) || 0) * g); };
-  const Rw = Q.window(ids.map(id => B.R.get(id)), 260, 52), cov = Q.covShrink(Rw).sigma;
+  const ser = ids.map(id => B.R.get(id)), T0 = B.dates.length;
+  const Rw = Q.window(ser.map(r => r || new Float64Array(T0).fill(NaN)), 260, 52), cov = Q.covShrink(Rw).sigma;
   const volOf = w => Math.sqrt(Math.max(0, Q.quad(cov, w)) * 52) * 100;
   const mx = hasA ? maxEq(CST.horizon) : 0, target = RISQ[CST.risque - 1].vol;
   let best = 0, bd = Infinity;
@@ -157,14 +158,17 @@ function cstBuild(lists){
 function renderConstructeur(){
   const root = $("#cst-body");
   if (bourseWait(root)) return;
-  const besoin = cstStockPool().slice(0, 90).map(o => o.x.id).concat(cstEtfPool().slice(0, 30).map(o => o.x.id), cstBondPool().slice(0, 30).map(o => o.x.id),
+  const besoin = cstStockPool().slice(0, 90).map(o => o.x.id).concat(cstEtfPool().map(o => o.x.id), cstBondPool().map(o => o.x.id),
     cstPoolSimple("monetaire").slice(0, 4).map(o => o.x.id), cstPoolSimple("or").slice(0, 4).map(o => o.x.id), Object.values(CST.picks).flat(), ["EUNL.DE", "EUNH.DE", "GOLD.PA"]);
   if (!hasRets(besoin)){
     if (!root.querySelector(".cstgrid")) root.innerHTML = `<div class="card"><p class="empty">Chargement des cours…</p></div>`;
     needRets(besoin).then(() => { if (CUR === "constructeur") renderConstructeur(); });
     return;
   }
-  const lists = cstLists(), built = cstBuild(lists);
+  const lists = cstLists();
+  const choisis = lists.flatMap(l => l.sel.map(x => x.id));
+  if (!hasRets(choisis)){ needRets(choisis).then(() => { if (CUR === "constructeur") renderConstructeur(); }); return; }
+  const built = cstBuild(lists);
   const secteurs = [...new Set(B.A.map(x => x.secteur).filter(s => s && s !== "—"))].sort((a, b) => a.localeCompare(b, "fr"));
   const th = B.meta.themes, R = RISQ[CST.risque - 1];
   root.innerHTML = `<div class="cstgrid">
