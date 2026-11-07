@@ -151,3 +151,9 @@ export async function ecrireDonnee(cle: string, contenu: unknown) {
     ON CONFLICT (cle) DO UPDATE SET contenu = EXCLUDED.contenu, maj = now()
   `;
 }
+
+/** Remet en file les titres jamais relevés (après une correction de la collecte). */
+export async function reessayerEchecs(): Promise<number> {
+  const r = await getSql()`UPDATE bourse_titres SET essai = NULL, echecs = 0 WHERE maj IS NULL AND essai IS NOT NULL RETURNING cle`;
+  return r.length;
+}

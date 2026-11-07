@@ -59,6 +59,9 @@ export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: 
   const cal: string[] = [];
   for (let k = semaines; k >= 0; k--) cal.push(ajouterJours(fin, -7 * k));
   const T = cal.length;
+  /* Titres qui ne cotent plus (retrait de la cote, rachat) : dernier cours plus de trois semaines avant la fin du calendrier */
+  const limite = ajouterJours(fin, -21);
+  for (let i = titres.length - 1; i >= 0; i--) { const t = titres[i].serie!.t; if (t[t.length - 1] < limite) titres.splice(i, 1); }
 
   /* Cours reportés sur le calendrier (dernier cours connu, rien avant la première cotation) */
   const surCal = (l: Ligne): Num[] => {

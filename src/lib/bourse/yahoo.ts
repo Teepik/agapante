@@ -89,15 +89,30 @@ async function fiche(sym: string, modules: string[]): Promise<Obj> {
   return plat;
 }
 
-/** Trouve le titre coté sur la place du pays à partir d'un ISIN. */
-export async function resoudreIsin(isin: string, pays?: string): Promise<string | null> {
-  const r = (await yf.search(isin, { quotesCount: 10, newsCount: 0 }, SANS_VALIDATION)) as unknown as { quotes?: Obj[] };
-  const qs = (r.quotes ?? []).filter((q) => txt(q.symbol) && (!q.quoteType || q.quoteType === "EQUITY"));
+/** Trouve le titre coté sur la place du pays : recherche par ISIN, puis par nom de société. */
+const PLACES_DE = [".F", ".BE", ".DU", ".MU", ".SG", ".HM", ".HA"];
+async function chercher(q: string): Promise<Obj[]> {
+  const r = (await yf.search(q, { quotesCount: 12, newsCount: 0 }, SANS_VALIDATION)) as unknown as { quotes?: Obj[] };
+  return (r.quotes ?? []).filter((x) => txt(x.symbol) && (!x.quoteType || x.quoteType === "EQUITY"));
+}
+export async function resoudreIsin(isin: string, pays?: string, nom?: string | null): Promise<string | null> {
   const suf = pays ? SUFFIXE_PAYS[pays] : undefined;
   const pref = [suf, ".PA", ".DE", ".AS", ".MI", ".MC", ".BR", ".L", ".SW", ".ST", ".HE", ".CO", ".OL", ".VI", ".LS", ".IR"].filter(Boolean) as string[];
-  for (const s of pref) {
-    const q = qs.find((x) => String(x.symbol).endsWith(s));
-    if (q) return String(q.symbol);
+  const choisir = (qs: Obj[], seulement?: string) => {
+    for (const s of seulement ? [seulement] : pref) { const q = qs.find((x) => String(x.symbol).endsWith(s)); if (q) return String(q.symbol); }
+    return null;
+  };
+  const parIsin = await chercher(isin);
+  const direct = choisir(parIsin);
+  if (direct) return direct;
+  if (nom) {
+    const parNom = await chercher(nom);
+    const n = choisir(parNom, suf) ?? (suf ? null : choisir(parNom));
+    if (n) return n;
+  }
+  if (suf === ".DE") {
+    const regional = parIsin.map((x) => String(x.symbol)).find((s) => PLACES_DE.some((p) => s.endsWith(p)));
+    if (regional) return regional.slice(0, regional.lastIndexOf(".")) + ".DE";
   }
   return null;
 }
@@ -106,7 +121,7 @@ export type Releve = { sym: string; fiche: Obj; serie: Serie };
 
 export async function releverTitre(l: Ligne): Promise<Releve> {
   let sym = l.sym || l.univ?.s || null;
-  if (!sym && l.univ?.isin) sym = await resoudreIsin(l.univ.isin, l.univ.p);
+  if (!sym && l.univ?.isin) sym = await resoudreIsin(l.univ.isin, l.univ.p, l.univ.n);
   if (!sym) throw new Error("symbole introuvable pour " + l.cle);
   const cinqAns = new Date(Date.now() - (5 * 365.25 + 21) * 864e5);
   if (l.type === "fx" || l.type === "proxy") {
@@ -125,12 +140,12 @@ export async function releverTitre(l: Ligne): Promise<Releve> {
 }
 
 /** Diagnostic d'un symbole ou d'un ISIN (route de collecte, paramètres ?test= et ?isin=). */
-export async function diagnostic(opts: { sym?: string; isin?: string }) {
+export async function diagnostic(opts: { sym?: string; isin?: string; nom?: string; pays?: string }) {
   const out: Record<string, unknown> = {};
   if (opts.isin) {
     const r = (await yf.search(opts.isin, { quotesCount: 10, newsCount: 0 }, SANS_VALIDATION)) as unknown as { quotes?: Obj[] };
     out.recherche = (r.quotes ?? []).map((q) => ({ symbol: q.symbol, exchange: q.exchange, quoteType: q.quoteType, nom: q.shortname ?? q.longname }));
-    out.resolu = await resoudreIsin(opts.isin);
+    out.resolu = await resoudreIsin(opts.isin, opts.pays, opts.nom);
   }
   if (opts.sym) {
     const depuis = new Date(Date.now() - (5 * 365.25 + 21) * 864e5);
