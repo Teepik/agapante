@@ -1,8 +1,8 @@
 /* Paramètres de /bourse : univers complémentaire (ETF, indices, devises) et tables de lecture des données Yahoo. */
 
 export type Classe =
-  | "act_monde" | "act_us" | "act_eu" | "act_jp" | "act_em" | "act_style" | "act_theme"
-  | "monetaire" | "etat" | "credit" | "monde_oblig" | "or" | "immo_cote";
+  | "act_monde" | "act_us" | "act_eu" | "act_jp" | "act_em" | "act_style" | "act_theme" | "act_pays" | "act_secteur"
+  | "monetaire" | "etat" | "credit" | "monde_oblig" | "or" | "matieres" | "immo_cote";
 
 /** ETF suivis : nom, ISIN, frais annuels (%), classe, éligible au PEA, placement correspondant dans l'atlas. */
 export const ETF: Record<string, [string, string, number, Classe, boolean, string | null]> = {
@@ -51,16 +51,17 @@ export const THEME_ETF: Record<string, Record<string, number>> = {
 export const PROXIES = ["^GSPC", "^STOXX", "^FCHI", "^GDAXI", "GC=F", "TLT", "IEF", "XLK", "XLF", "XLE", "XLV", "XLI", "XLU", "XLP", "XLY", "XLB", "XLRE", "XLC", "SMH", "ITA"];
 
 /** Cours des devises contre l'euro (unités de devise pour un euro). */
-export const FX = ["EURUSD=X", "EURGBP=X", "EURCHF=X", "EURSEK=X", "EURDKK=X", "EURNOK=X", "EURPLN=X", "EURJPY=X"];
+export const FX = ["EURUSD=X", "EURGBP=X", "EURCHF=X", "EURSEK=X", "EURDKK=X", "EURNOK=X", "EURPLN=X", "EURJPY=X", "EURCAD=X", "EURAUD=X"];
 export const FXT: Record<string, string> = {
   USD: "EURUSD=X", GBP: "EURGBP=X", GBp: "EURGBP=X", GBX: "EURGBP=X", CHF: "EURCHF=X", SEK: "EURSEK=X",
-  DKK: "EURDKK=X", NOK: "EURNOK=X", PLN: "EURPLN=X", JPY: "EURJPY=X",
+  DKK: "EURDKK=X", NOK: "EURNOK=X", PLN: "EURPLN=X", JPY: "EURJPY=X", CAD: "EURCAD=X", AUD: "EURAUD=X",
 };
 
 /** Place de cotation attendue selon le suffixe Yahoo, pour résoudre un ISIN vers le bon titre. */
 export const SUFFIXE_PAYS: Record<string, string> = {
   France: ".PA", Germany: ".DE", "United Kingdom": ".L", Netherlands: ".AS", Spain: ".MC", Italy: ".MI", Belgium: ".BR",
   Finland: ".HE", Sweden: ".ST", Switzerland: ".SW", Denmark: ".CO", Norway: ".OL", Austria: ".VI", Portugal: ".LS", Ireland: ".IR",
+  Poland: ".WA", Canada: ".TO", Japan: ".T", Australia: ".AX",
 };
 
 export const SECT_FR: Record<string, string> = {
@@ -82,6 +83,17 @@ export const PAYS_FR: Record<string, string> = {
   Uruguay: "Uruguay", Brazil: "Brésil", China: "Chine", Taiwan: "Taïwan", "Hong Kong": "Hong Kong", Singapore: "Singapour",
   "Cayman Islands": "Îles Caïmans", Mexico: "Mexique", Argentina: "Argentine", Australia: "Australie", Japan: "Japon", Greece: "Grèce",
   Cyprus: "Chypre", "South Africa": "Afrique du Sud", "United Arab Emirates": "Émirats arabes unis", Chile: "Chili",
+  "South Korea": "Corée du Sud", Korea: "Corée du Sud", India: "Inde", Peru: "Pérou", Colombia: "Colombie", Panama: "Panama", Monaco: "Monaco",
+  Macau: "Macao", Philippines: "Philippines", Thailand: "Thaïlande", Indonesia: "Indonésie", Malaysia: "Malaisie", Turkey: "Turquie", Iceland: "Islande",
+  "Puerto Rico": "Porto Rico", Bahamas: "Bahamas", Kazakhstan: "Kazakhstan", Gibraltar: "Gibraltar", Malta: "Malte", Liechtenstein: "Liechtenstein",
+};
+/** Code ISO des pays (pour le rendement attendu de leur marché dans l'atlas). */
+export const PAYS_ISO: Record<string, string> = {
+  "United States": "US", Japan: "JP", Canada: "CA", Australia: "AU", China: "CN", Taiwan: "TW", "South Korea": "KR", Korea: "KR", India: "IN",
+  Brazil: "BR", Mexico: "MX", Israel: "IL", Singapore: "SG", "Hong Kong": "HK", Argentina: "AR", Chile: "CL", Peru: "PE", Colombia: "CO",
+  "South Africa": "ZA", Indonesia: "ID", Philippines: "PH", Thailand: "TH", Malaysia: "MY", Turkey: "TR", Uruguay: "UY", Greece: "GR",
+  "United Kingdom": "GB", Switzerland: "CH", France: "FR", Germany: "DE", Netherlands: "NL", Italy: "IT", Spain: "ES", Sweden: "SE", Denmark: "DK",
+  Norway: "NO", Finland: "FI", Belgium: "BE", Austria: "AT", Portugal: "PT", Ireland: "IE", Poland: "PL",
 };
 
 /* Thèmes de rupture. Échelle : +2 gagnant direct, +1 gagnant indirect, −1 exposé, −2 menacé.

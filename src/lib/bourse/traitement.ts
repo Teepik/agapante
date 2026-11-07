@@ -1,7 +1,7 @@
 /* Traitement des relevés : rendements hebdomadaires en euros, notes de style, catégories, pièges, thèmes,
    rendement réel attendu par titre et épisodes de crise. Calcul pur, sans accès réseau. */
 import {
-  CIE, CYCL, EPISODES, ETF, FXT, IND, PAYS_FR, PEA_PAYS, SECT_FR, SECT_PROXY, THEME_ETF, THEMES,
+  CIE, CYCL, EPISODES, ETF, FXT, IND, PAYS_FR, PAYS_ISO, PEA_PAYS, SECT_FR, SECT_PROXY, THEME_ETF, THEMES,
 } from "./config";
 import type { Ligne } from "./stockage";
 
@@ -44,9 +44,21 @@ function rank(v: Num[], asc = true): Num[] {
 type Item = Record<string, unknown> & { id: string; secteurEn: string | null };
 
 export type Sortie = {
-  actions: { meta: Record<string, unknown>; actions: Record<string, unknown>[]; etf: Record<string, unknown>[]; chocs: Record<string, unknown> };
-  rets: { dates: string[]; unit: number; r: Record<string, (number | null)[]>; f: Record<string, (number | null)[]> };
+  /** Fiches des actions en colonnes (cols, rows) pour alléger le transfert, avec méta et épisodes. */
+  actions: { meta: Record<string, unknown>; cols: string[]; rows: unknown[][]; chocs: Record<string, unknown> };
+  etf: { etf: Record<string, unknown>[] };
+  retsmeta: { dates: string[]; unit: number; usd: string };
+  /** Rendements hebdomadaires par titre, base64 d'entiers 16 bits (unité 1e-4, −32768 = absent). */
+  rets: Record<string, string>;
+  /** Fiches complètes (objets), pour les contrôles. */
+  liste: Record<string, unknown>[];
 };
+const ZONES = { us: "us", eu: "eu", jp: "jp", ca: "ca", au: "au" } as Record<string, string>;
+function b64(a: Num[]): string {
+  const t = new Int16Array(a.length);
+  for (let i = 0; i < a.length; i++) t[i] = Number.isFinite(a[i]) ? Math.max(-32767, Math.min(32767, Math.round(a[i] * 10000))) : -32768;
+  return Buffer.from(t.buffer).toString("base64");
+}
 
 export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: number }> }, semaines = 260): Sortie {
   const parSym = new Map<string, Ligne>();
@@ -179,7 +191,7 @@ export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: 
     if (nom === nom.toUpperCase() && nom.includes(" ") && nom.length > 8) nom = nom.replace(/\B[A-ZÀ-Ý]+/g, (w) => w.toLowerCase());
     items.push({
       id: l.sym!, nom, x: l.univ?.x ?? null, isin: l.univ?.isin ?? null,
-      pays: paysEn ? PAYS_FR[paysEn] ?? paysEn : null, paysEn, zone: l.univ?.r === "us" ? "us" : "eu",
+      pays: paysEn ? PAYS_FR[paysEn] ?? paysEn : null, paysEn, zone: ZONES[l.univ?.r ?? ""] ?? "autres",
       secteurEn: sect, secteur: sect ? SECT_FR[sect] ?? sect : "—", industrie: (f.industry as string) || null, ccy,
       px: price, tgt, mcap: Number.isFinite(mcapEur) ? mcapEur / 1e9 : NaN, per: pet, perF: pef, pb: nn(f.priceToBook, 0, 200),
       evEbitda: nn(f.enterpriseToEbitda, 0, 150), dy: Number.isFinite(dy) ? dy * 100 : NaN, payout: nn(f.payoutRatio, 0, 5),
@@ -269,7 +281,8 @@ export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: 
     let conf = 0;
     if (ok(it.rev90)) conf += (it.rev90 as number) > 2 ? 1 : (it.rev90 as number) < -2 ? -1 : 0;
     if (Number.isFinite(momRel)) conf += momRel > 10 ? 1 : momRel < -10 ? -1 : 0;
-    const reg = it.zone === "us" ? EY_US : EY_EU;
+    const iso = PAYS_ISO[(it.paysEn as string) ?? ""];
+    const reg = it.zone === "us" ? EY_US : it.zone === "eu" ? EY_EU : iso && atlas.pays[iso]?.cape ? 100 / atlas.pays[iso].cape! : 100 / medCape;
     let muR: number;
     if (!(ey[i] > 0)) muR = reg - 1;
     else {
@@ -286,24 +299,35 @@ export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: 
   });
   actions.sort((a, b) => ((b.mcap as number) ?? 0) - ((a.mcap as number) ?? 0));
 
-  /* ---- ETF ---- */
+  /* ---- ETF : liste éditoriale, puis ETF découverts (classement fait à la constitution de l'univers) ---- */
   const etf: Record<string, unknown>[] = [];
-  for (const [id, [nom, isin, ter, cls, pea, pl]] of Object.entries(ETF)) {
+  const vus = new Set<string>();
+  const ajouterEtf = (id: string, meta: Record<string, unknown>) => {
     const r = R.get(id);
-    if (!r) continue;
+    if (!r || vus.has(id)) return;
     const st = stats(r);
-    if (!st) continue;
+    if (!st) return;
     const f = (parSym.get(id)?.fiche ?? {}) as Record<string, unknown>;
     const aum = nn(f.totalAssets, 0);
-    const o: Record<string, unknown> = { id, nom, isin, ter, cls, pea, pl, th: THEME_ETF[id] ?? {}, aum: aum > 0 ? Math.round(aum / 1e7) / 100 : null, ccy: f.currency ?? "EUR" };
+    const o: Record<string, unknown> = { id, ...meta, aum: aum > 0 ? Math.round(aum / 1e7) / 100 : null, ccy: f.currency ?? "EUR" };
+    if (o.ter == null && ok(f.ter)) o.ter = f.ter;
+    if (!o.f && f.fundFamily) o.f = f.fundFamily;
     for (const [k, v] of Object.entries(st)) o[k] = r2(v);
-    etf.push(o);
+    etf.push(o); vus.add(id);
+  };
+  for (const [id, [nom, isin, ter, cls, pea, pl]] of Object.entries(ETF)) ajouterEtf(id, { nom, isin, ter, cls, pea, pl, th: THEME_ETF[id] ?? {}, ed: true });
+  for (const l of titres) {
+    if (l.type !== "etf" || !l.univ || ETF[l.sym!]) continue;
+    const u = l.univ as Record<string, unknown>;
+    if (!u.cls) continue;
+    const { s: _s, n, ...rest } = u;
+    void _s;
+    ajouterEtf(l.sym!, { nom: n || l.sym, ...rest, th: u.th ?? {}, pea: !!u.pea });
   }
 
-  /* ---- Rendements compacts (centièmes de point de base : 1e-4) ---- */
-  const enc = (a: Num[]) => a.map((v) => (Number.isFinite(v) ? Math.round(v * 10000) : null));
-  const mat: Record<string, (number | null)[]> = {};
-  for (const o of [...actions, ...etf]) mat[o.id as string] = enc(R.get(o.id as string)!);
+  /* ---- Rendements compacts ---- */
+  const rets: Record<string, string> = {};
+  for (const o of [...actions, ...etf]) rets[o.id as string] = b64(R.get(o.id as string)!);
   const usd = fxRet("USD").slice(1);
 
   /* ---- Épisodes de crise (indices de référence, cours reportés au lundi) ---- */
@@ -340,8 +364,11 @@ export function traiter(lignes: Ligne[], atlas: { pays: Record<string, { cape?: 
     date: majs.length ? new Date(majs[majs.length - 1]).toISOString() : null,
     plusAncien: majs.length ? new Date(majs[0]).toISOString() : null,
     fin, actions: actions.length, etf: etf.length, semaines: dates.length, themes: THEMES,
+    zones: actions.reduce<Record<string, number>>((o, a) => { o[a.zone as string] = (o[a.zone as string] || 0) + 1; return o; }, {}),
     styles: { v: "Value", g: "Croissance", q: "Qualité", m: "Momentum", d: "Défensive", y: "Rendement", s: "Petite et moyenne capitalisation" },
     eyEU: r2(EY_EU), eyUS: r2(EY_US), gmed: r2(gmed),
   };
-  return { actions: { meta, actions, etf, chocs }, rets: { dates, unit: 1e-4, r: mat, f: { usd: enc(usd) } } };
+  const cols = [...new Set(actions.flatMap((a) => Object.keys(a)))].filter((k) => k !== "resume");
+  const rows = actions.map((a) => cols.map((k) => (a[k] === undefined ? null : a[k])));
+  return { actions: { meta, cols, rows, chocs }, etf: { etf }, retsmeta: { dates, unit: 1e-4, usd: b64(usd) }, rets, liste: actions };
 }

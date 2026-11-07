@@ -107,7 +107,6 @@ function openFiche(id){
   const x = B.byId.get(id); if (!x) return;
   const el = $("#fiche"), body = $("#f-body");
   $("#f-title").textContent = x.nom;
-  const monde = valuePath("EUNL.DE"), me = valuePath(id);
   const k = (l, v, c) => `<div class="kpi"><div class="l">${l}</div><div class="v">${v}</div>${c ? `<div class="c">${c}</div>` : ""}</div>`;
   const row = (l, v, cmt) => `<tr><td>${l}${cmt ? `<span class="cmp">${cmt}</span>` : ""}</td><td>${v}</td></tr>`;
   if (x.kind === "action"){
@@ -124,7 +123,7 @@ function openFiche(id){
       <div class="det">
         <div><h3>Notes de style</h3><div class="scorebar" style="margin-top:8px">${Object.entries(STY).map(([s, l]) => `<div class="sb" title="${esc(STY_EXPL[s])}"><div class="lab"><span>${esc(l)}</span><span>${fmt(x.sc[s], v => nf0.format(v) + " / 100")}</span></div><div class="track"><i style="width:${x.sc[s] || 0}%;background:var(${STY_C[s]})"></i></div></div>`).join("")}</div>
           <p class="note">Rangs centiles parmi les ${nf0.format(B.A.length)} sociétés suivies ; 100 = la meilleure.</p></div>
-        <div><h3>Cours en euros, base 100</h3><div class="chart" id="f-chart"></div><p class="note">${me.length ? `Sur ${nf0.format(me.length / 52)} ans : ${F.pctS((me[me.length - 1][1] / 100 - 1) * 100)} contre ${monde.length ? F.pctS((monde[monde.length - 1][1] / monde[Math.max(0, monde.length - me.length)][1] - 1) * 100) : "—"} pour l'ETF Monde (dividendes réinvestis).` : ""}</p></div>
+        <div><h3>Cours en euros, base 100</h3><div class="chart" id="f-chart"><p class="note">Chargement des cours…</p></div><p class="note" id="f-perf"></p></div>
       </div>
       <div class="det">
         <table class="t"><tbody>
@@ -142,14 +141,24 @@ function openFiche(id){
           ${row("Pire baisse sur un an", fmt(x.dd1y, F.pctS))}
         </tbody></table>
       </div>
-      ${x.resume ? `<div><h3>Activité</h3><p class="note" lang="en" style="font-size:13px;color:var(--fg)">${esc(x.resume)}</p><p class="note">Description publiée par Yahoo Finance, en anglais.</p></div>` : ""}`;
+      <div id="f-resume"></div>`;
+    fetch("/bourse/api/donnees?quoi=fiche&id=" + encodeURIComponent(id), {credentials:"same-origin"}).then(r => r.ok ? r.json() : null).then(j => {
+      if (!j || !j.resume || $("#f-title").textContent !== x.nom) return;
+      $("#f-resume").innerHTML = `<h3>Activité</h3><p class="note" lang="en" style="font-size:13px;color:var(--fg)">${esc(j.resume)}</p><p class="note">Description publiée par Yahoo Finance, en anglais${ok(j.effectif) ? ` · ${nf0.format(j.effectif)} salariés` : ""}.</p>`;
+    }).catch(() => {});
   } else {
-    body.innerHTML = `<div class="meta-l">${esc(x.id)} · ${esc(x.isin)} · ${esc(CLS_L[x.cls])}</div>
-      <div class="flags">${x.pea ? '<span class="pill good">Éligible au PEA</span>' : '<span class="pill neu">Compte-titres ou assurance-vie</span>'}${themePills(x.th)}</div>
-      <div class="kpis k3">${k("Frais annuels", nf2.format(x.ter) + " %")}${k("Encours", ok(x.aum) ? mdE(x.aum) : "—")}${k("Rendement réel attendu", fmt(x.mu, F.pct), "par an, net de frais, avant impôt")}
+    const ob = POCHE[x.cls] === "obligations" || (x.cls === "monetaire" && x.bt);
+    const hyp = x.pl && PLI[x.pl] ? `hypothèses de l'atlas pour « ${PLI[x.pl].nom} »${ETF_ADJ[x.id] ? `, corrigées de ${F.pts(ETF_ADJ[x.id]).replace(" pt", " point")} pour son style ou son thème` : ""}`
+      : ob ? `taux actuel de sa courbe (${x.bc === "USD" ? "États-Unis" : x.bp && P[x.bp] ? P[x.bp].nom : "zone euro"}) à ${ok(x.T) ? nf1.format(x.T) + " ans" : "sa durée"}${x.bt === "corp" ? ", plus la prime des entreprises de qualité et moins les défauts attendus" : x.bt === "hy" ? ", moins les pertes attendues sur défauts" : ""}${x.bc && x.bc !== "EUR" && x.bc !== "EMLOC" ? (x.hdg ? ", moins le coût de la couverture de change" : ", corrigé de la tendance de la devise contre l'euro") : ""}`
+      : x.cls === "or" ? "l'or garde son pouvoir d'achat, avec une prime de 0,5 % par an" : x.cls === "matieres" ? "les matières premières suivent l'inflation à long terme"
+      : `valorisation de ${geoL(x.geo) || "sa zone"} (1 / CAPE)${STY_ADJ[x.sty] ? `, ${F.pts(STY_ADJ[x.sty]).replace(" pt", " point")} pour son style` : ""}${x.cls === "act_theme" ? ", −1 point pour la cherté habituelle des thèmes" : ""}`;
+    body.innerHTML = `<div class="meta-l">${esc(x.id)} · ${esc(x.isin || "")}${x.f ? " · " + esc(x.f) : ""}</div>
+      <div class="meta-l"><b>${esc(etfSousTitre(x))}</b></div>
+      <div class="flags">${x.pea ? '<span class="pill good">Éligible au PEA</span>' : '<span class="pill neu">Compte-titres ou assurance-vie</span>'}${x.hdg ? '<span class="pill neu">Couvert en euros</span>' : ""}${x.ech ? `<span class="pill good">Échéance ${x.ech}</span>` : ""}${themePills(x.th)}</div>
+      <div class="kpis k3">${k("Frais annuels", ok(x.ter) ? nf2.format(x.ter) + " %" : "—", ok(x.ter) ? "" : "frais publiés absents ; 0,30 % retenu")}${k("Encours", ok(x.aum) ? mdE(x.aum) : "—")}${k("Rendement réel attendu", fmt(x.mu, F.pct), "par an, net de frais, avant impôt")}
         ${k("Volatilité", fmt(x.vol, v => nf1.format(v) + " %"), ok(x.beta) ? "bêta face au monde : " + nf2.format(x.beta) : "")}${k("Performance 12 mois", fmt(x.mom12, F.pctS))}${k("Pire baisse sur un an", fmt(x.dd1y, F.pctS))}</div>
-      <div><h3>Cours en euros, base 100</h3><div class="chart" id="f-chart"></div></div>
-      <p class="note">Rendement attendu tiré des hypothèses de l'atlas (${esc(x.pl && PLI[x.pl] ? PLI[x.pl].nom : "immobilier coté européen")})${ETF_ADJ[x.id] ? `, corrigé de ${F.pts(ETF_ADJ[x.id]).replace(" pt", " point")} pour son style ou son thème` : ""}.</p>`;
+      <div><h3>Cours en euros, base 100</h3><div class="chart" id="f-chart"><p class="note">Chargement des cours…</p></div><p class="note" id="f-perf"></p></div>
+      <p class="note">Rendement attendu : ${esc(hyp)}.${x.ech ? " Conservé jusqu'à l'échéance, un ETF obligataire daté se comporte comme une obligation : le rendement actuel est à peu près acquis." : ""}</p>`;
   }
   const pfs = (Store.data.portefeuilles && Store.data.portefeuilles.liste) || [];
   $("#f-foot").innerHTML = `<button type="button" class="ghost" id="f-watch">Suivre</button>
@@ -158,10 +167,14 @@ function openFiche(id){
   $("#f-watch").onclick = () => { addWatch({type:x.kind, id:x.id}); };
   $("#f-add").onclick = () => { pfAddLine(x.id, $("#f-pf") ? $("#f-pf").value : null); closeFiche(); };
   el.hidden = false; $("#f-close").focus();
-  requestAnimationFrame(() => {
+  needRets([id, "EUNL.DE"]).then(() => {
+    if ($("#fiche").hidden || $("#f-title").textContent !== x.nom) return;
+    const monde = valuePath("EUNL.DE"), me = valuePath(id);
     const series = [{name:x.nom, color:css("--accent"), pts:me, endLabel:x.id.split(".")[0]}];
     if (id !== "EUNL.DE" && monde.length && me.length){ const off = monde.length - me.length, b = monde[Math.max(0, off)][1]; series.push({name:"ETF Monde", color:css("--muted"), pts:monde.slice(Math.max(0, off)).map(([d, v]) => [d, v / b * 100]), dash:"4 3", w:1.5, endLabel:"Monde"}); }
-    if (me.length) lineChart($("#f-chart"), series, {h:190, xType:"time", yFmt:v => nf0.format(v)});
+    if (me.length){ lineChart($("#f-chart"), series, {h:190, xType:"time", yFmt:v => nf0.format(v)});
+      $("#f-perf").textContent = `Sur ${nf1.format(me.length / 52)} ans : ${F.pctS((me[me.length - 1][1] / 100 - 1) * 100)}${id !== "EUNL.DE" && monde.length ? ` contre ${F.pctS((monde[monde.length - 1][1] / monde[Math.max(0, monde.length - me.length)][1] - 1) * 100)} pour l'ETF Monde` : ""} (revenus réinvestis, en euros).`; }
+    else $("#f-chart").innerHTML = '<p class="note">Cours indisponibles.</p>';
   });
 }
 function closeFiche(){ $("#fiche").hidden = true; }

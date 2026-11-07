@@ -37,46 +37,62 @@ function cstStockPool(){
     if (CST.sectEx.includes(x.secteur)) return false;
     if (CST.pieges && x.pg && x.pg.length) return false;
     for (const [k, v] of Object.entries(x.th || {})){ if (CST.menaces && v <= -2) return false; const o = CST.themes[k]; if (o === 1 && v < 0) return false; if (o === -1 && v > 0) return false; }
-    return B.R.get(x.id) && x.hist >= 104;
+    return x.hist >= 104;
   }).map(x => ({x, s:cstStockScore(x)})).filter(o => ok(o.s)).sort((a, b) => b.s - a.s);
 }
 /* Sélection diversifiée : meilleure note d'abord, plafonds par secteur, pays et zone, pas de quasi-doublon */
 function cstPickStocks(pool, N){
-  const nEU = CST.pea ? N : Math.round(N * CST.geoEU / 100), quota = {eu:nEU, us:N - nEU};
+  const nEU = CST.pea ? N : Math.round(N * CST.geoEU / 100), quota = {eu:nEU, hors:N - nEU};
   const capS = Math.max(2, Math.ceil(N * .25)), capP = Math.max(3, Math.ceil(N * .4));
-  const picked = [], bySect = {}, byPays = {}, byZone = {eu:0, us:0};
+  const picked = [], bySect = {}, byPays = {}, byZone = {eu:0, hors:0}, zk = x => x.zone === "eu" ? "eu" : "hors";
   for (const pass of [0, 1, 2]) for (const {x} of pool){
     if (picked.length >= N) break;
     if (picked.includes(x)) continue;
-    if (pass === 0 && byZone[x.zone] >= quota[x.zone]) continue;
+    if (pass === 0 && byZone[zk(x)] >= quota[zk(x)]) continue;
     if (pass < 2 && ((bySect[x.secteur] || 0) >= capS || (byPays[x.pays] || 0) >= capP)) continue;
     if (picked.some(y => corr2(x.id, y.id) > .8)) continue;
-    picked.push(x); bySect[x.secteur] = (bySect[x.secteur] || 0) + 1; byPays[x.pays] = (byPays[x.pays] || 0) + 1; byZone[x.zone]++;
+    picked.push(x); bySect[x.secteur] = (bySect[x.secteur] || 0) + 1; byPays[x.pays] = (byPays[x.pays] || 0) + 1; byZone[zk(x)]++;
   }
   return picked;
 }
+const qualite = e => 8 * Math.log10(1 + (ok(e.aum) ? e.aum : .05) * 10) - 22 * (ok(e.ter) ? e.ter : .4) + (e.ed ? 6 : 0);
 function cstEtfPool(){
-  const eq = B.E.filter(e => POCHE[e.cls] === "actions" && e.cls !== "immo_cote" && (!CST.pea || e.pea));
-  const sty = {"IS3S.DE":"v", "IS3Q.DE":"q", "IS3R.DE":"m", "IQQ0.DE":"d", "ZPRV.DE":"s", "ZPRX.DE":"s"};
+  const eq = B.E.filter(e => POCHE[e.cls] === "actions" && e.cls !== "immo_cote" && (!CST.pea || e.pea) && (e.hist || 0) >= 52);
   const score = e => {
-    let s = 0;
-    if (e.cls === "act_monde") s += 100 - e.ter * 50 + (e.id === "WPEA.PA" || e.id === "EUNL.DE" ? 5 : 0);
-    if (e.cls === "act_eu") s += 40 + CST.geoEU * .6 + (e.id === "MEUD.PA" ? 8 : 0);
-    if (e.cls === "act_us") s += 30 + (100 - CST.geoEU) * .4 + (e.id === "PUST.PA" ? -10 : 0);
-    if (e.cls === "act_em") s += 38;
-    if (e.cls === "act_jp") s += 20;
-    if (sty[e.id]) s += 10 * (CST.w[sty[e.id]] || 0) - 5;
-    for (const [k, v] of Object.entries(e.th || {})){ if (CST.themes[k] === 1) s += 25 * v; if (CST.themes[k] === -1) s -= 60; }
-    if (e.cls === "act_theme" && !Object.keys(e.th || {}).some(k => CST.themes[k] === 1)) s -= 20;
+    let s = qualite(e);
+    switch (e.cls){
+      case "act_monde": s += 60; break;
+      case "act_eu": s += 25 + CST.geoEU * .5; break;
+      case "act_us": s += 20 + (100 - CST.geoEU) * .35; break;
+      case "act_em": s += 28; break;
+      case "act_jp": s += 14; break;
+      case "act_style": s += 4 + 10 * (CST.w[e.sty] || 0); break;
+      case "act_theme": s += Object.keys(e.th || {}).some(k => CST.themes[k] === 1 && e.th[k] > 0) ? 30 : -30; break;
+      case "act_secteur": s -= 15; break;
+      case "act_pays": s -= 10; break;
+    }
+    for (const [k, v] of Object.entries(e.th || {})){ if (CST.themes[k] === 1 && v > 0) s += 12 * v; if (CST.themes[k] === -1 && v > 0) s -= 80; if (CST.themes[k] === 1 && v < 0) s -= 40; }
+    if (e.hdg) s -= 4;
     return s;
   };
-  return eq.map(e => ({x:e, s:score(e)})).sort((a, b) => b.s - a.s);
+  return eq.map(e => ({x:e, s:score(e)})).sort((a, b) => b.s - a.s).slice(0, 60);
 }
 function cstBondPool(){
-  const infl = CMP.infl === "installee" || CMP.infl === "choc";
-  const score = e => ({"EUNH.DE":90, "IBCI.DE":infl ? 85 : 55, "EUN5.DE":88, "EUNW.DE":CST.risque >= 5 ? 60 : 30, "SXRM.DE":CST.risque >= 4 ? 62 : 45, "IUS7.DE":CST.risque >= 6 ? 50 : 25}[e.id] || 20);
-  return B.E.filter(e => POCHE[e.cls] === "obligations").map(e => ({x:e, s:score(e)})).sort((a, b) => b.s - a.s);
+  const H = CST.horizon, infl = CMP.infl === "installee" || CMP.infl === "choc", rq = CST.risque;
+  const score = e => {
+    let s = qualite(e);
+    const ob = e.ed ? ({"EUNH.DE":"gov", "IBCI.DE":"infl", "EUN5.DE":"corp", "EUNW.DE":"hy", "SXRM.DE":"gov", "IUS7.DE":"em"}[e.id] || "gov") : e.bt;
+    const cur = e.ed ? (e.cls === "monde_oblig" ? "USD" : "EUR") : (e.bc || "EUR");
+    if (cur === "EUR") s += ob === "gov" ? 30 : ob === "corp" ? 28 : ob === "infl" ? (infl ? 26 : 16) : ob === "hy" ? (rq >= 5 ? 18 : 0) : ob === "agg" ? 24 : 10;
+    else s += ob === "em" ? (rq >= 6 ? 12 : 2) : e.hdg ? 14 : (rq >= 4 ? 10 : 2);
+    const T = ok(e.T) ? e.T : e.id === "EUN5.DE" ? 4.4 : 7;
+    if (e.ech){ const d = Math.abs(T - H); s += T <= H + 1.2 ? 24 - 6 * d : -15; }
+    else s -= 2.5 * Math.max(0, T - Math.max(2, H));
+    return s;
+  };
+  return B.E.filter(e => POCHE[e.cls] === "obligations" && (e.hist || 0) >= 52).map(e => ({x:e, s:score(e)})).sort((a, b) => b.s - a.s).slice(0, 60);
 }
+const cstPoolSimple = cls => B.E.filter(e => e.cls === cls && (e.hist || 0) >= 52).map(e => ({x:e, s:qualite(e) + (e.ed ? 20 : 0)})).sort((a, b) => b.s - a.s).slice(0, 12);
 function cstLists(){
   const M = CST.montant, mx = maxEq(CST.horizon);
   const lists = [];
@@ -89,7 +105,7 @@ function cstLists(){
   const etfPool = cstEtfPool(), pocketE = M * eqGuess * (100 - CST.vifs) / 100;
   const nE = CST.n.etf ?? (pocketE >= 30000 ? 3 : pocketE >= 10000 ? 2 : pocketE > 0 ? 1 : 0);
   if (CST.vifs < 100 && nE > 0){
-    const auto = []; for (const {x} of etfPool){ if (auto.length >= nE) break; if (auto.some(y => y.cls === x.cls && x.cls !== "act_style" && x.cls !== "act_theme")) continue; auto.push(x); }
+    const auto = []; for (const {x} of etfPool){ if (auto.length >= nE) break; if (auto.some(y => y.cls === x.cls && x.cls !== "act_style" && x.cls !== "act_theme")) continue; if (auto.some(y => corr2(x.id, y.id) > .97)) continue; auto.push(x); }
     lists.push({id:"etf", titre:"ETF actions", poche:"actions", pool:etfPool, n:nE, auto,
       why:"Un ETF Monde sert de cœur ; les suivants ajoutent la zone, le style ou le thème que vos réglages favorisent."});
   }
@@ -98,12 +114,12 @@ function cstLists(){
   if (nB > 0 && eqGuess < 1){ const bp = cstBondPool();
     const auto = []; for (const {x} of bp){ if (auto.length >= nB) break; if (auto.some(y => y.cls === x.cls) && auto.length < 2) continue; auto.push(x); }
     if (auto.length < nB) for (const {x} of bp){ if (auto.length >= nB) break; if (!auto.includes(x)) auto.push(x); }
-    lists.push({id:"oblig", titre:"Obligations", poche:"obligations", pool:bp, n:nB, auto, why:`Horizon de ${CST.horizon} an${CST.horizon > 1 ? "s" : ""} : la part défensive se répartit entre monétaire (${nf0.format(split.monetaire * 100)} %), emprunts d'État (${nf0.format(split.etat * 100)} %) et entreprises de qualité (${nf0.format(split.credit * 100)} %).`});
+    lists.push({id:"oblig", titre:"Obligations", poche:"obligations", pool:bp, n:nB, auto, why:`Horizon de ${CST.horizon} an${CST.horizon > 1 ? "s" : ""} : la part défensive se répartit entre monétaire (${nf0.format(split.monetaire * 100)} %), emprunts d'État (${nf0.format(split.etat * 100)} %) et entreprises de qualité (${nf0.format(split.credit * 100)} %). Les ETF à échéance proche de ${2026 + CST.horizon} remontent en tête : conservés jusqu'au bout, ils rendent à peu près leur taux actuel.`});
   }
-  const mon = B.byId.get("CSH2.PA");
-  if (mon && eqGuess < 1 && split.monetaire > 0 && ((1 - eqGuess) * split.monetaire >= .025 || nB === 0)) lists.push({id:"mon", titre:"Monétaire", poche:"monetaire", pool:[{x:mon, s:1}], n:1, auto:[mon], why:"Rémunéré au taux de la BCE (€STR), quasiment sans variation : la réserve de sécurité."});
-  const gold = B.byId.get("GOLD.PA");
-  if (gold && OR_PART[CST.risque - 1] > 0 && eqGuess < 1) lists.push({id:"or", titre:"Or", poche:"or", pool:[{x:gold, s:1}], n:1, auto:[gold], why:"Peu lié aux actions comme aux obligations, l'or amortit les crises d'inflation et les chocs géopolitiques."});
+  const monP = cstPoolSimple("monetaire");
+  if (monP.length && eqGuess < 1 && split.monetaire > 0 && ((1 - eqGuess) * split.monetaire >= .025 || nB === 0)) lists.push({id:"mon", titre:"Monétaire", poche:"monetaire", pool:monP, n:1, auto:[monP[0].x], why:"Rémunéré au taux de la BCE (€STR), quasiment sans variation : la réserve de sécurité."});
+  const orP = cstPoolSimple("or");
+  if (orP.length && OR_PART[CST.risque - 1] > 0 && eqGuess < 1) lists.push({id:"or", titre:"Or", poche:"or", pool:orP, n:1, auto:[orP[0].x], why:"Peu lié aux actions comme aux obligations, l'or amortit les crises d'inflation et les chocs géopolitiques."});
   for (const l of lists){ const man = CST.picks[l.id]; l.sel = man ? man.map(id => B.byId.get(id)).filter(Boolean) : l.auto; l.manual = !!man; }
   return lists;
 }
@@ -141,6 +157,13 @@ function cstBuild(lists){
 function renderConstructeur(){
   const root = $("#cst-body");
   if (bourseWait(root)) return;
+  const besoin = cstStockPool().slice(0, 90).map(o => o.x.id).concat(cstEtfPool().slice(0, 30).map(o => o.x.id), cstBondPool().slice(0, 30).map(o => o.x.id),
+    cstPoolSimple("monetaire").slice(0, 4).map(o => o.x.id), cstPoolSimple("or").slice(0, 4).map(o => o.x.id), Object.values(CST.picks).flat(), ["EUNL.DE", "EUNH.DE", "GOLD.PA"]);
+  if (!hasRets(besoin)){
+    if (!root.querySelector(".cstgrid")) root.innerHTML = `<div class="card"><p class="empty">Chargement des cours…</p></div>`;
+    needRets(besoin).then(() => { if (CUR === "constructeur") renderConstructeur(); });
+    return;
+  }
   const lists = cstLists(), built = cstBuild(lists);
   const secteurs = [...new Set(B.A.map(x => x.secteur).filter(s => s && s !== "—"))].sort((a, b) => a.localeCompare(b, "fr"));
   const th = B.meta.themes, R = RISQ[CST.risque - 1];
@@ -151,7 +174,7 @@ function renderConstructeur(){
         <label for="c-m">Montant (€)<input id="c-m" type="number" min="1000" step="1000" value="${CST.montant}"></label>
         <label for="c-h">Horizon (ans)<input id="c-h" type="number" min="1" max="30" step="1" value="${CST.horizon}"></label></div>
       <label class="rg"><span>Part des actions en titres vifs <b>${CST.vifs} %</b><small>le reste en ETF</small></span><input type="range" min="0" max="100" step="10" value="${CST.vifs}" id="c-vifs"></label>
-      <label class="rg"><span>Europe dans les actions <b>${CST.pea ? "100 % (PEA)" : CST.geoEU + " %"}</b><small>${CST.pea ? "le PEA n'accepte que des sociétés européennes" : "le reste aux États-Unis"}</small></span><input type="range" min="0" max="100" step="5" value="${CST.geoEU}" id="c-geo" ${CST.pea ? "disabled" : ""}></label>
+      <label class="rg"><span>Europe dans les actions <b>${CST.pea ? "100 % (PEA)" : CST.geoEU + " %"}</b><small>${CST.pea ? "le PEA n'accepte que des sociétés européennes" : "le reste hors d'Europe (États-Unis, Japon, Canada…)"}</small></span><input type="range" min="0" max="100" step="5" value="${CST.geoEU}" id="c-geo" ${CST.pea ? "disabled" : ""}></label>
       <label class="field" for="c-liq"><span>Liquidité minimale des actions</span><select id="c-liq">${[[0, "Sans minimum"], [1, "1 M€ échangés par jour"], [5, "5 M€ par jour"], [20, "20 M€ par jour"], [100, "100 M€ par jour (grandes valeurs)"]].map(([v, l]) => `<option value="${v}" ${CST.liq === v ? "selected" : ""}>${l}</option>`).join("")}</select></label>
       <label class="chk"><input type="checkbox" id="c-pea" ${CST.pea ? "checked" : ""}> Actions logées dans un PEA</label>
       <label class="chk"><input type="checkbox" id="c-pg" ${CST.pieges ? "checked" : ""}> Écarter les pièges (value piège, dividende fragile, dette lourde…)</label>
@@ -213,7 +236,7 @@ function renderCstOut(lists, built){
       ${CST.pea && (poches.obligations || poches.or || poches.monetaire) ? `<p class="note">Obligations, monétaire et or n'entrent pas dans un PEA : cette part se loge sur un compte-titres ou en assurance-vie.</p>` : ""}
     </div>
     ${lists.map(l => { const top = l.pool.slice(0, Math.max(l.n * 3, 15)).map(o => o.x); for (const x of l.sel) if (!top.includes(x)) top.unshift(x);
-      return `<div class="card cl" data-l="${l.id}"><div class="btnrow" style="justify-content:space-between"><h2>${esc(l.titre)} : ${l.n > 1 ? `choisissez <span class="big">${l.n}</span> parmi ${l.pool.length}` : `<span class="big">1</span> ligne`}</h2>
+      return `<div class="card cl" data-l="${l.id}"><div class="btnrow" style="justify-content:space-between"><h2>${esc(l.titre)} : ${l.pool.length > 1 ? `choisissez <span class="big">${l.n}</span> parmi ${l.pool.length}` : `<span class="big">1</span> ligne`}</h2>
         <div class="btnrow">${l.pool.length > 1 ? `<button class="ghost small" data-n="-1" aria-label="Une ligne de moins">−</button><button class="ghost small" data-n="1" aria-label="Une ligne de plus">+</button>` : ""}${l.manual ? '<button class="ghost small" data-reset="1">Sélection automatique</button>' : ""}</div></div>
         <p class="note">${esc(l.why)} ${l.sel.length !== l.n ? `<b>${l.sel.length} cochée${l.sel.length > 1 ? "s" : ""}.</b>` : ""}</p>
         <div class="tblwrap" style="border:0"><table class="t cand"><thead><tr><th></th><th>Ligne</th>${l.id === "actions" ? "<th>Catégorie</th><th class=\"n\">Note</th>" : ""}<th class="n">Volat.</th><th class="n">Rdt réel att.</th><th class="n">Poids</th><th class="n">Montant</th></tr></thead><tbody>

@@ -41,14 +41,14 @@ function renderRuptures(){
   const list = dir => B.A.filter(x => inZ(x) && (dir > 0 ? (x.th[k] || 0) > 0 : (x.th[k] || 0) < 0))
     .sort((a, b) => Math.abs(b.th[k]) - Math.abs(a.th[k]) || (dir > 0 ? b.conf - a.conf : a.conf - b.conf) || (b.mcap || 0) - (a.mcap || 0));
   const g = list(1), p = list(-1);
-  const etfs = B.E.filter(e => (e.th || {})[k]);
+  const etfs = B.E.filter(e => (e.th || {})[k] && (RUP.zone === "all" || e.zone === RUP.zone || e.zone === "monde")).sort((a, b) => ((b.th[k] > 0) - (a.th[k] > 0)) || ((b.aum || 0) - (a.aum || 0))).slice(0, 14);
   const line = (x, dir) => { const [cl, tone] = confLabel(x, dir); const cher = dir > 0 && x.perF > 40;
     return `<button class="rrow" data-id="${esc(x.id)}"><span class="t"><b>${esc(x.nom)}</b><small>${esc(x.id)} · ${esc(x.pays || "")} · ${Math.abs(x.th[k]) === 2 ? (dir > 0 ? "gagnant direct" : "menacé directement") : (dir > 0 ? "gagnant indirect" : "exposé")}</small></span>
       <span class="v"><span class="pill ${tone} xs">${cl}</span>${cher ? '<span class="pill warn xs">Déjà payé cher</span>' : ""}<small>12 m ${fmt(x.mom12, F.pctS)} · révis. ${fmt(x.rev90, F.pctS)} · PER ${fmt(x.perF, F.x)}</small></span></button>`; };
   $("#rup-detail").innerHTML = `<h2>${esc(themeL(k))}</h2><p>${esc(RUP_TXT[k] || "")}</p>
     <div class="det"><div><h3>Gagnants (${g.length})</h3><div class="rlist">${g.slice(0, 40).map(x => line(x, 1)).join("") || '<p class="empty">Aucun dans cette zone.</p>'}</div></div>
       <div><h3>Menacés (${p.length})</h3><div class="rlist">${p.slice(0, 40).map(x => line(x, -1)).join("") || '<p class="empty">Aucun dans cette zone.</p>'}</div></div></div>
-    ${etfs.length ? `<div><h3>ETF du thème</h3><div class="rlist">${etfs.map(e => `<button class="rrow" data-id="${esc(e.id)}"><span class="t"><b>${esc(e.nom)}</b><small>${esc(e.id)} · frais ${nf2.format(e.ter)} %</small></span><span class="v"><small>12 m ${fmt(e.mom12, F.pctS)} · volatilité ${fmt(e.vol, v => nf0.format(v) + " %")}</small></span></button>`).join("")}</div></div>` : ""}
+    ${etfs.length ? `<div><h3>ETF du thème</h3><div class="rlist">${etfs.map(e => `<button class="rrow" data-id="${esc(e.id)}"><span class="t"><b>${esc(e.nom)}</b><small>${esc(e.id)} · ${e.th[k] > 0 ? "gagnant" : "exposé"} · frais ${fmt(e.ter, v => nf2.format(v) + " %")} · encours ${mdE(e.aum)}</small></span><span class="v"><small>12 m ${fmt(e.mom12, F.pctS)} · volatilité ${fmt(e.vol, v => nf0.format(v) + " %")}</small></span></button>`).join("")}</div></div>` : ""}
     <p class="note">Un classement éditorial vieillit : il se relit à chaque publication de résultats. La confirmation par le marché, elle, se met à jour à chaque collecte.</p>`;
   $$("#rup-detail .rrow").forEach(b => b.onclick = () => openFiche(b.dataset.id));
 }

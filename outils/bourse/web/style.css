@@ -315,3 +315,7 @@ table.cand .pill{margin-left:2px}
 #act-bar select{max-width:230px}
 table.res.act td:nth-child(2),table.res.act th:nth-child(2){text-align:left}
 table.res.act td .pill,table.res.act td.sg{font-family:var(--body)}
+table.res.etfT{min-width:1180px}
+table.res.etfT td.cat{white-space:normal;text-align:left;font-family:var(--body);font-size:12px;max-width:260px;color:var(--muted)}
+table.res.etfT th:nth-child(2){text-align:left}
+#etf-bar select{max-width:230px}

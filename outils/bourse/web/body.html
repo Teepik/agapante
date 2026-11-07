@@ -4,6 +4,7 @@
     <span class="sub"><span id="cover">Atlas financier et sélection d'actions</span><br><span id="b-date"></span></span>
     <nav class="views" aria-label="Vues">
       <button data-view="actions" aria-pressed="false">Actions</button>
+      <button data-view="etf" aria-pressed="false">ETF et obligations</button>
       <button data-view="ruptures" aria-pressed="false">Ruptures</button>
       <button data-view="portefeuille" aria-pressed="false">Portefeuille</button>
       <button data-view="constructeur" aria-pressed="false">Constructeur</button>
@@ -67,7 +68,7 @@
   <section id="view-actions" class="stack" hidden>
     <div class="bar" id="act-bar" hidden>
       <div class="field search"><span>Société</span><input id="act-q" type="search" placeholder="Nom, code, ISIN ou industrie…" autocomplete="off"></div>
-      <div class="field"><span>Zone</span><div class="seg" id="act-zone" role="group" aria-label="Zone"><button data-z="all" aria-pressed="true">Toutes</button><button data-z="eu" aria-pressed="false">Europe</button><button data-z="us" aria-pressed="false">États-Unis</button></div></div>
+      <div class="field"><span>Zone</span><div class="seg" id="act-zone" role="group" aria-label="Zone"><button data-z="all" aria-pressed="true">Toutes</button><button data-z="eu" aria-pressed="false">Europe</button><button data-z="us" aria-pressed="false">États-Unis</button><button data-z="jp" aria-pressed="false">Japon</button><button data-z="ca" aria-pressed="false">Canada</button><button data-z="au" aria-pressed="false">Australie</button><button data-z="autres" aria-pressed="false">Autres</button></div></div>
       <label class="field" for="act-sect"><span>Secteur</span><select id="act-sect"></select></label>
       <label class="field" for="act-cat"><span>Catégorie</span><select id="act-cat"></select></label>
       <label class="field" for="act-theme"><span>Rupture</span><select id="act-theme"></select></label>
@@ -77,6 +78,23 @@
       <label class="chk" for="act-pg"><input type="checkbox" id="act-pg"> Écarter les pièges</label>
     </div>
     <div id="act-body" class="stack"></div>
+  </section>
+
+  <!-- ============ ETF ET OBLIGATIONS ============ -->
+  <section id="view-etf" class="stack" hidden>
+    <div class="bar" id="etf-bar" hidden>
+      <div class="field search"><span>ETF</span><input id="etf-q" type="search" placeholder="Nom, code, ISIN, indice…" autocomplete="off"></div>
+      <div class="field"><span>Famille</span><div class="seg" id="etf-poche" role="group" aria-label="Famille"><button data-p="all" aria-pressed="true">Tous</button><button data-p="actions" aria-pressed="false">Actions</button><button data-p="obligations" aria-pressed="false">Obligations</button><button data-p="monetaire" aria-pressed="false">Monétaire</button><button data-p="or" aria-pressed="false">Or et matières</button></div></div>
+      <label class="field" for="etf-cls"><span>Catégorie</span><select id="etf-cls"></select></label>
+      <label class="field" for="etf-geo"><span>Zone</span><select id="etf-geo"></select></label>
+      <label class="field" for="etf-fam"><span>Émetteur</span><select id="etf-fam"></select></label>
+      <label class="field" for="etf-ter"><span>Frais</span><select id="etf-ter"></select></label>
+      <label class="field" for="etf-aum"><span>Encours</span><select id="etf-aum"></select></label>
+      <label class="chk" for="etf-pea"><input type="checkbox" id="etf-pea"> Éligibles au PEA</label>
+      <label class="chk" for="etf-ech"><input type="checkbox" id="etf-ech"> Obligations à échéance</label>
+      <label class="chk" for="etf-hdg"><input type="checkbox" id="etf-hdg"> Couverts en euros</label>
+    </div>
+    <div id="etf-body" class="stack"></div>
   </section>
 
   <!-- ============ RUPTURES ============ -->

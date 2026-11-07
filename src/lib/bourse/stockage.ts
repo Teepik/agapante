@@ -13,6 +13,7 @@ export type Ligne = {
   fiche: Record<string, unknown> | null;
   serie: Serie | null;
   maj?: string | null;
+  maj_fiche?: string | null;
 };
 
 let pret: Promise<void> | null = null;
@@ -35,6 +36,14 @@ export function schemaBourse(): Promise<void> {
         )
       `;
       await sql`CREATE INDEX IF NOT EXISTS bourse_titres_maj_idx ON bourse_titres (maj NULLS FIRST)`;
+      await sql`ALTER TABLE bourse_titres ADD COLUMN IF NOT EXISTS maj_fiche TIMESTAMPTZ`;
+      await sql`UPDATE bourse_titres SET maj_fiche = maj WHERE maj_fiche IS NULL AND fiche IS NOT NULL`;
+      await sql`
+        CREATE TABLE IF NOT EXISTS bourse_rets (
+          id  TEXT PRIMARY KEY,
+          r   TEXT NOT NULL
+        )
+      `;
       await sql`
         CREATE TABLE IF NOT EXISTS bourse_donnees (
           cle      TEXT PRIMARY KEY,
@@ -65,12 +74,16 @@ export async function inscrireUnivers(entrees: { cle: string; type: TypeTitre; u
   }
 }
 
-/** Titres à relever : devises et indices d'abord, puis les plus anciens. Un titre en échec répété attend deux semaines. */
+/** Titres à relever : devises et indices d'abord, puis les plus anciens. Les petits ETF et les petites sociétés sont relus moins souvent ;
+    un titre en échec répété attend deux semaines. */
 export async function titresARelever(limite: number, ageHeures: number): Promise<Ligne[]> {
   const sql = getSql();
   const rows = await sql`
-    SELECT cle, sym, type, univ FROM bourse_titres
-    WHERE (maj IS NULL OR maj < now() - make_interval(hours => ${ageHeures}))
+    SELECT cle, sym, type, univ, maj, maj_fiche FROM bourse_titres
+    WHERE (maj IS NULL OR maj < now() - CASE
+        WHEN type = 'etf' AND COALESCE((fiche->>'totalAssets')::float8, 1e15) < 2e7 THEN interval '14 days'
+        WHEN type = 'action' AND COALESCE((fiche->>'marketCap')::float8, 1e15) < 3e8 THEN interval '7 days'
+        ELSE make_interval(hours => ${ageHeures}) END)
       AND (essai IS NULL OR essai < now() - CASE WHEN echecs >= 3 THEN interval '14 days' ELSE interval '3 hours' END)
     ORDER BY (type IN ('fx', 'proxy')) DESC, maj NULLS FIRST, cle
     LIMIT ${limite}
@@ -83,12 +96,27 @@ export async function marquerEssai(cles: string[]) {
   await getSql()`UPDATE bourse_titres SET essai = now() WHERE cle = ANY(${cles}::text[])`;
 }
 
-export async function enregistrerTitre(cle: string, sym: string, fiche: Record<string, unknown>, serie: Serie) {
-  await getSql()`
-    UPDATE bourse_titres SET sym = ${sym}, fiche = ${JSON.stringify(fiche)}::jsonb, serie = ${JSON.stringify(serie)}::jsonb,
-      maj = now(), essai = now(), echecs = 0, erreur = NULL
-    WHERE cle = ${cle}
-  `;
+export async function enregistrerTitre(cle: string, sym: string, fiche: Record<string, unknown> | null, serie: Serie, vol13: number | null = null) {
+  const sql = getSql();
+  if (fiche) {
+    await sql`
+      UPDATE bourse_titres SET sym = ${sym}, fiche = ${JSON.stringify(fiche)}::jsonb, serie = ${JSON.stringify(serie)}::jsonb,
+        maj = now(), maj_fiche = now(), essai = now(), echecs = 0, erreur = NULL
+      WHERE cle = ${cle}
+    `;
+  } else {
+    await sql`
+      UPDATE bourse_titres SET sym = ${sym}, serie = ${JSON.stringify(serie)}::jsonb,
+        fiche = CASE WHEN ${vol13}::float8 IS NULL THEN fiche ELSE jsonb_set(COALESCE(fiche, '{}'::jsonb), '{vol13}', to_jsonb(${vol13}::float8)) END,
+        maj = now(), essai = now(), echecs = 0, erreur = NULL
+      WHERE cle = ${cle}
+    `;
+  }
+}
+
+export async function libererEssai(cles: string[]) {
+  if (!cles.length) return;
+  await getSql()`UPDATE bourse_titres SET essai = NULL WHERE cle = ANY(${cles}::text[])`;
 }
 
 export async function enregistrerEchec(cle: string, erreur: string, sym?: string | null) {
@@ -156,4 +184,27 @@ export async function ecrireDonnee(cle: string, contenu: unknown) {
 export async function reessayerEchecs(): Promise<number> {
   const r = await getSql()`UPDATE bourse_titres SET essai = NULL, echecs = 0 WHERE maj IS NULL AND essai IS NOT NULL RETURNING cle`;
   return r.length;
+}
+
+/** Rendements hebdomadaires par titre (base64 d'entiers 16 bits, unité 1e-4), lus à la demande par l'interface. */
+export async function ecrireRets(r: Record<string, string>) {
+  const sql = getSql();
+  const ids = Object.keys(r);
+  for (let i = 0; i < ids.length; i += 500) {
+    const lot = ids.slice(i, i + 500);
+    await sql`
+      INSERT INTO bourse_rets (id, r) SELECT u.id, u.r FROM unnest(${lot}::text[], ${lot.map((k) => r[k])}::text[]) AS u(id, r)
+      ON CONFLICT (id) DO UPDATE SET r = EXCLUDED.r
+    `;
+  }
+  if (ids.length) await sql`DELETE FROM bourse_rets WHERE NOT (id = ANY(${ids}::text[]))`;
+}
+export async function lireRets(ids: string[]): Promise<Record<string, string>> {
+  if (!ids.length) return {};
+  const rows = (await getSql()`SELECT id, r FROM bourse_rets WHERE id = ANY(${ids}::text[])`) as unknown as { id: string; r: string }[];
+  return Object.fromEntries(rows.map((x) => [x.id, x.r]));
+}
+export async function lireFiche(sym: string): Promise<Record<string, unknown> | null> {
+  const rows = (await getSql()`SELECT fiche FROM bourse_titres WHERE sym = ${sym} LIMIT 1`) as unknown as { fiche: Record<string, unknown> | null }[];
+  return rows.length ? rows[0].fiche : null;
 }

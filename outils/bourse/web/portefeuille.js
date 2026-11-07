@@ -33,22 +33,24 @@ function realized(id, a, b){
   return n >= 3 ? (v - 1) * 100 : null;
 }
 const FIXED_SHOCK = {
-  "2008":{monetaire:5, etat:9, credit:-4, monde_oblig:20, or:null, "EUNW.DE":-28, "IBCI.DE":3, "IUS7.DE":0},
-  "2020":{monetaire:0, etat:-2, credit:-7, monde_oblig:3, or:null, "EUNW.DE":-17, "IBCI.DE":-5, "IUS7.DE":-15}
+  "2008":{monetaire:5, etat:9, credit:-4, monde_oblig:20, matieres:-45, hy:-28, infl:3, em:0, float:2, "EUNW.DE":-28, "IBCI.DE":3, "IUS7.DE":0},
+  "2020":{monetaire:0, etat:-2, credit:-7, monde_oblig:3, matieres:-20, hy:-17, infl:-5, em:-15, float:-2, "EUNW.DE":-17, "IBCI.DE":-5, "IUS7.DE":-15}
 };
 function shockOf(x, ep){
   const C = B.chocs[ep]; if (!C) return null;
   if (ep === "2022"){ const v = realized(x.id, C.debut, C.fin); if (ok(v)) return {v, obs:true}; }
   if (x.kind === "etf" && POCHE[x.cls] !== "actions"){
-    const f = FIXED_SHOCK[ep] || {}; let v = f[x.id] ?? f[x.cls];
-    if (x.cls === "or") v = C.or_eur; if (x.id === "SXRM.DE" && ok(C.ief_eur)) v = C.ief_eur;
-    if (!ok(v)){ const ep22 = B.chocs["2022"]; v = ep === "2022" && ep22 ? null : 0; }
+    const f = FIXED_SHOCK[ep] || {}; let v = f[x.id] ?? (["hy", "infl", "em", "float"].includes(x.bt) ? f[x.bt] : undefined) ?? f[x.cls];
+    if (x.cls === "or") v = C.or_eur;
+    if ((x.id === "SXRM.DE" || (x.bt === "gov" && x.bc === "USD" && !x.hdg)) && ok(C.ief_eur)) v = C.ief_eur;
+    if (ep === "2022") return null;
     return ok(v) ? {v, obs:false} : null;
   }
   const world = ok(C.us_eur) && ok(C.eu) ? .7 * C.us_eur + .3 * C.eu : ok(C.us_eur) ? C.us_eur : C.eu;
   if (!ok(world)) return null;
   let v = (ok(x.beta) ? x.beta : 1) * world;
-  if (x.kind === "action" && C.secteurs_rel && ok(C.secteurs_rel[x.secteurEn])) v += .6 * C.secteurs_rel[x.secteurEn];
+  const sec = x.kind === "action" ? x.secteurEn : x.sec;
+  if (sec && C.secteurs_rel && ok(C.secteurs_rel[sec])) v += .6 * C.secteurs_rel[sec];
   return {v:clamp(v, -95, 150), obs:false};
 }
 const SCEN = [
@@ -65,9 +67,15 @@ function lookThrough(L){
   for (const {x, w} of L){
     add(poche, POCHE[x.cls] || "actions", w);
     if (x.kind === "action"){ add(pays, x.pays || "—", w); add(ccy, x.ccy === "GBp" || x.ccy === "GBX" ? "GBP" : x.ccy, w); add(sect, x.secteur, w); add(cat, x.cat, w); continue; }
-    const zw = ETF_ZONE_US[x.id] ? {US:1} : (W_ZONE[x.cls] || {_:1});
-    for (const [k, v] of Object.entries(zw)){ const nm = k === "_" ? "Autres pays" : k === "EZ" ? "Zone euro (obligations, monétaire)" : k === "OR" ? "Or" : (P[k] ? P[k].nom : k); add(pays, nm, w * v); add(ccy, CCY_OF[k] || "Autres devises", w * v); }
-    add(sect, POCHE[x.cls] === "actions" ? "ETF actions (diversifié)" : POCHE_L[POCHE[x.cls]], w);
+    const ob = POCHE[x.cls] === "obligations" || x.cls === "monetaire";
+    const zw = ETF_ZONE_US[x.id] ? {US:1} : x.ed ? (W_ZONE[x.cls] || {_:1})
+      : ob ? (x.bp ? {[x.bp]:1} : x.bc === "USD" ? {US:1} : x.bc === "GLOBAL" ? {US:.45, EZ:.3, JP:.1, _:.15} : x.bc === "GBP" ? {GB:1} : x.bc === "EMLOC" ? W_EM : x.bc === "CNY" ? {CN:1} : {EZ:1})
+      : x.cls === "or" ? {OR:1} : x.cls === "matieres" ? {MP:1} : geoWeights(x.geo);
+    for (const [k, v] of Object.entries(zw)){
+      const nm = k === "_" ? "Autres pays" : k === "EZ" ? "Zone euro (obligations, monétaire)" : k === "OR" ? "Or" : k === "MP" ? "Matières premières" : (P[k] ? P[k].nom : k);
+      add(pays, nm, w * v); add(ccy, x.hdg ? "EUR" : k === "MP" ? "USD (matières premières)" : CCY_OF[k] || (P[k] && P[k].ccy) || "Autres devises", w * v);
+    }
+    add(sect, x.cls === "act_secteur" && x.sec ? (SEC_FR[x.sec] || x.sec) : POCHE[x.cls] === "actions" ? "ETF actions (diversifié)" : POCHE_L[POCHE[x.cls]], w);
     add(cat, CLS_L[x.cls], w);
   }
   return {pays, ccy, sect, cat, poche};
@@ -75,6 +83,13 @@ function lookThrough(L){
 function barsHtml(o, n = 8, warn = 1){
   const e = Object.entries(o).filter(([, v]) => v > .0005).sort((a, b) => b[1] - a[1]).slice(0, n);
   return `<div class="hbars">${e.map(([k, v]) => `<div class="hb${v > warn ? " w" : ""}"><span>${esc(k)}</span><i style="--w:${Math.min(100, v * 100)}%"></i><b>${nf0.format(v * 100)} %</b></div>`).join("")}</div>`;
+}
+/* Candidats examinés pour les ajouts qui diversifient : ETF de la liste éditoriale et plus gros encours, grandes sociétés */
+function pfPool(){
+  if (pfPool.c && pfPool.n === B.A.length + B.E.length) return pfPool.c;
+  const etf = B.E.filter(e => e.ed).concat(B.E.filter(e => !e.ed && ok(e.aum)).sort((a, b) => b.aum - a.aum).slice(0, 140));
+  const act = B.A.slice().sort((a, b) => (b.mcap || 0) - (a.mcap || 0)).slice(0, 220);
+  pfPool.n = B.A.length + B.E.length; return (pfPool.c = etf.concat(act));
 }
 function renderPortefeuille(){
   const root = $("#pf-body");
@@ -90,6 +105,12 @@ function renderPortefeuille(){
     return;
   }
   const p = pfActive(); s.actif = p.id;
+  const besoin = p.lignes.map(l => l.id).concat(pfPool().map(x => x.id), ["EUNL.DE", "EUNH.DE", "GOLD.PA"]);
+  if (!hasRets(besoin)){
+    if (!root.querySelector(".pfgrid")) root.innerHTML = `<div class="card"><p class="empty">Chargement des cours…</p></div>`;
+    needRets(besoin).then(() => { if (CUR === "portefeuille") renderPortefeuille(); });
+    return;
+  }
   const {L, miss, tot} = pfLines(p);
   const an = L.length ? Q.analyse(L.map(l => ({id:l.x.id, r:l.r, mu:l.x.mu})), L.map(l => l.w)) : null;
   PF.an = an;
@@ -168,7 +189,7 @@ function renderPfAnalyse(p, L, an){
   pairs.sort((a, b) => b[2] - a[2]);
   // Suggestions
   const inPf = new Set(L.map(l => l.x.id));
-  const pool = B.E.concat(B.A.slice().sort((a, b) => (b.mcap || 0) - (a.mcap || 0)).slice(0, 250)).filter(x => !inPf.has(x.id) && B.R.get(x.id));
+  const pool = pfPool().filter(x => !inPf.has(x.id) && B.R.get(x.id));
   const scan = N >= 1 ? Q.scanAdd(an, an.R, L.map(l => l.w), pool.map(x => ({id:x.id, r:B.R.get(x.id), mu:x.mu, x})), .05).sort((a, b) => b.enb - a.enb).slice(0, 6) : [];
   const heavy = L.map((l, i) => ({x:l.x, w:l.w, rc:an.rc[i]})).filter(o => o.rc > o.w * 1.4 && o.rc > .06).sort((a, b) => b.rc - a.rc);
   const illq = L.filter(({x, w}) => x.kind === "action" && ok(x.liq) && M * w / (x.liq * 1e6 * .1) > .5);
