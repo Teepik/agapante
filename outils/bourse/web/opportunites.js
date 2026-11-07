@@ -71,8 +71,8 @@ function renderOpportunites(){
       <p class="note">Chaque liste croise plusieurs signaux tirés des données du jour ; les sociétés signalées par un piège en sont écartées. Une opportunité se vérifie dans la fiche de la société avant toute décision : les signaux décrivent une situation, la suite reste incertaine.</p></div>
     ${listes.map(({L, items}) => `<div class="card"><div class="btnrow" style="justify-content:space-between"><h2>${esc(L.titre)}</h2><span class="note">${items.length} société${items.length > 1 ? "s" : ""}</span></div>
       <p class="note">${esc(L.txt)}</p>
-      ${items.length ? `<div class="rlist">${items.slice(0, OPP.n).map(({x}) => `<div class="orow"><button class="rrow" data-id="${esc(x.id)}"><span class="t"><b>${esc(x.nom)}</b><small>${esc(x.id)} · ${esc(x.pays || "")} · ${esc(x.secteur)} · ${esc(x.cat)}${x.pea ? " · PEA" : ""}</small></span>
-        <span class="v"><span class="why">${L.why(x, m).join("")}</span><small>rdt réel att. ${fmt(x.muR, F.pct)} · note ${fmt(noteProfil(x), v => nf0.format(v))}</small></span></button><button class="ghost small" data-add="${esc(x.id)}" aria-label="Ajouter ${esc(x.nom)} au portefeuille">+</button></div>`).join("")}</div>`
+      ${items.length ? `<div class="rlist">${items.slice(0, OPP.n).map(({x}) => `<div class="orow"><button class="rrow" data-id="${esc(x.id)}"><span class="t"><b>${esc(x.nom)}</b><small>${esc(x.id)} · ${esc(x.pays || "")} · ${esc(x.secteur)} · ${esc(x.cat)}${x.pea ? " · PEA" : ""}${AN.idx.has(x.id) ? " " + anPill(x.id, true) : ""}</small></span>
+        <span class="v"><span class="why">${L.why(x, m).join("")}</span><small>rdt réel att. ${fmt(x.muR, F.pct)} · note ${fmt(noteProfil(x), v => nf0.format(v))}</small></span></button><button class="ghost small" data-add="${esc(x.id)}" aria-label="Mettre ${esc(x.nom)} à l'étude" title="${anStatut(x.id) === "entrer" ? "Analyse validée : ajouter au portefeuille" : "Mettre à l'étude : analyse approfondie avant le portefeuille"}">+</button></div>`).join("")}</div>`
         : `<p class="empty">${L.id === "evol" && !(B.meta.histo && B.meta.histo.w1) ? "L'historique des notes démarre : cette liste se remplira après le relevé de lundi prochain." : "Aucune société ne remplit toutes les conditions avec ces filtres."}</p>`}</div>`).join("")}
     <div class="card"><h2>Zones boursières les moins chères</h2><p class="note">Rendement réel attendu de chaque zone (1 / CAPE, net de frais), avec l'ETF le plus gros et le moins cher qui la couvre.</p>
       <div class="tblwrap" style="border:0"><table class="t" style="min-width:520px"><thead><tr><th>Zone</th><th>ETF</th><th class="n">Frais</th><th class="n">Rdt réel att.</th><th class="n">Perf. 12 m</th><th></th></tr></thead><tbody>
@@ -87,7 +87,8 @@ function renderOpportunites(){
   $("#opp-pea").oninput = e => { OPP.pea = e.target.checked; renderOpportunites(); };
   $("#opp-cap").oninput = e => { OPP.cap = +e.target.value; renderOpportunites(); };
   $$("#opp-body .rrow, #opp-body [data-f]").forEach(b => b.onclick = () => openFiche(b.dataset.id || b.dataset.f));
-  $$("#opp-body [data-add]").forEach(b => b.onclick = e => { e.stopPropagation(); pfAddLine(b.dataset.add); });
+  $$("#opp-body [data-add]").forEach(b => b.onclick = e => { e.stopPropagation(); const x = B.byId.get(b.dataset.add);
+    if (x && x.kind === "action" && anStatut(x.id) !== "entrer"){ if (anAjouter(x.id)) renderOpportunites(); } else pfAddLine(b.dataset.add); });
   renderDiversifiants(divSel);
 }
 /* Effet d'une petite part de chaque diversifiant sur le portefeuille actif (ou sur l'ETF Monde) */

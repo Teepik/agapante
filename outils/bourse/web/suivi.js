@@ -130,8 +130,8 @@ function addWatch(it){
 
 /* ================= Fenêtres de saisie ================= */
 let modalSubmit = null;
-function openModal(title, html, onSubmit){
-  $("#m-title").textContent = title; $("#m-body").innerHTML = html; modalSubmit = onSubmit; $("#modal").hidden = false;
+function openModal(title, html, onSubmit, okLabel){
+  $("#m-title").textContent = title; $("#m-body").innerHTML = html; modalSubmit = onSubmit; $("#m-ok").textContent = okLabel || "Enregistrer"; $("#modal").hidden = false;
   const f = $("#m-body input, #m-body select, #m-body textarea"); if (f) f.focus();
 }
 function closeModal(){ $("#modal").hidden = true; modalSubmit = null; }

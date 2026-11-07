@@ -282,3 +282,15 @@ export async function semainesHisto() {
 export async function lireSemaine(semaine: string) {
   return getSql()`SELECT * FROM bourse_histo WHERE semaine = ${semaine}::date`;
 }
+
+/* ---------------- Dossiers d'analyse ---------------- */
+export async function listeDossiers() {
+  return getSql()`
+    SELECT substr(cle, 9) AS id, contenu->>'statut' AS statut, contenu->>'nom' AS nom, contenu->>'these' AS these, contenu->>'prixEntree' AS "prixEntree",
+      contenu->>'revue' AS revue, contenu->>'cree' AS cree, contenu->'valid' AS valid, maj
+    FROM bourse_donnees WHERE cle LIKE 'dossier:%' ORDER BY maj DESC
+  `;
+}
+export async function supprimerDonnee(cle: string) {
+  await getSql()`DELETE FROM bourse_donnees WHERE cle = ${cle}`;
+}

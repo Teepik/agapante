@@ -100,7 +100,7 @@ function renderActionsTable(){
   const show = rows.slice(0, ACT.n);
   $("#act-table").innerHTML = `<thead><tr>${ACT_COLS.map(c => `<th data-k="${c.k}" ${c.tip ? `title="${esc(c.tip)}"` : ""} ${c.sc ? `class="scH" style="color:var(${STY_C[c.sc]})"` : ""} aria-sort="${ACT.sort.k === c.k ? (dir > 0 ? "ascending" : "descending") : "none"}">${esc(c.l)}</th>`).join("")}</tr></thead>
     <tbody>${show.map(x => `<tr data-id="${esc(x.id)}">
-      <td><span class="nm">${esc(x.nom)}</span><span class="fm">${esc(x.id)} · ${esc(x.pays || "—")} · ${esc(x.secteur)}${x.pea ? ' · <span class="env pea">PEA</span>' : ""}</span></td>
+      <td><span class="nm">${esc(x.nom)}</span><span class="fm">${esc(x.id)} · ${esc(x.pays || "—")} · ${esc(x.secteur)}${x.pea ? ' · <span class="env pea">PEA</span>' : ""}${AN.idx.has(x.id) ? " " + anPill(x.id, true) : ""}</span></td>
       <td>${catPill(x.cat)}</td>
       <td class="nt"><b>${fmt(x.note, v => nf0.format(v))}</b><i style="--w:${ok(x.note) ? x.note : 0}%"></i></td>
       <td class="${x.dn >= 3 ? "pos" : x.dn <= -3 ? "neg" : ""}">${ok(x.dn) ? (x.dn > 0 ? "+" : x.dn < 0 ? "−" : "") + nf0.format(Math.abs(x.dn)) : "—"}</td>
@@ -149,7 +149,7 @@ function openFiche(id){
   if (x.kind === "action"){
     const recoL = r => !ok(r) ? "—" : r < 1.8 ? "Achat fort" : r < 2.5 ? "Achat" : r < 3.3 ? "Conserver" : r < 4 ? "Alléger" : "Vendre";
     body.innerHTML = `<div class="meta-l">${esc(x.id)} · ${esc(x.pays || "—")} · ${esc(x.secteur)}${x.industrie ? " · " + esc(x.industrie) : ""}${x.x ? " · " + esc(x.x) : ""}${x.isin ? " · " + esc(x.isin) : ""}</div>
-      <div class="flags">${catPill(x.cat)}${x.pea ? '<span class="pill good">Éligible au PEA</span>' : '<span class="pill neu">Hors PEA</span>'}${x.cyclique ? '<span class="pill neu">Cyclique</span>' : ""}${themePills(x.th)}${(x.pg || []).map(([t]) => `<span class="pill warn">${esc(t)}</span>`).join("")}</div>
+      <div class="flags">${anPill(x.id)}${catPill(x.cat)}${x.pea ? '<span class="pill good">Éligible au PEA</span>' : '<span class="pill neu">Hors PEA</span>'}${x.cyclique ? '<span class="pill neu">Cyclique</span>' : ""}${themePills(x.th)}${(x.pg || []).map(([t]) => `<span class="pill warn">${esc(t)}</span>`).join("")}</div>
       ${(x.pg || []).map(([t, d]) => `<div class="callout"><b>${esc(t)}.</b> ${esc(d)}</div>`).join("")}
       <div class="kpis k3">${k("Cours", ok(x.px) ? nf2.format(x.px) + " " + esc(x.ccy) : "—", ok(x.upside) ? `objectif des analystes ${F.pctS(x.upside)}` : "")}
         ${k("Capitalisation", mdE(x.mcap), ok(x.liq) ? meur(x.liq) + " échangés par jour" : "")}
@@ -201,9 +201,14 @@ function openFiche(id){
       <p class="note">Rendement attendu : ${esc(hyp)}.${x.ech ? " Conservé jusqu'à l'échéance, un ETF obligataire daté se comporte comme une obligation : le rendement actuel est à peu près acquis." : ""}${x.spot ? " Détenu en direct, il s'achète sur une plateforme enregistrée auprès de l'AMF ; les plus-values relèvent du régime des actifs numériques." : x.cls === "crypto" ? " Produit coté adossé à la cryptomonnaie, détenu sur un compte-titres comme une action." : ""}</p>`;
   }
   const pfs = (Store.data.portefeuilles && Store.data.portefeuilles.liste) || [];
-  $("#f-foot").innerHTML = `<button type="button" class="ghost" id="f-watch">Suivre</button>
-    ${pfs.length ? `<select id="f-pf" aria-label="Portefeuille">${pfs.map(p => `<option value="${p.id}" ${p.id === Store.data.portefeuilles.actif ? "selected" : ""}>${esc(p.nom)}</option>`).join("")}</select>` : ""}
-    <button type="button" class="primary" id="f-add">Ajouter ${pfs.length ? "à ce portefeuille" : "à un portefeuille fictif"}</button>`;
+  const pfSel = pfs.length ? `<select id="f-pf" aria-label="Portefeuille">${pfs.map(p => `<option value="${p.id}" ${p.id === Store.data.portefeuilles.actif ? "selected" : ""}>${esc(p.nom)}</option>`).join("")}</select>` : "";
+  const ajout = `Ajouter ${pfs.length ? "à ce portefeuille" : "à un portefeuille fictif"}`;
+  // Une action passe par l'analyse approfondie avant le portefeuille ; un ETF entre directement.
+  const st = x.kind === "action" ? anStatut(x.id) : "entrer";
+  $("#f-foot").innerHTML = `<button type="button" class="ghost" id="f-watch">Suivre</button>${pfSel}
+    ${st === "entrer" ? `<button type="button" class="primary" id="f-add">${ajout}</button>`
+      : `<button type="button" class="ghost" id="f-add" title="Sans analyse validée, la ligne sera signalée dans le portefeuille">Ajouter à l'essai</button><button type="button" class="primary" id="f-an">${st ? "Ouvrir l'analyse" : "Analyser en profondeur"}</button>`}`;
+  if ($("#f-an")) $("#f-an").onclick = () => anOuvrir(x.id);
   $("#f-watch").onclick = () => { addWatch({type:x.kind, id:x.id}); };
   $("#f-add").onclick = () => { pfAddLine(x.id, $("#f-pf") ? $("#f-pf").value : null); closeFiche(); };
   el.hidden = false; $("#f-close").focus();

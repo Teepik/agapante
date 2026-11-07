@@ -179,3 +179,68 @@ export async function diagnostic(opts: { sym?: string; isin?: string; nom?: stri
   }
   return out;
 }
+
+/* ---------------- Analyse approfondie d'une société (à la demande) ---------------- */
+const CHAMPS_COMPTES = [
+  "totalAssets", "currentAssets", "cashAndCashEquivalents", "cashCashEquivalentsAndShortTermInvestments", "accountsReceivable", "inventory", "netPPE",
+  "goodwill", "goodwillAndOtherIntangibleAssets", "otherIntangibleAssets", "investmentsAndAdvances", "totalLiabilitiesNetMinorityInterest", "currentLiabilities",
+  "totalDebt", "longTermDebt", "currentDebt", "netDebt", "stockholdersEquity", "retainedEarnings", "workingCapital", "ordinarySharesNumber", "minorityInterest",
+  "totalRevenue", "grossProfit", "operatingIncome", "EBIT", "EBITDA", "netIncome", "netIncomeCommonStockholders", "interestExpense", "reconciledDepreciation",
+  "researchAndDevelopment", "dilutedAverageShares", "dilutedEPS", "operatingCashFlow", "capitalExpenditure", "freeCashFlow", "repurchaseOfCapitalStock",
+  "cashDividendsPaid", "purchaseOfBusiness", "netIssuancePaymentsOfDebt", "issuanceOfCapitalStock", "stockBasedCompensation",
+] as const;
+
+export async function analyseSociete(sym: string) {
+  const out: Obj = { sym, date: new Date().toISOString() };
+  const depuis = new Date(Date.now() - 6.5 * 365.25 * 864e5);
+  try {
+    const rows = (await yf.fundamentalsTimeSeries(sym, { period1: depuis, type: "annual", module: "all" }, SANS_VALIDATION)) as unknown as Obj[];
+    const parDate = new Map<string, Obj>();
+    for (const r of rows ?? []) {
+      const d = r.date instanceof Date ? r.date.toISOString().slice(0, 10) : typeof r.date === "number" ? new Date(r.date * (r.date < 1e12 ? 1000 : 1)).toISOString().slice(0, 10) : String(r.date ?? "").slice(0, 10);
+      if (!d) continue;
+      const o = parDate.get(d) ?? { date: d };
+      for (const k of CHAMPS_COMPTES) { const v = num(r[k]) ?? num(r["annual" + k[0].toUpperCase() + k.slice(1)]); if (v !== null && o[k] == null) o[k] = v; }
+      parDate.set(d, o);
+    }
+    out.comptes = [...parDate.values()].filter((o) => Object.keys(o).length > 3).sort((a, b) => String(a.date).localeCompare(String(b.date))).slice(-6);
+  } catch (e) {
+    out.erreurComptes = String(e instanceof Error ? e.message : e).slice(0, 200);
+  }
+  try {
+    const modules = ["price", "summaryDetail", "financialData", "defaultKeyStatistics", "assetProfile", "insiderTransactions", "insiderHolders",
+      "majorHoldersBreakdown", "netSharePurchaseActivity", "recommendationTrend", "upgradeDowngradeHistory", "calendarEvents", "earningsHistory", "esgScores"];
+    let r: Record<string, Obj | undefined>;
+    try {
+      r = (await yf.quoteSummary(sym, { modules: modules as never }, SANS_VALIDATION)) as unknown as Record<string, Obj | undefined>;
+    } catch {
+      // Certains modules manquent pour des titres hors États-Unis : on se replie sur l'essentiel.
+      r = (await yf.quoteSummary(sym, { modules: ["price", "financialData", "defaultKeyStatistics", "assetProfile", "majorHoldersBreakdown", "recommendationTrend", "calendarEvents"] as never }, SANS_VALIDATION)) as unknown as Record<string, Obj | undefined>;
+    }
+    const ap = r.assetProfile ?? {};
+    const date = (v: unknown) => (v instanceof Date ? v.toISOString().slice(0, 10) : typeof v === "number" ? new Date(v * (v < 1e12 ? 1000 : 1)).toISOString().slice(0, 10) : typeof v === "string" ? v.slice(0, 10) : null);
+    out.profil = {
+      resume: txt(ap.longBusinessSummary), site: txt(ap.website), effectif: num(ap.fullTimeEmployees), pays: txt(ap.country), ville: txt(ap.city),
+      risques: { audit: num(ap.auditRisk), conseil: num(ap.boardRisk), remuneration: num(ap.compensationRisk), actionnaires: num(ap.shareHolderRightsRisk), global: num(ap.overallRisk) },
+    };
+    out.dirigeants = ((ap.companyOfficers as Obj[] | undefined) ?? []).slice(0, 12).map((o) => ({ nom: txt(o.name), titre: txt(o.title), age: num(o.age), ne: num(o.yearBorn), remun: num(o.totalPay), devise: txt((r.price as Obj | undefined)?.currency) }));
+    const mh = r.majorHoldersBreakdown ?? {};
+    out.actionnaires = { initiés: num(mh.insidersPercentHeld), institutions: num(mh.institutionsPercentHeld), nbInstitutions: num(mh.institutionsCount) };
+    const np = r.netSharePurchaseActivity ?? {};
+    out.achatsInities = { periode: txt(np.period), achats: num(np.buyInfoShares), nbAchats: num(np.buyInfoCount), ventes: num(np.sellInfoShares), nbVentes: num(np.sellInfoCount), net: num(np.netInfoShares), partNet: num(np.netPercentInsiderShares) };
+    out.transactions = ((r.insiderTransactions?.transactions as Obj[] | undefined) ?? []).slice(0, 15).map((t) => ({ qui: txt(t.filerName), role: txt(t.filerRelation), quoi: txt(t.transactionText), date: date(t.startDate), titres: num(t.shares), valeur: num(t.value) }));
+    out.consensus = ((r.recommendationTrend?.trend as Obj[] | undefined) ?? []).map((t) => ({ periode: txt(t.period), achatFort: num(t.strongBuy), achat: num(t.buy), conserver: num(t.hold), vente: num(t.sell), venteForte: num(t.strongSell) }));
+    out.avis = ((r.upgradeDowngradeHistory?.history as Obj[] | undefined) ?? []).slice(0, 12).map((h) => ({ date: date(h.epochGradeDate), firme: txt(h.firm), avant: txt(h.fromGrade), apres: txt(h.toGrade), action: txt(h.action) }));
+    const ce = r.calendarEvents ?? {};
+    const er = (ce.earnings ?? {}) as Obj;
+    out.calendrier = { resultats: ((er.earningsDate as unknown[]) ?? []).map(date).filter(Boolean), dividende: date(ce.exDividendDate), versement: date(ce.dividendDate) };
+    out.surprises = ((r.earningsHistory?.history as Obj[] | undefined) ?? []).map((h) => ({ trimestre: date(h.quarter), attendu: num(h.epsEstimate), publie: num(h.epsActual), ecart: num(h.surprisePercent) }));
+    const esg = r.esgScores ?? {};
+    out.esg = { total: num(esg.totalEsg), env: num(esg.environmentScore), social: num(esg.socialScore), gouv: num(esg.governanceScore), controverse: num(esg.highestControversy), percentile: num(esg.percentile) };
+    out.devise = txt((r.price as Obj | undefined)?.currency); out.deviseComptes = txt((r.financialData as Obj | undefined)?.financialCurrency);
+    out.capi = num((r.price as Obj | undefined)?.marketCap); out.cours = num((r.financialData as Obj | undefined)?.currentPrice) ?? num((r.price as Obj | undefined)?.regularMarketPrice);
+  } catch (e) {
+    out.erreurProfil = String(e instanceof Error ? e.message : e).slice(0, 200);
+  }
+  return out;
+}

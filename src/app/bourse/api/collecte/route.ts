@@ -1,7 +1,7 @@
 import { accesCollecte, ENTETES_PRIVEES } from "@/lib/bourse/acces";
 import { collecter } from "@/lib/bourse/collecte";
 import { erreursRecentes, etatCollecte, lireDonnee, reessayerEchecs, schemaBourse } from "@/lib/bourse/stockage";
-import { diagnostic } from "@/lib/bourse/yahoo";
+import { analyseSociete, diagnostic } from "@/lib/bourse/yahoo";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -11,12 +11,13 @@ export const maxDuration = 300;
  * pendant un peu plus de trois minutes (cours à chaque passage, comptes une fois par semaine), puis recalcule classements et rendements.
  * ?budget=45 : passage court, en secondes (appel manuel).
  * ?etat=1 : état de la collecte sans rien relever · ?traiter=0 : relevé seul · ?relever=0 : recalcul seul ·
- * ?reessayer=1 : remet en file les titres jamais relevés · ?test=SYMBOLE, ?isin=…&nom=…&pays=… : diagnostic.
+ * ?reessayer=1 : remet en file les titres jamais relevés · ?test=SYMBOLE, ?isin=…&nom=…&pays=… : diagnostic · ?analyse=SYMBOLE : données d'analyse approfondie.
  */
 export async function GET(req: Request) {
   if (!(await accesCollecte(req))) return new Response("Non autorisé", { status: 401 });
   const q = new URL(req.url).searchParams;
   try {
+    if (q.get("analyse")) return Response.json(await analyseSociete(String(q.get("analyse")).slice(0, 40)), { headers: ENTETES_PRIVEES });
     if (q.get("test") || q.get("isin")) {
       return Response.json(await diagnostic({ sym: q.get("test") ?? undefined, isin: q.get("isin") ?? undefined, nom: q.get("nom") ?? undefined, pays: q.get("pays") ?? undefined }), { headers: ENTETES_PRIVEES });
     }

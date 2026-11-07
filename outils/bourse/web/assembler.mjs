@@ -8,7 +8,7 @@ const ICI = dirname(fileURLToPath(import.meta.url));
 const RACINE = join(ICI, "..", "..", "..");
 const lire = (...p) => readFileSync(join(...p), "utf8");
 const MODULES = ["core.js", "fiscal.js", "charts.js", "map.js", "comparateur.js", "taux.js", "suivi.js", "methode.js", "quant.js", "bourse.js",
-  "actions.js", "opportunites.js", "etf.js", "ruptures.js", "portefeuille.js", "constructeur.js", "main.js"];
+  "actions.js", "opportunites.js", "etf.js", "ruptures.js", "portefeuille.js", "constructeur.js", "analyses.js", "main.js"];
 const js = MODULES.map((f) => `/* ---- ${f} ---- */\n` + lire(ICI, f)).join("\n");
 const jsonScript = (id, file) => `<script type="application/json" id="${id}">${JSON.stringify(JSON.parse(lire(RACINE, "src", "lib", "bourse", file))).replace(/</g, "\\u003c")}</script>`;
 const d3 = lire(RACINE, "node_modules", "d3", "dist", "d3.min.js");

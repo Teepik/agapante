@@ -121,7 +121,7 @@ async function loadBourse(){
     console.error(err);
   }
   $("#b-date").textContent = B.etat === "pret" ? `${nf0.format(B.A.length)} actions et ${nf0.format(B.E.length)} ETF · cours au ${new Date(B.meta.fin).toLocaleDateString("fr-FR", {day:"numeric", month:"long", year:"numeric"})}` : "";
-  if (["actions","opportunites","etf","ruptures","portefeuille","constructeur","suivi"].includes(CUR)) go(CUR, false);
+  if (["actions","opportunites","analyses","etf","ruptures","portefeuille","constructeur","suivi"].includes(CUR)) go(CUR, false);
 }
 /* Rafraîchit les rendements attendus des ETF quand le foyer (inflation, hypothèse) change */
 function refreshMuEtf(){ for (const e of B.E) e.mu = muEtf(e); }

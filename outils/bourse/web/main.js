@@ -1,5 +1,5 @@
 /* ================= Navigation et démarrage ================= */
-const VIEWS = ["carte","actions","opportunites","etf","ruptures","portefeuille","constructeur","comparateur","taux","suivi","methode"];
+const VIEWS = ["carte","actions","opportunites","analyses","etf","ruptures","portefeuille","constructeur","comparateur","taux","suivi","methode"];
 let CUR = "carte";
 function go(v, push = true){
   if (!VIEWS.includes(v)) v = "carte";
@@ -12,6 +12,7 @@ function go(v, push = true){
   if (v === "actions") renderActions();
   if (v === "etf") renderEtf();
   if (v === "opportunites") renderOpportunites();
+  if (v === "analyses") renderAnalyses();
   if (v === "ruptures") renderRuptures();
   if (v === "portefeuille") renderPortefeuille();
   if (v === "constructeur") renderConstructeur();
@@ -50,6 +51,7 @@ new MutationObserver(() => go(CUR, false)).observe(document.documentElement, {at
     Store.init(() => { applyFoyer(Store.data.foyer); applyPrefs(Store.data.preferences); applyConstructeur(Store.data.constructeur); if (B.etat === "pret") refreshMuEtf(); renderSuiviCount(); if (CUR !== "carte") go(CUR, false); });
     go(location.hash.slice(1) || "actions", false);
     loadBourse();
+    anCharger().then(() => { if (B.etat === "pret" && ["actions", "opportunites", "portefeuille", "constructeur"].includes(CUR)) go(CUR, false); });
   } catch(e){
     $("#loading").textContent = "Les données de l'atlas n'ont pas pu être chargées. Rechargez la page.";
     console.error(e);

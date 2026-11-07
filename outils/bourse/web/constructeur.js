@@ -5,7 +5,7 @@ const RISQ = [
 ];
 const OR_PART = [0, .04, .05, .06, .07, .07, .05];
 const CST_DEF = {risque:4, horizon:10, montant:50000, pea:true, geoEU:45, vifs:50, liq:5, crypto:0, profil:"qualite", w:{...PROFILS[1].w}, themes:{}, menaces:true, pieges:true,
-  sectEx:[], pond:"egale", n:{}, picks:{}};
+  sectEx:[], pond:"egale", n:{}, picks:{}, analysees:false};
 let CST = JSON.parse(JSON.stringify(CST_DEF));
 const maxEq = h => h <= 1 ? .1 : h <= 2 ? .25 : h <= 3 ? .35 : h <= 4 ? .45 : h <= 5 ? .55 : h <= 7 ? .7 : h <= 9 ? .85 : 1;
 const defSplit = h => h <= 2 ? {monetaire:.6, etat:.25, credit:.15} : h <= 5 ? {monetaire:.3, etat:.4, credit:.3} : {monetaire:.1, etat:.5, credit:.4};
@@ -36,6 +36,7 @@ function cstStockPool(){
     if (CST.liq && !(x.liq >= CST.liq)) return false;
     if (CST.sectEx.includes(x.secteur)) return false;
     if (CST.pieges && x.pg && x.pg.length) return false;
+    if (CST.analysees && anStatut(x.id) !== "entrer") return false;
     for (const [k, v] of Object.entries(x.th || {})){ if (CST.menaces && v <= -2) return false; const o = CST.themes[k]; if (o === 1 && v < 0) return false; if (o === -1 && v > 0) return false; }
     return x.hist >= 104;
   }).map(x => ({x, s:cstStockScore(x)})).filter(o => ok(o.s)).sort((a, b) => b.s - a.s);
@@ -99,12 +100,14 @@ function cstLists(){
   const stockPool = cstStockPool();
   const eqGuess = Math.min(mx, [.08, .2, .38, .55, .72, .88, 1][CST.risque - 1]);
   const pocketV = M * eqGuess * CST.vifs / 100;
-  const nV = CST.n.actions ?? (pocketV >= 20000 ? clamp(Math.round(pocketV / 2500), 8, 25) : clamp(Math.floor(pocketV / 1500), 0, 8));
+  const nV = Math.min(CST.n.actions ?? (pocketV >= 20000 ? clamp(Math.round(pocketV / 2500), 8, 25) : clamp(Math.floor(pocketV / 1500), 0, 8)), CST.analysees ? stockPool.length : Infinity);
+  const nVal = CST.analysees ? stockPool.length : null;
   if (CST.vifs > 0 && nV > 0) lists.push({id:"actions", titre:"Actions en direct", poche:"actions", pool:stockPool, n:nV, auto:cstPickStocks(stockPool, nV),
-    why:`Environ ${F.eur(pocketV)} en titres vifs : ${nV} lignes de ${F.eur(pocketV / Math.max(1, nV))} environ, assez pour diluer le risque propre à chaque société, sans lignes trop petites face aux frais de courtage.`});
-  const etfPool = cstEtfPool(), pocketE = M * eqGuess * (100 - CST.vifs) / 100;
+    why:`Environ ${F.eur(pocketV)} en titres vifs : ${nV} lignes de ${F.eur(pocketV / Math.max(1, nV))} environ, assez pour diluer le risque propre à chaque société, sans lignes trop petites face aux frais de courtage.${CST.analysees ? ` Seules les sociétés validées après analyse approfondie sont proposées (${nVal}).` : " Avant d'entrer, chaque société cochée gagne à passer par l'analyse approfondie."}`});
+  const vifsEff = CST.vifs > 0 && nV > 0 ? CST.vifs : 0;
+  const etfPool = cstEtfPool(), pocketE = M * eqGuess * (100 - vifsEff) / 100;
   const nE = CST.n.etf ?? (pocketE >= 30000 ? 3 : pocketE >= 10000 ? 2 : pocketE > 0 ? 1 : 0);
-  if (CST.vifs < 100 && nE > 0){
+  if (vifsEff < 100 && nE > 0){
     const auto = []; for (const {x} of etfPool){ if (auto.length >= nE) break; if (auto.some(y => y.cls === x.cls && x.cls !== "act_style" && x.cls !== "act_theme")) continue; if (auto.some(y => corr2(x.id, y.id) > .97)) continue; auto.push(x); }
     lists.push({id:"etf", titre:"ETF actions", poche:"actions", pool:etfPool, n:nE, auto,
       why:"Un ETF Monde sert de cœur ; les suivants ajoutent la zone, le style ou le thème que vos réglages favorisent."});
@@ -191,6 +194,7 @@ function renderConstructeur(){
       <label class="chk"><input type="checkbox" id="c-pea" ${CST.pea ? "checked" : ""}> Actions logées dans un PEA</label>
       <label class="chk"><input type="checkbox" id="c-pg" ${CST.pieges ? "checked" : ""}> Écarter les pièges (value piège, dividende fragile, dette lourde…)</label>
       <label class="chk"><input type="checkbox" id="c-men" ${CST.menaces ? "checked" : ""}> Écarter les sociétés menacées directement par une rupture</label>
+      <label class="chk"><input type="checkbox" id="c-an" ${CST.analysees ? "checked" : ""}> Seulement les sociétés validées après analyse approfondie (${[...AN.idx.values()].filter(d => d.statut === "entrer").length})</label>
       <div class="field"><span>Style recherché</span><div class="chips" id="c-prof">${PROFILS.map(p => `<button class="chip" data-p="${p.id}" aria-pressed="${CST.profil === p.id}">${esc(p.l)}</button>`).join("")}</div></div>
       <div class="field"><span>Ruptures</span><div class="thset">${Object.entries(th).map(([k, l]) => `<div><span>${esc(l)}</span><div class="seg" data-th="${k}">${[[1, "Favoriser"], [0, "Neutre"], [-1, "Éviter"]].map(([v, t]) => `<button data-v="${v}" aria-pressed="${(CST.themes[k] || 0) === v}">${t}</button>`).join("")}</div></div>`).join("")}</div></div>
       <label class="field" for="c-pond"><span>Pondération des actions</span><select id="c-pond"><option value="egale" ${CST.pond === "egale" ? "selected" : ""}>Même poids</option><option value="vol" ${CST.pond === "vol" ? "selected" : ""}>Inverse de la volatilité</option></select></label>
@@ -208,6 +212,7 @@ function renderConstructeur(){
   $("#c-pea").oninput = e => { CST.pea = e.target.checked; upd(); };
   $("#c-pg").oninput = e => { CST.pieges = e.target.checked; upd(); };
   $("#c-men").oninput = e => { CST.menaces = e.target.checked; upd(); };
+  $("#c-an").oninput = e => { CST.analysees = e.target.checked; CST.n = {}; upd(); };
   $("#c-pond").oninput = e => { CST.pond = e.target.value; cstSave(); renderConstructeur(); };
   $$("#c-prof button").forEach(b => b.onclick = () => { const p = PROFILS.find(x => x.id === b.dataset.p); CST.profil = p.id; CST.w = {...p.w}; upd(); });
   $$(".thset .seg").forEach(sg => sg.querySelectorAll("button").forEach(b => b.onclick = () => { CST.themes[sg.dataset.th] = +b.dataset.v; upd(); }));
@@ -249,12 +254,12 @@ function renderCstOut(lists, built){
     </div>
     ${lists.map(l => { const top = l.pool.slice(0, Math.max(l.n * 3, 15)).map(o => o.x); for (const x of l.sel) if (!top.includes(x)) top.unshift(x);
       return `<div class="card cl" data-l="${l.id}"><div class="btnrow" style="justify-content:space-between"><h2>${esc(l.titre)} : ${l.pool.length > 1 ? `choisissez <span class="big">${l.n}</span> parmi ${l.pool.length}` : `<span class="big">1</span> ligne`}</h2>
-        <div class="btnrow">${l.pool.length > 1 ? `<button class="ghost small" data-n="-1" aria-label="Une ligne de moins">−</button><button class="ghost small" data-n="1" aria-label="Une ligne de plus">+</button>` : ""}${l.manual ? '<button class="ghost small" data-reset="1">Sélection automatique</button>' : ""}</div></div>
+        <div class="btnrow">${l.id === "actions" && l.sel.some(x => !AN.idx.has(x.id)) ? '<button class="ghost small" data-etude="1" title="Créer un dossier d\'analyse pour chaque société cochée">Mettre à l\'étude</button>' : ""}${l.pool.length > 1 ? `<button class="ghost small" data-n="-1" aria-label="Une ligne de moins">−</button><button class="ghost small" data-n="1" aria-label="Une ligne de plus">+</button>` : ""}${l.manual ? '<button class="ghost small" data-reset="1">Sélection automatique</button>' : ""}</div></div>
         <p class="note">${esc(l.why)} ${l.sel.length !== l.n ? `<b>${l.sel.length} cochée${l.sel.length > 1 ? "s" : ""}.</b>` : ""}</p>
         <div class="tblwrap" style="border:0"><table class="t cand"><thead><tr><th></th><th>Ligne</th>${l.id === "actions" ? "<th>Catégorie</th><th class=\"n\">Note</th>" : ""}<th class="n">Volat.</th><th class="n">Rdt réel att.</th><th class="n">Poids</th><th class="n">Montant</th></tr></thead><tbody>
           ${top.map(x => { const on = l.sel.includes(x), w = wOf.get(x.id) || 0;
             return `<tr class="${on ? "on" : ""}"><td><input type="checkbox" data-pick="${esc(x.id)}" ${on ? "checked" : ""} aria-label="Retenir ${esc(x.nom)}"></td>
-              <td><button class="lk" data-f="${esc(x.id)}">${esc(x.nom)}</button><span class="cmp" style="display:block;margin:0">${x.kind === "action" ? `${esc(x.id)} · ${esc(x.pays || "")} · ${esc(x.secteur)} · ${meur(x.liq)}/j` : `${esc(x.id)} · ${esc(CLS_L[x.cls])} · frais ${nf2.format(x.ter)} %`}${x.th && Object.keys(x.th).length ? " " + themePills(x.th, true) : ""}</span></td>
+              <td><button class="lk" data-f="${esc(x.id)}">${esc(x.nom)}</button><span class="cmp" style="display:block;margin:0">${x.kind === "action" ? `${esc(x.id)} · ${esc(x.pays || "")} · ${esc(x.secteur)} · ${meur(x.liq)}/j${AN.idx.has(x.id) ? " " + anPill(x.id, true) : ""}` : `${esc(x.id)} · ${esc(CLS_L[x.cls])} · frais ${nf2.format(x.ter)} %`}${x.th && Object.keys(x.th).length ? " " + themePills(x.th, true) : ""}</span></td>
               ${l.id === "actions" ? `<td>${catPill(x.cat)}</td><td class="n">${fmt(noteProfil(x, CST.w), v => nf0.format(v))}</td>` : ""}
               <td class="n">${fmt(x.vol, v => nf0.format(v) + " %")}</td><td class="n">${fmt(x.mu, F.pct)}</td><td class="n">${on ? nf1.format(w * 100) + " %" : ""}</td><td class="n">${on ? F.eur(w * M) : ""}</td></tr>`; }).join("")}
         </tbody></table></div></div>`; }).join("")}`;
@@ -265,6 +270,7 @@ function renderCstOut(lists, built){
       CST.picks[l.id] = cb.checked ? cur.concat([id]) : cur.filter(x => x !== id); cstSave(); renderConstructeur(); });
     card.querySelectorAll("[data-n]").forEach(b => b.onclick = () => { CST.n[l.id] = clamp(l.n + +b.dataset.n, 1, Math.min(40, l.pool.length)); delete CST.picks[l.id]; cstSave(); renderConstructeur(); });
     const rs = card.querySelector("[data-reset]"); if (rs) rs.onclick = () => { delete CST.picks[l.id]; cstSave(); renderConstructeur(); };
+    const et = card.querySelector("[data-etude]"); if (et) et.onclick = () => { const n = l.sel.filter(x => anAjouter(x.id, true)).length; toast(`${n} société${n > 1 ? "s" : ""} mise${n > 1 ? "s" : ""} à l'étude : onglet Analyses`); renderConstructeur(); };
   });
   $("#c-create").onclick = () => {
     const lignes = L.map(l => ({id:l.x.id, w:+(l.w * 100).toFixed(2)}));

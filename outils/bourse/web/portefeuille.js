@@ -122,9 +122,11 @@ function renderPortefeuille(){
       <div class="form"><label for="pf-m">Montant (€)<input id="pf-m" type="number" min="1000" step="1000" value="${p.montant || 50000}"></label><label for="pf-h">Horizon (ans)<input id="pf-h" type="number" min="1" max="30" step="1" value="${p.horizon || 10}"></label></div>
       <div class="field search" style="max-width:none"><span>Ajouter une action ou un ETF</span><input id="pf-q" type="search" placeholder="Nom, code ou ISIN…" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="pf-sugg"><div id="pf-sugg" class="sugg" hidden role="listbox"></div></div>
       ${miss.length ? `<p class="callout">Absents des données du jour : ${esc(miss.join(", "))}.</p>` : ""}
+      ${(() => { const nv = p.lignes.filter(l => { const x = B.byId.get(l.id); return x && x.kind === "action" && anStatut(l.id) !== "entrer"; });
+        return nv.length ? `<p class="callout">${nv.length} société${nv.length > 1 ? "s" : ""} sans analyse validée dans ce portefeuille. ${nv.some(l => !AN.idx.has(l.id)) ? '<button class="ghost small" id="pf-etude">Les mettre à l\'étude</button>' : '<button class="ghost small" id="pf-voir-an">Voir les analyses</button>'}</p>` : ""; })()}
       <div class="lines">${p.lignes.length ? `<table class="t pfl"><thead><tr><th>Ligne</th><th class="n">Poids</th><th class="n">Montant</th><th class="n" title="Part du risque du portefeuille">Risque</th><th></th></tr></thead><tbody>
         ${p.lignes.map((l, i) => { const x = B.byId.get(l.id), rc = rcOf.get(l.id), w = tot > 0 ? l.w / tot : 0;
-          return `<tr><td><button class="lk" data-f="${esc(l.id)}">${esc(x ? x.nom : l.id)}</button><span class="cmp" style="margin:0;display:block">${x ? (x.kind === "etf" ? esc(CLS_L[x.cls]) : esc(x.secteur) + " · " + esc(x.pays || "")) : "donnée absente"}</span></td>
+          return `<tr><td><button class="lk" data-f="${esc(l.id)}">${esc(x ? x.nom : l.id)}</button><span class="cmp" style="margin:0;display:block">${x ? (x.kind === "etf" ? esc(CLS_L[x.cls]) : esc(x.secteur) + " · " + esc(x.pays || "") + " " + (anPill(l.id, true) || '<span class="pill xs neu anp" title="Aucun dossier d\'analyse approfondie">sans analyse</span>')) : "donnée absente"}</span></td>
             <td class="n"><input type="number" min="0" max="100" step="0.5" value="${+(+l.w).toFixed(2)}" data-i="${i}" class="wIn" aria-label="Poids de ${esc(x ? x.nom : l.id)} en %"></td>
             <td class="n">${F.eur((p.montant || 0) * w)}</td><td class="n ${ok(rc) && rc > w * 1.4 && rc > .06 ? "neg" : ""}">${ok(rc) ? nf0.format(rc * 100) + " %" : "—"}</td>
             <td class="n"><button class="x small" data-del="${i}" aria-label="Retirer">×</button></td></tr>`; }).join("")}
@@ -145,6 +147,8 @@ function renderPortefeuille(){
   $("#pf-m").onchange = e => { p.montant = Math.max(0, +e.target.value || 0); pfSave(); renderPortefeuille(); };
   $("#pf-h").onchange = e => { p.horizon = clamp(Math.round(+e.target.value || 10), 1, 30); pfSave(); renderPortefeuille(); };
   attachSearch($("#pf-q"), $("#pf-sugg"), x => pfAddLine(x.id, p.id));
+  if ($("#pf-etude")) $("#pf-etude").onclick = () => { const n = p.lignes.filter(l => anAjouter(l.id, true)).length; toast(`${n} société${n > 1 ? "s" : ""} mise${n > 1 ? "s" : ""} à l'étude : onglet Analyses`); renderPortefeuille(); };
+  if ($("#pf-voir-an")) $("#pf-voir-an").onclick = () => { AN.cur = null; go("analyses"); };
   $$("#pf-edit .wIn").forEach(inp => inp.onchange = () => { p.lignes[+inp.dataset.i].w = Math.max(0, +inp.value || 0); pfSave(); renderPortefeuille(); });
   $$("#pf-edit [data-del]").forEach(b => b.onclick = () => { p.lignes.splice(+b.dataset.del, 1); pfSave(); renderPortefeuille(); });
   $$("#pf-edit [data-f]").forEach(b => b.onclick = () => openFiche(b.dataset.f));
